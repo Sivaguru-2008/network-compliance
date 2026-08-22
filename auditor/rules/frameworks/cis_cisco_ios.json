@@ -1,0 +1,282 @@
+{
+  "schema_version": "1.0",
+  "framework": "CIS",
+  "framework_version": "CIS Cisco IOS Benchmark (v4.x control numbering)",
+  "platform": {
+    "vendor": "cisco",
+    "os_family": "ios"
+  },
+  "source_note": "Conditions and remediation follow the CIS Cisco IOS Benchmark. Clause numbers are given for traceability and should be re-confirmed against your licensed copy of the benchmark for the exact IOS train you audit; rules whose clause could not be pinned exactly carry a section-level control_ref and a note.",
+  "rules": [
+    {
+      "id": "CIS-IOS-1.1.1",
+      "control_ref": "1.1.1",
+      "title": "Enable 'aaa new-model'",
+      "description": "AAA must be enabled so that authentication, authorization and accounting for device access are centrally defined rather than falling back to line-local passwords.",
+      "framework": "CIS",
+      "severity": "medium",
+      "baseline_fields": ["aaa_enabled"],
+      "condition": {
+        "field": "aaa_enabled",
+        "operator": "is_true"
+      },
+      "rationale": "Without 'aaa new-model' the device uses legacy line authentication, which cannot enforce per-user accountability, centralised credential revocation, or command accounting.",
+      "remediation": {
+        "summary": "Enable the AAA subsystem, then define authentication methods before disconnecting.",
+        "cli": [
+          "configure terminal",
+          " aaa new-model",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - 1.1.1 Enable 'aaa new-model'"],
+      "notes": "Enabling AAA changes login behaviour immediately. Configure 'aaa authentication login' with a local fallback in the same session to avoid lockout."
+    },
+    {
+      "id": "CIS-IOS-1.2.2",
+      "control_ref": "1.2.2",
+      "title": "Set 'transport input ssh' for 'line vty' connections",
+      "description": "VTY lines must accept SSH only. Telnet and the other legacy transports carry credentials and session data in cleartext.",
+      "framework": "CIS",
+      "severity": "high",
+      "baseline_fields": ["telnet_enabled", "vty_transport_input"],
+      "condition": {
+        "all_of": [
+          {
+            "field": "telnet_enabled",
+            "operator": "is_false"
+          },
+          {
+            "field": "vty_transport_input",
+            "operator": "subset_of",
+            "value": ["ssh"]
+          }
+        ]
+      },
+      "rationale": "Telnet transmits usernames, passwords and configuration in cleartext. Anyone able to observe the management path can capture privileged credentials and replay them.",
+      "remediation": {
+        "summary": "Restrict every VTY line to the SSH transport.",
+        "cli": [
+          "configure terminal",
+          " line vty 0 15",
+          "  transport input ssh",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - 1.2.2 Set 'transport input ssh' for 'line vty' connections"],
+      "notes": "Evaluated worst-case across all 'line vty' blocks: if any block permits a cleartext transport, the control fails."
+    },
+    {
+      "id": "CIS-IOS-1.2.9",
+      "control_ref": "1.2.9",
+      "title": "Set 'exec-timeout' to 10 minutes or less on 'line vty'",
+      "description": "Idle VTY sessions must be torn down automatically. An exec-timeout of 0 disables the timeout entirely and is explicitly non-compliant.",
+      "framework": "CIS",
+      "severity": "medium",
+      "baseline_fields": ["vty_exec_timeout_seconds"],
+      "condition": {
+        "all_of": [
+          {
+            "field": "vty_exec_timeout_seconds",
+            "operator": "greater_than",
+            "value": 0
+          },
+          {
+            "field": "vty_exec_timeout_seconds",
+            "operator": "less_or_equal",
+            "value": 600
+          }
+        ]
+      },
+      "rationale": "An unattended, authenticated session left open on a workstation or terminal server is a ready-made privileged foothold. 'exec-timeout 0 0' means the session never expires.",
+      "remediation": {
+        "summary": "Set an idle timeout of 10 minutes or less on every VTY line.",
+        "cli": [
+          "configure terminal",
+          " line vty 0 15",
+          "  exec-timeout 10 0",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - 1.2.9 Set 'exec-timeout' less than or equal to 10 minutes 'line vty'"],
+      "notes": "Evaluated worst-case: the longest timeout configured across VTY lines is used, and any 'exec-timeout 0' is treated as no timeout at all."
+    },
+    {
+      "id": "CIS-IOS-1.4.1-1.4.2",
+      "control_ref": "1.4.1, 1.4.2",
+      "title": "Set 'enable secret' and enable 'service password-encryption'",
+      "description": "The privileged-exec password must be stored as a one-way hash ('enable secret'), and stored passwords elsewhere in the configuration must not be left in plaintext.",
+      "framework": "CIS",
+      "severity": "high",
+      "baseline_fields": ["enable_secret_set", "password_encryption"],
+      "condition": {
+        "all_of": [
+          {
+            "field": "enable_secret_set",
+            "operator": "is_true"
+          },
+          {
+            "field": "password_encryption",
+            "operator": "is_true"
+          }
+        ]
+      },
+      "rationale": "'enable password' stores the privileged password reversibly and is trivially recovered from a configuration backup. 'service password-encryption' additionally obscures line and username passwords so a copied config does not immediately yield credentials.",
+      "remediation": {
+        "summary": "Configure a hashed enable secret and turn on password encryption; remove the legacy enable password.",
+        "cli": [
+          "configure terminal",
+          " enable secret <strong-password>",
+          " no enable password",
+          " service password-encryption",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": [
+        "CIS Cisco IOS Benchmark - 1.4.1 Set 'password' for 'enable secret'",
+        "CIS Cisco IOS Benchmark - 1.4.2 Enable 'service password-encryption'"
+      ],
+      "notes": "CIS lists these as two clauses; they are evaluated together here because either one alone still leaves privileged credentials recoverable. 'service password-encryption' uses reversible Vigenere (type 7) encoding and is a defence-in-depth measure, not a substitute for 'enable secret'."
+    },
+    {
+      "id": "CIS-IOS-1.5.2-1.5.3",
+      "control_ref": "1.5.2, 1.5.3",
+      "title": "Unset 'private' and 'public' for 'snmp-server community'",
+      "description": "No SNMP community string may use a well-known default value such as 'public' or 'private'.",
+      "framework": "CIS",
+      "severity": "high",
+      "baseline_fields": ["snmp_communities"],
+      "condition": {
+        "field": "snmp_communities",
+        "select": "name",
+        "operator": "contains_none",
+        "value": ["public", "private"],
+        "ignore_case": true
+      },
+      "rationale": "Default community strings are the first thing an attacker tries. A readable community exposes the full device configuration and topology; a writable one permits configuration changes over UDP with no user authentication.",
+      "remediation": {
+        "summary": "Remove default community strings and replace them with unique, non-guessable values restricted by an ACL.",
+        "cli": [
+          "configure terminal",
+          " no snmp-server community public",
+          " no snmp-server community private",
+          " access-list 99 permit <nms-subnet> <wildcard>",
+          " snmp-server community <unique-string> RO 99",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": [
+        "CIS Cisco IOS Benchmark - 1.5.2 Unset 'private' for 'snmp-server community'",
+        "CIS Cisco IOS Benchmark - 1.5.3 Unset 'public' for 'snmp-server community'"
+      ],
+      "notes": "Comparison is case-insensitive: 'Public' is no less well-known than 'public'. Prefer SNMPv3 with authPriv over any v1/v2c community."
+    },
+    {
+      "id": "CIS-IOS-2.1.1.6",
+      "control_ref": "2.1.1.6",
+      "title": "Set version 2 for 'ip ssh version'",
+      "description": "The device must enforce SSH protocol version 2. Version 1 and the 1.99 compatibility mode are cryptographically broken.",
+      "framework": "CIS",
+      "severity": "high",
+      "baseline_fields": ["ssh_version"],
+      "condition": {
+        "field": "ssh_version",
+        "operator": "equals",
+        "value": 2
+      },
+      "rationale": "SSHv1 has structural weaknesses including a CRC-32 integrity check that permits insertion attacks. Leaving the version unset lets IOS negotiate 1.99, which allows a client to downgrade the session to v1.",
+      "remediation": {
+        "summary": "Generate an adequate RSA key and pin SSH to version 2.",
+        "cli": [
+          "configure terminal",
+          " ip domain name <your.domain>",
+          " crypto key generate rsa modulus 2048",
+          " ip ssh version 2",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - 2.1.1.6 Set version 2 for 'ip ssh version'"],
+      "notes": "An absent 'ip ssh version' statement is reported as NEEDS_REVIEW rather than FAIL: the effective version depends on the IOS train and on whether an RSA key exists, so it cannot be established from the configuration text alone."
+    },
+    {
+      "id": "CIS-IOS-2.1-HTTP-SERVER",
+      "control_ref": "2.1",
+      "title": "Set 'no ip http server'",
+      "description": "The on-box HTTP management server must be disabled.",
+      "framework": "CIS",
+      "severity": "medium",
+      "baseline_fields": ["http_server_enabled"],
+      "condition": {
+        "field": "http_server_enabled",
+        "operator": "is_false"
+      },
+      "rationale": "The IOS HTTP server authenticates over an unencrypted channel, exposing privileged credentials, and has a long history of remotely exploitable defects. It is rarely needed on an infrastructure device.",
+      "remediation": {
+        "summary": "Disable the HTTP server; use HTTPS or SSH if a management interface is genuinely required.",
+        "cli": [
+          "configure terminal",
+          " no ip http server",
+          " no ip http secure-server",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - section 2.1 Global Service Rules"],
+      "notes": "Mapped at section level: this control is expressed under the benchmark's global service rules, and the exact clause number differs between IOS 15 and IOS 17 editions. Confirm the clause against your licensed copy before citing it in a formal audit."
+    },
+    {
+      "id": "CIS-IOS-2.2.2-2.2.4",
+      "control_ref": "2.2.2, 2.2.4",
+      "title": "Configure a logging destination (syslog host or local buffer)",
+      "description": "Logging must be on and must have at least one destination: a remote syslog host, a sized local buffer, or both.",
+      "framework": "CIS",
+      "severity": "medium",
+      "baseline_fields": ["logging_enabled", "logging_hosts", "logging_buffered"],
+      "condition": {
+        "all_of": [
+          {
+            "field": "logging_enabled",
+            "operator": "is_true"
+          },
+          {
+            "any_of": [
+              {
+                "field": "logging_hosts",
+                "operator": "is_not_empty"
+              },
+              {
+                "field": "logging_buffered",
+                "operator": "is_true"
+              }
+            ]
+          }
+        ]
+      },
+      "rationale": "A device that keeps no log has no incident timeline. Remote syslog additionally preserves evidence after a device is rebooted, reimaged, or compromised, which is exactly when local logs are lost.",
+      "remediation": {
+        "summary": "Enable logging to a sized local buffer and to a remote syslog collector.",
+        "cli": [
+          "configure terminal",
+          " logging on",
+          " logging buffered 64000 informational",
+          " logging host <syslog-server-ip>",
+          " logging trap informational",
+          " service timestamps log datetime msec show-timezone",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": [
+        "CIS Cisco IOS Benchmark - 2.2.2 Set 'buffer size' for 'logging buffered'",
+        "CIS Cisco IOS Benchmark - 2.2.4 Set IP address for 'logging host'"
+      ],
+      "notes": "CIS treats the buffer and the remote host as separate clauses; this rule requires at least one destination and fails the device if logging is explicitly turned off with 'no logging on'."
+    }
+  ]
+}
