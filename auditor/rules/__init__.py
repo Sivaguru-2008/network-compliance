@@ -7,6 +7,7 @@ from .loader import (
     discover_packs,
     load_framework,
     load_ruleset,
+    platform_mismatch_note,
 )
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "discover_packs",
     "load_framework",
     "load_ruleset",
+    "platform_mismatch_note",
 ]

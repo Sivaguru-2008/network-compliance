@@ -37,6 +37,10 @@ class VendorParser(ABC):
     os_family: ClassVar[str] = "unknown"
     version: ClassVar[str] = "0.0.0"
     base_confidence: ClassVar[float] = 1.0
+    #: A fallback parser handles configurations no deterministic parser claims.
+    #: It is kept out of normal ranking and selected only when everything else
+    #: scores below threshold *and* the caller opted in.
+    is_fallback: ClassVar[bool] = False
 
     @classmethod
     @abstractmethod
@@ -80,24 +84,56 @@ class ParserRegistry:
         return sorted(self._parsers)
 
     def rank(self, config_text: str) -> List[Tuple[float, Type[VendorParser]]]:
-        """All parsers scored against the config, best first."""
-        scored = [(cls.detect(config_text), cls) for cls in self._parsers.values()]
+        """Deterministic parsers scored against the config, best first."""
+        scored = [
+            (cls.detect(config_text), cls) for cls in self._parsers.values() if not cls.is_fallback
+        ]
         return sorted(scored, key=lambda pair: (-pair[0], pair[1].name))
 
-    def detect(self, config_text: str, *, threshold: float = 0.3) -> Tuple[Type[VendorParser], float]:
-        """Pick the best-matching parser, or raise if none is confident enough."""
+    def fallbacks(self) -> List[Type[VendorParser]]:
+        return sorted(
+            (cls for cls in self._parsers.values() if cls.is_fallback), key=lambda cls: cls.name
+        )
+
+    def detect(
+        self,
+        config_text: str,
+        *,
+        threshold: float = 0.3,
+        allow_fallback: bool = False,
+    ) -> Tuple[Type[VendorParser], float]:
+        """Pick the best-matching parser, or raise if none is confident enough.
+
+        A fallback parser is considered only when no deterministic parser clears
+        ``threshold`` and the caller passed ``allow_fallback``. The opt-in is
+        deliberate: the fallback sends the configuration to a third-party API,
+        which is the caller's decision to make, not a silent default.
+        """
         ranked = self.rank(config_text)
-        if not ranked:
-            raise ParserError("No parsers registered.")
-        score, parser_cls = ranked[0]
-        if score < threshold:
-            raise ParserError(
-                "Could not confidently identify the device vendor from this configuration "
-                f"(best guess {parser_cls.name!r} at {score:.2f}, threshold {threshold:.2f}). "
-                "Pass --vendor to force a parser. A future LLMParser will register as the "
-                "fallback for exactly this case."
+        best_score, best_parser = ranked[0] if ranked else (0.0, None)
+
+        if best_parser is not None and best_score >= threshold:
+            return best_parser, best_score
+
+        available = self.fallbacks()
+        if available:
+            if allow_fallback:
+                fallback = available[0]
+                return fallback, fallback.detect(config_text)
+            hint = (
+                f" The {available[0].name!r} fallback parser can handle unknown vendors; enable it "
+                "explicitly (--allow-llm), which sends the configuration to the model provider."
             )
-        return parser_cls, score
+        else:
+            hint = ""
+
+        if best_parser is None:
+            raise ParserError("No deterministic parsers registered." + hint)
+        raise ParserError(
+            "Could not confidently identify the device vendor from this configuration "
+            f"(best guess {best_parser.name!r} at {best_score:.2f}, threshold {threshold:.2f}). "
+            "Pass --vendor to force a parser." + hint
+        )
 
 
 registry = ParserRegistry()

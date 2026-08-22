@@ -6,7 +6,7 @@ grammar.  That is what makes both sides swappable: a new vendor is a new
 parser, a new framework is a new JSON file, and neither touches this module.
 """
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from ..models.baseline import SecurityBaselineModel
 from ..models.result import (
@@ -111,6 +111,7 @@ class ComplianceEngine:
         tool_name: str,
         tool_version: str,
         include_baseline: bool = True,
+        platform_note: Optional[str] = None,
     ) -> AuditReport:
         results = self.evaluate(baseline)
         return AuditReport(
@@ -132,6 +133,7 @@ class ComplianceEngine:
                 version=self.ruleset.framework_version,
                 rules_evaluated=len(results),
                 source_note=self.ruleset.source_note,
+                platform_note=platform_note,
             ),
             summary=ReportSummary.from_results(results),
             results=results,

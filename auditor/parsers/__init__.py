@@ -2,5 +2,16 @@
 
 from .base import ParserError, ParserRegistry, VendorParser, registry
 from .cisco_ios import CiscoIOSParser
+from .llm import LLMClient, LLMParser, LLMResponseError, LLMUnavailableError
 
-__all__ = ["CiscoIOSParser", "ParserError", "ParserRegistry", "VendorParser", "registry"]
+__all__ = [
+    "CiscoIOSParser",
+    "LLMClient",
+    "LLMParser",
+    "LLMResponseError",
+    "LLMUnavailableError",
+    "ParserError",
+    "ParserRegistry",
+    "VendorParser",
+    "registry",
+]

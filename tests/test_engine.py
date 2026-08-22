@@ -308,3 +308,42 @@ def test_results_are_ordered_worst_first(insecure_results, engine, insecure):
     order = [Status.FAIL, Status.NEEDS_REVIEW, Status.PASS]
     positions = [order.index(s) for s in statuses]
     assert positions == sorted(positions)
+
+
+def test_passing_control_never_cites_missing_evidence(engine):
+    """A PASS row must point at a field that was actually established.
+
+    Rules with an `any_of` can pass while one operand stays undetected; the
+    report must cite the operand that carried it, not the one that was silent.
+    """
+    from auditor.parsers import CiscoIOSParser
+
+    config = (
+        "hostname PARTIAL-LOG\n"
+        "service password-encryption\n"
+        "aaa new-model\n"
+        "enable secret 9 $9$abcdefghijklmnop\n"
+        "ip ssh version 2\n"
+        "no ip http server\n"
+        "logging host 10.0.0.5\n"  # a destination exists, but nothing is buffered
+        "snmp-server community Uniq-C0mm RO\n"
+        "line vty 0 15\n"
+        " exec-timeout 10 0\n"
+        " transport input ssh\n"
+        "end\n"
+    )
+    baseline = CiscoIOSParser().parse(config)
+    baseline.logging_buffered = baseline.logging_buffered.model_copy(
+        update={"detected": False, "value": None, "note": "simulated missing evidence"}
+    )
+
+    result = next(r for r in engine.evaluate(baseline) if r.rule_id == "CIS-IOS-2.2.2-2.2.4")
+    assert result.status is Status.PASS
+    assert result.primary_evidence.detected is True
+    assert result.primary_evidence.source_line == "logging host 10.0.0.5"
+
+
+def test_failing_control_still_cites_the_field_that_fell_short(insecure_results):
+    result = insecure_results["CIS-IOS-1.4.1-1.4.2"]
+    assert result.status is Status.FAIL
+    assert result.primary_evidence.field == "enable_secret_set"

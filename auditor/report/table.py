@@ -9,9 +9,11 @@ CI produces clean text.
 
 import os
 import sys
+import textwrap
 from typing import List, Optional, Sequence
 
-from ..models.result import AuditReport, ControlResult, Status
+from ..models.observation import Origin
+from ..models.result import AuditReport, ControlResult, Evidence, Status
 from ..models.rule import Severity
 
 _RESET = "\033[0m"
@@ -97,10 +99,23 @@ def render_report(report: AuditReport, *, color: Optional[bool] = None, width: i
         f"(detection confidence {target.detection_confidence:.2f})"
     )
     out.append(f"  Framework     : {report.framework.name} - {report.framework.version}")
+    llm_fields = _llm_field_count(report)
+    if llm_fields:
+        out.append(
+            paint(
+                f"  Evidence      : {llm_fields} setting(s) normalized by a language model "
+                "and verified against the configuration text",
+                _COLORS[Status.NEEDS_REVIEW],
+            )
+        )
     out.append(f"  Generated     : {report.generated_at.strftime('%Y-%m-%d %H:%M:%S UTC')}")
     if target.source_sha256:
         out.append(f"  Config SHA256 : {target.source_sha256}")
     out.append("=" * width)
+    if report.framework.platform_note:
+        out.append("")
+        for line in _wrap(f"! {report.framework.platform_note}", width):
+            out.append(paint(line, _COLORS[Status.NEEDS_REVIEW]))
     out.append("")
 
     # -- control table ----------------------------------------------------
@@ -174,9 +189,38 @@ def render_report(report: AuditReport, *, color: Optional[bool] = None, width: i
     return "\n".join(out)
 
 
+def _origin_tag(item: Evidence) -> str:
+    """Mark evidence that a model produced, with the confidence it was accepted at."""
+    if item.origin is Origin.DETERMINISTIC:
+        return ""
+    return f"[{item.origin.value} {item.confidence:.2f}] "
+
+
+def _llm_field_count(report: AuditReport) -> int:
+    fields = {
+        item.field
+        for result in report.results
+        for item in result.evidence
+        if item.origin is not Origin.DETERMINISTIC
+    }
+    return len(fields)
+
+
+def _wrap(text: str, width: int, indent: str = "  ", hanging: str = "    ") -> List[str]:
+    """Wrap a paragraph to the report width, indenting continuation lines."""
+    return textwrap.wrap(
+        " ".join(text.split()),
+        width=width,
+        initial_indent=indent,
+        subsequent_indent=hanging,
+    ) or [indent]
+
+
 def _evidence_cell(result: ControlResult) -> str:
     evidence = result.primary_evidence
-    return evidence.display if evidence else "(no evidence recorded)"
+    if evidence is None:
+        return "(no evidence recorded)"
+    return f"{_origin_tag(evidence)}{evidence.display}"
 
 
 def _render_finding(result: ControlResult, paint: _Painter, width: int) -> List[str]:
@@ -191,7 +235,7 @@ def _render_finding(result: ControlResult, paint: _Painter, width: int) -> List[
     lines.append(f"    Why         : {_truncate(result.message, width - 18)}")
     lines.append("    Evidence    :")
     for item in result.evidence:
-        prefix = f"      - {item.field}: "
+        prefix = f"      - {item.field}: {_origin_tag(item)}"
         lines.append(prefix + _truncate(item.display, max(24, width - len(prefix))))
         if item.source_line and item.note:
             note_prefix = "          note: "

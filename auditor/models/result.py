@@ -105,11 +105,19 @@ class ControlResult(BaseModel):
 
     @property
     def primary_evidence(self) -> Optional[Evidence]:
-        """The most decisive evidence line: prefer an undetected field, else the first."""
-        for item in self.evidence:
-            if not item.detected:
-                return item
-        return self.evidence[0] if self.evidence else None
+        """The evidence line that best explains this verdict.
+
+        Which one that is depends on the verdict. A control that passed is
+        explained by a field that was actually established -- citing an
+        undetected field next to PASS reads as "passed on no evidence", which
+        is precisely the impression this tool must never give. A FAIL or
+        NEEDS_REVIEW is explained by the field that fell short, so there the
+        undetected field is the interesting one.
+        """
+        if not self.evidence:
+            return None
+        wanted = self.status is Status.PASS
+        return next((item for item in self.evidence if item.detected is wanted), self.evidence[0])
 
 
 class ReportSummary(BaseModel):
@@ -174,6 +182,10 @@ class FrameworkInfo(BaseModel):
     version: str
     rules_evaluated: int
     source_note: Optional[str] = None
+    platform_note: Optional[str] = Field(
+        default=None,
+        description="Set when the rule pack targets a different platform than the audited device.",
+    )
 
 
 class AuditReport(BaseModel):

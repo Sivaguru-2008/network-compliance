@@ -1,3 +1,4 @@
+# Deterministic core. The LLM fallback parser is optional - see requirements-llm.txt.
 ciscoconfparse2>=0.7
 pydantic>=2.5
 pytest>=7.4

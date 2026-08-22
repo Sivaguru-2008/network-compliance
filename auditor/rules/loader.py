@@ -57,13 +57,51 @@ def available_frameworks(search_dir: Optional[Path] = None) -> List[str]:
     return sorted({framework for framework, _ in discover_packs(search_dir)})
 
 
-def load_framework(framework: str, platform_key: str, search_dir: Optional[Path] = None) -> RuleSet:
-    """Load the pack for a framework/platform pair, e.g. ('CIS', 'cisco_ios')."""
+def load_framework(
+    framework: str,
+    platform_key: str,
+    search_dir: Optional[Path] = None,
+    *,
+    allow_cross_platform: bool = False,
+) -> RuleSet:
+    """Load the pack for a framework/platform pair, e.g. ('CIS', 'cisco_ios').
+
+    With ``allow_cross_platform``, a pack written for a different platform may
+    be used when none exists for this one. That is sound for the *conditions* -
+    they only reference vendor-neutral baseline fields - but not for the
+    remediation commands, which are written in one vendor's CLI. Callers that
+    opt in are expected to surface :func:`platform_mismatch_note` in the report.
+    """
     packs = discover_packs(search_dir)
     key = (framework.upper(), platform_key)
-    if key not in packs:
-        available = ", ".join(f"{f}/{p}" for f, p in sorted(packs)) or "(none found)"
-        raise RuleLoadError(
-            f"No rule pack for framework {framework!r} on platform {platform_key!r}. Available: {available}"
-        )
-    return load_ruleset(packs[key])
+    if key in packs:
+        return load_ruleset(packs[key])
+
+    if allow_cross_platform:
+        candidates = {k: v for k, v in packs.items() if k[0] == framework.upper()}
+        if len(candidates) == 1:
+            return load_ruleset(next(iter(candidates.values())))
+        if len(candidates) > 1:
+            options = ", ".join(sorted(p for _, p in candidates))
+            raise RuleLoadError(
+                f"No rule pack for framework {framework!r} on platform {platform_key!r}, and "
+                f"several could substitute ({options}). Choose one with --rules."
+            )
+
+    available = ", ".join(f"{f}/{p}" for f, p in sorted(packs)) or "(none found)"
+    raise RuleLoadError(
+        f"No rule pack for framework {framework!r} on platform {platform_key!r}. Available: {available}"
+    )
+
+
+def platform_mismatch_note(ruleset: RuleSet, vendor: str, os_family: str) -> Optional[str]:
+    """Warn when a pack's remediation CLI was written for a different platform."""
+    pack_platform = f"{ruleset.platform.vendor}/{ruleset.platform.os_family}"
+    device_platform = f"{vendor}/{os_family}"
+    if pack_platform == device_platform:
+        return None
+    return (
+        f"Rule pack targets {pack_platform} but this device was identified as {device_platform}. "
+        "The pass/fail conditions are vendor-neutral and still apply; the remediation commands "
+        f"are written in {pack_platform} syntax and must be translated before use."
+    )

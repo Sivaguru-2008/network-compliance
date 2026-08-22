@@ -15,9 +15,16 @@ from typing import List, Optional, Sequence
 from . import __version__
 from .engine import ComplianceEngine, RuleEvaluationError
 from .models.result import AuditReport, Status
-from .parsers import ParserError, registry
+from .parsers import LLMParser, ParserError, VendorParser, registry
+from .parsers.llm.client import DEFAULT_MODEL, AnthropicClient, LLMUnavailableError
 from .report import render_report, write_json_report
-from .rules import RuleLoadError, available_frameworks, load_framework, load_ruleset
+from .rules import (
+    RuleLoadError,
+    available_frameworks,
+    load_framework,
+    load_ruleset,
+    platform_mismatch_note,
+)
 
 TOOL_NAME = "netaudit"
 
@@ -79,6 +86,28 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Omit the full normalized baseline from the JSON report.",
     )
+    llm = parser.add_argument_group(
+        "LLM fallback",
+        "For vendors no deterministic parser handles. Parsing sends the configuration "
+        "to the model provider, so it is opt-in.",
+    )
+    llm.add_argument(
+        "--allow-llm",
+        action="store_true",
+        help="Permit the LLM fallback parser when no deterministic parser recognises the config.",
+    )
+    llm.add_argument(
+        "--llm-model",
+        default=DEFAULT_MODEL,
+        help=f"Model to use for LLM parsing (default: {DEFAULT_MODEL}).",
+    )
+    llm.add_argument(
+        "--llm-min-confidence",
+        type=float,
+        default=0.6,
+        metavar="F",
+        help="Discard model findings below this confidence, escalating them to NEEDS_REVIEW (default: 0.6).",
+    )
     parser.add_argument(
         "--strict",
         action="store_true",
@@ -94,12 +123,24 @@ def _read_config(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="replace")
 
 
-def _select_parser(config_text: str, vendor: Optional[str]):
+def _select_parser(config_text: str, vendor: Optional[str], allow_llm: bool):
     """Explicit --vendor wins; otherwise rank the registered parsers."""
     if vendor:
         parser_cls = registry.get(vendor)
         return parser_cls, parser_cls.detect(config_text)
-    return registry.detect(config_text)
+    return registry.detect(config_text, allow_fallback=allow_llm)
+
+
+def _instantiate(parser_cls, args) -> "VendorParser":
+    """Build the parser, passing LLM knobs only to the parser that has them."""
+    if parser_cls is LLMParser:
+        return LLMParser(min_confidence=args.llm_min_confidence, client=_llm_client(args))
+    return parser_cls()
+
+
+def _llm_client(args):
+    """Constructed eagerly so a missing SDK or key fails before the config is read aloud."""
+    return AnthropicClient(model=args.llm_model)
 
 
 def _default_json_path(config: Path, framework: str) -> Path:
@@ -112,15 +153,20 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
 
     try:
         config_text = _read_config(args.config)
-        parser_cls, confidence = _select_parser(config_text, args.vendor)
-        baseline = parser_cls().parse(config_text, source_file=str(args.config))
-        baseline.provenance.detection_confidence = confidence
+        parser_cls, confidence = _select_parser(config_text, args.vendor, args.allow_llm)
+        parser = _instantiate(parser_cls, args)
+        baseline = parser.parse(config_text, source_file=str(args.config))
+        if parser_cls is not LLMParser:
+            # The LLM parser reports the vendor it identified; do not overwrite it.
+            baseline.provenance.detection_confidence = confidence
 
+        # Platform comes from the parsed baseline, not the parser class: the LLM
+        # fallback only learns the vendor by reading the configuration.
+        platform_key = f"{baseline.provenance.vendor}_{baseline.provenance.os_family}"
         if args.rules:
             ruleset = load_ruleset(args.rules)
         else:
-            platform_key = f"{parser_cls.vendor}_{parser_cls.os_family}"
-            ruleset = load_framework(args.framework, platform_key)
+            ruleset = load_framework(args.framework, platform_key, allow_cross_platform=True)
 
         engine = ComplianceEngine(ruleset)
         report = engine.build_report(
@@ -128,8 +174,11 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
             tool_name=TOOL_NAME,
             tool_version=__version__,
             include_baseline=not args.no_baseline,
+            platform_note=platform_mismatch_note(
+                ruleset, baseline.provenance.vendor, baseline.provenance.os_family
+            ),
         )
-    except (ParserError, RuleLoadError, RuleEvaluationError) as exc:
+    except (ParserError, RuleLoadError, RuleEvaluationError, LLMUnavailableError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_ERROR
 
