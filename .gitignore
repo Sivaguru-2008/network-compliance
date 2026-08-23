@@ -8,3 +8,6 @@ reports/
 # Training-loop artifacts: metrics, fitted thresholds, mined examples.
 # Anchored, so it never matches the auditor/training/ package.
 /training/
+
+# Bulk-ingestion output: regenerate with `python -m auditor --bulk ... --inventory-out`.
+/inventory.json

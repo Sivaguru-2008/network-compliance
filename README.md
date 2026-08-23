@@ -78,6 +78,8 @@ python -m auditor device.conf --vendor hybrid
 | Flag | Effect |
 | --- | --- |
 | `--framework CIS` | Which rule pack to evaluate (default `CIS`). |
+| `--bulk` | Ingest a directory, glob or file list as a batch — see [Device Inventory & Bulk Ingestion](#device-inventory--bulk-ingestion). |
+| `--inventory-out path.json` | With `--bulk`, write the device inventory JSON. |
 | `--vendor cisco_ios\|juniper_junos\|llm\|hybrid` | Force a parser instead of auto-detecting the vendor. |
 | `--rules path.json` | Use an explicit rule pack, bypassing framework lookup. |
 | `--json path.json` | Where to write the JSON report (default `reports/<name>.<framework>.json`). |
@@ -687,6 +689,11 @@ auditor/
     baseline.py      SecurityBaselineModel — the vendor-neutral contract
     rule.py          ComplianceRule, conditions, operators, RuleSet
     result.py        Status, Evidence, ControlResult, AuditReport
+    identity.py      DeviceIdentity - hostname/version/model/serial, each with evidence
+    inventory.py     DeviceRecord, DeviceInventory, dedup keying, duplicate groups
+  identity/
+    extractors.py    per-vendor identity extraction; nothing inferred, nothing invented
+    companion.py     optional show-output capture - the only honest source of a serial
   parsers/
     base.py          VendorParser ABC + ParserRegistry (ranking, fallback selection)
     cisco_ios.py     CiscoIOSParser — ciscoconfparse2, absence policy, worst-case aggregation
@@ -717,12 +724,17 @@ auditor/
     conditions.py    three-valued logic + operator implementations
     evaluator.py     ComplianceEngine — rules × baseline → report
   report/
-    table.py         dependency-free CLI table
+    table.py         dependency-free CLI table (single device)
+    inventory.py     fleet view - counts, per-framework rollup, per-device rows
     json_report.py   structured JSON
+  pipeline.py        the single-file audit as callable stages; shared by CLI and bulk
+  ingest.py          bulk orchestration over pipeline.py - collection, isolation, dedup
   cli.py             argument parsing and wiring only
 samples/             hardened_ios.conf, insecure_ios.conf, junos_srx.conf,
                      fortios_fgt.conf, unknown_vendor.conf
-tests/               500 tests
+samples/configs/     a seven-file fleet for --bulk, including a companion capture,
+                     a drifted second snapshot, an unknown vendor and an empty file
+tests/               619 tests
 ```
 
 ## Tests
@@ -735,6 +747,14 @@ Covers the normalized baseline for every sample field by field, the expected
 verdict matrix per control, evidence integrity (every cited line number must
 actually contain the cited text), the three-valued logic truth tables, the
 operator truth table, rule-pack validation, and the CLI end to end.
+
+`test_device_identity.py` pins the honesty constraint from the other direction:
+a serial number is `null` on every vendor for a config-only ingest, a `boot
+system` image name is never turned into a version, and identity never mentions a
+framework. `test_bulk_ingestion.py` pins the orchestration properties — one
+record per file, one parse per file however many frameworks run, a malformed
+file that costs only itself, byte-identical output across runs, and bulk results
+that match a single-file run of the same config exactly.
 
 Four tests pin the "no hardcoded verdicts" constraint: editing one line of the
 hardened config must flip exactly one control to `FAIL`, and remediating the
@@ -853,3 +873,233 @@ The engine maps the 13 core security controls to the following frameworks:
 | `ntp_configured` | CIS 2.3 / time sync | AU-8 (verified) | CCI-000159 (verified) | unverified (internal) |
 | `no_write_snmp_community` | CIS 1.5 / read-only SNMP | unverified (internal) | unverified (internal) | unverified (internal) |
 
+
+---
+
+## Device Inventory & Bulk Ingestion
+
+A single configuration produces a single-device report. A *directory* of
+configurations produces a **device inventory**: one record per device, carrying
+who the device is alongside how it scored, in a machine-readable file the
+dashboard step consumes.
+
+Bulk ingestion adds no auditing of its own. It is a loop over the same pipeline
+stages the single-file path runs, in the same order:
+
+```text
+Single config  →  existing pipeline (unchanged)
+
+Directory / glob / explicit paths
+        ↓
+Bulk ingestion orchestrator (auditor/ingest.py)
+        ↓
+   per file, isolated:
+   detect vendor → parse → normalize
+        → device identity extraction
+        → evaluate every selected framework against that one baseline
+        ↓
+DeviceRecord (identity + findings + framework summaries + provenance)
+        ↓
+DeviceInventory (records + rollup + duplicate groups)
+```
+
+One config in, one device record out. A file that cannot be read, parsed, or
+identified becomes a record with a status and a reason — it never aborts the
+batch.
+
+### Usage
+
+```bash
+# unchanged single-file behaviour
+python -m auditor samples/hardened_ios.conf --framework cis
+
+# a directory, scanned recursively
+python -m auditor --bulk samples/configs/ --framework cis --framework nist_800_53
+
+# explicit files
+python -m auditor --bulk file1.conf file2.conf file3.conf --framework stig
+
+# a glob, and the inventory written for downstream consumers
+python -m auditor --bulk "configs/**/*.conf" \
+    --framework cis --framework iso_27001 \
+    --inventory-out inventory.json
+```
+
+| Flag | Effect |
+| --- | --- |
+| `--bulk` | Ingest the given paths as a batch and render the inventory instead of a single-device report. |
+| `--inventory-out PATH` | Write the full `DeviceInventory` as JSON to `PATH`. |
+
+Directory scans **recurse**, skip dot-directories, and accept
+`.conf .cfg .config .txt .text .ios .junos .fortios .rsc`. A path named
+explicitly on the command line is ingested whatever its extension — naming a
+file is a statement that it is one. Files are sorted by path before anything
+runs, so two runs over one directory produce byte-identical output.
+
+Under `--bulk`, `--strict` grades the batch by its worst device: `1` if any
+control FAILED anywhere, `3` if anything needs review *or* any file could not be
+audited, `0` otherwise.
+
+### Device identity, and the serial number problem
+
+`DeviceIdentity` is deliberately separate from `SecurityBaselineModel`. The
+baseline is what the rule engine consumes; no compliance control turns on a
+serial number, and keeping identity out of the baseline is what stops identity
+fields drifting into rule conditions. Identity knows nothing about CIS, NIST,
+STIG or ISO — `extract_identity()` does not even take a framework argument.
+
+| Field | Type | Extractable from a config alone? |
+| --- | --- | --- |
+| `vendor` | `cisco_ios` \| `juniper_junos` \| `fortinet_fortios` \| `unknown` | yes — from the parser that claimed the file |
+| `os_family` | `ios` \| `junos` \| `fortios` \| `unknown` | yes |
+| `hostname` | observation | **yes, all three vendors** |
+| `os_version` | observation | Cisco `version 15.7`; Junos `set version ...`; FortiOS `#config-version=` header |
+| `model` | observation | FortiOS only (platform code in the header); Cisco only if `license udi` is present |
+| `serial_number` | observation | **no — null unless a companion capture is supplied** |
+
+Each of the four observation fields carries value, `detected`, the source line,
+and the line number it came from — the same evidence contract the baseline uses.
+
+**A running-config does not contain the hardware serial number.** The serial
+lives in `show version` / `show inventory` (Cisco), `show chassis hardware`
+(Junos) and `get system status` (FortiOS) — none of which are configuration. So
+for a config-only ingest:
+
+* `serial_number` is `null` with `detected: false`, and the note names the
+  command that would produce it.
+* `model` is `null` on Cisco and Junos for the same reason.
+* **A null serial is a correct result, not a failure.** Nothing is guessed,
+  inferred, or synthesised to fill the gap.
+
+The same rule governs versions. A Cisco `boot system` line naming
+`c2900-universalk9-mz.SPA.157-3.M2.bin` *implies* IOS 15.7(3)M2 — but only after
+a transformation the file never states, so no version is reported from it. What
+is read is read verbatim.
+
+#### Optional companion capture
+
+Supply show output next to a config and the serial is filled in from it:
+
+```text
+samples/configs/core-rtr-01.conf
+samples/configs/core-rtr-01.show_version.txt   <- read if present, ignored if not
+```
+
+Companion files are never ingested as devices of their own. Values taken from
+one cite the companion's line number and say so in their note, so a serial is
+never presented as though it came from the configuration. The configuration wins
+on any field both establish — it is the artefact under audit. Delete the
+companion and the serial for `core-rtr-01` returns to `null`.
+
+### Deduplication and collisions
+
+Each record is keyed by the strongest identity it actually has, and the tier
+used is stored on the record so the result is auditable:
+
+| Precedence | Tier | Why |
+| --- | --- | --- |
+| 1 | `serial_number` | Survives renames, re-IPs and rewrites — the real identity. |
+| 2 | `hostname` + `vendor` | A convention, not an identity: two devices can share one. |
+| 3 | `source_hash` | Identifies the *file*, not the device. Honest last resort. |
+
+Similar records are **flagged, never merged** — nothing is dropped, and both
+sides of every group are kept:
+
+| Kind | Meaning |
+| --- | --- |
+| `duplicate_serial` | Two files report the same serial: the same physical device, twice. |
+| `duplicate_content` | Byte-identical configurations — the same file ingested twice. |
+| `possible_config_drift` | Same hostname and vendor, different content. Either two snapshots of one device or two devices sharing a name; the files do not say which, so the tool refuses to decide. |
+
+### Inventory JSON schema
+
+`--inventory-out` writes this structure with **sorted keys and stable ordering**,
+so two runs diff cleanly. It is the contract the dashboard step consumes.
+
+```jsonc
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-01-01T12:00:00Z",
+  "tool": { "name": "netaudit", "version": "0.1.0" },
+  "frameworks": ["cis", "nist_800_53"],      // requested for the batch
+  "counts": {
+    "total": 7, "audited": 5,
+    "unknown_vendor": 1, "parse_error": 1,
+    "duplicate_groups": 1
+  },
+  "framework_rollup": {                       // summed across every device
+    "CIS": { "total": 65, "passed": 22, "failed": 38, "needs_review": 5,
+             "compliance_score": 33.8, "adjudicated_score": 36.7 }
+  },
+  "devices": [
+    {
+      "identity": {
+        "vendor": "cisco_ios",
+        "os_family": "ios",
+        "hostname":      { "value": "CORE-RTR-01", "detected": true,
+                           "source_line": "hostname CORE-RTR-01",
+                           "line_number": 11, "note": null },
+        "os_version":    { "value": "15.7", "detected": true, "line_number": 4 },
+        "model":         { "value": null, "detected": false,
+                           "note": "Hardware model is not present in a cisco ios configuration file; it requires show-command output (show version / show inventory)." },
+        "serial_number": { "value": null, "detected": false, "note": "..." },
+        "companion_file": null
+      },
+      "source_file": "samples/configs/core-rtr-01.conf",
+      "source_hash": "<sha256 of the bytes of the file>",
+      "ingested_at": "2026-01-01T12:00:00Z",
+      "status": "audited",                    // audited | unknown_vendor | parse_error
+      "error": null,
+      "device_key": "host:core-rtr-01@cisco_ios",
+      "device_key_tier": "hostname_vendor",   // serial_number | hostname_vendor | source_hash
+      "frameworks": ["CIS", "NIST SP 800-53"],
+      "findings": [ /* ControlResult, unchanged, across all frameworks */ ],
+      "framework_summaries": { "CIS": { "passed": 13, "failed": 0 } },
+      "summary": { /* the same shape, across all frameworks */ },
+      "target": { /* parser provenance: parser, version, confidence, warnings */ },
+      "companion_file": null
+    }
+  ],
+  "duplicates": [
+    { "kind": "possible_config_drift",
+      "key": "branch-sw-07@cisco_ios",
+      "key_tier": "hostname_vendor",
+      "source_files": ["...branch-sw-07.2024-06-01.conf", "...branch-sw-07.conf"],
+      "note": "..." }
+  ],
+  "warnings": []                              // input paths that matched no files
+}
+```
+
+`findings` holds the existing `ControlResult` model unchanged — every result
+carries its own `framework`, so per-framework drill-down is a filter rather than
+a second copy of the data. Evidence line numbers survive intact from the source
+config all the way into the inventory.
+
+### What the sample fleet produces
+
+```bash
+python -m auditor --bulk samples/configs/ --framework cis --framework nist_800_53 \
+    --inventory-out inventory.json
+```
+
+`samples/configs/` is a deliberately awkward seven-file batch:
+
+| File | Outcome |
+| --- | --- |
+| `core-rtr-01.conf` (+ `.show_version.txt`) | audited; serial and model filled from the companion |
+| `branch-sw-07.conf` | audited |
+| `branch-sw-07.2024-06-01.conf` | audited; flagged `possible_config_drift` against the above |
+| `branch-fw-02.conf` | audited (Junos) |
+| `fgt-60f-01.conf` | audited (FortiOS); model from the config-version header |
+| `vrp-core-01.conf` | `unknown_vendor` — hostname reported, everything hardware null |
+| `truncated-upload.conf` | `parse_error` — empty file, and the batch continues |
+
+Five audited, one unknown vendor, one parse error, one duplicate group — and the
+five audits are identical to what a single-file run of each config produces.
+
+### Scope
+
+This step delivers the ingestion and inventory **backend**. The per-device PDF
+report (which consumes this inventory) and the web dashboard follow in later
+steps; neither is built here.
