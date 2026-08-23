@@ -80,6 +80,8 @@ python -m auditor device.conf --vendor hybrid
 | `--framework CIS` | Which rule pack to evaluate (default `CIS`). |
 | `--bulk` | Ingest a directory, glob or file list as a batch — see [Device Inventory & Bulk Ingestion](#device-inventory--bulk-ingestion). |
 | `--inventory-out path.json` | With `--bulk`, write the device inventory JSON. |
+| `--pdf [path.pdf]` | Write a [per-device PDF](#per-device-pdf-reports) (needs `requirements-pdf.txt`). |
+| `--pdf-dir DIR` | With `--bulk`, one PDF per device into DIR. |
 | `--vendor cisco_ios\|juniper_junos\|llm\|hybrid` | Force a parser instead of auto-detecting the vendor. |
 | `--rules path.json` | Use an explicit rule pack, bypassing framework lookup. |
 | `--json path.json` | Where to write the JSON report (default `reports/<name>.<framework>.json`). |
@@ -726,6 +728,8 @@ auditor/
   report/
     table.py         dependency-free CLI table (single device)
     inventory.py     fleet view - counts, per-framework rollup, per-device rows
+    document.py      ReportDocument - what a per-device report says, renderer-agnostic
+    pdf.py           per-device PDF; reportlab imported lazily, so it stays optional
     json_report.py   structured JSON
   pipeline.py        the single-file audit as callable stages; shared by CLI and bulk
   ingest.py          bulk orchestration over pipeline.py - collection, isolation, dedup
@@ -734,7 +738,7 @@ samples/             hardened_ios.conf, insecure_ios.conf, junos_srx.conf,
                      fortios_fgt.conf, unknown_vendor.conf
 samples/configs/     a seven-file fleet for --bulk, including a companion capture,
                      a drifted second snapshot, an unknown vendor and an empty file
-tests/               619 tests
+tests/               670 tests (622, plus 48 PDF tests that skip without reportlab)
 ```
 
 ## Tests
@@ -755,6 +759,23 @@ framework. `test_bulk_ingestion.py` pins the orchestration properties — one
 record per file, one parse per file however many frameworks run, a malformed
 file that costs only itself, byte-identical output across runs, and bulk results
 that match a single-file run of the same config exactly.
+
+`test_pdf_report.py` (48 tests) pins the report's contract rather than its
+pixels: a missing serial prints as `null` and no string resembling a serial
+appears anywhere on the page, a companion-sourced serial never cites a
+configuration line number, `NEEDS_REVIEW` reaches the page spelled out and is
+never drawn as a pass, every evidence line number matches both the stored result
+and the actual source file, a Cisco record gets Cisco commands and a Junos
+record Junos ones for the same control, and two snapshots of one switch never
+overwrite each other's file.
+
+The load-bearing one is `test_rendering_never_parses_or_evaluates`: it replaces
+`pipeline.parse_config`, `pipeline.evaluate`, `ComplianceEngine.evaluate` and all
+three vendor parsers with functions that raise, then renders a PDF anyway. The
+renderer is a sink over a finished `DeviceRecord`; if it ever reached back into
+the analysis, the PDF could disagree with the JSON report and the CLI table for
+the same device, and nothing would say which was right. The whole file skips
+cleanly where reportlab is not installed.
 
 Four tests pin the "no hardcoded verdicts" constraint: editing one line of the
 hardened config must flip exactly one control to `FAIL`, and remediating the
@@ -1098,8 +1119,159 @@ python -m auditor --bulk samples/configs/ --framework cis --framework nist_800_5
 Five audited, one unknown vendor, one parse error, one duplicate group — and the
 five audits are identical to what a single-file run of each config produces.
 
+---
+
+## Per-Device PDF Reports
+
+The inventory answers "what does the fleet look like?". The PDF answers "what
+about this one box?" — a single self-contained document per device, suitable for
+handing to whoever has to fix it or file it.
+
+A PDF is a **rendering, never a second analysis**. Its input is the Step 8
+inventory contract — a fully-populated `DeviceRecord`, carrying identity,
+findings, per-framework summaries and parse provenance. Every verdict, tally and
+evidence line on the page was decided by the rule engine and is copied from that
+record verbatim. The report layer adds no evaluation of its own: it never
+re-reads the configuration, re-runs a parser, loads a rule pack or re-scores a
+control, so the PDF, the JSON report and the CLI table cannot disagree about a
+device.
+
+```text
+DeviceRecord  (from a bulk ingest, or from a single-file audit)
+      ↓
+build_device_document()      auditor/report/document.py   — what the report says
+      ↓
+ReportDocument               pure data: sections, rows, findings, footnotes
+      ↓
+render_document()            auditor/report/pdf.py        — how it is drawn
+      ↓
+one PDF
+```
+
+That split is deliberate. The honesty guarantees — a missing serial prints as
+`null`, a `NEEDS_REVIEW` is never drawn as a pass, every evidence row keeps its
+line number — are properties of `ReportDocument`, so they are asserted directly
+instead of by parsing a PDF, and they hold for any renderer built on it.
+
+### Usage
+
+```bash
+# one config, one PDF, every framework inside it
+python -m auditor samples/hardened_ios.conf     --framework cis --framework nist_800_53 --framework stig --framework iso_27001     --pdf-out report.pdf
+
+# no path: reports/<config-name>.pdf
+python -m auditor samples/junos_srx.conf --framework cis --pdf-out
+
+# one PDF per device across a whole batch
+python -m auditor --bulk samples/configs/ \
+    --framework cis --framework nist_800_53 \
+    --inventory-out inventory.json \
+    --pdf-dir reports/fleet/
+```
+
+| Flag | Effect |
+| --- | --- |
+| `--pdf-out [PATH]` | Single-config mode. Writes one PDF; with no PATH, `reports/<config-name>.pdf`. |
+| `--pdf-dir DIR` | Bulk mode. Writes one PDF per device into DIR. |
+
+`--pdf` is accepted as a synonym for `--pdf-out`. Without either flag nothing
+changes: the table and the JSON report are emitted exactly as they were before
+this step existed.
+
+`--pdf-out` and `--bulk` together is an error, as is `--pdf-dir` without
+`--bulk`: one flag writes a file, the other writes a directory, and quietly
+reinterpreting either would put reports somewhere the operator did not ask for.
+
+**One device is always one PDF.** Four frameworks do not produce four files;
+they produce four rows in the compliance summary and four groups of controls
+inside a single document, because the thing being reported on is the device.
+
+### reportlab is optional
+
+PDF rendering needs [reportlab](https://pypi.org/project/reportlab/), which is
+**not** a core dependency:
+
+```bash
+pip install -r requirements-pdf.txt
+```
+
+The deterministic core, the CLI table, the JSON report and the inventory all
+work without it, exactly as the LLM fallback keeps `anthropic` optional. The
+import is lazy, so a machine that has never installed reportlab still runs every
+other command, and the rest of the test suite (`test_pdf_report.py` skips as a
+whole). Asking for a PDF without it prints an instruction and exits `2` — never
+a traceback:
+
+```text
+error: The 'reportlab' package is required to write PDF reports. Install it with
+`pip install -r requirements-pdf.txt`, or use the table and JSON output, which
+need no extra dependencies.
+```
+
+### What is on the page
+
+1. **Header** — hostname, vendor, OS version, model, and a PASS / FAIL /
+   NEEDS REVIEW count across every framework evaluated.
+2. **Compliance summary** — per framework: PASS, FAIL, REVIEW, total,
+   compliance score and adjudicated score, copied from the record.
+3. **Device identification** — hostname, vendor, OS family, version, model and
+   serial, each with the evidence behind it. For a **config-only ingest the
+   serial is `null`, and usually the model too**: a running configuration does
+   not contain them. The report prints `null` and names the show command that
+   would establish the field — *not present in a configuration file; it requires
+   show-command output (show version / show inventory)* — rather than leaving a
+   blank that reads as a formatting slip or inventing a plausible serial. Supply
+   a companion capture (`<config>.show_version.txt`) and the real value is
+   printed instead, credited to that file.
+4. **Source and provenance** — file, SHA-256 of the ingested bytes, parser and
+   version, detection confidence, parser warnings, and the companion capture if
+   one was supplied.
+5. **Control results** — every evaluated control: framework, citation, severity,
+   verdict, title, primary evidence.
+6. **Detailed findings** — each non-passing control in full: what it means, why
+   this verdict, every evidence line with its number, and the remediation CLI.
+7. **Notes** — the caveats a reader needs in order not to over-read the report.
+
+Three details are load-bearing rather than cosmetic:
+
+* **A serial from a companion capture never cites a config line number.** It is
+  labelled with the capture it came from and the words *not from the
+  configuration*. A bare `L24:` beside a serial number would assert that line 24
+  of the running config contained one — which no running config ever does.
+* **An unverified citation is marked.** Control references this tool mapped
+  itself, rather than reading from a licensed copy of the benchmark, print with
+  a `*` and a legend. Beside a real `AC-17` in the same column, an unmarked
+  internal identifier would read as though the framework published it.
+* **`NEEDS_REVIEW` is spelled out in the findings**, not shortened to `REVIEW`.
+  The narrow results table has to abbreviate; a finding heading does not, and
+  this is the one verdict whose meaning a reader must not have to infer.
+
+### Filenames
+
+`{hostname}_{vendor}_{shorthash}.pdf`, and every part earns its place:
+
+```text
+core-rtr-01_cisco_ios_cb27a258.pdf
+branch-sw-07_cisco_ios_4b3d85c6.pdf     two snapshots of one switch,
+branch-sw-07_cisco_ios_4202c7c9.pdf     kept as two reports
+truncated-upload_unknown_e3b0c442.pdf   a file that could not be parsed
+```
+
+The hostname makes the file findable. The vendor separates two boxes a site
+naming convention gave the same name. The content hash separates two *snapshots*
+of one device, which share hostname and vendor by definition — without it, last
+night's config would overwrite this morning's audit and a fleet of N would
+quietly produce fewer than N reports. Names derive only from the record, so the
+same inventory always produces the same filenames.
+
+**Every device gets a PDF, including the ones that were never audited.** An
+`unknown_vendor` or `parse_error` device produces a short report stating what
+happened and what little identity could be established. A fleet of reports where
+the failures are simply missing looks complete when it is not.
+
 ### Scope
 
-This step delivers the ingestion and inventory **backend**. The per-device PDF
-report (which consumes this inventory) and the web dashboard follow in later
-steps; neither is built here.
+Steps 8 and 9 deliver the ingestion, inventory and per-device reporting backend.
+The web dashboard follows; it consumes `inventory.json` and can render the same
+`ReportDocument` without reimplementing any decision about what belongs in a
+device report.

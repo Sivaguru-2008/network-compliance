@@ -24,13 +24,23 @@ from .models.result import AuditReport
 from .parsers import HybridParser, LLMParser, ParserError, VendorParser, registry
 from .parsers.llm.client import DEFAULT_MODEL, AnthropicClient, LLMUnavailableError
 from .pipeline import DEFAULT_FRAMEWORK, TOOL_NAME
-from .report import render_inventory, render_report, write_json_report
+from .report import (
+    PdfUnavailableError,
+    render_inventory,
+    render_report,
+    write_device_pdf,
+    write_inventory_pdfs,
+    write_json_report,
+)
 from .rules import RuleLoadError, available_frameworks
 
 EXIT_OK = 0
 EXIT_FINDINGS = 1
 EXIT_ERROR = 2
 EXIT_REVIEW = 3
+
+#: Sentinel for a bare ``--pdf`` with no path: use the default next to the JSON.
+_PDF_DEFAULT = object()
 
 _EPILOG = """\
 bulk ingestion:
@@ -42,6 +52,15 @@ bulk ingestion:
   against every requested framework; a file that cannot be read, parsed, or
   identified becomes a record with a status and a reason, and the batch
   continues.
+
+PDF reporting:
+  python -m auditor samples/hardened_ios.conf --framework cis --framework stig --pdf-out report.pdf
+  python -m auditor --bulk samples/configs/ --framework cis --pdf-dir reports/
+
+  One comprehensive PDF per device -- identity, per-framework tallies, every
+  control result, and vendor-specific remediation for the ones that did not
+  pass. Every framework named with --framework appears inside that one file;
+  the PDF renders the finished audit and evaluates nothing itself.
 
 exit codes:
   0  completed (or, with --strict, every control passed)
@@ -87,6 +106,26 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         metavar="PATH",
         help="With --bulk, write the full device inventory as JSON to PATH.",
+    )
+    parser.add_argument(
+        "--pdf-out",
+        "--pdf",
+        dest="pdf_path",
+        nargs="?",
+        const=_PDF_DEFAULT,
+        default=None,
+        metavar="PATH",
+        help="Write the comprehensive per-device PDF report to PATH "
+        "(default: reports/<config-name>.pdf). One file, covering every framework "
+        "given with --framework. Requires reportlab: pip install -r requirements-pdf.txt",
+    )
+    parser.add_argument(
+        "--pdf-dir",
+        dest="pdf_dir",
+        type=Path,
+        default=None,
+        metavar="DIR",
+        help="With --bulk, write one PDF per device into DIR.",
     )
     parser.add_argument(
         "--framework",
@@ -212,6 +251,10 @@ def _default_json_path(config: Path, framework: str) -> Path:
     return Path("reports") / f"{config.stem}.{framework.lower()}.json"
 
 
+def _default_pdf_path(config: Path) -> Path:
+    return Path("reports") / f"{config.stem}.pdf"
+
+
 def run(argv: Optional[Sequence[str]] = None) -> int:
     args = build_parser().parse_args(argv)
     _force_utf8_stdout()
@@ -223,7 +266,21 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
         return EXIT_ERROR
 
     if args.bulk:
+        if args.pdf_path is not None:
+            print(
+                "error: --pdf-out writes one file. Use --pdf-dir DIR with --bulk to write "
+                "one PDF per device.",
+                file=sys.stderr,
+            )
+            return EXIT_ERROR
         return _run_bulk(args, frameworks_to_run)
+
+    if args.pdf_dir is not None:
+        print(
+            "error: --pdf-dir requires --bulk. For a single config, use --pdf-out PATH.",
+            file=sys.stderr,
+        )
+        return EXIT_ERROR
 
     if len(args.config) > 1:
         print(
@@ -269,6 +326,20 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
         destination = args.json_path or _default_json_path(args.config, fw_suffix)
         written = write_json_report(report, destination, include_baseline=not args.no_baseline)
         print(f"JSON report written to {written}")
+
+    if args.pdf_path is not None:
+        from .ingest import record_from_audit  # deferred: only a PDF run needs it
+
+        record = record_from_audit(report, config_text, args.config, baseline=baseline)
+        destination = (
+            _default_pdf_path(args.config) if args.pdf_path is _PDF_DEFAULT else Path(args.pdf_path)
+        )
+        try:
+            written = write_device_pdf(record, destination, version=__version__)
+        except PdfUnavailableError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return EXIT_ERROR
+        print(f"PDF report written to {written}")
 
     return _exit_code(report, strict=args.strict)
 
@@ -319,6 +390,14 @@ def _run_bulk(args, frameworks_to_run: List[str]) -> int:
     if args.inventory_path:
         written = write_inventory(inventory, args.inventory_path)
         print(f"Inventory JSON written to {written}")
+
+    if args.pdf_dir is not None:
+        try:
+            pdfs = write_inventory_pdfs(inventory, args.pdf_dir, version=__version__)
+        except PdfUnavailableError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return EXIT_ERROR
+        print(f"{len(pdfs)} per-device PDF report(s) written to {Path(args.pdf_dir)}")
 
     return _inventory_exit_code(inventory, strict=args.strict)
 

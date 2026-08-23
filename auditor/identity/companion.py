@@ -38,6 +38,12 @@ COMPANION_SUFFIXES: Tuple[str, ...] = (
 #: the config is the authority on what the device is configured to be called.
 COMPANION_FIELDS = ("serial_number", "model", "os_version")
 
+#: Every companion-sourced note opens with this. It is a shared constant rather
+#: than a phrase each caller re-types, so a renderer can ask whether a value came
+#: from show output instead of guessing from the wording -- and a serial is never
+#: displayed as though line 24 of the *configuration* contained it.
+COMPANION_NOTE_PREFIX = "Read from companion show output"
+
 _Rule = Tuple[Pattern[str], str]
 
 
@@ -157,7 +163,10 @@ def enrich_from_companion(
             value,
             source_line,
             line_number,
-            note=f"Read from companion show output {label} (line {line_number}), not from the configuration.",
+            note=(
+                f"{COMPANION_NOTE_PREFIX} {label} (line {line_number}), "
+                "not from the configuration."
+            ),
         )
 
     if not updates:
@@ -178,3 +187,13 @@ def _first_match(
             if match and match.group(1):
                 return match.group(1).strip().strip(",;"), line.strip(), index
     return None
+
+
+def is_from_companion(observation) -> bool:
+    """True when this value was read from show output rather than the config.
+
+    The one place that owns the convention. A report that cites a line number
+    must be able to say *which file* that line is in.
+    """
+    note = getattr(observation, "note", None)
+    return bool(note) and note.startswith(COMPANION_NOTE_PREFIX)

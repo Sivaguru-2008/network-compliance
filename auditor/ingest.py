@@ -272,6 +272,35 @@ def ingest_file(
         record.target = pipeline.target_info(baseline)
         return record
 
+    return audited_record(
+        identity,
+        source_file=source_file,
+        source_hash=source_hash,
+        ingested_at=ingested_at,
+        framework_names=[info.name for info in outcome.frameworks],
+        results=outcome.results,
+        summaries=outcome.summaries,
+        target=pipeline.target_info(baseline),
+    )
+
+
+def audited_record(
+    identity: DeviceIdentity,
+    *,
+    source_file: str,
+    source_hash: Optional[str],
+    ingested_at: datetime,
+    framework_names: Sequence[str],
+    results: Sequence,
+    summaries: Dict[str, ReportSummary],
+    target=None,
+) -> DeviceRecord:
+    """Build one audited record and key it.
+
+    Shared by the batch path and by ``record_from_audit`` below, so a record
+    produced from a single-file audit is the same object, built the same way, as
+    one produced by a bulk run. Two constructors would eventually disagree.
+    """
     record = DeviceRecord(
         identity=identity,
         source_file=source_file,
@@ -281,15 +310,48 @@ def ingest_file(
         error=None,
         device_key="",  # assigned below, once identity is final
         device_key_tier=DeviceKeyTier.SOURCE_HASH,
-        frameworks=[info.name for info in outcome.frameworks],
-        findings=outcome.results,
-        framework_summaries=outcome.summaries,
-        summary=ReportSummary.from_results(outcome.results),
-        target=pipeline.target_info(baseline),
+        frameworks=list(framework_names),
+        findings=list(results),
+        framework_summaries=dict(summaries),
+        summary=ReportSummary.from_results(list(results)),
+        target=target,
         companion_file=identity.companion_file,
     )
     _assign_key(record)
     return record
+
+
+def record_from_audit(
+    report,
+    config_text: str,
+    path: Path,
+    *,
+    baseline=None,
+    read_companion: bool = True,
+    now: Optional[datetime] = None,
+) -> DeviceRecord:
+    """Adapt a finished single-file ``AuditReport`` into a device record.
+
+    Lets the single-file path produce the same per-device deliverable a batch
+    does, without re-parsing or re-evaluating anything: the report already holds
+    the verdicts, and identity comes from the baseline that produced them.
+
+    ``baseline`` is passed explicitly because ``--no-baseline`` strips it from
+    the report; identity must not silently degrade to "unknown vendor" just
+    because the caller chose a smaller JSON file.
+    """
+    baseline = baseline if baseline is not None else report.baseline
+    identity = _identity_for(config_text, baseline, path if read_companion else None)
+    return audited_record(
+        identity,
+        source_file=_display_path(path),
+        source_hash=report.target.source_sha256,
+        ingested_at=now or datetime.now(timezone.utc),
+        framework_names=[info.name for info in report.frameworks],
+        results=report.results,
+        summaries=report.framework_summaries,
+        target=report.target,
+    )
 
 
 def _identity_for(config_text: str, baseline, path: Optional[Path]) -> DeviceIdentity:
