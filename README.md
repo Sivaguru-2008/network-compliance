@@ -7,12 +7,27 @@ security baseline, evaluates it against a CIS Benchmark rule pack, and reports
 `PASS` / `FAIL` / `NEEDS_REVIEW` per control — each verdict backed by the exact
 configuration line it came from.
 
-Four parsers implement one interface: deterministic parsers for
-**[Cisco IOS](#two-deterministic-vendors)** and **[Juniper Junos](#two-deterministic-vendors)**,
-an **[LLM fallback](#the-llm-fallback-parser)** for vendors nothing deterministic
+Five parsers implement one interface: deterministic parsers for
+**[Cisco IOS](#three-deterministic-vendors)**, **[Juniper Junos](#three-deterministic-vendors)**
+and **[Fortinet FortiOS](#three-deterministic-vendors)**, an
+**[LLM fallback](#the-llm-fallback-parser)** for vendors nothing deterministic
 recognises, and a **[hybrid](#the-hybrid-parser)** that runs the deterministic
 pass first and lets the model fill only what it could not settle. The engine
 cannot tell them apart — that is the design.
+
+| Vendor | Parser | How it is read |
+| --- | --- | --- |
+| Cisco IOS / IOS-XE | `cisco_ios` | **deterministic** — grammar, no model call |
+| Juniper Junos | `juniper_junos` | **deterministic** — grammar, both config formats |
+| Fortinet FortiOS | `fortinet_fortios` | **deterministic** — grammar, block walk |
+| anything else | `llm` | **LLM fallback**, opt-in with `--allow-llm` |
+| a recognised vendor with gaps | `hybrid` | deterministic first; the model fills only what it could not settle |
+
+Three configuration languages with nothing in common — indented IOS commands,
+Junos braces or `set` paths, FortiOS `config`/`edit`/`next`/`end` blocks — are
+normalized by three vendor-specific parsers into **one** audit model. Everything
+downstream of that model is written once: one engine, one condition grammar, one
+report. A vendor is a parser and a rule pack, never a change to the pipeline.
 
 A [feedback loop](#the-training-loop) closes over the same contract: every
 config a deterministic parser reads is free ground truth for the model, so the
@@ -30,6 +45,7 @@ python -m venv .venv && .venv/Scripts/activate && pip install -r requirements.tx
 ```bash
 python -m auditor samples/insecure_ios.conf --framework CIS
 python -m auditor samples/junos_srx.conf --framework CIS
+python -m auditor samples/fortios_fgt.conf --framework CIS
 ```
 
 Prints the report table and writes `reports/<name>.cis.json`. The vendor is
@@ -46,7 +62,7 @@ in explicitly — `--allow-llm` sends the configuration to the model provider, s
 it is never automatic:
 
 ```bash
-python -m auditor samples/fortios_unknown.conf --allow-llm
+python -m auditor samples/unknown_vendor.conf --allow-llm
 ```
 
 For a config a deterministic parser *does* recognise but cannot fully read, ask
@@ -120,10 +136,29 @@ configuration text:
 | `CIS-JUNOS-SYSLOG-DESTINATION` | medium | PASS — syslog host and on-box file |
 | `CIS-JUNOS-LOGIN-BANNER` | low | PASS — `set system login message` |
 
-A fourth sample, `samples/fortios_unknown.conf`, is FortiOS — syntax no
-deterministic parser here understands, and the worked example for the LLM
-fallback. Its verdicts depend on a live model call, so they are not pinned in a
-table; the tests exercise that path with a stub client instead.
+`samples/fortios_fgt.conf` is a FortiGate, audited against the FortiOS pack
+with no flags:
+
+| Control | Severity | `fortios_fgt.conf` |
+| --- | --- | --- |
+| `CIS-FORTIOS-ADMIN-TRUSTHOST` | high | **FAIL** — no account carries a trusthost |
+| `CIS-FORTIOS-NO-CLEARTEXT-ACCESS` | high | **FAIL** — `set allowaccess … telnet` on the WAN port |
+| `CIS-FORTIOS-SNMP-NO-DEFAULT-COMMUNITY` | high | **FAIL** — `public` |
+| `CIS-FORTIOS-ADMIN-PASSWORD-HASHED` | high | PASS — `set password ENC …` |
+| `CIS-FORTIOS-SNMP-NO-WRITE` | high | PASS — the FortiOS agent offers no community write |
+| `CIS-FORTIOS-SSH-V2` | high | **NEEDS_REVIEW** — `admin-ssh-v1` is unwritten, and the release is not evidence |
+| `CIS-FORTIOS-AAA-CENTRALISED` | medium | **FAIL** — no RADIUS/TACACS+, no `remote-auth` |
+| `CIS-FORTIOS-IDLE-TIMEOUT` | medium | **FAIL** — `set admintimeout 480` |
+| `CIS-FORTIOS-NO-HTTP-ADMIN` | medium | **FAIL** — `http` in `allowaccess` |
+| `CIS-FORTIOS-PASSWORD-MIN-LENGTH` | medium | **FAIL** — no password policy configured |
+| `CIS-FORTIOS-NTP-CONFIGURED` | medium | **NEEDS_REVIEW** — synchronised, but against FortiGuard's unnamed servers |
+| `CIS-FORTIOS-SYSLOG-DESTINATION` | medium | PASS — enabled syslog server |
+| `CIS-FORTIOS-LOGIN-BANNER` | low | **FAIL** — neither banner enabled |
+
+`samples/unknown_vendor.conf` is Huawei VRP — syntax no deterministic parser
+here understands, and the worked example for the LLM fallback. Its verdicts
+depend on a live model call, so they are not pinned in a table; the tests
+exercise that path with a stub client instead.
 
 ---
 
@@ -202,7 +237,7 @@ up to PASS.** An auditor who cannot see a setting says so, and escalates.
 Absence is ambiguous in general, so each parser declares a policy per setting
 rather than applying one blanket rule. The policies genuinely differ by vendor,
 which is the point: below is the IOS one (`auditor/parsers/cisco_ios.py`), and
-[Junos reaches different conclusions](#two-deterministic-vendors) from the same
+[Junos reaches different conclusions](#three-deterministic-vendors) from the same
 kind of silence.
 
 - **Conclusive absence** — the command is off by default *and* always written
@@ -224,8 +259,9 @@ This is why `insecure_ios.conf` yields `NEEDS_REVIEW` on SSH version: the file
 has no `ip ssh version` line at all, and the honest answer is "a human must
 check the device", not "fail" and not "pass".
 
-The same silence about the HTTP server means something *different* on Junos, and
-the two parsers say so — see [Two deterministic vendors](#two-deterministic-vendors).
+The same silence about the HTTP server means something *different* on Junos and
+different again on FortiOS, and all three parsers say so — see
+[Three deterministic vendors](#three-deterministic-vendors).
 
 ### 3. Aggregation is worst-case
 
@@ -236,16 +272,20 @@ inbound `access-class`, the management plane is reachable from anywhere. And
 clean-but-incomplete evidence is not proof: if some VTY blocks specify no
 transport at all, the result is `NEEDS_REVIEW` rather than a pass.
 
-The same rule governs Junos, where the weakest path is a login class with no
-idle timeout rather than a VTY block.
+The same rule governs the other two vendors, where the weakest path is a login
+class with no idle timeout (Junos) or one interface out of six whose
+`allowaccess` still lists `telnet` (FortiOS).
 
 ---
 
 ## Rule packs
 
 `auditor/rules/frameworks/cis_cisco_ios.json` holds thirteen controls, and the
-Junos pack the same thirteen. A rule refers only to baseline fields, never to
-Cisco syntax:
+Junos and FortiOS packs the same thirteen — the *conditions* are byte-for-byte
+identical across all three, because they read the same vendor-neutral baseline
+fields. What differs between packs is the remediation, which has to be written
+in each vendor's own CLI. A rule refers only to baseline fields, never to Cisco
+syntax:
 
 ```json
 {
@@ -294,22 +334,33 @@ carries a section-level `control_ref` (`2.1`, Global Service Rules) and a note,
 because its exact clause could not be pinned with confidence; the other seven
 carry specific clause numbers.
 
-For Junos the clause numbers are **deliberately not asserted at all**:
-`control_ref` is `null` on every rule. The control intent follows the CIS
-Juniper OS Benchmark, but the numbering could not be verified against a licensed
-copy, and inventing a plausible-looking clause number is worse than omitting it —
-it would survive into an audit report as a citation nobody can check.
+For Junos and FortiOS the clause numbers are **deliberately not asserted at
+all**: `control_ref` is `null` on every rule in both packs. The control intent
+follows the CIS Juniper OS and CIS Fortinet FortiGate Benchmarks respectively,
+but neither numbering could be verified against a licensed copy, and inventing a
+plausible-looking clause number is worse than omitting it — it would survive into
+an audit report as a citation nobody can check. A test asserts that both packs
+keep `control_ref` null, so a number cannot be added later without someone
+deciding to.
 
 ---
 
-## Two deterministic vendors
+## Three deterministic vendors
 
-Cisco IOS and Juniper Junos are both read by grammar, not by a model. The second
-one exists to test a claim the architecture makes and cannot otherwise prove:
-that `SecurityBaselineModel` is genuinely vendor-neutral rather than Cisco
-vocabulary with vendor-neutral names. Adding Junos required **no change to the
-baseline, the engine, the operators, the report layer, or the CLI** — a parser
-file and a rule pack, exactly as the pipeline section promises.
+Cisco IOS, Juniper Junos and Fortinet FortiOS are all read by grammar, not by a
+model. Each was added for a reason the previous one could not settle:
+
+- **Cisco IOS** proved the pipeline end to end.
+- **Junos** tested whether `SecurityBaselineModel` was genuinely vendor-neutral
+  or Cisco vocabulary wearing neutral names.
+- **FortiOS** tested whether a *setting* in this tool means the effective state
+  of the device or merely a line that appears in a file.
+
+Adding the second and third vendor each required **no change to the baseline,
+the engine, the operators, the report layer, or the CLI** — a parser file and a
+rule pack, exactly as the pipeline section promises. Three configuration
+languages go in; one `SecurityBaselineModel` comes out; from there the code path
+is shared, byte for byte.
 
 ### Junos: two formats, one reading
 
@@ -335,47 +386,99 @@ Two Junos details a naive grep gets wrong, and this parser does not:
   `system services` enables the SSH server; `ssh` under `system services
   netconf` does not.
 
-### The same silence, two different conclusions
+### FortiOS: configured is not the same as in force
+
+FortiOS is block-structured — `config` opens a section, `edit` opens a table
+entry, `next` and `end` close them — and a setting's meaning is the path it sits
+at, not its keyword. `allowaccess` under `port1` says nothing about `port2`.
+
+Its grammar has **four separate ways** to write a setting down and leave it out
+of force, and each one is read rather than grepped past:
+
+- **`unset allowaccess`** clears an attribute set earlier in the same block. It
+  is not "deny everything": the attribute returns to a factory default that
+  depends on the interface's role and the hardware model, which the text does
+  not state — so it escalates rather than passing.
+- **`delete port3`** removes a table entry and everything under it.
+- **`set status disable`** configures an object and switches it off. An SNMP
+  community, a syslog server, or a password policy behind it is written down and
+  unreachable, and a `minimum-length 16` under a disabled policy enforces
+  nothing.
+- **the wrong `edit` context** — an attribute belongs to the entry that contains
+  it, and nested tables (`config hosts` inside an SNMP community) nest in the
+  path too.
+
+One FortiOS statement also feeds *five* baseline fields, because `set allowaccess
+ping https http ssh telnet` is the whole administrative-access surface — it is
+not a transport list, and reading it as one would be wrong in both directions:
+
+| `allowaccess` keyword | baseline field |
+| --- | --- |
+| `telnet` | `telnet_enabled`, `vty_transport_input` |
+| `ssh` | `ssh_enabled`, `vty_transport_input` |
+| `http` / `https` | `http_server_enabled` / `https_server_enabled` |
+| `ping`, `snmp`, `fgfm`, … | none — these are not logins |
+
+And where IOS restricts management with an `access-class` and Junos with an
+input filter on `lo0`, FortiOS uses `set trusthostN` on each administrator
+account. Same field, `management_acl_applied`; three unrelated pieces of syntax.
+The factory trusthost is `0.0.0.0 0.0.0.0`, which restricts nothing, so an
+account without a narrower one is reachable from anywhere.
+
+### The same silence, three different conclusions
 
 This is the part worth reading. Junos configurations are complete documents — a
 service that is not written is not offered — so most absences are *conclusive*
-there, where the equivalent IOS absence is *ambiguous*:
+there, where the equivalent IOS absence is *ambiguous*. FortiOS sits in a third
+place again: `show` prints only what differs from the factory default while
+`show full-configuration` prints everything, so the same device yields two files
+and silence means different things in each.
 
-| Silence about… | Cisco IOS | Juniper Junos |
-| --- | --- | --- |
-| the HTTP management server | `NEEDS_REVIEW` — the default differs across IOS trains | `FAIL`-able `False` — J-Web is not served unless configured |
-| cleartext management transports | `NEEDS_REVIEW` if a VTY block declares no transport (`all` on 12.x, `none` on 15.x+) | conclusive `False` — no service, no listener |
-| the idle timeout | `NEEDS_REVIEW` — the effective default cannot be confirmed from text | conclusive `0` — Junos does not time out a session unless told to |
-| the SSH protocol version | `NEEDS_REVIEW` — 1.99 fallback depends on release and key state | `NEEDS_REVIEW` — v1 was accepted before 15.1, and the release is not evidence |
-| the password minimum length | conclusive `0` — IOS enforces no minimum unless told to | `NEEDS_REVIEW` — Junos enforces a release-dependent default, and the text does not say which |
+| Silence about… | Cisco IOS | Juniper Junos | Fortinet FortiOS |
+| --- | --- | --- | --- |
+| the HTTP management server | `NEEDS_REVIEW` — the default differs across IOS trains | conclusive `False` — J-Web is not served unless configured | conclusive `False` *if* every interface writes its `allowaccess`; `NEEDS_REVIEW` if any does not |
+| cleartext management transports | `NEEDS_REVIEW` if a VTY block declares no transport (`all` on 12.x, `none` on 15.x+) | conclusive `False` — no service, no listener | same rule as HTTP: one silent interface and the reading is not proof |
+| the idle timeout | `NEEDS_REVIEW` — the effective default cannot be confirmed from text | conclusive `0` — Junos does not time out a session unless told to | `NEEDS_REVIEW` — FortiOS applies a factory timeout, and a `show` omits it |
+| the SSH protocol version | `NEEDS_REVIEW` — 1.99 fallback depends on release and key state | `NEEDS_REVIEW` — v1 was accepted before 15.1, and the release is not evidence | `NEEDS_REVIEW` — `admin-ssh-v1` exists in 6.x and is gone in 7.x |
+| the password minimum length | conclusive `0` — IOS enforces no minimum unless told to | `NEEDS_REVIEW` — Junos enforces a release-dependent default, and the text does not say which | conclusive `0` — no policy block means no policy |
+| a time source | conclusive `[]` — IOS writes `ntp server` when configured | conclusive `[]` — Junos writes `system ntp server` | `NEEDS_REVIEW` — FortiOS syncs against FortiGuard out of the box and names no address |
+| management source restriction | conclusive `False` — an `access-class` not written is not applied | conclusive `False` — a filter not written is not applied | conclusive `False` — the factory trusthost admits every source |
 
-Note the last row, where the roles reverse: on password policy it is **IOS**
-that can be conclusive (no minimum is enforced unless configured) and **Junos**
-that must escalate (a non-zero default applies, and which one has moved between
-releases). Neither vendor is the privileged one; the evidence is.
+Read the password-minimum row and the time-source row together: on one, IOS and
+FortiOS are conclusive and Junos must escalate; on the other, IOS and Junos are
+conclusive and FortiOS must escalate. **No vendor is the privileged one. The
+evidence is.** All three parsers reach their conclusions by the same question —
+*is this absence provably equivalent to a setting?* — and answer differently
+because the platforms differ, which is exactly what a shared baseline is
+supposed to let them do.
 
-Both parsers reach these conclusions by the same rule — *is the absence provably
-equivalent to a setting?* — and answer differently because the platforms differ.
-That is why the whole `junos_srx.conf` sample is conclusive while
-`insecure_ios.conf` still escalates one control. Note the last row: Junos gets
-no free pass either. The configuration carries `set version 21.4R3-S4.9`, and a
-release string is *not* proof of what the SSH daemon enforces, so the tool
-escalates rather than inferring.
+That is why `junos_srx.conf` escalates one control, `insecure_ios.conf`
+escalates one, and `fortios_fgt.conf` escalates two — and why no two of them
+escalate the same one. Note that no vendor gets a free pass from its own version
+string: `junos_srx.conf` carries `set version 21.4R3-S4.9` and
+`fortios_fgt.conf` carries `#config-version=FGT60F-7.2.5-…`, and a release
+string is *not* proof of what the SSH daemon enforces, so both escalate rather
+than infer.
 
 ### What it means for the training loop
 
-Ground truth is now two vendors wide. Every Junos config in a corpus is another
-free label set for the model parser, on syntax structurally unlike IOS — which
-is exactly the distribution shift that reveals whether the model learned to read
-configurations or learned to read Cisco.
+Ground truth is now three vendors wide. Every Junos and FortiOS config in a
+corpus is another free label set for the model parser, on syntax structurally
+unlike IOS — which is exactly the distribution shift that reveals whether the
+model learned to read configurations or learned to read Cisco. FortiOS widens it
+further than Junos did: its `allowaccess` keyword list has no analogue in either
+of the other two, so a model that had memorised "look for a transport statement"
+has nothing to match.
 
 ---
 
 ## The LLM fallback parser
 
-`LLMParser` handles configurations no deterministic parser recognises — Juniper,
-Arista, Fortinet, Huawei, whatever walks in. It implements the *same*
-`VendorParser` contract as `CiscoIOSParser`:
+`LLMParser` handles configurations no deterministic parser recognises — Arista,
+Huawei, Palo Alto, whatever walks in. Cisco IOS, Junos and FortiOS are **not**
+in that set any more: each has a deterministic parser, and the registry always
+prefers one. It implements the *same* `VendorParser` contract as
+`CiscoIOSParser`:
 
 ```python
 parse(config_text) -> SecurityBaselineModel
@@ -458,8 +561,11 @@ platform default it cannot confirm from text — and IOS accepts abbreviations
 2. If nothing is left undetected, return — **no model call is made at all.**
 3. Otherwise ask the model, and accept its answers *only* for the gaps.
 
-A deterministic reading is never overruled by a model, however confident the
-model is. What the model fills is stamped `origin=hybrid` — a model working with
+**The deterministic result is authoritative.** A field the grammar settled is
+never overruled by a model, however confident the model is; the only thing a
+model may do is fill a gap the deterministic pass explicitly left open, and only
+when that answer is grounded in a line the configuration actually contains.
+What the model fills is stamped `origin=hybrid` — a model working with
 deterministic results in hand is a different reliability class from one reading
 an unknown vendor cold, and the training loop scores the two separately. The
 same grounding, confidence, and type gates still apply, so a gap the model
@@ -585,6 +691,7 @@ auditor/
     base.py          VendorParser ABC + ParserRegistry (ranking, fallback selection)
     cisco_ios.py     CiscoIOSParser — ciscoconfparse2, absence policy, worst-case aggregation
     junos.py         JunosParser — set + braces format, deactivate/inactive, Junos absence policy
+    fortios.py       FortiosParser — config/edit block walk, unset/delete, configured vs in force
     hybrid.py        HybridParser — deterministic first, model only for the gaps
     llm/
       parser.py      LLMParser — the fallback for unrecognised vendors
@@ -603,8 +710,9 @@ auditor/
     cli.py           `python -m auditor.training`
   rules/
     loader.py        pack discovery + schema validation
-    frameworks/cis_cisco_ios.json      thirteen controls, Cisco remediation
-    frameworks/cis_juniper_junos.json  the same thirteen conditions, Junos remediation
+    frameworks/cis_cisco_ios.json        thirteen controls, Cisco remediation
+    frameworks/cis_juniper_junos.json    the same thirteen conditions, Junos remediation
+    frameworks/cis_fortinet_fortios.json the same thirteen conditions, FortiOS remediation
   engine/
     conditions.py    three-valued logic + operator implementations
     evaluator.py     ComplianceEngine — rules × baseline → report
@@ -612,8 +720,9 @@ auditor/
     table.py         dependency-free CLI table
     json_report.py   structured JSON
   cli.py             argument parsing and wiring only
-samples/             hardened_ios.conf, insecure_ios.conf, junos_srx.conf, fortios_unknown.conf
-tests/               336 tests
+samples/             hardened_ios.conf, insecure_ios.conf, junos_srx.conf,
+                     fortios_fgt.conf, unknown_vendor.conf
+tests/               500 tests
 ```
 
 ## Tests
@@ -627,17 +736,32 @@ verdict matrix per control, evidence integrity (every cited line number must
 actually contain the cited text), the three-valued logic truth tables, the
 operator truth table, rule-pack validation, and the CLI end to end.
 
-Three tests pin the "no hardcoded verdicts" constraint: editing one line of the
-hardened config must flip exactly one control to `FAIL`, and remediating either
-the insecure IOS config or the Junos sample must turn all thirteen green.
+Four tests pin the "no hardcoded verdicts" constraint: editing one line of the
+hardened config must flip exactly one control to `FAIL`, and remediating the
+insecure IOS config, the Junos sample or the FortiGate sample must turn all
+thirteen green.
 
 The Junos tests carry the multi-vendor claim. The same device in set format and
 in braces format must produce the same baseline, and each must cite lines that
 exist in the file *it* was given — that is what the hand-written brace walker
-buys. One test asserts the two rule packs' conditions are identical, so a
-condition edited in one pack and not the other fails the suite; another asserts
-the two parsers reach *different* conclusions from the same silence, because
-their platforms differ.
+buys.
+
+The FortiOS tests carry the evidence-integrity claim, and carry it harder,
+because the parser walks a block structure rather than a flat statement list.
+Two tests insert irrelevant padding above a finding and require every citation
+to move by exactly that many lines and still land on the text it names — a
+parser that rebuilt or renumbered the configuration would fail both. Others pin
+scope isolation (`unset` inside one `edit` block must not reach into another)
+and the four ways FortiOS writes a setting down and leaves it out of force.
+
+`tests/test_parser_contract.py` asserts the seam itself rather than any vendor:
+that all three parsers implement one interface, produce one model type, answer
+every field of the vocabulary, cite only lines that exist, and drive **one**
+engine and **one** report layer. It also asserts the three rule packs' conditions
+are byte-for-byte identical while their remediation is not, so a condition edited
+in one pack and not the others fails the suite. A fourth vendor that passes this
+file needed no change below the parser — which is the architecture's whole
+claim.
 
 The LLM parser is tested entirely against a stub client — **no API key, no
 network, no cost** — because once the model's claims are fixed, everything the

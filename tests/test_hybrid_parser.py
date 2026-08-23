@@ -22,7 +22,7 @@ from auditor.parsers import CiscoIOSParser, HybridParser, LLMParser, ParserError
 from llm_stub import StubClient, found, make_extraction
 
 SAMPLES = Path(__file__).resolve().parents[1] / "samples"
-UNKNOWN_VENDOR = (SAMPLES / "fortios_unknown.conf").read_text(encoding="utf-8")
+UNKNOWN_VENDOR = (SAMPLES / "unknown_vendor.conf").read_text(encoding="utf-8")
 
 # The gap under test is real, not contrived: IOS accepts abbreviated commands,
 # and `ip ssh ver 2` is a line the regex grammar does not match but a model

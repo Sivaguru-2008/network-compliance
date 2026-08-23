@@ -27,7 +27,7 @@ from auditor.rules import load_framework
 
 SAMPLES = Path(__file__).resolve().parents[1] / "samples"
 SRX_TEXT = (SAMPLES / "junos_srx.conf").read_text(encoding="utf-8")
-FORTIOS_TEXT = (SAMPLES / "fortios_unknown.conf").read_text(encoding="utf-8")
+FORTIOS_TEXT = (SAMPLES / "fortios_fgt.conf").read_text(encoding="utf-8")
 
 # The same device as samples/junos_srx.conf, as `show configuration` renders it.
 BRACES_TEXT = """\

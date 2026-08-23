@@ -119,14 +119,14 @@ def loop(ruleset, tmp_path) -> TrainingLoop:
 
 
 def test_corpus_splits_labelled_from_unlabelled(corpus_dir):
-    (corpus_dir / "fortios.conf").write_text(
-        (SAMPLES / "fortios_unknown.conf").read_text(encoding="utf-8"), encoding="utf-8"
+    (corpus_dir / "unknown_vendor.conf").write_text(
+        (SAMPLES / "unknown_vendor.conf").read_text(encoding="utf-8"), encoding="utf-8"
     )
     corpus = ConfigCorpus.from_paths([corpus_dir])
 
     assert len(corpus) == 3
     assert {entry.name for entry in corpus.labelled} == {"hardened.conf", "insecure.conf"}
-    assert [entry.name for entry in corpus.unlabelled] == ["fortios.conf"]
+    assert [entry.name for entry in corpus.unlabelled] == ["unknown_vendor.conf"]
     assert corpus.labelled[0].deterministic_parser() is CiscoIOSParser
 
 
@@ -485,8 +485,8 @@ def test_a_dry_run_measures_without_changing_anything(loop, corpus_dir, scripted
 def test_a_corpus_with_no_ground_truth_is_refused(loop, tmp_path):
     directory = tmp_path / "unknown"
     directory.mkdir()
-    (directory / "fortios.conf").write_text(
-        (SAMPLES / "fortios_unknown.conf").read_text(encoding="utf-8"), encoding="utf-8"
+    (directory / "unknown_vendor.conf").write_text(
+        (SAMPLES / "unknown_vendor.conf").read_text(encoding="utf-8"), encoding="utf-8"
     )
 
     with pytest.raises(ValueError, match="No labelled configurations"):

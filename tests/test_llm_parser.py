@@ -37,7 +37,7 @@ from llm_stub import StubClient, found, make_extraction, undetermined
 SAMPLES = Path(__file__).resolve().parents[1] / "samples"
 JUNOS = (SAMPLES / "junos_srx.conf").read_text(encoding="utf-8")
 # A vendor no deterministic parser claims — what the fallback actually exists for.
-UNKNOWN_VENDOR = (SAMPLES / "fortios_unknown.conf").read_text(encoding="utf-8")
+UNKNOWN_VENDOR = (SAMPLES / "unknown_vendor.conf").read_text(encoding="utf-8")
 
 
 def parse_with(extraction, config_text=JUNOS, **kwargs) -> SecurityBaselineModel:
