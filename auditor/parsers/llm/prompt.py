@@ -20,6 +20,8 @@ The system prompt is a module constant so it stays byte-stable across calls and
 can be prompt-cached.
 """
 
+from typing import Optional
+
 SYSTEM_PROMPT = """\
 You are a network configuration normalizer inside a security compliance auditor.
 
@@ -104,6 +106,22 @@ syslog collector or a local log buffer/file).
 
 Report every field. Use `determined: false` with a null value for anything the \
 configuration does not settle."""
+
+
+def build_system_prompt(examples_block: Optional[str] = None) -> str:
+    """The system prompt, optionally extended with worked examples.
+
+    Examples come from the training loop: cases this parser previously got
+    wrong, paired with the ground truth. They are appended rather than woven in
+    so the base instructions stay byte-stable and reviewable, and so a run with
+    no examples produces exactly the original prompt.
+
+    Adding examples changes the cached prefix, so the first request after a loop
+    run pays the cache-write cost once.
+    """
+    if not examples_block:
+        return SYSTEM_PROMPT
+    return SYSTEM_PROMPT + "\n\n" + examples_block
 
 
 def build_user_message(config_text: str) -> str:

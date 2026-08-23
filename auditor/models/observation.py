@@ -17,15 +17,19 @@ T = TypeVar("T")
 class Origin(str, Enum):
     """Where an observation came from.
 
-    Step 1 only ever emits ``DETERMINISTIC``.  ``LLM`` / ``HYBRID`` exist now so
-    that the later ``LLMParser`` can populate the *same* baseline model without
-    a schema migration, and so the training loop can diff LLM observations
-    against deterministic ones on configs both can parse.
+    Recording this per observation is what lets the training loop diff a model's
+    output against deterministic ground truth field by field, and what lets a
+    report say which findings a human should weigh differently.
     """
 
     DETERMINISTIC = "deterministic"
     LLM = "llm"
+    #: Produced by a model working with deterministic results already in hand -
+    #: the hybrid parser filling a gap the grammar-based pass left open.
     HYBRID = "hybrid"
+    #: Ruled on by a person. Outranks every parser, including a deterministic
+    #: one: if a reviewer says the parser was wrong, the parser was wrong.
+    HUMAN = "human"
 
 
 class Observation(BaseModel, Generic[T]):

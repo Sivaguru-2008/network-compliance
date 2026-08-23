@@ -14,7 +14,7 @@ machine that has never installed it.
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
-from .prompt import SYSTEM_PROMPT, build_user_message
+from .prompt import build_system_prompt, build_user_message
 from .schema import LLMExtraction
 
 DEFAULT_MODEL = "claude-opus-5"
@@ -63,9 +63,13 @@ class AnthropicClient(LLMClient):
         max_retries: int = DEFAULT_MAX_RETRIES,
         api_key: Optional[str] = None,
         client: Any = None,
+        system_suffix: str = "",
     ) -> None:
         self.model = model
         self.max_tokens = max_tokens
+        # Worked examples fitted by the training loop, appended to the system
+        # prompt. Stable within a run, so the cached prefix still holds.
+        self.system_prompt = build_system_prompt(system_suffix)
         self._anthropic = _import_anthropic()
         if client is not None:
             self._client = client
@@ -97,7 +101,7 @@ class AnthropicClient(LLMClient):
                 system=[
                     {
                         "type": "text",
-                        "text": SYSTEM_PROMPT,
+                        "text": self.system_prompt,
                         # Stable prefix: the same instructions on every config,
                         # so repeated audits read the system prompt from cache.
                         "cache_control": {"type": "ephemeral"},

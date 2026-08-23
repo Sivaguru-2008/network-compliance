@@ -71,15 +71,23 @@ class Grounder:
         *,
         min_confidence: float = 0.6,
         trust_absence_claims: bool = False,
+        field_thresholds: Optional[Dict[str, float]] = None,
     ) -> None:
         self.index = GroundingIndex(config_text)
         self.min_confidence = min_confidence
+        # Per-field overrides fitted by the training loop from measured
+        # precision. A field the loop could not make reliable at any confidence
+        # gets a threshold above 1.0, which no claim can satisfy.
+        self.field_thresholds = dict(field_thresholds or {})
         # Absence is only evidence when you know the platform's defaults and
         # NVGEN behaviour. For an unknown vendor we do not, so by default an
         # "it isn't configured" claim escalates instead of failing the device.
         # A later step can enable this per vendor once semantics are known.
         self.trust_absence_claims = trust_absence_claims
         self.warnings: List[str] = []
+
+    def threshold_for(self, field: str) -> float:
+        return self.field_thresholds.get(field, self.min_confidence)
 
     def _warn(self, message: str) -> None:
         if message not in self.warnings:
@@ -88,6 +96,7 @@ class Grounder:
     def observe(self, field: str, finding: _Finding, value_type: Any) -> Observation:
         """Turn one model claim into a verified (or degraded) Observation."""
         confidence = max(0.0, min(1.0, finding.confidence))
+        threshold = self.threshold_for(field)
         reasoning = (finding.reasoning or "").strip()
 
         if not finding.determined:
@@ -95,12 +104,14 @@ class Grounder:
                 f"Model could not determine this setting. {reasoning}".strip()
             )
 
-        if confidence < self.min_confidence:
+        if confidence < threshold:
             note = (
                 f"Model reported this setting with confidence {confidence:.2f}, below the "
-                f"{self.min_confidence:.2f} threshold, so it was not accepted. {reasoning}"
+                f"{threshold:.2f} threshold for this field, so it was not accepted. {reasoning}"
             ).strip()
-            self._warn(f"{field}: discarded low-confidence claim ({confidence:.2f}).")
+            self._warn(
+                f"{field}: discarded low-confidence claim ({confidence:.2f} < {threshold:.2f})."
+            )
             return Observation[value_type].unknown(note)
 
         value = finding.value
