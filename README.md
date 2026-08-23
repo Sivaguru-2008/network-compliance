@@ -801,3 +801,55 @@ The system supports an administrator-facing semantic learning workflow that allo
 ### Distinguishing Mappings vs. Threshold Tuning
 * **Administrator Semantic Mapping**: Maps raw configuration commands to the existing baseline vocabulary. This is a human-verified, authoritative learning loop that bypasses the LLM for future matched lines.
 * **Training-loop Threshold Tuning**: Fits statistical confidence thresholds (`thresholds.json`) and extracts system prompt worked examples (`examples.json`) based on historical model precision and error rates.
+
+---
+
+## Multi-Framework Compliance
+
+The compliance engine evaluates configurations against multiple security frameworks (CIS, NIST SP 800-53, DISA STIGs, ISO/IEC 27001) in a single pass. 
+
+### Decoupling Architecture
+
+```text
+Vendor configuration
+        ↓
+Vendor-specific parsing
+        ↓
+Vendor-neutral normalized baseline
+        ↓
+Framework mapping
+        ↓
+CIS / NIST / STIG / ISO
+        ↓
+Common findings model
+        ↓
+Report
+```
+
+* **Vendor Syntax Parser**: Parses raw config text into the framework-neutral `SecurityBaselineModel` vocabulary. It contains zero compliance/framework knowledge.
+* **Security Baseline Model**: Holds vendor-neutral, evidence-carrying normalized observations (e.g. `ssh_version`, `telnet_enabled`, `vty_exec_timeout_seconds`).
+* **Framework Mapping Layer**: Maps compliance controls to normalized baseline security controls. This layer is platform-independent.
+* **Vendor Remediation Layer**: Defines platform-specific fixes (e.g. Cisco CLI, Junos CLI, FortiOS CLI) for each security control. Remediations are entirely decoupled from frameworks.
+
+The implementation demonstrates representative mappings rather than claiming complete coverage of the full CIS, NIST SP 800-53, DISA STIG, or ISO/IEC 27001 standards.
+
+### Supported Framework Subset
+
+The engine maps the 13 core security controls to the following frameworks:
+
+| Normalized Control | CIS Mapping | NIST SP 800-53 Mapping | DISA STIG Mapping | ISO/IEC 27001 Mapping |
+| --- | --- | --- | --- | --- |
+| `aaa_enabled` | CIS 1.1.1 / centralized auth | AC-2 (verified) | CCI-000015 (verified) | A.8.2 (verified) |
+| `secure_vty_transport` | CIS 1.2.2 / cleartext service | AC-17 (verified) | CCI-000366 (verified) | A.8.20 (verified) |
+| `vty_idle_timeout` | CIS 1.2.9 / idle timeout | AC-12 (verified) | CCI-000057 (verified) | A.8.19 (verified) |
+| `enable_secret_encrypted` | CIS 1.4.1-1.4.2 / root hash | IA-5 (verified) | CCI-000200 (verified) | unverified (internal) |
+| `no_default_snmp_community` | CIS 1.5.2-1.5.3 / defaults | unverified (internal) | unverified (internal) | unverified (internal) |
+| `http_server_disabled` | CIS 2.1-HTTP-SERVER / web mgmt | SC-7 (verified) | CCI-000381 (verified) | unverified (internal) |
+| `ssh_version_2` | CIS 2.1.1.6 / SSH version | SC-13 (verified) | CCI-000068 (verified) | unverified (internal) |
+| `logging_enabled` | CIS 2.2.2-2.2.4 / logging | AU-2 (verified) | CCI-000130 (verified) | A.8.10 (verified) |
+| `management_acl` | CIS 1.2 / trusthost | AC-3 (verified) | unverified (internal) | unverified (internal) |
+| `login_banner` | CIS 1.6 / login message | AC-8 (verified) | CCI-000048 (verified) | unverified (internal) |
+| `password_min_length` | CIS 1.1 / password policy | IA-5(1) (verified) | CCI-000200 (verified) | A.5.17 (verified) |
+| `ntp_configured` | CIS 2.3 / time sync | AU-8 (verified) | CCI-000159 (verified) | unverified (internal) |
+| `no_write_snmp_community` | CIS 1.5 / read-only SNMP | unverified (internal) | unverified (internal) | unverified (internal) |
+

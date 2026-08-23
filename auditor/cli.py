@@ -55,8 +55,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("config", type=Path, help="Path to the device configuration file.")
     parser.add_argument(
         "--framework",
-        default="CIS",
-        help="Compliance framework to evaluate (default: CIS). Available: %s"
+        action="append",
+        default=None,
+        help="Compliance framework to evaluate (can specify multiple). Available: %s"
         % (", ".join(available_frameworks()) or "none found"),
     )
     parser.add_argument(
@@ -196,21 +197,79 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
 
         # Platform comes from the parsed baseline, not the parser class: the LLM
         # fallback only learns the vendor by reading the configuration.
+        from .models.result import FrameworkInfo, ReportSummary, TargetInfo
+
         platform_key = f"{baseline.provenance.vendor}_{baseline.provenance.os_family}"
+        
+        frameworks_to_run = args.framework
+        if not frameworks_to_run:
+            frameworks_to_run = ["CIS"]
+
+        all_results = []
+        frameworks_info = []
+        framework_summaries = {}
+        primary_framework = None
+
         if args.rules:
             ruleset = load_ruleset(args.rules)
+            engine = ComplianceEngine(ruleset)
+            results = engine.evaluate(baseline)
+            all_results.extend(results)
+            fw_info = FrameworkInfo(
+                name=ruleset.framework,
+                version=ruleset.framework_version,
+                rules_evaluated=len(results),
+                source_note=ruleset.source_note,
+                platform_note=platform_mismatch_note(
+                    ruleset, baseline.provenance.vendor, baseline.provenance.os_family
+                ),
+            )
+            frameworks_info.append(fw_info)
+            framework_summaries[ruleset.framework] = ReportSummary.from_results(results)
+            primary_framework = fw_info
         else:
-            ruleset = load_framework(args.framework, platform_key, allow_cross_platform=True)
+            for fw in frameworks_to_run:
+                ruleset = load_framework(fw, platform_key, allow_cross_platform=True)
+                engine = ComplianceEngine(ruleset)
+                results = engine.evaluate(baseline)
+                all_results.extend(results)
+                fw_info = FrameworkInfo(
+                    name=ruleset.framework,
+                    version=ruleset.framework_version,
+                    rules_evaluated=len(results),
+                    source_note=ruleset.source_note,
+                    platform_note=platform_mismatch_note(
+                        ruleset, baseline.provenance.vendor, baseline.provenance.os_family
+                    ),
+                )
+                frameworks_info.append(fw_info)
+                framework_summaries[ruleset.framework] = ReportSummary.from_results(results)
+                if primary_framework is None:
+                    primary_framework = fw_info
 
-        engine = ComplianceEngine(ruleset)
-        report = engine.build_report(
-            baseline,
-            tool_name=TOOL_NAME,
-            tool_version=__version__,
-            include_baseline=not args.no_baseline,
-            platform_note=platform_mismatch_note(
-                ruleset, baseline.provenance.vendor, baseline.provenance.os_family
+        # Overall summary of all results across all frameworks
+        summary = ReportSummary.from_results(all_results)
+
+        report = AuditReport(
+            tool={"name": TOOL_NAME, "version": __version__},
+            target=TargetInfo(
+                source_file=baseline.source_file,
+                source_sha256=baseline.source_sha256,
+                hostname=baseline.hostname.value,
+                vendor=baseline.provenance.vendor,
+                os_family=baseline.provenance.os_family,
+                parser=baseline.provenance.parser_name,
+                parser_version=baseline.provenance.parser_version,
+                detection_confidence=baseline.provenance.detection_confidence,
+                config_line_count=baseline.config_line_count,
+                parser_warnings=baseline.provenance.warnings,
             ),
+            framework=primary_framework,
+            frameworks=frameworks_info,
+            framework_summaries=framework_summaries,
+            summary=summary,
+            results=all_results,
+            baseline=baseline if not args.no_baseline else None,
         )
     except (ParserError, RuleLoadError, RuleEvaluationError, LLMUnavailableError) as exc:
         print(f"error: {exc}", file=sys.stderr)
@@ -220,7 +279,13 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
         print(render_report(report, color=False if args.no_color else None))
 
     if not args.no_json:
-        destination = args.json_path or _default_json_path(args.config, ruleset.framework)
+        if args.rules:
+            fw_suffix = "rules"
+        elif len(frameworks_to_run) > 1:
+            fw_suffix = "multi"
+        else:
+            fw_suffix = primary_framework.name.lower()
+        destination = args.json_path or _default_json_path(args.config, fw_suffix)
         written = write_json_report(report, destination, include_baseline=not args.no_baseline)
         print(f"JSON report written to {written}")
 

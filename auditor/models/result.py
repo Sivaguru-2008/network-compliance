@@ -78,6 +78,8 @@ class ControlResult(BaseModel):
 
     rule_id: str
     control_ref: Optional[str] = None
+    internal_control_id: Optional[str] = None
+    verified_ref: bool = True
     title: str
     description: str
     framework: str
@@ -99,6 +101,8 @@ class ControlResult(BaseModel):
         return cls(
             rule_id=rule.id,
             control_ref=rule.control_ref,
+            internal_control_id=rule.internal_control_id,
+            verified_ref=rule.verified_ref,
             title=rule.title,
             description=rule.description,
             framework=rule.framework,
@@ -206,6 +210,8 @@ class AuditReport(BaseModel):
     tool: Dict[str, str] = Field(default_factory=dict)
     target: TargetInfo
     framework: FrameworkInfo
+    frameworks: List[FrameworkInfo] = Field(default_factory=list)
+    framework_summaries: Dict[str, ReportSummary] = Field(default_factory=dict)
     summary: ReportSummary
     results: List[ControlResult] = Field(default_factory=list)
     baseline: Optional[SecurityBaselineModel] = Field(
