@@ -84,11 +84,18 @@ class StubClient(LLMClient):
     of running deterministically first, so it is asserted, not assumed.
     """
 
-    def __init__(self, extraction=None, error=None):
+    def __init__(self, extraction=None, error=None, proposal=None):
         self.extraction = extraction if extraction is not None else make_extraction()
         self.error = error
+        self.proposal = proposal or {
+            "field": "vty_exec_timeout_seconds",
+            "value": "600",
+            "compliance_relevance": "Cryptographic Protocol Security",
+            "reasoning": "Likely VTY timeout configuration",
+        }
         self.seen_config: Optional[str] = None
         self.calls = 0
+        self.propose_calls = 0
 
     def extract(self, config_text: str) -> LLMExtraction:
         self.calls += 1
@@ -96,3 +103,9 @@ class StubClient(LLMClient):
         if self.error:
             raise self.error
         return self.extraction
+
+    def propose_mapping(self, vendor: str, os_family: str, line: str) -> dict:
+        self.propose_calls += 1
+        if self.error:
+            raise self.error
+        return self.proposal

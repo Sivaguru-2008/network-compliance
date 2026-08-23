@@ -41,6 +41,10 @@ class LLMClient(ABC):
         ``LLMResponseError`` when a response arrives but cannot be used.
         """
 
+    @abstractmethod
+    def propose_mapping(self, vendor: str, os_family: str, line: str) -> dict:
+        """Propose a mapping for a raw config line."""
+
     @property
     def description(self) -> str:
         """Short identifier recorded in the report's provenance."""
@@ -150,6 +154,42 @@ class AnthropicClient(LLMClient):
                 "If this is 'max_tokens', raise max_tokens for this client."
             )
         return extraction
+
+    def propose_mapping(self, vendor: str, os_family: str, line: str) -> dict:
+        _ = _import_anthropic()
+        from ...models.baseline import SecurityBaselineModel
+        selectable_fields = ", ".join(SecurityBaselineModel.observable_fields())
+        prompt = (
+            f"You are a network security compliance expert.\n"
+            f"The deterministic parser encountered an unknown configuration structure for vendor '{vendor}' and OS '{os_family}'.\n"
+            f"Please analyze this raw configuration line and map it to one of the existing baseline fields.\n"
+            f"Raw configuration line: {line}\n\n"
+            f"Selectable baseline fields: {selectable_fields}\n\n"
+            f"Provide the suggested normalized field name, the extracted value (as a string), the compliance category relevance, and the reasoning."
+        )
+        try:
+            response = self._client.messages.parse(
+                model=self.model,
+                max_tokens=2000,
+                system="You propose semantic mappings for raw network configurations to normalized security baseline fields.",
+                messages=[{"role": "user", "content": prompt}],
+                output_format=AIPendingProposal,
+            )
+            proposal = response.parsed_output
+            if proposal is None:
+                raise LLMResponseError("No structured output returned for the proposal.")
+            return proposal.model_dump()
+        except Exception as exc:
+            raise LLMResponseError(f"Failed to propose mapping: {exc}") from exc
+
+
+from pydantic import BaseModel, Field
+
+class AIPendingProposal(BaseModel):
+    field: str = Field(description="The suggested normalized baseline field name from the existing schema.")
+    value: str = Field(description="The suggested value extracted from the line.")
+    compliance_relevance: str = Field(description="Suggested compliance relevance category.")
+    reasoning: str = Field(description="Explanation for the suggested mapping.")
 
 
 def _import_anthropic():

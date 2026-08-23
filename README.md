@@ -783,3 +783,21 @@ field clears the error, that the lowest threshold clearing the target is the one
 chosen, that a field which cannot reach the target is pinned to always-escalate,
 that a thin run cannot relax a threshold an earlier one tightened, and that more
 dangerous verdict flips counts as a regression even when every average improved.
+
+
+## Administrator Training
+
+The system supports an administrator-facing semantic learning workflow that allows the compliance auditor to learn new vendor configuration logic without backend code changes or redeployment.
+
+### Workflow
+1. **Detection**: When a configuration is parsed, the deterministic parser extracts all known fields, leaving unknown or unrecognized configuration lines identified.
+2. **AI Proposal**: For any unrecognized line selected by the administrator, the AI client proposes a semantic interpretation (recommending a normalized baseline field, an extracted value, and a compliance relevance).
+3. **Review**: The administrator reviews the AI suggestion on the training dashboard (`/training` screen) and can manually select the correct normalized field, value, extraction strategy, and regex pattern.
+4. **Persistence**: The approved mapping is persisted in the training store (`learned_mappings.jsonl`) with version tracking.
+5. **Execution**: Future audits of matching configurations automatically apply the approved learned mappings, extracting the normalized settings without requiring LLM calls.
+6. **No Redeployment**: Semantic learning happens dynamically at runtime; no backend code changes are required.
+7. **Precedence**: Deterministic parser results always remain authoritative and cannot be overridden by learned mappings.
+
+### Distinguishing Mappings vs. Threshold Tuning
+* **Administrator Semantic Mapping**: Maps raw configuration commands to the existing baseline vocabulary. This is a human-verified, authoritative learning loop that bypasses the LLM for future matched lines.
+* **Training-loop Threshold Tuning**: Fits statistical confidence thresholds (`thresholds.json`) and extracts system prompt worked examples (`examples.json`) based on historical model precision and error rates.

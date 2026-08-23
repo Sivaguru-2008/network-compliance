@@ -24,7 +24,8 @@ data the training loop consumes, harvested for free from ordinary audits
 (``last_llm_baseline``).
 """
 
-from typing import List, Optional, Type
+from pathlib import Path
+from typing import Any, List, Optional, Type
 
 from ..models.baseline import SecurityBaselineModel
 from ..models.observation import Origin
@@ -47,9 +48,13 @@ class HybridParser(VendorParser):
         self,
         deterministic: Optional[VendorParser] = None,
         llm: Optional[LLMParser] = None,
+        training_dir: Optional[Path] = None,
+        mapping_store: Optional[Any] = None,
     ) -> None:
         self._deterministic = deterministic
         self._llm = llm or LLMParser()
+        self.training_dir = Path(training_dir) if training_dir else Path("training")
+        self.mapping_store = mapping_store
         self.last_llm_baseline: Optional[SecurityBaselineModel] = None
         self.filled_fields: List[str] = []
 
@@ -77,12 +82,27 @@ class HybridParser(VendorParser):
         deterministic = self._resolve_deterministic(config_text)
         baseline = deterministic.parse(config_text, source_file=source_file)
 
+        # Apply learned mappings
+        if self.mapping_store is None:
+            from ..training.mappings import LearnedMappingStore
+            store_path = self.training_dir / "learned_mappings.jsonl"
+            self.mapping_store = LearnedMappingStore(store_path)
+
+        from ..training.mappings import resolve_learned_mappings, get_unrecognized_lines, check_all_unrecognized_lines_matched
+        unrecognized = get_unrecognized_lines(config_text, baseline)
+        approved = self.mapping_store.get_active_approved_mappings()
+        vendor_approved = [m for m in approved if m.vendor.lower() == baseline.provenance.vendor.lower()]
+        all_matched = check_all_unrecognized_lines_matched(unrecognized, vendor_approved)
+
+        stats_path = self.training_dir / "stats.json"
+        baseline = resolve_learned_mappings(config_text, baseline, self.mapping_store, stats_path=stats_path)
+
         fields = SecurityBaselineModel.observable_fields()
         gaps = [field for field in fields if not getattr(baseline, field).detected]
-        if not gaps:
+        if all_matched or not gaps:
             baseline.provenance.parser_name = self.name
             baseline.provenance.warnings.append(
-                "Hybrid parse: the deterministic parser established every field, "
+                "Hybrid parse: the deterministic parser and learned mappings established every field, "
                 "so no model call was needed."
             )
             return baseline
