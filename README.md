@@ -91,9 +91,14 @@ not be read, parsed, or evaluated.
 | `CIS-IOS-1.2.9` — VTY exec-timeout ≤ 10 min, non-zero | medium | PASS | **FAIL** — `exec-timeout 0 0` |
 | `CIS-IOS-2.2.2-2.2.4` — a logging destination exists | medium | PASS | **FAIL** — no logging configured |
 | `CIS-IOS-1.1.1` — `aaa new-model` | medium | PASS | **FAIL** — not present |
+| `CIS-IOS-1.2-VTY-ACCESS-CLASS` — every VTY restricted by source | high | PASS | **FAIL** — no `access-class` |
+| `CIS-IOS-1.5-SNMP-NO-WRITE` — no read-write community | high | PASS | **FAIL** — `private RW` |
+| `CIS-IOS-1.1-PASSWORD-MIN-LENGTH` — minimum ≥ 8 | medium | PASS | **FAIL** — no minimum enforced |
+| `CIS-IOS-2.3-NTP-CONFIGURED` — a time source exists | medium | PASS | **FAIL** — no `ntp server` |
+| `CIS-IOS-1.6-LOGIN-BANNER` — a banner is shown | low | PASS | **FAIL** — no banner |
 
-`8 PASS` versus `7 FAIL + 1 NEEDS_REVIEW`. The `NEEDS_REVIEW` is deliberate and
-is explained below.
+`13 PASS` versus `12 FAIL + 1 NEEDS_REVIEW`. The `NEEDS_REVIEW` is deliberate
+and is explained below.
 
 `samples/junos_srx.conf` is a Juniper SRX in set format, audited against the
 Junos rule pack with no flags — the vendor and the pack are both chosen from the
@@ -101,14 +106,19 @@ configuration text:
 
 | Control | Severity | `junos_srx.conf` |
 | --- | --- | --- |
+| `CIS-JUNOS-MGMT-FILTER` | high | **FAIL** — no input filter on `lo0` |
 | `CIS-JUNOS-NO-CLEARTEXT-SERVICES` | high | **FAIL** — `set system services telnet` |
 | `CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY` | high | **FAIL** — `public`, `private` |
+| `CIS-JUNOS-SNMP-NO-WRITE` | high | **FAIL** — `private` is `read-write` |
 | `CIS-JUNOS-ROOT-AUTH-HASHED` | high | PASS — hashed root credential, no plain-text statement |
 | `CIS-JUNOS-SSH-V2` | high | PASS — `protocol-version v2` |
 | `CIS-JUNOS-AAA-CENTRALISED` | medium | **FAIL** — no authentication-order, no RADIUS/TACACS+ |
 | `CIS-JUNOS-IDLE-TIMEOUT` | medium | **FAIL** — `idle-timeout 0` |
 | `CIS-JUNOS-NO-JWEB-HTTP` | medium | **FAIL** — J-Web served over HTTP |
+| `CIS-JUNOS-PASSWORD-MIN-LENGTH` | medium | **NEEDS_REVIEW** — the release default applies, and it is not in the text |
+| `CIS-JUNOS-NTP-CONFIGURED` | medium | PASS — `set system ntp server` |
 | `CIS-JUNOS-SYSLOG-DESTINATION` | medium | PASS — syslog host and on-box file |
+| `CIS-JUNOS-LOGIN-BANNER` | low | PASS — `set system login message` |
 
 A fourth sample, `samples/fortios_unknown.conf`, is FortiOS — syntax no
 deterministic parser here understands, and the worked example for the LLM
@@ -155,11 +165,18 @@ Observation(
 )
 ```
 
-Fields: `hostname`, `telnet_enabled`, `vty_transport_input`,
+Twenty fields: `hostname`, `telnet_enabled`, `vty_transport_input`,
 `vty_exec_timeout_seconds`, `ssh_enabled`, `ssh_version`, `http_server_enabled`,
-`https_server_enabled`, `enable_secret_set`, `enable_password_present`,
-`password_encryption`, `aaa_enabled`, `snmp_communities`, `logging_enabled`,
-`logging_hosts`, `logging_buffered`.
+`https_server_enabled`, `management_acl_applied`, `login_banner_present`,
+`enable_secret_set`, `enable_password_present`, `password_encryption`,
+`password_min_length`, `aaa_enabled`, `snmp_communities`, `logging_enabled`,
+`logging_hosts`, `logging_buffered`, `ntp_servers`.
+
+Growth goes in one direction only. A rule that needs a setting nobody
+normalizes yet is blocked until the field exists **here**, and adding it here
+obliges every parser — and the LLM extraction schema — to say what it means for
+their vendor. That is why a control cannot be added by writing a clever regex
+in one parser: the vocabulary is shared or it is worthless.
 
 ---
 
@@ -193,7 +210,8 @@ kind of silence.
   "not configured". Recorded as `detected=True` with the insecure value and a
   note naming the absence as the evidence.
   → `enable secret`, `enable password`, `service password-encryption`,
-  `aaa new-model`, `logging host`, `logging buffered`, `snmp-server community`.
+  `aaa new-model`, `logging host`, `logging buffered`, `snmp-server community`,
+  `banner`, `ntp server`, `security passwords min-length`, `access-class`.
 
 - **Ambiguous absence** — the effective value comes from a platform default that
   varies by IOS train, or the section may simply be missing from an excerpt.
@@ -213,16 +231,21 @@ the two parsers say so — see [Two deterministic vendors](#two-deterministic-ve
 
 A device is only as strong as its weakest management path. If *any* `line vty`
 block permits telnet, `telnet_enabled` is true. If *any* block has
-`exec-timeout 0`, the device's VTY timeout is "never". And clean-but-incomplete
-evidence is not proof: if some VTY blocks specify no transport at all, the
-result is `NEEDS_REVIEW` rather than a pass.
+`exec-timeout 0`, the device's VTY timeout is "never". If *any* block lacks an
+inbound `access-class`, the management plane is reachable from anywhere. And
+clean-but-incomplete evidence is not proof: if some VTY blocks specify no
+transport at all, the result is `NEEDS_REVIEW` rather than a pass.
+
+The same rule governs Junos, where the weakest path is a login class with no
+idle timeout rather than a VTY block.
 
 ---
 
 ## Rule packs
 
-`auditor/rules/frameworks/cis_cisco_ios.json` holds the eight controls. A rule
-refers only to baseline fields, never to Cisco syntax:
+`auditor/rules/frameworks/cis_cisco_ios.json` holds thirteen controls, and the
+Junos pack the same thirteen. A rule refers only to baseline fields, never to
+Cisco syntax:
 
 ```json
 {
@@ -324,6 +347,12 @@ there, where the equivalent IOS absence is *ambiguous*:
 | cleartext management transports | `NEEDS_REVIEW` if a VTY block declares no transport (`all` on 12.x, `none` on 15.x+) | conclusive `False` — no service, no listener |
 | the idle timeout | `NEEDS_REVIEW` — the effective default cannot be confirmed from text | conclusive `0` — Junos does not time out a session unless told to |
 | the SSH protocol version | `NEEDS_REVIEW` — 1.99 fallback depends on release and key state | `NEEDS_REVIEW` — v1 was accepted before 15.1, and the release is not evidence |
+| the password minimum length | conclusive `0` — IOS enforces no minimum unless told to | `NEEDS_REVIEW` — Junos enforces a release-dependent default, and the text does not say which |
+
+Note the last row, where the roles reverse: on password policy it is **IOS**
+that can be conclusive (no minimum is enforced unless configured) and **Junos**
+that must escalate (a non-zero default applies, and which one has moved between
+releases). Neither vendor is the privileged one; the evidence is.
 
 Both parsers reach these conclusions by the same rule — *is the absence provably
 equivalent to a setting?* — and answer differently because the platforms differ.
@@ -574,8 +603,8 @@ auditor/
     cli.py           `python -m auditor.training`
   rules/
     loader.py        pack discovery + schema validation
-    frameworks/cis_cisco_ios.json      eight controls, Cisco remediation
-    frameworks/cis_juniper_junos.json  the same eight conditions, Junos remediation
+    frameworks/cis_cisco_ios.json      thirteen controls, Cisco remediation
+    frameworks/cis_juniper_junos.json  the same thirteen conditions, Junos remediation
   engine/
     conditions.py    three-valued logic + operator implementations
     evaluator.py     ComplianceEngine — rules × baseline → report
@@ -584,7 +613,7 @@ auditor/
     json_report.py   structured JSON
   cli.py             argument parsing and wiring only
 samples/             hardened_ios.conf, insecure_ios.conf, junos_srx.conf, fortios_unknown.conf
-tests/               292 tests
+tests/               336 tests
 ```
 
 ## Tests
@@ -600,7 +629,7 @@ operator truth table, rule-pack validation, and the CLI end to end.
 
 Three tests pin the "no hardcoded verdicts" constraint: editing one line of the
 hardened config must flip exactly one control to `FAIL`, and remediating either
-the insecure IOS config or the Junos sample must turn all eight controls green.
+the insecure IOS config or the Junos sample must turn all thirteen green.
 
 The Junos tests carry the multi-vendor claim. The same device in set format and
 in braces format must produce the same baseline, and each must cite lines that

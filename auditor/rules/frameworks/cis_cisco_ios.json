@@ -277,6 +277,143 @@
         "CIS Cisco IOS Benchmark - 2.2.4 Set IP address for 'logging host'"
       ],
       "notes": "CIS treats the buffer and the remote host as separate clauses; this rule requires at least one destination and fails the device if logging is explicitly turned off with 'no logging on'."
+    },
+    {
+      "id": "CIS-IOS-1.2-VTY-ACCESS-CLASS",
+      "control_ref": "1.2",
+      "title": "Set an inbound 'access-class' on every 'line vty'",
+      "description": "Every VTY line must carry an inbound access-class restricting which source addresses may open a management session.",
+      "framework": "CIS",
+      "severity": "high",
+      "baseline_fields": ["management_acl_applied"],
+      "condition": {
+        "field": "management_acl_applied",
+        "operator": "is_true"
+      },
+      "rationale": "Authentication is the second line of defence; reachability is the first. An unrestricted VTY line lets anyone who can route to the device attempt a login, which turns a stolen or guessable credential into a compromise and puts the management plane within reach of every host on the network.",
+      "remediation": {
+        "summary": "Permit only the management network, and apply the list inbound on every VTY line.",
+        "cli": [
+          "configure terminal",
+          " access-list 99 remark MANAGEMENT-HOSTS",
+          " access-list 99 permit 10.20.30.0 0.0.0.255",
+          " line vty 0 15",
+          "  access-class 99 in",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - section 1.2 Line Rules"],
+      "notes": "Verify your own address is inside the permitted range before applying this, and keep console access available: an access-class that excludes you locks you out of the device. This control is evaluated worst-case - one VTY block without an inbound access-class fails it, because that block is the way in."
+    },
+    {
+      "id": "CIS-IOS-1.6-LOGIN-BANNER",
+      "control_ref": "1.6",
+      "title": "Configure a login banner",
+      "description": "A banner must be displayed before or at login.",
+      "framework": "CIS",
+      "severity": "low",
+      "baseline_fields": ["login_banner_present"],
+      "condition": {
+        "field": "login_banner_present",
+        "operator": "is_true"
+      },
+      "rationale": "The banner is what makes unauthorised access provably unauthorised. Prosecutions and disciplinary actions have failed because a device never told the intruder they were not welcome, and it costs one command.",
+      "remediation": {
+        "summary": "Set a login banner stating that access is restricted and activity is monitored.",
+        "cli": [
+          "configure terminal",
+          " banner login ^C",
+          "Authorised access only. Activity is logged and monitored.",
+          "^C",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - section 1.6 Banner Rules"],
+      "notes": "Do not name the device, its model, its owner or its software version in the banner: that is free reconnaissance. Have the wording approved by whoever owns legal risk in your organisation."
+    },
+    {
+      "id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+      "control_ref": "1.1",
+      "title": "Set 'security passwords min-length' to 8 or more",
+      "description": "The device must refuse locally configured passwords shorter than eight characters.",
+      "framework": "CIS",
+      "severity": "medium",
+      "baseline_fields": ["password_min_length"],
+      "condition": {
+        "field": "password_min_length",
+        "operator": "greater_or_equal",
+        "value": 8
+      },
+      "rationale": "IOS enforces no minimum length at all unless told to, so nothing stops an operator setting a two-character password during a late-night change. This is the only control here that constrains what a future password may be, rather than auditing the ones already set.",
+      "remediation": {
+        "summary": "Enforce a minimum length for every locally configured password.",
+        "cli": [
+          "configure terminal",
+          " security passwords min-length 8",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - section 1.1 Local Authentication Rules"],
+      "notes": "This applies to passwords set after the command, not to existing ones. Re-set existing local credentials afterwards, or the control passes while short passwords remain in use."
+    },
+    {
+      "id": "CIS-IOS-2.3-NTP-CONFIGURED",
+      "control_ref": "2.3",
+      "title": "Configure at least one NTP server",
+      "description": "The device must synchronise its clock with at least one NTP time source.",
+      "framework": "CIS",
+      "severity": "medium",
+      "baseline_fields": ["ntp_servers"],
+      "condition": {
+        "field": "ntp_servers",
+        "operator": "is_not_empty"
+      },
+      "rationale": "Every other control here produces evidence, and evidence is worth what its timestamps are worth. Without synchronised time, logs from two devices cannot be correlated, an incident timeline cannot be reconstructed, and certificate validation and time-based access rules misbehave.",
+      "remediation": {
+        "summary": "Point the device at two or more internal time sources.",
+        "cli": [
+          "configure terminal",
+          " ntp server 10.20.30.41",
+          " ntp server 10.20.30.42",
+          " clock timezone UTC 0 0",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - section 2.3 Logging Rules"],
+      "notes": "Two sources let the device detect a lying one; a single source is a single point of failure for every timestamp it produces. Authenticate NTP (ntp authenticate / ntp trusted-key) where the time source crosses an untrusted network."
+    },
+    {
+      "id": "CIS-IOS-1.5-SNMP-NO-WRITE",
+      "control_ref": "1.5",
+      "title": "Do not configure read-write SNMP communities",
+      "description": "No SNMP v1/v2c community may grant read-write access.",
+      "framework": "CIS",
+      "severity": "high",
+      "baseline_fields": ["snmp_communities"],
+      "condition": {
+        "field": "snmp_communities",
+        "select": "access",
+        "operator": "contains_none",
+        "value": ["rw"],
+        "ignore_case": true
+      },
+      "rationale": "An SNMP v1/v2c community is a password sent in cleartext, and a read-write one is a password that rewrites the configuration. Anyone who observes it once - or guesses it - can download the running-config or push a new one, without ever authenticating to the CLI.",
+      "remediation": {
+        "summary": "Remove every read-write community; use read-only with an ACL, or SNMPv3 for write access.",
+        "cli": [
+          "configure terminal",
+          " no snmp-server community <rw-string> RW",
+          " snmp-server community <new-ro-string> RO 99",
+          " end",
+          "copy running-config startup-config"
+        ]
+      },
+      "references": ["CIS Cisco IOS Benchmark - section 1.5 SNMP Rules"],
+      "notes": "This is independent of the community's name: renaming a read-write community away from 'private' does not fix it. If write access is genuinely required, use SNMPv3 with authPriv rather than a v2c community."
     }
   ]
 }

@@ -29,14 +29,18 @@ KINDS = {
     "ssh_version": IntegerFinding,
     "http_server_enabled": BooleanFinding,
     "https_server_enabled": BooleanFinding,
+    "management_acl_applied": BooleanFinding,
+    "login_banner_present": BooleanFinding,
     "enable_secret_set": BooleanFinding,
     "enable_password_present": BooleanFinding,
     "password_encryption": BooleanFinding,
+    "password_min_length": IntegerFinding,
     "aaa_enabled": BooleanFinding,
     "snmp_communities": SnmpCommunityFinding,
     "logging_enabled": BooleanFinding,
     "logging_hosts": TextListFinding,
     "logging_buffered": BooleanFinding,
+    "ntp_servers": TextListFinding,
 }
 
 

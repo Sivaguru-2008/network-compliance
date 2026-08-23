@@ -87,12 +87,22 @@ time out. Report the LONGEST timeout across all management access methods.
 determined if the config pins a version explicitly.
 - `http_server_enabled` — true if a plaintext HTTP management server is on.
 - `https_server_enabled` — true if an HTTPS/TLS management server is on.
+- `management_acl_applied` — true only if EVERY remote administrative access \
+path is restricted to specific source addresses: an access list on the \
+management lines, a firewall filter protecting the control plane, or the \
+vendor's equivalent. If any path is open to all sources, this is false.
+- `login_banner_present` — true if a banner, message of the day, or legal \
+notice is displayed before or at login.
 - `enable_secret_set` — true if the privileged/administrative password is \
 stored as a one-way cryptographic hash.
 - `enable_password_present` — true if a privileged password is stored \
 reversibly or in plaintext.
 - `password_encryption` — true if the device obscures stored passwords at rest \
 (the vendor's equivalent of `service password-encryption`).
+- `password_min_length` — the minimum password length the device enforces on \
+locally configured passwords, as an integer; 0 means no minimum is enforced. \
+Only determined if the configuration states it. A platform default you happen \
+to know is not evidence.
 - `aaa_enabled` — true if centralised authentication/authorization/accounting \
 is enabled (RADIUS, TACACS+, or the vendor's AAA subsystem).
 - `snmp_communities` — every SNMP v1/v2c community string configured, with its \
@@ -103,6 +113,8 @@ configured with no v1/v2c communities (for example, SNMPv3 only). Use \
 syslog collector or a local log buffer/file).
 - `logging_hosts` — addresses or hostnames of remote syslog collectors.
 - `logging_buffered` — true if the device retains logs locally.
+- `ntp_servers` — addresses or hostnames of configured NTP time sources. An \
+empty list means time synchronisation is not configured.
 
 Report every field. Use `determined: false` with a null value for anything the \
 configuration does not settle."""

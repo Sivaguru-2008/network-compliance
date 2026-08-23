@@ -24,6 +24,11 @@ HARDENED_EXPECTATIONS = {
     "CIS-IOS-2.1.1.6": Status.PASS,          # ip ssh version 2
     "CIS-IOS-2.1-HTTP-SERVER": Status.PASS,  # no ip http server
     "CIS-IOS-2.2.2-2.2.4": Status.PASS,      # logging buffered + logging host
+    "CIS-IOS-1.2-VTY-ACCESS-CLASS": Status.PASS,    # access-class 99 in on every vty
+    "CIS-IOS-1.6-LOGIN-BANNER": Status.PASS,        # banner login
+    "CIS-IOS-1.1-PASSWORD-MIN-LENGTH": Status.PASS, # security passwords min-length 8
+    "CIS-IOS-2.3-NTP-CONFIGURED": Status.PASS,      # ntp server 10.20.30.41
+    "CIS-IOS-1.5-SNMP-NO-WRITE": Status.PASS,       # the one community is read-only
 }
 
 INSECURE_EXPECTATIONS = {
@@ -35,6 +40,11 @@ INSECURE_EXPECTATIONS = {
     "CIS-IOS-2.1.1.6": Status.NEEDS_REVIEW,          # no ip ssh version line at all
     "CIS-IOS-2.1-HTTP-SERVER": Status.FAIL,          # ip http server
     "CIS-IOS-2.2.2-2.2.4": Status.FAIL,              # no logging destination
+    "CIS-IOS-1.2-VTY-ACCESS-CLASS": Status.FAIL,     # no access-class on either vty block
+    "CIS-IOS-1.6-LOGIN-BANNER": Status.FAIL,         # no banner of any kind
+    "CIS-IOS-1.1-PASSWORD-MIN-LENGTH": Status.FAIL,  # no minimum enforced
+    "CIS-IOS-2.3-NTP-CONFIGURED": Status.FAIL,       # no ntp server
+    "CIS-IOS-1.5-SNMP-NO-WRITE": Status.FAIL,        # private RW
 }
 
 
@@ -60,13 +70,13 @@ def test_summary_counts_match_the_matrices(engine, hardened, insecure):
     hardened_report = engine.build_report(hardened, tool_name="t", tool_version="0")
     insecure_report = engine.build_report(insecure, tool_name="t", tool_version="0")
 
-    assert (hardened_report.summary.passed, hardened_report.summary.failed) == (8, 0)
+    assert (hardened_report.summary.passed, hardened_report.summary.failed) == (13, 0)
     assert hardened_report.summary.compliance_score == 100.0
 
-    assert insecure_report.summary.failed == 7
+    assert insecure_report.summary.failed == 12
     assert insecure_report.summary.needs_review == 1
     assert insecure_report.summary.passed == 0
-    assert insecure_report.summary.failed_by_severity == {"medium": 4, "high": 3}
+    assert insecure_report.summary.failed_by_severity == {"low": 1, "medium": 6, "high": 5}
 
 
 # ---------------------------------------------------------------------------
@@ -134,7 +144,11 @@ def test_fixing_the_insecure_config_turns_findings_into_passes(engine, insecure_
         .replace("snmp-server community public RO", "snmp-server community Uniq-C0mm RO 99")
         .replace("snmp-server community private RW", "snmp-server community An0ther-C0mm RO 99")
         .replace("hostname BRANCH-SW-07", "hostname BRANCH-SW-07\nservice password-encryption\naaa new-model")
+        .replace(" login\n exec-timeout", " login\n access-class 99 in\n exec-timeout")
         + "\nlogging host 10.0.0.5\nlogging buffered 64000\nip ssh version 2\n"
+        + "banner login ^C\nAuthorised access only.\n^C\n"
+        + "security passwords min-length 8\nntp server 10.20.30.41\n"
+        + "access-list 99 permit 10.20.30.0 0.0.0.255\n"
     )
     baseline = CiscoIOSParser().parse(remediated, source_file="remediated")
     results = {r.rule_id: r.status for r in engine.evaluate(baseline)}

@@ -32,13 +32,17 @@ conclusive rather than ambiguous:
 CONCLUSIVE ABSENCE -- the feature is off unless configured, and Junos writes
     every configured statement back into the configuration.
         system services telnet / ftp / finger / ssh / web-management,
-        snmp community, system syslog, system root-authentication,
+        snmp community, system syslog, system ntp server,
+        system root-authentication, system login message / announcement,
         system authentication-order + radius-server / tacplus-server,
-        system login idle-timeout
+        system login idle-timeout, an input filter on lo0
 
-AMBIGUOUS ABSENCE -- the effective value is a release-dependent default.
+AMBIGUOUS ABSENCE -- the effective value is a release-dependent default, so it
+    is escalated rather than guessed.
         system services ssh protocol-version (v1 was accepted by releases
         before 15.1; the enforced version cannot be read from the text alone)
+        system login password minimum-length (the default is non-zero and has
+        moved between releases, so neither 0 nor 6 can be claimed)
 
 Vendor-neutral mappings, stated explicitly because the training loop diffs this
 parser against the LLM's reading of the same device and both must mean the same
@@ -60,6 +64,10 @@ thing by a field:
                              rather than a setting (see `_normalize_credentials`).
     logging_buffered         `system syslog file …` — on-box log retention,
                              the analogue of the IOS buffer.
+    management_acl_applied   an input firewall filter on `lo0.0`. Junos has no
+                             per-line `access-class`: traffic to the routing
+                             engine arrives via the loopback, so the loopback
+                             filter is what restricts who may reach it.
 
 Aggregation is worst-case, exactly as in the IOS parser: if any login class
 never times out, the device's idle timeout is "never".
@@ -178,10 +186,14 @@ class JunosParser(VendorParser):
         baseline.hostname = self._hostname()
         self._normalize_services(baseline)
         self._normalize_idle_timeout(baseline)
+        self._normalize_management_acl(baseline)
+        self._normalize_banner(baseline)
         self._normalize_credentials(baseline)
+        self._normalize_password_policy(baseline)
         self._normalize_aaa(baseline)
         self._normalize_snmp(baseline)
         self._normalize_logging(baseline)
+        self._normalize_ntp(baseline)
 
         baseline.provenance.warnings = self._warnings
         return baseline
@@ -482,6 +494,69 @@ class JunosParser(VendorParser):
             seconds, *self._evidence(statement), note=note
         )
 
+    def _normalize_management_acl(self, baseline: SecurityBaselineModel) -> None:
+        """On Junos the management plane is protected by a filter on lo0.
+
+        There is no per-line `access-class`: traffic to the routing engine
+        arrives via the loopback, so an input firewall filter applied to
+        `lo0.0` is what restricts who may reach SSH at all. Its absence is
+        conclusive — a filter Junos does not write is a filter that is not
+        applied.
+        """
+        applied = [
+            statement
+            for statement in self.find("interfaces", "lo0")
+            if "filter" in statement.path and "input" in statement.path
+        ]
+        if applied:
+            statement = applied[0]
+            baseline.management_acl_applied = Observation[bool].found(
+                True,
+                *self._evidence(statement),
+                note="An input firewall filter is applied to lo0, restricting access to the routing engine.",
+            )
+            return
+
+        baseline.management_acl_applied = Observation[bool].absent(
+            False,
+            "No input firewall filter is applied to lo0. Junos writes interface filters into "
+            "the configuration, so their absence means traffic to the routing engine is "
+            "unrestricted by source address.",
+        )
+
+    def _normalize_banner(self, baseline: SecurityBaselineModel) -> None:
+        """`system login message` (pre-login) or `announcement` (post-login)."""
+        for kind in ("message", "announcement"):
+            statement = self.first("system", "login", kind)
+            if statement is not None:
+                baseline.login_banner_present = Observation[bool].found(
+                    True, *self._evidence(statement)
+                )
+                return
+
+        baseline.login_banner_present = Observation[bool].absent(
+            False,
+            "No 'system login message' or 'system login announcement' statement present, so no "
+            "banner is shown to anyone connecting.",
+        )
+
+    def _normalize_ntp(self, baseline: SecurityBaselineModel) -> None:
+        servers = self.find("system", "ntp", "server")
+        if not servers:
+            baseline.ntp_servers = Observation[List[str]].absent(
+                [],
+                "No 'system ntp server' statement present. Junos writes NTP configuration into "
+                "the configuration file, so absence means the clock is not synchronised.",
+            )
+            return
+
+        addresses = sorted({s.path[3] for s in servers if len(s.path) > 3})
+        baseline.ntp_servers = Observation[List[str]].found(
+            addresses,
+            *self._evidence(servers[0]),
+            note=f"{len(addresses)} NTP time source(s) configured.",
+        )
+
     def _normalize_credentials(self, baseline: SecurityBaselineModel) -> None:
         encrypted = self.first("system", "root-authentication", "encrypted-password")
         plaintext = self.first("system", "root-authentication", "plain-text-password")
@@ -540,6 +615,29 @@ class JunosParser(VendorParser):
             "Junos hashes stored credentials by default and offers no equivalent of "
             "'service password-encryption'; no plain-text password statement is present.",
         )
+
+    def _normalize_password_policy(self, baseline: SecurityBaselineModel) -> None:
+        """The one Junos absence this parser refuses to call.
+
+        Unlike a service, a password policy has a non-zero platform default —
+        current releases enforce a six-character minimum — and that default has
+        moved between releases. The configuration text does not say which
+        applies, so this escalates instead of claiming either 0 or 6.
+        """
+        statement = self.first("system", "login", "password", "minimum-length")
+        if statement is not None and statement.path[-1].isdigit():
+            baseline.password_min_length = Observation[int].found(
+                int(statement.path[-1]), *self._evidence(statement)
+            )
+            return
+
+        note = (
+            "No 'system login password minimum-length' statement present. Junos applies a "
+            "release-dependent default minimum (six characters in current releases) rather "
+            "than none, so the enforced length cannot be read from the configuration."
+        )
+        self._warn(note)
+        baseline.password_min_length = Observation[int].unknown(note)
 
     def _normalize_aaa(self, baseline: SecurityBaselineModel) -> None:
         """Centralised authentication: an order naming a remote method, and a server."""

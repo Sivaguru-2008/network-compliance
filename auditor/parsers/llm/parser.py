@@ -39,14 +39,18 @@ FIELD_TYPES: Dict[str, Any] = {
     "ssh_version": int,
     "http_server_enabled": bool,
     "https_server_enabled": bool,
+    "management_acl_applied": bool,
+    "login_banner_present": bool,
     "enable_secret_set": bool,
     "enable_password_present": bool,
     "password_encryption": bool,
+    "password_min_length": int,
     "aaa_enabled": bool,
     "snmp_communities": List[SnmpCommunity],
     "logging_enabled": bool,
     "logging_hosts": List[str],
     "logging_buffered": bool,
+    "ntp_servers": List[str],
 }
 
 _FALLBACK_SCORE = 0.05

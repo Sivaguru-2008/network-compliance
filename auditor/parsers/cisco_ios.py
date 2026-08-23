@@ -125,10 +125,12 @@ class CiscoIOSParser(VendorParser):
         self._normalize_vty(parse, baseline)
         self._normalize_ssh(parse, baseline)
         self._normalize_http(parse, baseline)
+        self._normalize_banner(parse, baseline)
         self._normalize_credentials(parse, baseline)
         self._normalize_aaa(parse, baseline)
         self._normalize_snmp(parse, baseline)
         self._normalize_logging(parse, baseline)
+        self._normalize_ntp(parse, baseline)
 
         baseline.provenance.warnings = self._warnings
         return baseline
@@ -170,11 +172,14 @@ class CiscoIOSParser(VendorParser):
             baseline.telnet_enabled = Observation[bool].unknown(note)
             baseline.vty_transport_input = Observation[List[str]].unknown(note)
             baseline.vty_exec_timeout_seconds = Observation[int].unknown(note)
+            baseline.management_acl_applied = Observation[bool].unknown(note)
             return
 
         transports: Dict[str, Tuple[str, int]] = {}  # transport -> (source_line, line_number)
         blocks_without_transport = 0
         blocks_without_timeout = 0
+        blocks_without_access_class = 0
+        access_classes: List[Tuple[str, int]] = []  # (source_line, line_number)
         timeouts: List[Tuple[int, str, int]] = []  # (seconds, source_line, line_number)
 
         for block in vty_blocks:
@@ -201,8 +206,19 @@ class CiscoIOSParser(VendorParser):
                 if seconds is not None:
                     timeouts.append((seconds, child.text, self._lineno(child)))
 
+            # `access-class <acl> in` is what restricts *who* may open a session.
+            # An outbound-only access-class does not, so the direction matters.
+            inbound_acl = [
+                c for c in block.children if re.match(r"(?i)^\s*access-class\s+\S+\s+in\b", c.text)
+            ]
+            if not inbound_acl:
+                blocks_without_access_class += 1
+            for child in inbound_acl:
+                access_classes.append((child.text, self._lineno(child)))
+
         self._resolve_transports(baseline, transports, blocks_without_transport)
         self._resolve_exec_timeout(baseline, timeouts, blocks_without_timeout)
+        self._resolve_management_acl(baseline, access_classes, blocks_without_access_class)
 
     @staticmethod
     def _exec_timeout_seconds(text: str) -> Optional[int]:
@@ -279,6 +295,82 @@ class CiscoIOSParser(VendorParser):
         seconds, line, lineno = max(timeouts, key=lambda item: item[0])
         baseline.vty_exec_timeout_seconds = Observation[int].found(
             seconds, line, lineno, note="Longest idle timeout configured across VTY lines."
+        )
+
+    def _resolve_management_acl(
+        self,
+        baseline: SecurityBaselineModel,
+        access_classes: List[Tuple[str, int]],
+        blocks_without_access_class: int,
+    ) -> None:
+        """Worst case: one unrestricted VTY block leaves the device reachable.
+
+        Unlike `transport input`, absence is conclusive here. There is no
+        platform default that silently restricts a VTY line — an `access-class`
+        that is not written is an `access-class` that is not applied — so a
+        block without one proves the management plane is open to any source.
+        """
+        if blocks_without_access_class:
+            line, lineno = access_classes[0] if access_classes else (None, None)
+            note = (
+                f"{blocks_without_access_class} 'line vty' block(s) have no inbound "
+                "'access-class', so remote management is reachable from any source address."
+            )
+            self._warn(note)
+            baseline.management_acl_applied = (
+                Observation[bool].found(False, line, lineno, note=note)
+                if line
+                else Observation[bool].absent(False, note)
+            )
+            return
+
+        line, lineno = access_classes[0]
+        baseline.management_acl_applied = Observation[bool].found(
+            True,
+            line,
+            lineno,
+            note="Every 'line vty' block restricts inbound access with an access-class.",
+        )
+
+    def _normalize_banner(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
+        """`banner login|motd|exec` — the notice shown before or at login."""
+        obj = self._first(parse, r"(?i)^\s*banner\s+(login|motd|exec)\b")
+        if obj is not None:
+            baseline.login_banner_present = Observation[bool].found(
+                True, obj.text, self._lineno(obj)
+            )
+            return
+        baseline.login_banner_present = Observation[bool].absent(
+            False,
+            "No 'banner login', 'banner motd' or 'banner exec' statement present. IOS writes "
+            "banner configuration to the running-config, so absence means no banner is shown.",
+        )
+
+    def _normalize_ntp(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
+        """`ntp server <host>` — peers are excluded; a peer is not an authority."""
+        servers = self._find(parse, r"(?i)^\s*ntp server\b")
+        if not servers:
+            baseline.ntp_servers = Observation[List[str]].absent(
+                [],
+                "No 'ntp server' statement present. IOS writes NTP configuration to the "
+                "running-config, so absence means the clock is not synchronised.",
+            )
+            return
+
+        addresses: List[str] = []
+        for obj in servers:
+            tokens = obj.text.split()[2:]
+            # `ntp server [vrf NAME] <host> [key N] [prefer] ...`
+            if tokens[:1] == ["vrf"]:
+                tokens = tokens[2:]
+            if tokens:
+                addresses.append(tokens[0])
+        first = servers[0]
+        baseline.ntp_servers = Observation[List[str]].found(
+            sorted(set(addresses)),
+            first.text,
+            self._lineno(first),
+            note=f"{len(set(addresses))} NTP time source(s) configured.",
         )
 
     def _normalize_ssh(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
@@ -367,6 +459,20 @@ class CiscoIOSParser(VendorParser):
                 False,
                 "No 'service password-encryption' statement present. The feature is disabled by "
                 "default and is written to the running-config when enabled, so absence means disabled.",
+            )
+
+        min_length = self._first(parse, r"(?i)^\s*security passwords min-length\s+\d+")
+        if min_length is not None:
+            baseline.password_min_length = Observation[int].found(
+                int(re.search(r"(\d+)\s*$", min_length.text).group(1)),
+                min_length.text,
+                self._lineno(min_length),
+            )
+        else:
+            baseline.password_min_length = Observation[int].absent(
+                0,
+                "No 'security passwords min-length' statement present. IOS enforces no minimum "
+                "password length unless this is configured, and writes it when it is.",
             )
 
     def _normalize_aaa(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:

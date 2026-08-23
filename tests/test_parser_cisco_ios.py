@@ -39,6 +39,10 @@ def test_hardened_identity(hardened: SecurityBaselineModel):
         ("logging_enabled", True),
         ("logging_buffered", True),
         ("logging_hosts", ["10.20.30.40"]),
+        ("management_acl_applied", True),
+        ("login_banner_present", True),
+        ("password_min_length", 8),
+        ("ntp_servers", ["10.20.30.41"]),
     ],
 )
 def test_hardened_values(hardened: SecurityBaselineModel, field: str, expected_value):
@@ -82,6 +86,10 @@ def test_insecure_identity(insecure: SecurityBaselineModel):
         ("logging_enabled", False),
         ("logging_buffered", False),
         ("logging_hosts", []),
+        ("management_acl_applied", False),
+        ("login_banner_present", False),
+        ("password_min_length", 0),
+        ("ntp_servers", []),
     ],
 )
 def test_insecure_values(insecure: SecurityBaselineModel, field: str, expected_value):
@@ -175,6 +183,10 @@ def test_ambiguous_absence_is_undetected(minimal: SecurityBaselineModel, field: 
         ("password_encryption", False),
         ("aaa_enabled", False),
         ("logging_enabled", False),
+        ("management_acl_applied", False),
+        ("login_banner_present", False),
+        ("password_min_length", 0),
+        ("ntp_servers", []),
     ],
 )
 def test_conclusive_absence_is_detected_as_insecure(minimal: SecurityBaselineModel, field: str, expected):
@@ -190,6 +202,84 @@ def test_no_vty_block_leaves_remote_access_undetermined():
     baseline = CiscoIOSParser().parse("hostname EDGE-02\n!\nend\n")
     assert baseline.telnet_enabled.detected is False
     assert "line vty" in baseline.telnet_enabled.note
+    assert baseline.management_acl_applied.detected is False
+
+
+# ---------------------------------------------------------------------------
+# management reachability, banner, password policy, time
+# ---------------------------------------------------------------------------
+
+
+def test_one_unrestricted_vty_block_defeats_the_others():
+    """Worst case: the block without an access-class is the way in."""
+    baseline = CiscoIOSParser().parse(
+        "hostname EDGE-03\n"
+        "!\n"
+        "line vty 0 4\n"
+        " access-class 99 in\n"
+        " transport input ssh\n"
+        "line vty 5 15\n"
+        " transport input ssh\n"
+        "!\nend\n"
+    )
+
+    assert baseline.management_acl_applied.value is False
+    assert "1 'line vty' block(s) have no inbound" in baseline.management_acl_applied.note
+    assert any("access-class" in w for w in baseline.provenance.warnings)
+
+
+def test_every_vty_block_restricted_is_a_pass():
+    baseline = CiscoIOSParser().parse(
+        "hostname EDGE-04\n"
+        "!\n"
+        "line vty 0 4\n"
+        " access-class 99 in\n"
+        "line vty 5 15\n"
+        " access-class 99 in\n"
+        "!\nend\n"
+    )
+
+    assert baseline.management_acl_applied.value is True
+    assert baseline.management_acl_applied.source_line == "access-class 99 in"
+
+
+def test_an_outbound_access_class_does_not_restrict_who_may_connect():
+    """`access-class N out` governs outbound sessions; direction is the control."""
+    baseline = CiscoIOSParser().parse(
+        "hostname EDGE-05\n!\nline vty 0 4\n access-class 99 out\n!\nend\n"
+    )
+
+    assert baseline.management_acl_applied.value is False
+
+
+@pytest.mark.parametrize("banner", ["banner login ^C", "banner motd ^C", "banner exec ^C"])
+def test_any_banner_kind_counts(banner: str):
+    baseline = CiscoIOSParser().parse(f"hostname EDGE-06\n!\n{banner}\nNotice.\n^C\n!\nend\n")
+
+    assert baseline.login_banner_present.value is True
+    assert baseline.login_banner_present.source_line == banner
+
+
+def test_ntp_servers_are_deduplicated_and_vrf_qualified_forms_are_read():
+    baseline = CiscoIOSParser().parse(
+        "hostname EDGE-07\n"
+        "!\n"
+        "ntp server 10.20.30.41\n"
+        "ntp server 10.20.30.41 prefer\n"
+        "ntp server vrf MGMT 10.20.30.42 key 1\n"
+        "ntp peer 10.20.30.99\n"
+        "!\nend\n"
+    )
+
+    assert baseline.ntp_servers.value == ["10.20.30.41", "10.20.30.42"], "a peer is not an authority"
+
+
+def test_password_min_length_is_read_as_a_number():
+    baseline = CiscoIOSParser().parse(
+        "hostname EDGE-08\n!\nsecurity passwords min-length 12\n!\nend\n"
+    )
+
+    assert baseline.password_min_length.value == 12
 
 
 # ---------------------------------------------------------------------------

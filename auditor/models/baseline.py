@@ -77,6 +77,17 @@ class SecurityBaselineModel(BaseModel):
     )
     http_server_enabled: Observation[bool] = Field(default_factory=_unknown(bool))
     https_server_enabled: Observation[bool] = Field(default_factory=_unknown(bool))
+    management_acl_applied: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description=(
+            "Remote administrative access is restricted to specific source addresses. "
+            "Worst-case across management paths: false if any path is unrestricted."
+        ),
+    )
+    login_banner_present: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="A banner is presented before or at login (legal notice / warning).",
+    )
 
     # -- credentials ------------------------------------------------------
     enable_secret_set: Observation[bool] = Field(
@@ -87,6 +98,10 @@ class SecurityBaselineModel(BaseModel):
     )
     password_encryption: Observation[bool] = Field(
         default_factory=_unknown(bool), description="Stored passwords are obfuscated at rest (service password-encryption)."
+    )
+    password_min_length: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Minimum length the device enforces on locally set passwords; 0 means unenforced.",
     )
 
     # -- authentication, authorization, accounting ------------------------
@@ -99,6 +114,10 @@ class SecurityBaselineModel(BaseModel):
     )
     logging_hosts: Observation[List[str]] = Field(default_factory=_unknown(List[str]))
     logging_buffered: Observation[bool] = Field(default_factory=_unknown(bool))
+    ntp_servers: Observation[List[str]] = Field(
+        default_factory=_unknown(List[str]),
+        description="Configured NTP time sources. Log timestamps are only evidence if the clock is.",
+    )
 
     # -- introspection used by the engine ---------------------------------
 
