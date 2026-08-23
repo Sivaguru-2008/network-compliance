@@ -35,11 +35,13 @@ from auditor.parsers.llm.prompt import SYSTEM_PROMPT, build_user_message
 from llm_stub import StubClient, found, make_extraction, undetermined
 
 SAMPLES = Path(__file__).resolve().parents[1] / "samples"
-JUNOS = (SAMPLES / "junos_unknown.conf").read_text(encoding="utf-8")
+JUNOS = (SAMPLES / "junos_srx.conf").read_text(encoding="utf-8")
+# A vendor no deterministic parser claims — what the fallback actually exists for.
+UNKNOWN_VENDOR = (SAMPLES / "fortios_unknown.conf").read_text(encoding="utf-8")
 
 
 def parse_with(extraction, config_text=JUNOS, **kwargs) -> SecurityBaselineModel:
-    return LLMParser(StubClient(extraction), **kwargs).parse(config_text, source_file="samples/junos_unknown.conf")
+    return LLMParser(StubClient(extraction), **kwargs).parse(config_text, source_file="samples/junos_srx.conf")
 
 
 # ---------------------------------------------------------------------------
@@ -68,13 +70,17 @@ def test_registry_prefers_a_deterministic_parser(hardened_text):
 
 def test_fallback_requires_opt_in():
     with pytest.raises(ParserError, match="--allow-llm"):
-        registry.detect(JUNOS)
-    parser_cls, _ = registry.detect(JUNOS, allow_fallback=True)
+        registry.detect(UNKNOWN_VENDOR)
+    parser_cls, _ = registry.detect(UNKNOWN_VENDOR, allow_fallback=True)
     assert parser_cls is LLMParser
 
 
 def test_fallback_scores_below_any_real_match():
-    assert LLMParser.detect(JUNOS) < 0.3
+    """Junos has a deterministic parser now, and the fallback must lose to it."""
+    from auditor.parsers import JunosParser
+
+    assert LLMParser.detect(JUNOS) < 0.3 < JunosParser.detect(JUNOS)
+    assert LLMParser.detect(UNKNOWN_VENDOR) < 0.3
     assert LLMParser.detect("") == 0.0
 
 
