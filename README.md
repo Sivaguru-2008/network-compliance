@@ -7,10 +7,15 @@ security baseline, evaluates it against a CIS Benchmark rule pack, and reports
 `PASS` / `FAIL` / `NEEDS_REVIEW` per control — each verdict backed by the exact
 configuration line it came from.
 
-Two parsers implement one interface: a deterministic `ciscoconfparse2`-backed
-parser for Cisco IOS, and an [LLM fallback](#the-llm-fallback-parser) for
-vendors nothing deterministic recognises. The engine cannot tell them apart —
-that is the design.
+Three parsers implement one interface: a deterministic `ciscoconfparse2`-backed
+parser for Cisco IOS, an [LLM fallback](#the-llm-fallback-parser) for vendors
+nothing deterministic recognises, and a [hybrid](#the-hybrid-parser) that runs
+the deterministic pass first and lets the model fill only what it could not
+settle. The engine cannot tell them apart — that is the design.
+
+A [feedback loop](#the-training-loop) closes over the same contract: the
+deterministic parser is free ground truth for the model, so the model's
+thresholds and its prompt are fitted from measurement rather than guessed.
 
 ---
 
@@ -39,12 +44,20 @@ it is never automatic:
 python -m auditor samples/junos_unknown.conf --allow-llm
 ```
 
+For a config a deterministic parser *does* recognise but cannot fully read, ask
+for the hybrid parser by name. It never runs on its own, because it costs an API
+call and sends the configuration off-box:
+
+```bash
+python -m auditor device.conf --vendor hybrid
+```
+
 ### Useful flags
 
 | Flag | Effect |
 | --- | --- |
 | `--framework CIS` | Which rule pack to evaluate (default `CIS`). |
-| `--vendor cisco_ios` | Force a parser instead of auto-detecting the vendor. |
+| `--vendor cisco_ios\|llm\|hybrid` | Force a parser instead of auto-detecting the vendor. |
 | `--rules path.json` | Use an explicit rule pack, bypassing framework lookup. |
 | `--json path.json` | Where to write the JSON report (default `reports/<name>.<framework>.json`). |
 | `--no-json` / `--quiet` | Skip the JSON file / skip the table. |
@@ -53,6 +66,7 @@ python -m auditor samples/junos_unknown.conf --allow-llm
 | `--allow-llm` | Permit the LLM fallback when no deterministic parser recognises the config. |
 | `--llm-model` | Model for LLM parsing (default `claude-opus-5`). |
 | `--llm-min-confidence` | Discard model findings below this confidence (default `0.6`). |
+| `--training-dir DIR` | Apply the per-field thresholds and worked examples fitted by a [training run](#the-training-loop). |
 
 Without `--strict` the tool exits `0` on any successful run, so it can collect
 reports in a pipeline without gating on them. Exit `2` means the config could
@@ -113,7 +127,7 @@ Observation(
     detected=True,                           # was this conclusively determined?
     source_line="transport input telnet",    # the raw config line, verbatim
     line_number=41,                          # 1-based, into the source file
-    origin=Origin.DETERMINISTIC,             # deterministic | llm | hybrid
+    origin=Origin.DETERMINISTIC,             # deterministic | llm | hybrid | human
     confidence=1.0,                          # 0..1
     note="Plaintext transport(s) permitted on VTY: telnet.",
 )
@@ -297,22 +311,131 @@ Per-vendor packs are the clean fix and are a drop-in JSON file away.
 
 ---
 
-## What is still to come: the training loop
+## The hybrid parser
 
-The pieces it needs are already in place. Every `Observation` carries `origin`
-and `confidence`; the JSON report embeds the full normalized baseline rather
-than just verdicts; and both parsers share one field vocabulary and one set of
-normalization semantics (worst-case aggregation, what counts as "plaintext",
-what `0` means for an idle timeout) — deliberately, so that diffing them
-measures extraction quality rather than vocabulary drift.
+The deterministic parser is exact but narrow. On a Cisco IOS config it leaves
+some fields undetected *on purpose*, because the effective value depends on a
+platform default it cannot confirm from text — and IOS accepts abbreviations
+(`ip ssh ver 2`) that a regex grammar does not match. Those fields become
+`NEEDS_REVIEW`: honest, but it costs coverage.
 
-That gives two label sources. Running both parsers over configs the
-deterministic one already handles yields free, exact ground truth to score and
-calibrate the model against, field by field. And human adjudications of
-`NEEDS_REVIEW` findings — the ones the tool deliberately escalates — supply
-scarcer but higher-value labels on precisely the cases the parsers found hard.
-A `HYBRID` origin is reserved for the natural next parser: run the deterministic
-pass first, and let the model fill only the fields it left undetected.
+`HybridParser` keeps the exactness and buys some of that coverage back:
+
+1. Run the deterministic parser. Keep **every** field it established.
+2. If nothing is left undetected, return — **no model call is made at all.**
+3. Otherwise ask the model, and accept its answers *only* for the gaps.
+
+A deterministic reading is never overruled by a model, however confident the
+model is. What the model fills is stamped `origin=hybrid` — a model working with
+deterministic results in hand is a different reliability class from one reading
+an unknown vendor cold, and the training loop scores the two separately. The
+same grounding, confidence, and type gates still apply, so a gap the model
+cannot settle *credibly* stays `NEEDS_REVIEW`.
+
+It is never auto-selected: `detect()` returns `0.0`, so reaching it takes an
+explicit `--vendor hybrid`. Sending a configuration off-box is an operator's
+decision, not a fallback.
+
+One useful side effect: the model is asked about the whole config, not just the
+gaps, so every hybrid parse also yields a full model reading of fields the
+deterministic parser already knows — labelled comparison data, harvested free
+from ordinary audits (`HybridParser.last_llm_baseline`).
+
+---
+
+## The training loop
+
+Measurement is what separates "we used an LLM" from "we know what the LLM is
+worth". The loop lives in `auditor/training/` and has its own command, because
+unlike an audit it spends money, sends every corpus config to the model
+provider, and rewrites the policy the parser will use next time:
+
+```bash
+python -m auditor.training run corpus/ --target-precision 0.95   # score, fit, feed back
+python -m auditor.training report                                # read the last run
+python -m auditor.training adjudicate device.conf --field ssh_version --reviewer you --undetermined
+```
+
+Then point an audit at what it learned:
+
+```bash
+python -m auditor device.conf --vendor hybrid --training-dir training/
+```
+
+### Where the labels come from
+
+Two sources, and neither requires anyone to hand-annotate a corpus:
+
+- **Deterministic ground truth is free.** For any config `CiscoIOSParser`
+  recognises, its output *is* the label. Both parsers share one field vocabulary
+  and one set of normalization semantics — worst-case aggregation, what counts
+  as "plaintext", what `0` means for an idle timeout — deliberately, so that
+  diffing them measures extraction quality rather than vocabulary drift.
+- **Human adjudications are scarce and valuable.** `NEEDS_REVIEW` is not just a
+  safe verdict; it is the collection mechanism. Each ruling is a label on a case
+  both parsers found hard — the only label source for vendors nothing
+  deterministic reads. Rulings are stored append-only as JSONL and **outrank
+  every parser**, including the deterministic one: if a reviewer says the parser
+  was wrong, the parser was wrong.
+
+### What one run does
+
+1. **Label.** Deterministic output per config, with adjudications overlaid on top.
+2. **Score.** Diff the candidate field by field, then run the rule engine over
+   *both* baselines so the damage is also measured where anyone acts on it — in
+   control verdicts, not just field accuracy.
+3. **Fit.** Derive a per-field confidence threshold (`thresholds.json`).
+4. **Feed back.** Mine worked examples from the errors (`examples.json`). This
+   is the only step that changes behaviour; everything before it is numbers.
+5. **Gate.** Compare against the previous run and refuse to call it an
+   improvement if it got worse.
+
+Scoring deliberately runs the candidate **ungated** (`min_confidence=0`). A gated
+parser only reports claims that already passed the last threshold, which would
+make each fit a function of the previous one — thresholds would ratchet upward
+and never recover. Fitting needs the raw distribution.
+
+### Precision is a floor, never traded for coverage
+
+For each field the loop takes the **lowest** threshold whose surviving claims
+still hit the precision target — lowest, because every point of threshold costs
+coverage, and coverage is the whole reason to run a model parser. But the target
+itself is never traded away: a field that cannot reach it at *any* confidence is
+pinned to `ALWAYS_ESCALATE` rather than allowed to answer badly. Escalating to a
+human is a known cost; a wrong verdict is not.
+
+Small samples are the obvious way to fool this, so a threshold is only fitted
+once a field has `--min-samples` claims behind it, and a field with too little
+new evidence keeps whatever an earlier, better-evidenced run decided.
+
+### The regression gate
+
+`--fail-on-regression` exits `1` — for CI — when a run is worse than the last:
+
+- **Dangerous verdict flips** (ground truth not `PASS`, candidate `PASS`) have
+  no tolerance band. One more device wrongly reported clean is a regression
+  regardless of what the averages did.
+- Precision falling more than two points is a regression.
+
+The run also reports calibration (expected calibration error per confidence
+bucket), because a model whose 0.9 claims are right 60% of the time cannot be
+gated by a threshold at all — it has to be re-prompted or replaced.
+
+### How the output reaches production
+
+`tuned_parser(workdir, client)` — one call, which `--training-dir` wires up for
+you. Fitted thresholds gate the claims; worked examples are appended to the
+system prompt as corrections ("you previously answered X; the correct value was
+Y, and the deciding line was …"). Selection is biased hard toward *wrong* over
+*over-claiming*: a confidently false value is what deserves prompt tokens, since
+over-claiming is already handled by thresholds. The examples block is appended
+rather than woven in, so the base prompt stays byte-stable and a run with no
+examples produces exactly the original prompt.
+
+> Worked examples embed real configuration lines from your corpus and are sent
+> with every subsequent request. That is fine for a corpus of your own devices;
+> it is not fine for a corpus of someone else's. The loop says so rather than
+> deciding for you.
 
 ---
 
@@ -328,12 +451,22 @@ auditor/
   parsers/
     base.py          VendorParser ABC + ParserRegistry (ranking, fallback selection)
     cisco_ios.py     CiscoIOSParser — ciscoconfparse2, absence policy, worst-case aggregation
+    hybrid.py        HybridParser — deterministic first, model only for the gaps
     llm/
       parser.py      LLMParser — the fallback for unrecognised vendors
       client.py      LLMClient interface + Claude-backed implementation
       schema.py      the schema the model is constrained to return
       prompt.py      extraction prompt (injection stance, shared semantics)
       grounding.py   confidence / grounding / type gates
+  training/
+    corpus.py        the configs to learn from; labelled = a parser recognises it
+    comparison.py    candidate vs ground truth, field by field
+    metrics.py       precision, coverage, calibration, verdict impact
+    calibration.py   fitting per-field thresholds; precision as a hard floor
+    examples.py      worked examples mined from the parser's own mistakes
+    adjudication.py  append-only human rulings; they outrank every parser
+    loop.py          measure → fit → feed back → regression gate
+    cli.py           `python -m auditor.training`
   rules/
     loader.py        pack discovery + schema validation
     frameworks/cis_cisco_ios.json
@@ -345,7 +478,7 @@ auditor/
     json_report.py   structured JSON
   cli.py             argument parsing and wiring only
 samples/             hardened_ios.conf, insecure_ios.conf, junos_unknown.conf
-tests/               172 tests
+tests/               229 tests
 ```
 
 ## Tests
@@ -370,3 +503,16 @@ adversarial: hallucinated lines, hallucinated lines that would *fail* a control,
 low-confidence claims, wrong-typed values, partially groundable SNMP lists, and
 absence claims must each degrade to `NEEDS_REVIEW` rather than produce a
 verdict.
+
+The hybrid parser and the training loop are tested the same way, against the
+same stub. The hybrid tests pin the three properties that make it safe: a
+confident model contradicting the deterministic parser changes nothing; a config
+the deterministic parser fully reads costs **zero** model calls; and a filled gap
+is stamped `hybrid` and still had to clear the grounding and confidence gates.
+
+The loop tests plant a known wrong answer and a known over-claim in the model's
+output and assert the run finds exactly those, that a human ruling on the same
+field clears the error, that the lowest threshold clearing the target is the one
+chosen, that a field which cannot reach the target is pinned to always-escalate,
+that a thin run cannot relax a threshold an earlier one tightened, and that more
+dangerous verdict flips counts as a regression even when every average improved.

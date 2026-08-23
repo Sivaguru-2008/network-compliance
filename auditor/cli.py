@@ -15,7 +15,7 @@ from typing import List, Optional, Sequence
 from . import __version__
 from .engine import ComplianceEngine, RuleEvaluationError
 from .models.result import AuditReport, Status
-from .parsers import LLMParser, ParserError, VendorParser, registry
+from .parsers import HybridParser, LLMParser, ParserError, VendorParser, registry
 from .parsers.llm.client import DEFAULT_MODEL, AnthropicClient, LLMUnavailableError
 from .report import render_report, write_json_report
 from .rules import (
@@ -88,8 +88,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     llm = parser.add_argument_group(
         "LLM fallback",
-        "For vendors no deterministic parser handles. Parsing sends the configuration "
-        "to the model provider, so it is opt-in.",
+        "For vendors no deterministic parser handles, and for the gaps the deterministic "
+        "parser leaves open (--vendor hybrid). Parsing sends the configuration to the "
+        "model provider, so it is opt-in.",
     )
     llm.add_argument(
         "--allow-llm",
@@ -107,6 +108,14 @@ def build_parser() -> argparse.ArgumentParser:
         default=0.6,
         metavar="F",
         help="Discard model findings below this confidence, escalating them to NEEDS_REVIEW (default: 0.6).",
+    )
+    llm.add_argument(
+        "--training-dir",
+        type=Path,
+        default=None,
+        metavar="DIR",
+        help="Apply the per-field thresholds and worked examples fitted by "
+        "`python -m auditor.training run` in this directory.",
     )
     parser.add_argument(
         "--strict",
@@ -132,14 +141,37 @@ def _select_parser(config_text: str, vendor: Optional[str], allow_llm: bool):
 
 
 def _instantiate(parser_cls, args) -> "VendorParser":
-    """Build the parser, passing LLM knobs only to the parser that has them."""
+    """Build the parser, passing LLM knobs only to the parsers that have them."""
     if parser_cls is LLMParser:
-        return LLMParser(min_confidence=args.llm_min_confidence, client=_llm_client(args))
+        return _llm_parser(args)
+    if parser_cls is HybridParser:
+        return HybridParser(llm=_llm_parser(args))
     return parser_cls()
 
 
+def _llm_parser(args) -> LLMParser:
+    """The LLM parser, tuned by a training run when one is pointed at.
+
+    Without --training-dir this is the parser exactly as shipped: a flat
+    confidence gate and the base prompt. With it, the thresholds the loop
+    measured per field and the corrections it mined replace those defaults, so
+    fields the model has proven unreliable at escalate instead of answering.
+    """
+    client = _llm_client(args)
+    if args.training_dir is None:
+        return LLMParser(client, min_confidence=args.llm_min_confidence)
+    from .training import tuned_parser  # deferred: auditing never needs the loop
+
+    return tuned_parser(args.training_dir, client, min_confidence=args.llm_min_confidence)
+
+
 def _llm_client(args):
-    """Constructed eagerly so a missing SDK or key fails before the config is read aloud."""
+    """Constructed before the parse, so a missing SDK fails before anything is sent.
+
+    A missing *key* surfaces on the first request instead: the SDK resolves
+    credentials lazily. That is why a hybrid parse of a config with no gaps
+    succeeds without one — it never makes a request.
+    """
     return AnthropicClient(model=args.llm_model)
 
 
@@ -156,8 +188,10 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
         parser_cls, confidence = _select_parser(config_text, args.vendor, args.allow_llm)
         parser = _instantiate(parser_cls, args)
         baseline = parser.parse(config_text, source_file=str(args.config))
-        if parser_cls is not LLMParser:
-            # The LLM parser reports the vendor it identified; do not overwrite it.
+        if parser_cls not in (LLMParser, HybridParser):
+            # The LLM parser reports the vendor it identified, and the hybrid parser
+            # carries the confidence of the deterministic parser it built on. Neither
+            # is improved by the registry's score for the class itself.
             baseline.provenance.detection_confidence = confidence
 
         # Platform comes from the parsed baseline, not the parser class: the LLM

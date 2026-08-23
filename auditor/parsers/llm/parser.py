@@ -70,10 +70,12 @@ class LLMParser(VendorParser):
         *,
         min_confidence: float = 0.6,
         trust_absence_claims: bool = False,
+        field_thresholds: Optional[Dict[str, float]] = None,
     ) -> None:
         self._client = client
         self.min_confidence = min_confidence
         self.trust_absence_claims = trust_absence_claims
+        self.field_thresholds = dict(field_thresholds or {})
 
     # -- detection ---------------------------------------------------------
 
@@ -104,6 +106,7 @@ class LLMParser(VendorParser):
             config_text,
             min_confidence=self.min_confidence,
             trust_absence_claims=self.trust_absence_claims,
+            field_thresholds=self.field_thresholds,
         )
 
         baseline = SecurityBaselineModel(

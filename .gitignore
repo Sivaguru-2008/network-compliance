@@ -4,3 +4,7 @@ __pycache__/
 venv/
 reports/
 .pytest_cache/
+
+# Training-loop artifacts: metrics, fitted thresholds, mined examples.
+# Anchored, so it never matches the auditor/training/ package.
+/training/

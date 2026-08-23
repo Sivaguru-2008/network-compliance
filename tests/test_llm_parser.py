@@ -24,77 +24,18 @@ from auditor.parsers.llm import (
     Grounder,
     GroundingIndex,
     IntegerFinding,
-    LLMClient,
     LLMExtraction,
     LLMParser,
     SnmpCommunityClaim,
-    SnmpCommunityFinding,
     TextFinding,
     TextListFinding,
 )
 from auditor.parsers.llm.parser import FIELD_TYPES
 from auditor.parsers.llm.prompt import SYSTEM_PROMPT, build_user_message
+from llm_stub import StubClient, found, make_extraction, undetermined
 
 SAMPLES = Path(__file__).resolve().parents[1] / "samples"
 JUNOS = (SAMPLES / "junos_unknown.conf").read_text(encoding="utf-8")
-
-_KINDS = {
-    "hostname": TextFinding,
-    "telnet_enabled": BooleanFinding,
-    "vty_transport_input": TextListFinding,
-    "vty_exec_timeout_seconds": IntegerFinding,
-    "ssh_enabled": BooleanFinding,
-    "ssh_version": IntegerFinding,
-    "http_server_enabled": BooleanFinding,
-    "https_server_enabled": BooleanFinding,
-    "enable_secret_set": BooleanFinding,
-    "enable_password_present": BooleanFinding,
-    "password_encryption": BooleanFinding,
-    "aaa_enabled": BooleanFinding,
-    "snmp_communities": SnmpCommunityFinding,
-    "logging_enabled": BooleanFinding,
-    "logging_hosts": TextListFinding,
-    "logging_buffered": BooleanFinding,
-}
-
-
-def found(value, source_line, confidence=0.95, reasoning="explicit statement"):
-    return {
-        "determined": True,
-        "value": value,
-        "source_line": source_line,
-        "confidence": confidence,
-        "reasoning": reasoning,
-    }
-
-
-def undetermined(reasoning="not mentioned in the configuration"):
-    return {"determined": False, "value": None, "source_line": None, "confidence": 0.0, "reasoning": reasoning}
-
-
-def make_extraction(vendor="juniper", os_family="junos", **overrides) -> LLMExtraction:
-    """Build a complete extraction; unspecified fields come back undetermined."""
-    payload = {
-        "vendor": vendor,
-        "os_family": os_family,
-        "identification_confidence": 0.97,
-    }
-    for field, kind in _KINDS.items():
-        payload[field] = kind.model_validate(overrides.get(field, undetermined()))
-    return LLMExtraction.model_validate(payload)
-
-
-class StubClient(LLMClient):
-    def __init__(self, extraction=None, error=None):
-        self.extraction = extraction if extraction is not None else make_extraction()
-        self.error = error
-        self.seen_config = None
-
-    def extract(self, config_text: str) -> LLMExtraction:
-        self.seen_config = config_text
-        if self.error:
-            raise self.error
-        return self.extraction
 
 
 def parse_with(extraction, config_text=JUNOS, **kwargs) -> SecurityBaselineModel:
