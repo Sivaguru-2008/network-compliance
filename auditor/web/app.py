@@ -100,6 +100,13 @@ def create_app(store_root: Optional[Path] = None) -> FastAPI:
     store = JobStore(store_root)
     app.state.store = store
 
+    from ..training.mappings import LearnedMappingStore
+    training_dir = Path("training")
+    if store_root:
+        training_dir = store_root / "training"
+    store_path = training_dir / "learned_mappings.jsonl"
+    app.state.mapping_store = LearnedMappingStore(store_path)
+
     # -- views --------------------------------------------------------------
 
     @app.get("/", response_class=HTMLResponse, include_in_schema=False)
@@ -152,14 +159,23 @@ def create_app(store_root: Optional[Path] = None) -> FastAPI:
             store.discard(job_id)
             raise HTTPException(status_code=413, detail=exc.detail) from exc
 
-        # The core call. Explicit paths, exactly as `netaudit --bulk a.conf b.conf`
-        # passes them, so every uploaded file yields a record whatever its
-        # extension -- and so a malformed one yields a parse_error row instead of
-        # taking the batch down with it.
+        # The core call. Explicit paths, using the hybrid parser and dynamically
+        # resolved learned mappings from the store.
+        from ..parsers import HybridParser
+        def custom_parser_factory(parser_cls):
+            if issubclass(parser_cls, HybridParser):
+                return parser_cls(
+                    training_dir=store_path.parent,
+                    mapping_store=app.state.mapping_store
+                )
+            return parser_cls()
+
         inventory = await run_in_threadpool(
             ingest_module.ingest_paths,
             [str(path) for path in saved],
             selected,
+            vendor="hybrid",
+            parser_factory=custom_parser_factory,
         )
 
         job = store.record(job_id, root, inventory)
@@ -244,6 +260,251 @@ def create_app(store_root: Optional[Path] = None) -> FastAPI:
             media_type="application/pdf",
             filename=names[device_id],
         )
+
+    # -- training endpoints --------------------------------------------------
+
+    from pydantic import BaseModel
+    from ..models.inventory import DeviceStatus
+    from ..models.observation import Observation
+    from ..parsers import registry
+    from ..training.mappings import LearnedMapping
+
+    class PreviewRequest(BaseModel):
+        vendor: str
+        pattern: str
+        field: str
+        extraction_strategy: str
+        regex_pattern: Optional[str] = None
+        original_line: str
+
+    def get_device_config_text(job, device_id: int) -> str:
+        config_dir = job.config_dir
+        matching_files = list(config_dir.glob(f"{device_id:04d}_*"))
+        if not matching_files:
+            raise FileNotFoundError(f"Config file for device {device_id} not found in job {job.job_id}")
+        return matching_files[0].read_text(encoding="utf-8", errors="replace")
+
+    @app.get("/training", response_class=HTMLResponse, include_in_schema=False)
+    async def training_view() -> HTMLResponse:
+        return HTMLResponse((STATIC_DIR / "index.html").read_text(encoding="utf-8"))
+
+    @app.get("/training/queue")
+    async def training_queue() -> JSONResponse:
+        queue = []
+        for job_id in store.job_ids():
+            job = store.get(job_id)
+            if not job or not job.inventory:
+                continue
+            for idx, device in enumerate(job.inventory.devices):
+                if device.status != DeviceStatus.AUDITED:
+                    continue
+                try:
+                    config_text = get_device_config_text(job, idx)
+                except Exception:
+                    continue
+
+                if not device.target or not device.target.parser:
+                    continue
+                try:
+                    parser_cls = registry.get(device.target.parser)
+                    parser = parser_cls()
+                    baseline = parser.parse(config_text)
+                except Exception:
+                    continue
+
+                from ..training.mappings import get_unrecognized_lines
+                unrecognized = get_unrecognized_lines(config_text, baseline)
+
+                for item in unrecognized:
+                    line_num = item["line_number"]
+                    line_text = item["text"]
+                    # Context: 5 lines before and after
+                    lines = config_text.splitlines()
+                    start = max(0, line_num - 6)
+                    end = min(len(lines), line_num + 5)
+                    context_lines = []
+                    for i in range(start, end):
+                        context_lines.append(f"Line {i+1}: {lines[i]}")
+                    context = "\n".join(context_lines)
+
+                    queue.append({
+                        "id": f"{job_id}_{idx}_{line_num}",
+                        "job_id": job_id,
+                        "device_id": idx,
+                        "line_number": line_num,
+                        "vendor": device.identity.vendor or device.target.vendor,
+                        "device_identity": device.display_name,
+                        "field": "Unknown",
+                        "status": "NEEDS_REVIEW",
+                        "source_line": line_text,
+                        "excerpt": line_text,
+                        "context": context,
+                        "reason": "Pattern unrecognized by deterministic parser.",
+                    })
+        return JSONResponse(queue)
+
+
+
+    @app.post("/training/preview")
+    async def training_preview(req: PreviewRequest) -> JSONResponse:
+        from ..models.baseline import SecurityBaselineModel, ParserProvenance
+        from ..training.mappings import resolve_learned_mappings
+        import re
+
+        if req.field not in SecurityBaselineModel.observable_fields():
+            raise HTTPException(status_code=400, detail=f"Unknown baseline field: {req.field}")
+
+        if req.extraction_strategy == "regex":
+            if not req.regex_pattern:
+                raise HTTPException(status_code=400, detail="Regex pattern is required for regex extraction strategy.")
+            try:
+                re.compile(req.regex_pattern)
+            except re.error as e:
+                raise HTTPException(status_code=400, detail=f"Invalid regex pattern: {e}")
+
+        dummy_provenance = ParserProvenance(
+            parser_name="preview",
+            parser_version="1.0.0",
+            vendor=req.vendor,
+            os_family="unknown"
+        )
+        dummy_baseline = SecurityBaselineModel(provenance=dummy_provenance)
+
+        mapping = LearnedMapping(
+            mapping_id="preview-temp",
+            vendor=req.vendor,
+            pattern=req.pattern,
+            field=req.field,
+            extraction_strategy=req.extraction_strategy,
+            regex_pattern=req.regex_pattern,
+            approval_state="approved",
+            status="approved"
+        )
+
+        class TempMappingStore:
+            def get_active_approved_mappings(self):
+                return [mapping]
+
+        resolved_baseline = resolve_learned_mappings(
+            config_text=req.original_line,
+            baseline=dummy_baseline,
+            store=TempMappingStore()
+        )
+
+        obs = getattr(resolved_baseline, req.field)
+        if obs.detected:
+            return JSONResponse({
+                "result": "FOUND",
+                "extracted_value": obs.value,
+                "evidence": "line 1"
+            })
+        else:
+            return JSONResponse({
+                "result": "NOT_FOUND",
+                "extracted_value": None,
+                "evidence": "Pattern did not match the original configuration line."
+            })
+
+    @app.post("/training")
+    async def create_mapping_endpoint(mapping: LearnedMapping) -> JSONResponse:
+        try:
+            saved = app.state.mapping_store.create_mapping(mapping)
+            return JSONResponse(saved.model_dump(mode="json"))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
+    @app.post("/training/{id}/approve")
+    async def training_approve(id: str) -> JSONResponse:
+        mapping = app.state.mapping_store.approve_mapping(id)
+        if not mapping:
+            raise HTTPException(status_code=404, detail="Mapping not found")
+        return JSONResponse(mapping.model_dump(mode="json"))
+
+    @app.post("/training/{id}/reject")
+    async def training_reject(id: str) -> JSONResponse:
+        latest = app.state.mapping_store.retrieve_mapping(id)
+        if not latest:
+            raise HTTPException(status_code=404, detail="Mapping not found")
+        rejected = latest.model_copy(update={
+            "status": "rejected",
+            "approval_state": "rejected",
+            "version": latest.version + 1
+        })
+        app.state.mapping_store._records.append(rejected)
+        app.state.mapping_store._resolve_conflicts()
+        app.state.mapping_store.save()
+        return JSONResponse(rejected.model_dump(mode="json"))
+
+    @app.post("/training/{id}/disable")
+    async def training_disable(id: str) -> JSONResponse:
+        mapping = app.state.mapping_store.disable_mapping(id)
+        if not mapping:
+            raise HTTPException(status_code=404, detail="Mapping not found")
+        return JSONResponse(mapping.model_dump(mode="json"))
+
+    @app.post("/training/{id}/delete")
+    async def training_delete(id: str) -> JSONResponse:
+        deleted = app.state.mapping_store.delete_mapping(id)
+        if not deleted:
+            raise HTTPException(status_code=404, detail="Mapping not found")
+        return JSONResponse({"status": "deleted"})
+
+    @app.get("/training/history")
+    async def training_history() -> JSONResponse:
+        mappings = app.state.mapping_store.list_mappings()
+        return JSONResponse([m.model_dump(mode="json") for m in mappings])
+
+    @app.get("/training/{id}")
+    async def training_item(id: str) -> JSONResponse:
+        parts = id.split("_")
+        if len(parts) < 3:
+            raise HTTPException(status_code=400, detail="Invalid queue item ID format")
+        job_id = parts[0]
+        try:
+            device_idx = int(parts[1])
+            line_num = int(parts[2])
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid queue item ID format")
+
+        job = store.get(job_id)
+        if not job:
+            raise HTTPException(status_code=404, detail="Job not found")
+        device = job.device_at(device_idx)
+        if not device:
+            raise HTTPException(status_code=404, detail="Device not found")
+
+        try:
+            config_text = get_device_config_text(job, device_idx)
+        except Exception:
+            raise HTTPException(status_code=404, detail="Config file not found")
+
+        lines = config_text.splitlines()
+        if line_num < 1 or line_num > len(lines):
+            raise HTTPException(status_code=404, detail="Line number out of range")
+
+        line_text = lines[line_num - 1].strip()
+
+        start = max(0, line_num - 6)
+        end = min(len(lines), line_num + 5)
+        context_lines = []
+        for i in range(start, end):
+            context_lines.append(f"Line {i+1}: {lines[i]}")
+        context = "\n".join(context_lines)
+
+        return JSONResponse({
+            "id": id,
+            "job_id": job_id,
+            "device_id": device_idx,
+            "line_number": line_num,
+            "vendor": device.identity.vendor or (device.target.vendor if device.target else "unknown"),
+            "device_identity": device.display_name,
+            "field": "Unknown",
+            "status": "NEEDS_REVIEW",
+            "source_line": line_text,
+            "excerpt": line_text,
+            "context": context,
+            "reason": "Pattern unrecognized by deterministic parser.",
+        })
 
     return app
 

@@ -58,6 +58,8 @@ _HARDWARE_SOURCE = {
     "cisco_ios": "show version / show inventory",
     "juniper_junos": "show chassis hardware / show version",
     "fortinet_fortios": "get system status",
+    "arista_eos": "show version / show inventory",
+    "sonic": "show platform summary",
     UNKNOWN_VENDOR: "the vendor's show-version equivalent",
 }
 
@@ -235,12 +237,87 @@ def _best_effort_hostname(lines: List[str]) -> Optional[Observation[str]]:
     return None
 
 
+_ARISTA_DEVICE_HEADER = re.compile(
+    r"(?i)^\s*!\s*device:\s*\S+\s*\(([^,]+),\s*EOS-([^)]+)\)"
+)
+
+_ARISTA_VERSION = re.compile(r"(?i)^\s*!\s*device:\s*\S+\s*\([^,]+,\s*EOS-([^)]+)\)")
+
+
+def _extract_arista_eos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    header = _scan(lines, _ARISTA_DEVICE_HEADER, group=1)
+    if header:
+        model_val, source_line, line_number = header
+        version_match = _ARISTA_VERSION.match(source_line)
+        fields["model"] = Observation[str].found(
+            model_val.strip(), source_line, line_number,
+            note="Platform model from the '! device:' header.",
+        )
+        if version_match:
+            fields["os_version"] = Observation[str].found(
+                version_match.group(1).strip(), source_line, line_number,
+                note="EOS version from the '! device:' header.",
+            )
+        else:
+            fields["os_version"] = _missing("os_version", "arista_eos")
+    else:
+        fields["model"] = _missing("model", "arista_eos")
+        fields["os_version"] = Observation[str].unknown(
+            "No '! device:' header found in this configuration."
+        )
+
+    fields["serial_number"] = _missing("serial_number", "arista_eos")
+    return fields
+
+
+def _extract_sonic(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    raw_text = "\n".join(lines)
+    try:
+        data = __import__("json").loads(raw_text)
+    except Exception:
+        data = {}
+
+    meta = data.get("DEVICE_METADATA", {}).get("localhost", {})
+    platform = meta.get("platform") or meta.get("hwsku")
+    if platform:
+        for idx, line in enumerate(lines, 1):
+            if "platform" in line or "hwsku" in line:
+                fields["model"] = Observation[str].found(
+                    platform, line.strip(), idx,
+                    note="Platform from DEVICE_METADATA.",
+                )
+                break
+        else:
+            fields["model"] = Observation[str].found(
+                platform, "DEVICE_METADATA", None,
+            )
+    else:
+        fields["model"] = _missing("model", "sonic")
+
+    fields["os_version"] = Observation[str].unknown(
+        "SONiC version is not stored in config_db.json; it requires "
+        "'show version' output."
+    )
+    fields["serial_number"] = _missing("serial_number", "sonic")
+    return fields
+
+
 _EXTRACTORS: Dict[
     str, Callable[[List[str], Optional[SecurityBaselineModel]], Dict[str, Observation]]
 ] = {
     "cisco_ios": _extract_cisco_ios,
     "juniper_junos": _extract_junos,
     "fortinet_fortios": _extract_fortios,
+    "arista_eos": _extract_arista_eos,
+    "sonic_sonic": _extract_sonic,
 }
 
 

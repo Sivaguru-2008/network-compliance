@@ -157,6 +157,22 @@
   .err { color: var(--fail); background: var(--fail-bg); border: 1px solid #f3c2bd; padding: 10px 14px; border-radius: 6px; margin-top: 14px; font-size: 13.5px; }
   .dl { background: var(--accent); color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 13.5px; display: inline-block; }
   .spin { color: var(--muted); font-size: 13.5px; }
+
+  /* -- training center styles -- */
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;
+  }
+  .badge-approved { background: var(--pass-bg); color: var(--pass); border: 1px solid #b7e0c2; }
+  .badge-pending { background: var(--review-bg); color: var(--review); border: 1px dashed #e0b76a; }
+  .badge-rejected { background: var(--fail-bg); color: var(--fail); border: 1px solid #f3c2bd; }
+  .badge-disabled { background: #e8edf3; color: #3c5675; }
+  .badge-deleted { background: #eef0f2; color: #8b929c; }
+
+  .line-item {
+    padding: 10px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background 0.1s;
+  }
+  .line-item:hover { background: #fafbfc; }
+  .line-item.selected { background: #ebf8ff; border-left: 4px solid var(--accent); }
 </style>
 </head>
 <body>
@@ -165,6 +181,7 @@
   <h1>netaudit</h1>
   <span class="tag">unified ingestion &middot; multi-vendor &middot; multi-framework</span>
   <span class="spacer"></span>
+  <button id="btn-training">Training Center</button>
   <button id="btn-new" class="hidden">New upload</button>
   <button id="btn-back" class="hidden">&larr; Inventory</button>
 </header>
@@ -230,6 +247,99 @@
     </div>
   </section>
 
+  <!-- ============ 4. TRAINING CENTER ============ -->
+  <section id="view-training" class="hidden">
+    <div class="panel">
+      <h2>Training Center</h2>
+      <p class="sub">Human-in-the-loop mapping workflow. Teach the parser new configuration patterns to resolve NEEDS_REVIEW status.</p>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <!-- Left Column: Queue -->
+        <div>
+          <h3>NEEDS_REVIEW Queue</h3>
+          <div id="queue-list" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff;">
+            <p style="padding: 16px; color: var(--muted);">Scanning for items requiring review...</p>
+          </div>
+        </div>
+        
+        <!-- Right Column: Observation Viewer & Editor -->
+        <div>
+          <h3>Selected Observation</h3>
+          <div id="obs-viewer" class="note" style="margin-top: 0; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <p style="color: var(--muted);">Select an observation from the queue to teach a mapping.</p>
+          </div>
+          
+          <div id="mapping-editor" class="hidden" style="margin-top: 16px; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; background: #fff;">
+            <h4 style="margin: 0 0 12px 0;">Create Mapping</h4>
+            <form id="mapping-form" onsubmit="event.preventDefault();">
+              <input type="hidden" id="map-vendor">
+              <input type="hidden" id="map-device">
+              <input type="hidden" id="map-line-num">
+              <input type="hidden" id="map-source-line">
+              
+              <div style="margin-bottom: 12px;">
+                <label class="lbl">Pattern (config prefix or regex match)</label>
+                <input type="text" id="map-pattern" style="width:100%; padding:6px; border:1px solid var(--line); border-radius:4px;" required>
+              </div>
+              
+              <div style="margin-bottom: 12px;">
+                <label class="lbl">Target Baseline Field</label>
+                <select id="map-field" style="width:100%; padding:6px; border:1px solid var(--line); border-radius:4px;" required>
+                  <!-- Populate dynamically -->
+                </select>
+              </div>
+              
+              <div style="margin-bottom: 12px;">
+                <label class="lbl">Extraction Strategy</label>
+                <select id="map-strategy" style="width:100%; padding:6px; border:1px solid var(--line); border-radius:4px;" required>
+                  <option value="exact">Exact (Boolean True)</option>
+                  <option value="token">Token (Value after pattern)</option>
+                  <option value="token_list">Token List (Space-separated list)</option>
+                  <option value="regex">Regex (Custom regular expression)</option>
+                </select>
+              </div>
+              
+              <div id="map-regex-group" class="hidden" style="margin-bottom: 12px;">
+                <label class="lbl">Regex Pattern (must contain one capture group, e.g. pattern (\d+))</label>
+                <input type="text" id="map-regex" style="width:100%; padding:6px; border:1px solid var(--line); border-radius:4px;">
+              </div>
+              
+              <div style="display: flex; gap: 8px; margin-top: 16px;">
+                <button type="button" id="btn-preview" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px;">Preview Mapping</button>
+                <button type="button" id="btn-approve" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px; background: var(--pass);">Approve & Save</button>
+                <button type="button" id="btn-reject" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px; background: var(--fail);">Reject</button>
+              </div>
+            </form>
+            
+            <div id="preview-result" class="hidden" style="margin-top: 16px; padding: 12px; border-radius: 4px;">
+              <!-- Preview results -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Bottom: History -->
+      <div>
+        <h3>Training History</h3>
+        <table style="background: #fff; border: 1px solid var(--line); border-radius: var(--radius);">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Field</th>
+              <th>Status</th>
+              <th>Creator</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="history-rows">
+            <tr><td colspan="6" style="text-align: center; color: var(--muted);">No mappings in history.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <script>
@@ -257,10 +367,10 @@ function displayFile(sourceFile) {
 }
 
 function show(view) {
-  ["upload", "inventory", "device"].forEach(function (v) {
+  ["upload", "inventory", "device", "training"].forEach(function (v) {
     $("view-" + v).classList.toggle("hidden", v !== view);
   });
-  $("btn-new").classList.toggle("hidden", view === "upload");
+  $("btn-new").classList.toggle("hidden", view === "upload" || view === "training");
   $("btn-back").classList.toggle("hidden", view !== "device");
   window.scrollTo(0, 0);
 }
@@ -568,6 +678,314 @@ function renderFindings() {
     "</div>";
   }).join("");
 }
+// ---------------------------------------------------------------- training center javascript
+
+var baselineFields = [
+  "hostname",
+  "telnet_enabled",
+  "vty_transport_input",
+  "vty_exec_timeout_seconds",
+  "ssh_enabled",
+  "ssh_version",
+  "http_server_enabled",
+  "https_server_enabled",
+  "management_acl_applied",
+  "login_banner_present",
+  "enable_secret_set",
+  "enable_password_present",
+  "password_encryption",
+  "password_min_length",
+  "aaa_enabled",
+  "snmp_communities",
+  "logging_enabled",
+  "logging_hosts",
+  "logging_buffered",
+  "ntp_servers"
+];
+
+function initTrainingCenter() {
+  var select = $("map-field");
+  select.innerHTML = baselineFields.map(function(f) {
+    return '<option value="' + esc(f) + '">' + esc(f) + '</option>';
+  }).join("");
+
+  $("map-strategy").addEventListener("change", function() {
+    $("map-regex-group").classList.toggle("hidden", this.value !== "regex");
+  });
+
+  $("btn-preview").addEventListener("click", previewMapping);
+  $("btn-approve").addEventListener("click", approveMapping);
+  $("btn-reject").addEventListener("click", rejectMapping);
+
+  $("btn-training").addEventListener("click", function() {
+    show("training");
+    loadTrainingQueue();
+    loadTrainingHistory();
+  });
+}
+
+function loadTrainingQueue() {
+  $("queue-list").innerHTML = '<p style="padding: 16px; color: var(--muted);">Loading queue...</p>';
+  fetch("/training/queue")
+    .then(function(r) { return r.json(); })
+    .then(function(queue) {
+      if (!queue.length) {
+        $("queue-list").innerHTML = '<p style="padding: 16px; color: var(--pass);">No items requiring review in queue!</p>';
+        return;
+      }
+      $("queue-list").innerHTML = queue.map(function(item) {
+        return '<div class="line-item" onclick="selectQueueItem(\'' + esc(item.id) + '\')">' +
+          '<strong>' + esc(item.vendor) + '</strong> &middot; <span class="file">' + esc(item.device_identity) + '</span>' +
+          '<div style="font-family: monospace; font-size: 12px; margin-top: 4px; color: var(--ink);">L' + item.line_number + ': ' + esc(item.source_line) + '</div>' +
+          '</div>';
+      }).join("");
+    })
+    .catch(function() {
+      $("queue-list").innerHTML = '<p style="padding: 16px; color: var(--fail);">Failed to load training queue.</p>';
+    });
+}
+
+function selectQueueItem(id) {
+  // Highlight selected item in list
+  var items = [].slice.call(document.querySelectorAll("#queue-list .line-item"));
+  items.forEach(function(item) { item.classList.remove("selected"); });
+  // Find clicked item
+  var clicked = items.find(function(item) {
+    return item.getAttribute("onclick").indexOf(id) !== -1;
+  });
+  if (clicked) clicked.classList.add("selected");
+
+  fetch("/training/" + id)
+    .then(function(r) { return r.json(); })
+    .then(function(item) {
+      $("obs-viewer").className = "note";
+      $("obs-viewer").style.display = "block";
+      $("obs-viewer").innerHTML = 
+        '<div><strong>Vendor:</strong> ' + esc(item.vendor) + '</div>' +
+        '<div><strong>Device:</strong> ' + esc(item.device_identity) + '</div>' +
+        '<div><strong>Field:</strong> ' + esc(item.field) + '</div>' +
+        '<div><strong>Current status:</strong> <span class="v v-review">' + esc(item.status) + '</span></div>' +
+        '<div style="margin-top: 10px;"><strong>Evidence:</strong></div>' +
+        '<div style="font-family: monospace; background: #fff; padding: 6px; border: 1px solid var(--line); border-radius: 4px;">Line ' + item.line_number + ': ' + esc(item.source_line) + '</div>' +
+        '<div style="margin-top: 10px;"><strong>Context:</strong></div>' +
+        '<pre style="font-family: monospace; background: #fff; padding: 6px; border: 1px solid var(--line); border-radius: 4px; overflow-x: auto; margin: 0; font-size: 12px;">' + esc(item.context) + '</pre>' +
+        '<div style="margin-top: 10px; font-size: 13px; color: var(--muted);"><strong>Why review is required:</strong> ' + esc(item.reason) + '</div>';
+
+      $("map-vendor").value = item.vendor;
+      $("map-device").value = item.device_identity;
+      $("map-line-num").value = item.line_number;
+      $("map-source-line").value = item.source_line;
+
+      // Suggest pattern
+      var words = item.source_line.trim().split(/\s+/);
+      var suggestion = words[0];
+      if (words.length > 1 && !words[1].startsWith("-") && !words[1].match(/^\d+$/)) {
+        suggestion += " " + words[1];
+      }
+      $("map-pattern").value = suggestion;
+      
+      $("mapping-editor").classList.remove("hidden");
+      $("preview-result").classList.add("hidden");
+    });
+}
+
+function previewMapping() {
+  var req = {
+    vendor: $("map-vendor").value,
+    pattern: $("map-pattern").value,
+    field: $("map-field").value,
+    extraction_strategy: $("map-strategy").value,
+    regex_pattern: $("map-strategy").value === "regex" ? $("map-regex").value : null,
+    original_line: $("map-source-line").value
+  };
+
+  fetch("/training/preview", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req)
+  })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      var box = $("preview-result");
+      box.classList.remove("hidden");
+      if (!res.ok) {
+        box.style.background = "var(--fail-bg)";
+        box.style.border = "1px solid var(--fail)";
+        box.innerHTML = '<span style="color: var(--fail); font-weight: bold;">Validation Error:</span><div style="margin-top:4px;">' + esc(res.body.detail || "Preview failed.") + '</div>';
+        return;
+      }
+      var b = res.body;
+      if (b.result === "FOUND") {
+        box.style.background = "var(--pass-bg)";
+        box.style.border = "1px solid var(--pass)";
+        box.innerHTML = 
+          '<div><strong style="color: var(--pass);">FOUND</strong></div>' +
+          '<div><strong>Field:</strong> <code>' + esc(req.field) + '</code></div>' +
+          '<div><strong>Extracted Value:</strong> <code>' + esc(JSON.stringify(b.extracted_value)) + '</code></div>' +
+          '<div><strong>Evidence:</strong> ' + esc(b.evidence) + '</div>';
+      } else {
+        box.style.background = "var(--review-bg)";
+        box.style.border = "1px dashed var(--review)";
+        box.innerHTML = 
+          '<div><strong style="color: var(--review);">NOT FOUND</strong></div>' +
+          '<div style="font-size: 13px; color: var(--muted);">' + esc(b.evidence) + '</div>';
+      }
+    })
+    .catch(function(e) {
+      var box = $("preview-result");
+      box.classList.remove("hidden");
+      box.style.background = "var(--fail-bg)";
+      box.style.border = "1px solid var(--fail)";
+      box.innerHTML = '<span style="color: var(--fail); font-weight: bold;">Network Error:</span><div>' + esc(e.message) + '</div>';
+    });
+}
+
+function approveMapping() {
+  var mappingId = "LM-" + Math.floor(Math.random() * 1000000);
+  var req = {
+    mapping_id: mappingId,
+    vendor: $("map-vendor").value,
+    pattern: $("map-pattern").value,
+    field: $("map-field").value,
+    extraction_strategy: $("map-strategy").value,
+    regex_pattern: $("map-strategy").value === "regex" ? $("map-regex").value : null,
+    creator: "administrator",
+    status: "pending",
+    approval_state: "pending",
+    evidence_example: $("map-source-line").value
+  };
+
+  fetch("/training", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req)
+  })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      if (!res.ok) throw new Error(res.body.detail || "Failed to create mapping.");
+      return fetch("/training/" + mappingId + "/approve", { method: "POST" });
+    })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      if (!res.ok) throw new Error(res.body.detail || "Failed to approve mapping.");
+      alert("Mapping successfully approved and persisted!");
+      $("mapping-editor").classList.add("hidden");
+      loadTrainingQueue();
+      loadTrainingHistory();
+    })
+    .catch(function(e) {
+      alert("Error: " + e.message);
+    });
+}
+
+function rejectMapping() {
+  var mappingId = "LM-" + Math.floor(Math.random() * 1000000);
+  var req = {
+    mapping_id: mappingId,
+    vendor: $("map-vendor").value,
+    pattern: $("map-pattern").value,
+    field: $("map-field").value,
+    extraction_strategy: $("map-strategy").value,
+    regex_pattern: $("map-strategy").value === "regex" ? $("map-regex").value : null,
+    creator: "administrator",
+    status: "pending",
+    approval_state: "pending",
+    evidence_example: $("map-source-line").value
+  };
+
+  fetch("/training", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req)
+  })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      if (!res.ok) throw new Error(res.body.detail || "Failed to create mapping.");
+      return fetch("/training/" + mappingId + "/reject", { method: "POST" });
+    })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      if (!res.ok) throw new Error(res.body.detail || "Failed to reject mapping.");
+      alert("Mapping successfully rejected.");
+      $("mapping-editor").classList.add("hidden");
+      loadTrainingQueue();
+      loadTrainingHistory();
+    })
+    .catch(function(e) {
+      alert("Error: " + e.message);
+    });
+}
+
+function approveMappingFromHistory(id) {
+  fetch("/training/" + id + "/approve", { method: "POST" })
+    .then(function(r) {
+      if (!r.ok) alert("Failed to approve mapping.");
+      loadTrainingHistory();
+      loadTrainingQueue();
+    });
+}
+
+function disableMappingFromHistory(id) {
+  fetch("/training/" + id + "/disable", { method: "POST" })
+    .then(function(r) {
+      if (!r.ok) alert("Failed to disable mapping.");
+      loadTrainingHistory();
+    });
+}
+
+function deleteMappingFromHistory(id) {
+  if (confirm("Are you sure you want to delete this mapping?")) {
+    fetch("/training/" + id + "/delete", { method: "POST" })
+      .then(function(r) {
+        if (!r.ok) alert("Failed to delete mapping.");
+        loadTrainingHistory();
+      });
+  }
+}
+
+function loadTrainingHistory() {
+  fetch("/training/history")
+    .then(function(r) { return r.json(); })
+    .then(function(history) {
+      var tbody = $("history-rows");
+      if (!history.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--muted);">No mappings in history.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = history.map(function(m) {
+        var actions = [];
+        if (m.status !== "approved") {
+          actions.push('<button class="primary" style="margin-top:0; padding:2px 8px; font-size:11px; background:var(--pass);" onclick="approveMappingFromHistory(\'' + esc(m.mapping_id) + '\')">Approve</button>');
+        } else {
+          actions.push('<button class="primary" style="margin-top:0; padding:2px 8px; font-size:11px; background:var(--review);" onclick="disableMappingFromHistory(\'' + esc(m.mapping_id) + '\')">Disable</button>');
+        }
+        actions.push('<button class="primary" style="margin-top:0; padding:2px 8px; font-size:11px; background:var(--fail);" onclick="deleteMappingFromHistory(\'' + esc(m.mapping_id) + '\')">Delete</button>');
+
+        var dateStr = String(m.created_at || "").replace("T", " ").slice(0, 19);
+
+        return '<tr>' +
+          '<td><strong>' + esc(m.pattern) + '</strong><br><small style="color:var(--muted)">' + esc(m.vendor) + '</small></td>' +
+          '<td><code>' + esc(m.field) + '</code><br><small style="color:var(--muted)">' + esc(m.extraction_strategy) + '</small></td>' +
+          '<td><span class="badge badge-' + esc(m.status) + '">' + esc(m.status) + '</span></td>' +
+          '<td>' + esc(m.creator) + '</td>' +
+          '<td>' + esc(dateStr) + '</td>' +
+          '<td><div style="display:flex; gap:4px;">' + actions.join("") + '</div></td>' +
+          '</tr>';
+      }).join("");
+    })
+    .catch(function() {
+      $("history-rows").innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--fail);">Failed to load history.</td></tr>';
+    });
+}
+
+// Call init on page load
+initTrainingCenter();
+if (window.location.pathname === "/training" || window.location.hash === "#training") {
+  show("training");
+  loadTrainingQueue();
+  loadTrainingHistory();
+}
+
 </script>
 </body>
 </html>

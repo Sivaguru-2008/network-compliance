@@ -7,9 +7,11 @@ security baseline, evaluates it against a CIS Benchmark rule pack, and reports
 `PASS` / `FAIL` / `NEEDS_REVIEW` per control — each verdict backed by the exact
 configuration line it came from.
 
-Five parsers implement one interface: deterministic parsers for
-**[Cisco IOS](#three-deterministic-vendors)**, **[Juniper Junos](#three-deterministic-vendors)**
-and **[Fortinet FortiOS](#three-deterministic-vendors)**, an
+Seven parsers implement one interface: deterministic parsers for
+**[Cisco IOS](#five-deterministic-vendors)**, **[Juniper Junos](#five-deterministic-vendors)**,
+**[Fortinet FortiOS](#five-deterministic-vendors)**,
+**[Arista EOS](#five-deterministic-vendors)** and
+**[SONiC](#five-deterministic-vendors)**, an
 **[LLM fallback](#the-llm-fallback-parser)** for vendors nothing deterministic
 recognises, and a **[hybrid](#the-hybrid-parser)** that runs the deterministic
 pass first and lets the model fill only what it could not settle. The engine
@@ -20,12 +22,15 @@ cannot tell them apart — that is the design.
 | Cisco IOS / IOS-XE | `cisco_ios` | **deterministic** — grammar, no model call |
 | Juniper Junos | `juniper_junos` | **deterministic** — grammar, both config formats |
 | Fortinet FortiOS | `fortinet_fortios` | **deterministic** — grammar, block walk |
+| Arista EOS | `arista_eos` | **deterministic** — grammar, management-block structure |
+| SONiC | `sonic` | **deterministic** — JSON config_db.json |
 | anything else | `llm` | **LLM fallback**, opt-in with `--allow-llm` |
 | a recognised vendor with gaps | `hybrid` | deterministic first; the model fills only what it could not settle |
 
-Three configuration languages with nothing in common — indented IOS commands,
-Junos braces or `set` paths, FortiOS `config`/`edit`/`next`/`end` blocks — are
-normalized by three vendor-specific parsers into **one** audit model. Everything
+Five configuration languages with nothing in common — indented IOS commands,
+Junos braces or `set` paths, FortiOS `config`/`edit`/`next`/`end` blocks,
+Arista EOS management blocks, and SONiC JSON config_db — are normalized by
+five vendor-specific parsers into **one** audit model. Everything
 downstream of that model is written once: one engine, one condition grammar, one
 report. A vendor is a parser and a rule pack, never a change to the pipeline.
 
@@ -349,22 +354,28 @@ deciding to.
 
 ---
 
-## Three deterministic vendors
+## Five deterministic vendors
 
-Cisco IOS, Juniper Junos and Fortinet FortiOS are all read by grammar, not by a
-model. Each was added for a reason the previous one could not settle:
+Cisco IOS, Juniper Junos, Fortinet FortiOS, Arista EOS and SONiC are all read
+by grammar, not by a model. Each was added for a reason the previous one could
+not settle:
 
 - **Cisco IOS** proved the pipeline end to end.
 - **Junos** tested whether `SecurityBaselineModel` was genuinely vendor-neutral
   or Cisco vocabulary wearing neutral names.
 - **FortiOS** tested whether a *setting* in this tool means the effective state
   of the device or merely a line that appears in a file.
+- **Arista EOS** tested vendor detection isolation against a closely related CLI
+  syntax (EOS shares IOS heritage but organises management access differently).
+- **SONiC** tested a fundamentally different configuration format (JSON
+  config_db.json), where many security settings live at the Linux level and
+  cannot be confirmed from config_db alone.
 
-Adding the second and third vendor each required **no change to the baseline,
-the engine, the operators, the report layer, or the CLI** — a parser file and a
-rule pack, exactly as the pipeline section promises. Three configuration
-languages go in; one `SecurityBaselineModel` comes out; from there the code path
-is shared, byte for byte.
+Adding each new vendor required **no change to the baseline, the engine, the
+operators, the report layer, or the CLI** — a parser file and a remediation
+file, exactly as the pipeline section promises. Five configuration languages go
+in; one `SecurityBaselineModel` comes out; from there the code path is shared,
+byte for byte.
 
 ### Junos: two formats, one reading
 
@@ -478,10 +489,10 @@ has nothing to match.
 
 ## The LLM fallback parser
 
-`LLMParser` handles configurations no deterministic parser recognises — Arista,
-Huawei, Palo Alto, whatever walks in. Cisco IOS, Junos and FortiOS are **not**
-in that set any more: each has a deterministic parser, and the registry always
-prefers one. It implements the *same* `VendorParser` contract as
+`LLMParser` handles configurations no deterministic parser recognises — Huawei,
+Palo Alto, whatever walks in. Cisco IOS, Junos, FortiOS, Arista EOS and SONiC
+are **not** in that set: each has a deterministic parser, and the registry
+always prefers one. It implements the *same* `VendorParser` contract as
 `CiscoIOSParser`:
 
 ```python
@@ -701,6 +712,8 @@ auditor/
     cisco_ios.py     CiscoIOSParser — ciscoconfparse2, absence policy, worst-case aggregation
     junos.py         JunosParser — set + braces format, deactivate/inactive, Junos absence policy
     fortios.py       FortiosParser — config/edit block walk, unset/delete, configured vs in force
+    arista_eos.py    AristaEOSParser — ciscoconfparse2, management-block structure, EOS absence policy
+    sonic.py         SonicParser — JSON config_db.json, Linux-level NEEDS_REVIEW policy
     hybrid.py        HybridParser — deterministic first, model only for the gaps
     llm/
       parser.py      LLMParser — the fallback for unrecognised vendors
@@ -735,7 +748,9 @@ auditor/
   ingest.py          bulk orchestration over pipeline.py - collection, isolation, dedup
   cli.py             argument parsing and wiring only
 samples/             hardened_ios.conf, insecure_ios.conf, junos_srx.conf,
-                     fortios_fgt.conf, unknown_vendor.conf
+                     fortios_fgt.conf, unknown_vendor.conf,
+                     arista/ (secure/insecure/ambiguous/unknown/malformed),
+                     sonic/ (secure/insecure/ambiguous/unknown/malformed)
 samples/configs/     a seven-file fleet for --bulk, including a companion capture,
                      a drifted second snapshot, an unknown vendor and an empty file
 tests/               670 tests (622, plus 48 PDF tests that skip without reportlab)
@@ -971,8 +986,8 @@ STIG or ISO — `extract_identity()` does not even take a framework argument.
 
 | Field | Type | Extractable from a config alone? |
 | --- | --- | --- |
-| `vendor` | `cisco_ios` \| `juniper_junos` \| `fortinet_fortios` \| `unknown` | yes — from the parser that claimed the file |
-| `os_family` | `ios` \| `junos` \| `fortios` \| `unknown` | yes |
+| `vendor` | `cisco_ios` \| `juniper_junos` \| `fortinet_fortios` \| `arista_eos` \| `sonic` \| `unknown` | yes — from the parser that claimed the file |
+| `os_family` | `ios` \| `junos` \| `fortios` \| `eos` \| `sonic` \| `unknown` | yes |
 | `hostname` | observation | **yes, all three vendors** |
 | `os_version` | observation | Cisco `version 15.7`; Junos `set version ...`; FortiOS `#config-version=` header |
 | `model` | observation | FortiOS only (platform code in the header); Cisco only if `license udi` is present |
@@ -1396,6 +1411,41 @@ step, and nothing here half-builds toward it. Anyone who can reach the port can
 upload and read back any job. Fine for a local demo; not for anything beyond
 one.
 
-**Next:** the in-browser training GUI (Step 11) — exposing the existing
-learned-mapping / training flow so an administrator teaches an unknown vendor
-from this dashboard and re-audits without a code change.
+### Administrator Training
+
+When the parser encounters an unknown configuration pattern, it produces `NEEDS_REVIEW` rather than guessing.
+
+An administrator can review the evidence, create a normalized mapping, preview its effect, and explicitly approve it.
+
+Approved mappings are persisted in `LearnedMappingStore` and automatically consumed by subsequent `HybridParser` executions.
+
+#### Canonical Training Store
+All approved mappings are saved in `training/learned_mappings.jsonl` (or dynamically under the test's temporary store root during unit/integration tests). No SQLite or secondary databases are introduced.
+
+#### Training Workflow
+1. Upload configuration files via the main dashboard.
+2. If any lines are unrecognized, click **Training Center** in the top header.
+3. The queue displays the unrecognized config lines.
+4. Select a queue item to view its details (line content, line number, surrounding context, vendor, and device identity).
+5. Specify a mapping pattern, choose a target baseline field, select an extraction strategy, and write a regex pattern if necessary.
+6. Click **Preview Mapping** to execute a validation check on the configuration line without saving.
+7. Click **Approve & Save** to add the mapping to the store.
+
+#### Approval Semantics
+Mappings are saved with a version history. When a mapping is explicitly approved, it moves to `status = "approved"` and `approval_state = "approved"`, which makes it active. A rejected mapping has `status = "rejected"` and `approval_state = "rejected"`, meaning it remains in history but does not affect the parser's behavior.
+
+#### Security Model
+- Mappings only permit standard, safe extraction strategies (`exact`, `token`, `token_list`, `regex`) already defined in the core pipeline.
+- No arbitrary Python (`eval`, `exec`), shell commands, or executable scripts are supported or executed.
+- Regular expressions are validated and compiled (`re.compile`) prior to mapping creation.
+- Unknown baseline fields are rejected at creation time.
+
+#### How to Run Training Tests
+To run the Step 12 Training GUI tests:
+```bash
+pytest tests/test_training_gui.py
+```
+To run the entire test suite and verify baseline regression:
+```bash
+pytest
+```

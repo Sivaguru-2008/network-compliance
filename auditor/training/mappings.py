@@ -180,6 +180,22 @@ class LearnedMappingStore:
         self.save()
         return disabled
 
+    def reject_mapping(self, mapping_id: str) -> "LearnedMapping | None":
+        latest = self.retrieve_mapping(mapping_id)
+        if not latest:
+            return None
+        if latest.status == "rejected" and latest.approval_state == "rejected":
+            return latest
+        rejected = latest.model_copy(update={
+            "status": "rejected",
+            "approval_state": "rejected",
+            "version": latest.version + 1,
+        })
+        self._records.append(rejected)
+        self._resolve_conflicts()
+        self.save()
+        return rejected
+
     def delete_mapping(self, mapping_id: str) -> bool:
         latest = self.retrieve_mapping(mapping_id)
         if not latest:
@@ -233,6 +249,20 @@ def resolve_learned_mappings(
     store: LearnedMappingStore,
     stats_path: Optional[Path] = None,
 ) -> SecurityBaselineModel:
+    def norm_vendor(v: str) -> str:
+        val = v.lower()
+        if "cisco" in val:
+            return "cisco"
+        if "juniper" in val or "junos" in val:
+            return "juniper"
+        if "forti" in val:
+            return "fortinet"
+        if "arista" in val:
+            return "arista"
+        if "sonic" in val:
+            return "sonic"
+        return val
+
     approved = store.get_active_approved_mappings()
     if not approved:
         return baseline
@@ -253,7 +283,7 @@ def resolve_learned_mappings(
         field_type = FIELD_TYPES[field]
         field_mappings = [
             m for m in approved
-            if m.field == field and m.vendor.lower() == baseline.provenance.vendor.lower()
+            if m.field == field and norm_vendor(m.vendor) == norm_vendor(baseline.provenance.vendor)
         ]
         if not field_mappings:
             continue

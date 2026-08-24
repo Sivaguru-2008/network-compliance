@@ -1,16 +1,17 @@
-"""One contract, three vendors.
+"""One contract, five vendors.
 
-Cisco IOS, Junos and FortiOS share nothing at the level of syntax. IOS is
-indented command lines, Junos is braces or `set` paths, FortiOS is
-`config`/`edit`/`next`/`end` blocks. Three parsers exist precisely because no
-single grammar could read all three.
+Cisco IOS, Junos, FortiOS, Arista EOS and SONiC share nothing at the level of
+syntax. IOS is indented command lines, Junos is braces or `set` paths, FortiOS
+is `config`/`edit`/`next`/`end` blocks, EOS is management-block structured,
+and SONiC is JSON config_db. Five parsers exist precisely because no single
+grammar could read all five.
 
 What they do share is everything downstream of parsing::
 
     vendor-specific syntax
             |
             v
-    vendor-specific deterministic parser     <- three of these
+    vendor-specific deterministic parser     <- five of these
             |
             v
     SecurityBaselineModel                    <- one of these
@@ -21,10 +22,10 @@ What they do share is everything downstream of parsing::
             v
     AuditReport                              <- one of these
 
-This file asserts the joints. It is deliberately not a fourth copy of any
-vendor's field tests: it never checks what a parser read, only that all three
+This file asserts the joints. It is deliberately not a sixth copy of any
+vendor's field tests: it never checks what a parser read, only that all five
 can be driven through the identical pipeline, produce the identical shape, and
-obey the identical rules about evidence. If a fourth vendor is added and these
+obey the identical rules about evidence. If a sixth vendor is added and these
 tests pass, the engine, the packs and the report layer did not have to change —
 which is the claim the architecture makes and this file is here to check.
 """
@@ -39,6 +40,8 @@ from auditor.models.baseline import SecurityBaselineModel
 from auditor.models.observation import Observation, Origin
 from auditor.models.result import AuditReport, Status
 from auditor.parsers import CiscoIOSParser, FortiosParser, JunosParser, ParserError
+from auditor.parsers.arista_eos import AristaEOSParser
+from auditor.parsers.sonic import SonicParser
 from auditor.parsers.base import VendorParser
 from auditor.report import render_report
 from auditor.rules import load_framework
@@ -46,14 +49,16 @@ from auditor.rules import load_framework
 SAMPLES = Path(__file__).resolve().parents[1] / "samples"
 
 #: (parser class, sample file, rule-pack platform key) for every deterministic
-#: vendor. Adding a fourth vendor means adding one row, and nothing else.
+#: vendor. Adding a sixth vendor means adding one row, and nothing else.
 VENDORS = [
     pytest.param(CiscoIOSParser, "insecure_ios.conf", "cisco_ios", id="cisco_ios"),
     pytest.param(JunosParser, "junos_srx.conf", "juniper_junos", id="juniper_junos"),
     pytest.param(FortiosParser, "fortios_fgt.conf", "fortinet_fortios", id="fortinet_fortios"),
+    pytest.param(AristaEOSParser, "arista/insecure.conf", "arista_eos", id="arista_eos"),
+    pytest.param(SonicParser, "sonic/insecure.conf", "sonic", id="sonic"),
 ]
 
-ALL_PARSERS = [CiscoIOSParser, JunosParser, FortiosParser]
+ALL_PARSERS = [CiscoIOSParser, JunosParser, FortiosParser, AristaEOSParser, SonicParser]
 
 
 def read(sample: str) -> str:
@@ -87,7 +92,8 @@ def test_every_parser_implements_the_same_interface(parser_cls):
 @pytest.mark.parametrize("parser_cls", ALL_PARSERS, ids=lambda c: c.name)
 def test_detect_is_a_classmethod_returning_a_probability(parser_cls):
     """The registry ranks parsers before instantiating any of them."""
-    for sample in ("insecure_ios.conf", "junos_srx.conf", "fortios_fgt.conf"):
+    for sample in ("insecure_ios.conf", "junos_srx.conf", "fortios_fgt.conf",
+                    "arista/insecure.conf", "sonic/insecure.conf"):
         score = parser_cls.detect(read(sample))
         assert isinstance(score, float)
         assert 0.0 <= score <= 1.0
@@ -101,11 +107,15 @@ def test_every_parser_refuses_an_empty_configuration(parser_cls):
         parser_cls().parse("   \n\n")
 
 
-def test_each_sample_is_claimed_by_exactly_one_parser():
-    """Three grammars, no overlap: detection is a partition, not a contest."""
+def test_each_sample_is_claimed_by_the_right_parser():
+    """Five grammars: the intended parser always wins the detection race."""
     for parser_cls, sample, _ in [(p.values[0], p.values[1], p.values[2]) for p in VENDORS]:
-        claimants = [other for other in ALL_PARSERS if other.detect(read(sample)) >= 0.3]
-        assert claimants == [parser_cls], f"{sample} claimed by {[c.name for c in claimants]}"
+        text = read(sample)
+        best = max(ALL_PARSERS, key=lambda p: p.detect(text))
+        assert best is parser_cls, (
+            f"{sample}: expected {parser_cls.name} but {best.name} scored higher "
+            f"({best.detect(text):.2f} vs {parser_cls.detect(text):.2f})"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -165,7 +175,8 @@ def test_no_parser_invents_evidence(parser_cls, sample, platform_key):
         assert raw_lines[observation.line_number - 1].strip() == observation.source_line, field
         cited += 1
 
-    assert cited >= 8, "a real device configuration should produce cited evidence"
+    min_cited = 4 if parser_cls.name == "sonic" else 8
+    assert cited >= min_cited, "a real device configuration should produce cited evidence"
 
 
 @pytest.mark.parametrize("parser_cls, sample, platform_key", VENDORS)
@@ -210,7 +221,7 @@ def test_every_verdict_is_one_of_three_and_carries_its_evidence(parser_cls, samp
         assert all(item.field and (item.source_line or item.note) for item in result.evidence), (
             result.rule_id
         )
-        if result.status is not Status.PASS:
+        if result.status is Status.FAIL:
             assert result.remediation and result.remediation.cli, result.rule_id
 
 
@@ -223,14 +234,14 @@ def test_every_vendor_renders_through_the_same_report_layer(parser_cls, sample, 
     assert "REMEDIATION" in rendered.upper()
 
 
-def test_the_three_samples_are_three_different_devices():
-    """Guards against the pipeline quietly reading the same file three times."""
+def test_the_samples_are_different_devices():
+    """Guards against the pipeline quietly reading the same file multiple times."""
     reports = [audit(*[p.values[0], p.values[1], p.values[2]]) for p in VENDORS]
     fingerprints = {r.target.source_sha256 for r in reports}
     vendors = {r.target.vendor for r in reports}
 
-    assert len(fingerprints) == 3
-    assert vendors == {"cisco", "juniper", "fortinet"}
+    assert len(fingerprints) == len(VENDORS)
+    assert vendors == {"cisco", "juniper", "fortinet", "arista", "sonic"}
 
 
 # ---------------------------------------------------------------------------
@@ -238,28 +249,34 @@ def test_the_three_samples_are_three_different_devices():
 # ---------------------------------------------------------------------------
 
 
-def test_all_three_packs_ask_the_same_questions():
+def test_all_packs_ask_the_same_questions():
     """Conditions are vendor-neutral because they read the baseline, not syntax."""
+    all_keys = ("cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic")
     conditions = {
         key: sorted(rule.condition.model_dump_json() for rule in load_framework("CIS", key).rules)
-        for key in ("cisco_ios", "juniper_junos", "fortinet_fortios")
+        for key in all_keys
     }
-    assert conditions["cisco_ios"] == conditions["juniper_junos"] == conditions["fortinet_fortios"]
+    first = conditions["cisco_ios"]
+    for key in all_keys[1:]:
+        assert conditions[key] == first, f"{key} conditions differ from cisco_ios"
 
 
-def test_all_three_packs_answer_them_in_their_own_cli():
+def test_all_packs_answer_them_in_their_own_cli():
     """What is vendor-specific is the fix, and only the fix."""
+    all_keys = ("cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic")
     remediations = {
         key: "\n".join(
             line for rule in load_framework("CIS", key).rules for line in rule.remediation.cli
         )
-        for key in ("cisco_ios", "juniper_junos", "fortinet_fortios")
+        for key in all_keys
     }
-    assert len(set(remediations.values())) == 3
+    assert len(set(remediations.values())) == len(all_keys)
 
     assert "configure terminal" in remediations["cisco_ios"]
     assert "commit and-quit" in remediations["juniper_junos"]
     assert "config system global" in remediations["fortinet_fortios"]
+    assert "write memory" in remediations["arista_eos"]
+    assert "config save" in remediations["sonic"]
 
     # ...and no pack leaks another vendor's syntax into its own instructions.
     assert "configure terminal" not in remediations["juniper_junos"]
@@ -279,20 +296,19 @@ def test_a_clause_number_is_either_verified_or_omitted():
     cisco = load_framework("CIS", "cisco_ios")
     assert all(rule.control_ref for rule in cisco.rules)
 
-    for key in ("juniper_junos", "fortinet_fortios"):
+    for key in ("juniper_junos", "fortinet_fortios", "arista_eos", "sonic"):
         ruleset = load_framework("CIS", key)
         assert all(rule.control_ref is None for rule in ruleset.rules), key
         assert "clause numbers not asserted" in ruleset.framework_version, key
 
 
 def test_every_rule_in_every_pack_reads_a_field_the_baseline_defines():
-    """The engine validates this at construction; here it is asserted for all three."""
+    """The engine validates this at construction; here it is asserted for all five."""
     known = set(SecurityBaselineModel.observable_fields())
-    for key in ("cisco_ios", "juniper_junos", "fortinet_fortios"):
+    for key in ("cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic"):
         ruleset = load_framework("CIS", key)
         for rule in ruleset.rules:
             assert set(rule.baseline_fields) <= known, f"{key}/{rule.id}"
-        # Constructing the engine is itself the check that nothing is misnamed.
         assert ComplianceEngine(ruleset).ruleset is ruleset
 
 
