@@ -287,25 +287,25 @@ class TestFrameworkFlowThrough:
         return SonicParser().parse(text)
 
     def test_cis_framework_loads_for_sonic(self):
-        ruleset = load_framework("CIS", "sonic")
+        ruleset = load_framework("CIS", "sonic_sonic")
         assert len(ruleset.rules) == 13
         assert ruleset.platform.vendor == "sonic"
 
     def test_nist_framework_loads_for_sonic(self):
-        ruleset = load_framework("NIST_800_53", "sonic")
+        ruleset = load_framework("NIST_800_53", "sonic_sonic")
         assert len(ruleset.rules) == 13
 
     def test_stig_framework_loads_for_sonic(self):
-        ruleset = load_framework("STIG", "sonic")
+        ruleset = load_framework("STIG", "sonic_sonic")
         assert len(ruleset.rules) == 13
 
     def test_iso_framework_loads_for_sonic(self):
-        ruleset = load_framework("ISO_27001", "sonic")
+        ruleset = load_framework("ISO_27001", "sonic_sonic")
         assert len(ruleset.rules) == 13
 
     @pytest.mark.parametrize("fw", ["CIS", "NIST_800_53", "STIG", "ISO_27001"])
     def test_sonic_control_flows_through_all_frameworks(self, fw, sonic_baseline):
-        ruleset = load_framework(fw, "sonic")
+        ruleset = load_framework(fw, "sonic_sonic")
         engine = ComplianceEngine(ruleset)
         results = engine.evaluate(sonic_baseline)
         by_control = {r.internal_control_id: r for r in results}
@@ -314,7 +314,7 @@ class TestFrameworkFlowThrough:
 
     def test_cis_insecure_produces_failures(self, insecure_text):
         baseline = SonicParser().parse(insecure_text)
-        ruleset = load_framework("CIS", "sonic")
+        ruleset = load_framework("CIS", "sonic_sonic")
         engine = ComplianceEngine(ruleset)
         results = engine.evaluate(baseline)
         statuses = {r.internal_control_id: r.status for r in results}

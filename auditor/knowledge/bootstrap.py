@@ -53,7 +53,7 @@ def bootstrap_database_if_empty() -> bool:
     platform_files = list(REMEDIATIONS_DIR.glob("*.json"))
     platforms = [p.stem for p in platform_files]
     if not platforms:
-        platforms = ["cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic"]
+        platforms = ["cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic_sonic"]
         
     # 4. Ingest each framework mapping file
     for fw_file in FRAMEWORKS_DIR.glob("*.json"):

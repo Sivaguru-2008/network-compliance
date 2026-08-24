@@ -55,7 +55,7 @@ VENDORS = [
     pytest.param(JunosParser, "junos_srx.conf", "juniper_junos", id="juniper_junos"),
     pytest.param(FortiosParser, "fortios_fgt.conf", "fortinet_fortios", id="fortinet_fortios"),
     pytest.param(AristaEOSParser, "arista/insecure.conf", "arista_eos", id="arista_eos"),
-    pytest.param(SonicParser, "sonic/insecure.conf", "sonic", id="sonic"),
+    pytest.param(SonicParser, "sonic/insecure.conf", "sonic_sonic", id="sonic"),
 ]
 
 ALL_PARSERS = [CiscoIOSParser, JunosParser, FortiosParser, AristaEOSParser, SonicParser]
@@ -251,7 +251,7 @@ def test_the_samples_are_different_devices():
 
 def test_all_packs_ask_the_same_questions():
     """Conditions are vendor-neutral because they read the baseline, not syntax."""
-    all_keys = ("cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic")
+    all_keys = ("cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic_sonic")
     conditions = {
         key: sorted(rule.condition.model_dump_json() for rule in load_framework("CIS", key).rules)
         for key in all_keys
@@ -263,7 +263,7 @@ def test_all_packs_ask_the_same_questions():
 
 def test_all_packs_answer_them_in_their_own_cli():
     """What is vendor-specific is the fix, and only the fix."""
-    all_keys = ("cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic")
+    all_keys = ("cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic_sonic")
     remediations = {
         key: "\n".join(
             line for rule in load_framework("CIS", key).rules for line in rule.remediation.cli
@@ -276,7 +276,7 @@ def test_all_packs_answer_them_in_their_own_cli():
     assert "commit and-quit" in remediations["juniper_junos"]
     assert "config system global" in remediations["fortinet_fortios"]
     assert "write memory" in remediations["arista_eos"]
-    assert "config save" in remediations["sonic"]
+    assert "config save" in remediations["sonic_sonic"]
 
     # ...and no pack leaks another vendor's syntax into its own instructions.
     assert "configure terminal" not in remediations["juniper_junos"]
@@ -296,7 +296,7 @@ def test_a_clause_number_is_either_verified_or_omitted():
     cisco = load_framework("CIS", "cisco_ios")
     assert all(rule.control_ref for rule in cisco.rules)
 
-    for key in ("juniper_junos", "fortinet_fortios", "arista_eos", "sonic"):
+    for key in ("juniper_junos", "fortinet_fortios", "arista_eos", "sonic_sonic"):
         ruleset = load_framework("CIS", key)
         assert all(rule.control_ref is None for rule in ruleset.rules), key
         assert "clause numbers not asserted" in ruleset.framework_version, key
@@ -305,7 +305,7 @@ def test_a_clause_number_is_either_verified_or_omitted():
 def test_every_rule_in_every_pack_reads_a_field_the_baseline_defines():
     """The engine validates this at construction; here it is asserted for all five."""
     known = set(SecurityBaselineModel.observable_fields())
-    for key in ("cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic"):
+    for key in ("cisco_ios", "juniper_junos", "fortinet_fortios", "arista_eos", "sonic_sonic"):
         ruleset = load_framework("CIS", key)
         for rule in ruleset.rules:
             assert set(rule.baseline_fields) <= known, f"{key}/{rule.id}"
