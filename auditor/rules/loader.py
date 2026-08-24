@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Tuple
 
 from pydantic import ValidationError
 
-from ..models.rule import RuleSet, ComplianceRule, Platform, Remediation
+from ..models.rule import RuleSet, ComplianceRule, Platform, Remediation, Severity
 
 FRAMEWORKS_DIR = Path(__file__).parent / "frameworks"
 REMEDIATIONS_DIR = Path(__file__).parent / "remediations"
@@ -98,6 +98,15 @@ def discover_packs(search_dir: Optional[Path] = None) -> Dict[Tuple[str, str], P
 
 
 def available_frameworks(search_dir: Optional[Path] = None) -> List[str]:
+    try:
+        from ..knowledge.bootstrap import bootstrap_database_if_empty
+        bootstrap_database_if_empty()
+        from ..knowledge.repository import get_available_frameworks
+        fw_list = get_available_frameworks()
+        if fw_list:
+            return sorted(list({f for f, _ in fw_list}))
+    except Exception:
+        pass
     return sorted({framework for framework, _ in discover_packs(search_dir)})
 
 
@@ -109,6 +118,72 @@ def load_framework(
     allow_cross_platform: bool = False,
 ) -> RuleSet:
     """Load the pack for a framework/platform pair, e.g. ('CIS', 'cisco_ios')."""
+    # 0. Try loading from SQLite database first
+    try:
+        from ..knowledge.bootstrap import bootstrap_database_if_empty
+        bootstrap_database_if_empty()
+        
+        from ..knowledge.repository import get_controls_for_framework, get_latest_framework_version
+        
+        if ":" in framework:
+            framework_name, fw_version = framework.split(":", 1)
+        else:
+            framework_name = framework
+            fw_version = get_latest_framework_version(framework_name, platform_key)
+            
+        db_rules = get_controls_for_framework(framework_name, platform_key, fw_version)
+        if db_rules:
+            rules = []
+            for row in db_rules:
+                remediation = Remediation(
+                    summary=row["remediation_summary"],
+                    cli=row["remediation_cli"],
+                    provenance=row.get("remediation_provenance") or "VERIFIED"
+                )
+                
+                if remediation.provenance == "AI_SUGGESTED" and not remediation.summary.startswith("[AI_SUGGESTED]"):
+                    remediation.summary = f"[AI_SUGGESTED] {remediation.summary}"
+                    
+                rule = ComplianceRule(
+                    id=row["control_id"],
+                    control_ref=row["source_location"],
+                    internal_control_id=row["internal_control_id"],
+                    verified_ref=bool(row["verified_ref"]),
+                    title=row["title"],
+                    description=row["description"] or "",
+                    framework=row["framework_display_name"] or framework_name,
+                    severity=Severity(row["severity"].lower()),
+                    condition=row["pass_condition"],
+                    rationale=row["description"],
+                    remediation=remediation,
+                    references=row["references"],
+                    notes=None,
+                    knowledge_version=row["framework_version"]
+                )
+                rules.append(rule)
+                
+            parts = platform_key.split("_", 1)
+            vendor = parts[0] if len(parts) > 1 else platform_key
+            os_family = parts[1] if len(parts) > 1 else "unknown"
+            
+            if vendor == "fortinet":
+                os_family = "fortios"
+            elif vendor == "juniper":
+                os_family = "junos"
+                
+            source_note_val = db_rules[0]["source_note"] or f"Loaded from local compliance knowledge base (version {fw_version or '1.0'})."
+            fw_disp = db_rules[0]["framework_display_name"] or framework_name
+            return RuleSet(
+                schema_version="1.0",
+                framework=fw_disp,
+                framework_version=fw_version or "1.0",
+                platform=Platform(vendor=vendor, os_family=os_family),
+                source_note=source_note_val,
+                rules=rules
+            )
+    except Exception as exc:
+        pass
+
     packs = discover_packs(search_dir)
     key = (framework.upper(), platform_key)
 
