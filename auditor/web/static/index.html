@@ -208,7 +208,8 @@
   }
   .chart-row { display: flex; gap: 24px; flex-wrap: wrap; }
   .chart-row > div { flex: 1; min-width: 280px; }
-  .chart-container svg { width: 100%; height: auto; display: block; }
+  .chart-container svg { width: 100%; height: auto; display: block; max-height: 300px; }
+  .chart-container.chart-wide svg { max-height: 220px; }
 
   /* -- heatmap -- */
   .heatmap-wrap { overflow-x: auto; }
@@ -371,7 +372,7 @@
         <!-- Framework Comparison Bar Chart -->
         <div class="analytics-section">
           <h3>Compliance Score by Framework</h3>
-          <div class="chart-container" id="chart-framework"></div>
+          <div class="chart-container chart-wide" id="chart-framework"></div>
         </div>
 
         <!-- Vendor Donut + Severity Breakdown side by side -->
@@ -861,13 +862,20 @@ function computeAnalytics() {
   });
 
   // Control heatmap: controls as rows, devices as columns
+  // Group by title to deduplicate across frameworks — the spec asks for
+  // the 13 normalised controls, not one row per framework-specific rule.
   var auditedDevices = devices.filter(function(d) { return d.status === "audited"; });
+  var WORST = { "FAIL": 0, "NEEDS_REVIEW": 1, "PASS": 2 };
   var controlMap = {};
   auditedDevices.forEach(function(d, di) {
     (d.findings || []).forEach(function(f) {
-      var cid = f.rule_id || f.internal_control_id || f.title;
-      if (!controlMap[cid]) controlMap[cid] = { title: f.title, results: {} };
-      controlMap[cid].results[di] = f.status;
+      var cid = f.title || f.internal_control_id || f.rule_id;
+      if (!controlMap[cid]) controlMap[cid] = { title: f.title || cid, results: {} };
+      var prev = controlMap[cid].results[di];
+      var curr = f.status;
+      if (prev === undefined || (WORST[curr] || 0) < (WORST[prev] || 0)) {
+        controlMap[cid].results[di] = curr;
+      }
     });
   });
 
