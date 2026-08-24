@@ -38,7 +38,7 @@ from auditor.engine import ComplianceEngine
 from auditor.models.baseline import SecurityBaselineModel
 from auditor.models.observation import Observation, Origin
 from auditor.models.result import AuditReport, Status
-from auditor.parsers import CiscoIOSParser, FortiosParser, JunosParser, ParserError
+from auditor.parsers import CiscoIOSParser, FortiosParser, JunosParser, AristaEOSParser, SonicParser, ParserError
 from auditor.parsers.base import VendorParser
 from auditor.report import render_report
 from auditor.rules import load_framework
@@ -51,9 +51,11 @@ VENDORS = [
     pytest.param(CiscoIOSParser, "insecure_ios.conf", "cisco_ios", id="cisco_ios"),
     pytest.param(JunosParser, "junos_srx.conf", "juniper_junos", id="juniper_junos"),
     pytest.param(FortiosParser, "fortios_fgt.conf", "fortinet_fortios", id="fortinet_fortios"),
+    pytest.param(AristaEOSParser, "arista/sample.conf", "arista_eos", id="arista_eos"),
+    pytest.param(SonicParser, "sonic/sample.conf", "sonic_linux", id="sonic_linux"),
 ]
 
-ALL_PARSERS = [CiscoIOSParser, JunosParser, FortiosParser]
+ALL_PARSERS = [CiscoIOSParser, JunosParser, FortiosParser, AristaEOSParser, SonicParser]
 
 
 def read(sample: str) -> str:
@@ -229,8 +231,8 @@ def test_the_three_samples_are_three_different_devices():
     fingerprints = {r.target.source_sha256 for r in reports}
     vendors = {r.target.vendor for r in reports}
 
-    assert len(fingerprints) == 3
-    assert vendors == {"cisco", "juniper", "fortinet"}
+    assert len(fingerprints) == len(VENDORS)
+    assert vendors == {"cisco", "juniper", "fortinet", "arista", "sonic"}
 
 
 # ---------------------------------------------------------------------------

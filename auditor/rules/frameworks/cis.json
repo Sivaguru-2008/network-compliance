@@ -16,67 +16,80 @@
     "aaa_enabled": {
       "cisco_ios": { "id": "CIS-IOS-1.1.1", "control_ref": "1.1.1", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-AAA-CENTRALISED", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-AAA-CENTRALISED", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-AAA", "control_ref": null, "verified": false }
     },
     "secure_vty_transport": {
       "cisco_ios": { "id": "CIS-IOS-1.2.2", "control_ref": "1.2.2", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-NO-CLEARTEXT-ACCESS", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-NO-CLEARTEXT-ACCESS", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-VTY-SECURE", "control_ref": null, "verified": false }
     },
     "vty_idle_timeout": {
       "cisco_ios": { "id": "CIS-IOS-1.2.9", "control_ref": "1.2.9", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-IDLE-TIMEOUT", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-VTY-TIMEOUT", "control_ref": null, "verified": false }
     },
     "enable_secret_encrypted": {
       "cisco_ios": { "id": "CIS-IOS-1.4.1-1.4.2", "control_ref": "1.4.1, 1.4.2", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-ROOT-AUTH-HASHED", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-ADMIN-PASSWORD-HASHED", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-ADMIN-PASSWORD-HASHED", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-ENABLE-HASH", "control_ref": null, "verified": false }
     },
     "no_default_snmp_community": {
       "cisco_ios": { "id": "CIS-IOS-1.5.2-1.5.3", "control_ref": "1.5.2, 1.5.3", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-SNMP-NO-DEFAULT", "control_ref": null, "verified": false }
     },
     "http_server_disabled": {
       "cisco_ios": { "id": "CIS-IOS-2.1-HTTP-SERVER", "control_ref": "2.1", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-NO-JWEB-HTTP", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-NO-HTTP-ADMIN", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-NO-HTTP-ADMIN", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-HTTP-DISABLE", "control_ref": null, "verified": false }
     },
     "ssh_version_2": {
       "cisco_ios": { "id": "CIS-IOS-2.1.1.6", "control_ref": "2.1.1.6", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-SSH-V2", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-SSH-V2", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-SSH-V2", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-SSH-V2", "control_ref": null, "verified": false }
     },
     "logging_enabled": {
       "cisco_ios": { "id": "CIS-IOS-2.2.2-2.2.4", "control_ref": "2.2.2, 2.2.4", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-SYSLOG-DESTINATION", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-LOGGING", "control_ref": null, "verified": false }
     },
     "management_acl": {
       "cisco_ios": { "id": "CIS-IOS-1.2-VTY-ACCESS-CLASS", "control_ref": "1.2", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-MGMT-FILTER", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-ADMIN-TRUSTHOST", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-ADMIN-TRUSTHOST", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-MGMT-ACL", "control_ref": null, "verified": false }
     },
     "login_banner": {
       "cisco_ios": { "id": "CIS-IOS-1.6-LOGIN-BANNER", "control_ref": "1.6", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-LOGIN-BANNER", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-LOGIN-BANNER", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-BANNER", "control_ref": null, "verified": false }
     },
     "password_min_length": {
       "cisco_ios": { "id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH", "control_ref": "1.1", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false }
     },
     "ntp_configured": {
       "cisco_ios": { "id": "CIS-IOS-2.3-NTP-CONFIGURED", "control_ref": "2.3", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-NTP-CONFIGURED", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-NTP-CONFIGURED", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-NTP-CONFIGURED", "control_ref": null, "verified": false }
     },
     "no_write_snmp_community": {
       "cisco_ios": { "id": "CIS-IOS-1.5-SNMP-NO-WRITE", "control_ref": "1.5", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-SNMP-NO-WRITE", "control_ref": null, "verified": false }
+      "fortinet_fortios": { "id": "CIS-FORTIOS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
+      "default": { "id": "CIS-GENERIC-SNMP-NO-WRITE", "control_ref": null, "verified": false }
     }
   }
 }

@@ -1,0 +1,143 @@
+{
+  "aaa_enabled": {
+    "summary": "Enable the AAA subsystem on Arista EOS, then define authentication methods.",
+    "cli": [
+      "configure terminal",
+      " aaa new-model",
+      " end",
+      "write memory"
+    ],
+    "notes": "Enabling AAA changes login behaviour immediately. Configure local fallback authentication to avoid lockout."
+  },
+  "secure_vty_transport": {
+    "summary": "Restrict VTY line transport input to SSH.",
+    "cli": [
+      "configure terminal",
+      " line vty 0 15",
+      "  transport input ssh",
+      " end",
+      "write memory"
+    ],
+    "notes": "Ensure no plaintext administrative access is permitted."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set VTY session idle timeout to 10 minutes or less.",
+    "cli": [
+      "configure terminal",
+      " line vty 0 15",
+      "  exec-timeout 10 0",
+      " end",
+      "write memory"
+    ],
+    "notes": "Timeout must be non-zero to tear down inactive sessions."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Configure a secure enable secret password.",
+    "cli": [
+      "configure terminal",
+      " enable secret <strong-password>",
+      " service password-encryption",
+      " end",
+      "write memory"
+    ],
+    "notes": "Always use enable secret instead of enable password."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default public and private SNMP community strings.",
+    "cli": [
+      "configure terminal",
+      " no snmp-server community public",
+      " no snmp-server community private",
+      " snmp-server community <unique-string> RO",
+      " end",
+      "write memory"
+    ],
+    "notes": "Replace with a strong community name."
+  },
+  "http_server_disabled": {
+    "summary": "Disable administrative http/https access if not required, or disable unencrypted HTTP.",
+    "cli": [
+      "configure terminal",
+      " no management api http-commands",
+      " end",
+      "write memory"
+    ],
+    "notes": "Disable unencrypted API access to protect credentials."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce SSH protocol version 2.",
+    "cli": [
+      "configure terminal",
+      " ip ssh version 2",
+      " end",
+      "write memory"
+    ],
+    "notes": "Arista EOS defaults to SSH version 2."
+  },
+  "logging_enabled": {
+    "summary": "Enable remote logging and sized local buffers.",
+    "cli": [
+      "configure terminal",
+      " logging host <syslog-server-ip>",
+      " logging buffered 64000 informational",
+      " end",
+      "write memory"
+    ],
+    "notes": "Send syslog to central NMS."
+  },
+  "management_acl": {
+    "summary": "Apply access-class to restrict administrative access to authorized subnets.",
+    "cli": [
+      "configure terminal",
+      " ip access-list standard MGMT-ACL",
+      "  permit 10.20.30.0/24",
+      " line vty 0 15",
+      "  access-class MGMT-ACL in",
+      " end",
+      "write memory"
+    ],
+    "notes": "Apply to all VTY lines."
+  },
+  "login_banner": {
+    "summary": "Define login banner.",
+    "cli": [
+      "configure terminal",
+      " banner login",
+      "Authorized Access Only. Activity is logged.",
+      "EOF",
+      " end",
+      "write memory"
+    ],
+    "notes": "Ensure warning is displayed before access is granted."
+  },
+  "password_min_length": {
+    "summary": "Configure minimum password length for local accounts.",
+    "cli": [
+      "configure terminal",
+      " security passwords min-length 8",
+      " end",
+      "write memory"
+    ],
+    "notes": "Ensures minimal complexity on local logins."
+  },
+  "ntp_configured": {
+    "summary": "Configure NTP synchronization.",
+    "cli": [
+      "configure terminal",
+      " ntp server 10.20.30.41",
+      " end",
+      "write memory"
+    ],
+    "notes": "Use time synchronization for accurate audit logs."
+  },
+  "no_write_snmp_community": {
+    "summary": "Remove write communities for SNMP.",
+    "cli": [
+      "configure terminal",
+      " no snmp-server community <rw-string> RW",
+      " end",
+      "write memory"
+    ],
+    "notes": "Only read-only communities should be configured."
+  }
+}
