@@ -1340,6 +1340,7 @@ checkout with nothing installed but the server it talks to.
 | `GET /api/device/{job_id}/{device_id}` | One `DeviceRecord`: identity, findings (each with its `evidence[].origin`), framework summaries, and a `pdf_url`. `device_id` is the device's position in the inventory — an integer, never a client-supplied path. |
 | `GET /api/device/{job_id}/{device_id}/pdf` | The Step 9 PDF for that device, rendered via `write_device_pdf` (cached on disk after the first request) and served as `application/pdf` with `Content-Disposition: attachment`, named by the same `{hostname}_{vendor}_{shorthash}.pdf` scheme the CLI uses. |
 | `GET /api/frameworks` | The frameworks discovered from the installed rule packs — what the upload form's checkboxes offer. |
+| `GET /api/jobs` | Lists all stored jobs with summary metrics: `job_id`, `uploaded_at`, `device_count`, `frameworks`, and `compliance_scores` (per-framework). Reads from `JobStore` and the already-persisted `inventory.json` per job — no new persistence. |
 
 Frameworks selected at upload time are validated once against
 `available_frameworks()` and passed straight into `ingest_paths` — no second
@@ -1448,4 +1449,62 @@ pytest tests/test_training_gui.py
 To run the entire test suite and verify baseline regression:
 ```bash
 pytest
+```
+
+### Fleet Analytics
+
+The dashboard includes a fleet-wide compliance analytics view — a read-only
+presentation layer over the data the engine already produces. All analytics are
+computed client-side from the `DeviceInventory` JSON the API returns. No new
+models, no new database, no new persistence.
+
+#### Summary tiles
+
+Six at-a-glance metrics appear above the inventory table after upload: total
+devices, fleet compliance score, critical findings (FAIL + high severity),
+needs-review count, vendor count, and frameworks evaluated. Score tiles are
+colour-coded by tier: green above 80%, amber 50–80%, red below 50%.
+
+#### Charts (inline SVG, no external libraries)
+
+- **Framework comparison** — horizontal bar chart with one bar per framework,
+  coloured by score tier, with a subtle 0/25/50/75/100% grid.
+- **Vendor distribution** — donut chart with a 6-colour palette distinct from the
+  verdict colours. Single-vendor fleets skip the donut and show a text summary.
+- **Severity breakdown** — stacked horizontal bar with PASS/FAIL/NEEDS_REVIEW
+  segments per severity level (high/medium/low).
+- **Control compliance heatmap** — grid of controls (rows) × devices (columns),
+  cells coloured by verdict, sorted by worst fleet pass rate. Scrolls horizontally
+  for large fleets.
+- **Device compliance ranking** — sortable table with inline progress bars,
+  click-through to device detail.
+
+All charts use CSS custom properties for colours and render correctly in both
+light and dark contexts. Responsive from 375px to 1280px+ viewports.
+
+#### Upload history and comparison
+
+`GET /api/jobs` lists all stored jobs with summary metrics. The history panel
+lets users load any previous upload into the analytics view or select two uploads
+for side-by-side comparison — compliance score deltas per framework and per
+control, with ↑/↓ indicators colour-coded green (improvement) or red (regression).
+
+#### CSV export
+
+An "Export CSV" button generates a CSV of all findings across all devices,
+entirely client-side from the already-fetched inventory JSON. Columns:
+`hostname, vendor, framework, control_id, control_title, severity, status,
+evidence_summary, remediation_summary`. Includes a BOM prefix for Excel
+compatibility.
+
+#### Print readiness
+
+A `@media print` block hides the header, navigation, and action buttons; sets
+white backgrounds; ensures SVG charts render with explicit colours; and adds a
+"Fleet Compliance Report — {date}" header visible only in print.
+
+#### How to run analytics tests
+
+```bash
+pytest tests/test_analytics.py
 ```
