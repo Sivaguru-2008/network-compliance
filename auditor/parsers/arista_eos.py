@@ -52,6 +52,15 @@ _EOS_MARKERS: Sequence[Tuple[str, float]] = (
     (r"(?im)^\s*daemon \S+", 0.10),
     (r"(?im)^\s*enable secret\b", 0.05),
     (r"(?im)^\s*snmp-server\b", 0.05),
+    # EOS (and NX-OS) carry interface addresses in prefix-length form; an IOS
+    # running-config always expands them to a dotted mask. This is the strongest
+    # "not classic IOS" signal that also fires on minimal routed EOS configs that
+    # lack any management-plane marker -- exactly the ones that used to be lost to
+    # the IOS parser (both share hostname/interface/router-bgp syntax).
+    (r"(?im)^\s*ip address \d+\.\d+\.\d+\.\d+/\d+", 0.35),
+    # Bare "Ethernet<n>" naming is EOS; IOS uses GigabitEthernet/FastEthernet or
+    # the slash-bearing Ethernet0/0 of older platforms.
+    (r"(?im)^\s*interface Ethernet\d+\s*$", 0.15),
 )
 
 _NON_EOS_MARKERS: Sequence[Tuple[str, float]] = (

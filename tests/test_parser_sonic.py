@@ -339,3 +339,45 @@ class TestCrossVendorDetection:
     def test_eos_does_not_match_sonic_config(self, secure_text):
         from auditor.parsers.arista_eos import AristaEOSParser
         assert AristaEOSParser.detect(secure_text) < SonicParser.detect(secure_text)
+
+
+# ---------------------------------------------------------------------------
+# management ACL is service-aware: a control-plane ACL only restricts management
+# access if it actually governs the SSH management plane. A CTRLPLANE ACL scoped
+# to NTP/SNMP/BGP must NOT pass "restrict management access by source IP".
+# ---------------------------------------------------------------------------
+
+
+class TestManagementAclServiceAwareness:
+    @staticmethod
+    def _macl(acl_table: dict):
+        cfg = {"DEVICE_METADATA": {"localhost": {"hostname": "sw", "type": "LeafRouter"}}}
+        if acl_table is not None:
+            cfg["ACL_TABLE"] = acl_table
+        return SonicParser().parse(json.dumps(cfg), source_file="t.json").management_acl_applied
+
+    def test_ssh_ctrlplane_acl_passes(self):
+        o = self._macl({"ALLOW_SSH": {"type": "CTRLPLANE", "services": ["SSH"], "stage": "ingress"}})
+        assert o.detected is True and o.value is True
+
+    def test_ntp_only_ctrlplane_acl_is_not_a_management_restriction(self):
+        # The load-bearing regression: a control-plane ACL that governs only NTP
+        # says nothing about who may open a management session. It must escalate,
+        # never pass.
+        o = self._macl({"ALLOW_NTP": {"type": "CTRLPLANE", "services": ["NTP"], "stage": "ingress"}})
+        assert o.detected is False, "an NTP-only control-plane ACL must not pass management_acl"
+
+    def test_ntp_and_ssh_together_pass_via_ssh(self):
+        o = self._macl({
+            "ALLOW_NTP": {"type": "CTRLPLANE", "services": ["NTP"]},
+            "ALLOW_SSH": {"type": "CTRLPLANE", "services": ["SSH"]},
+        })
+        assert o.detected is True and o.value is True
+
+    def test_empty_acl_table_is_conclusive_no_restriction(self):
+        o = self._macl({})
+        assert o.detected is True and o.value is False
+
+    def test_no_acl_table_is_unknown(self):
+        o = self._macl(None)
+        assert o.detected is False

@@ -402,16 +402,39 @@ class SonicParser(VendorParser):
             )
             return
 
-        ctrl_plane_acls = [
-            name for name, attrs in acl_table.items()
-            if isinstance(attrs, dict) and attrs.get("type", "").upper() == "CTRLPLANE"
-        ]
+        def _services(attrs: dict) -> set:
+            svc = attrs.get("services")
+            if isinstance(svc, list):
+                return {str(s).upper() for s in svc}
+            if isinstance(svc, str):
+                return {svc.upper()}
+            return set()
 
-        if ctrl_plane_acls:
-            line, lineno = self._find_line(ctrl_plane_acls[0])
+        ctrl_plane = {
+            name: attrs for name, attrs in acl_table.items()
+            if isinstance(attrs, dict) and attrs.get("type", "").upper() == "CTRLPLANE"
+        }
+        # A control-plane ACL restricts *management* access only if it actually
+        # governs the SSH management plane. A CTRLPLANE ACL scoped to NTP, SNMP or
+        # BGP says nothing about who may open a management session, so its mere
+        # presence must not pass this control.
+        ssh_acls = [name for name, attrs in ctrl_plane.items() if "SSH" in _services(attrs)]
+
+        if ssh_acls:
+            line, lineno = self._find_line(ssh_acls[0])
             baseline.management_acl_applied = Observation[bool].found(
-                True, line or f"ACL_TABLE.{ctrl_plane_acls[0]}", lineno,
-                note=f"Control-plane ACL(s) applied: {', '.join(ctrl_plane_acls)}.",
+                True, line or f"ACL_TABLE.{ssh_acls[0]}", lineno,
+                note=f"Control-plane ACL(s) restrict SSH management access: {', '.join(ssh_acls)}.",
+            )
+            return
+
+        if ctrl_plane:
+            other = sorted({s for attrs in ctrl_plane.values() for s in _services(attrs)})
+            svc_note = f" (services: {', '.join(other)})" if other else ""
+            baseline.management_acl_applied = Observation[bool].unknown(
+                f"Control-plane ACL(s) present but none govern the SSH management "
+                f"service{svc_note}; SSH source restriction cannot be confirmed from "
+                "config_db and may be enforced outside it (e.g. iptables)."
             )
             return
 
