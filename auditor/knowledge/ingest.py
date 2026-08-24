@@ -203,15 +203,9 @@ def ingest_from_text_with_llm(file_path: Path, api_key: Optional[str] = None) ->
                 references=candidate.references,
                 source_id=source_id,
                 source_location=candidate.source_location,
-                validation_status="VALIDATION_PENDING"
+                validation_status="VALIDATION_PENDING",
+                remediation_provenance="AI_SUGGESTED"
             )
-            
-            # Since this remediation was suggested by LLM, mark its provenance
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            cursor.execute("UPDATE controls SET validation_status = 'VALIDATION_PENDING' WHERE id = ?", (c_id,))
-            conn.commit()
-            conn.close()
             
             control_ids.append(c_id)
         except Exception as exc:

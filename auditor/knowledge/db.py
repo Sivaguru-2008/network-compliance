@@ -53,6 +53,7 @@ def init_db() -> None:
         needs_review_condition TEXT, -- JSON string of condition (optional)
         remediation_summary TEXT,
         remediation_cli TEXT,        -- JSON string of list of CLI commands
+        remediation_provenance TEXT DEFAULT 'VERIFIED',
         references_json TEXT,        -- JSON string of list of references
         source_id INTEGER,
         source_location TEXT,
@@ -64,5 +65,11 @@ def init_db() -> None:
     );
     """)
     
+    try:
+        cursor.execute("ALTER TABLE controls ADD COLUMN remediation_provenance TEXT DEFAULT 'VERIFIED'")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
+        
     conn.commit()
     conn.close()

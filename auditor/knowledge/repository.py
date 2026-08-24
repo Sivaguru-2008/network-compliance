@@ -59,7 +59,8 @@ def save_control(
     internal_control_id: Optional[str] = None,
     source_note: Optional[str] = None,
     framework_display_name: Optional[str] = None,
-    verified_ref: int = 1
+    verified_ref: int = 1,
+    remediation_provenance: str = "VERIFIED"
 ) -> int:
     """Save or replace a compliance control."""
     conn = get_db_connection()
@@ -72,9 +73,9 @@ def save_control(
         framework, framework_version, framework_display_name, control_id, internal_control_id, verified_ref, title, requirement, description,
         severity, vendor, platform, platform_version, evidence_requirements,
         pass_condition, fail_condition, needs_review_condition,
-        remediation_summary, remediation_cli, references_json,
+        remediation_summary, remediation_cli, remediation_provenance, references_json,
         source_id, source_location, source_note, ingestion_timestamp, validation_status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         framework, framework_version, framework_display_name, control_id, internal_control_id, verified_ref, title, requirement, description,
         severity.lower(), vendor, platform, platform_version,
@@ -84,6 +85,7 @@ def save_control(
         json.dumps(needs_review_condition) if needs_review_condition else None,
         remediation_summary,
         json.dumps(remediation_cli),
+        remediation_provenance,
         json.dumps(references),
         source_id, source_location, source_note, timestamp, validation_status
     ))

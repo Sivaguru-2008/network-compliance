@@ -169,7 +169,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     llm.add_argument(
         "--allow-llm",
+        "--allow-llm-fallback",
         action="store_true",
+        dest="allow_llm",
         help="Permit the LLM fallback parser when no deterministic parser recognises the config.",
     )
     llm.add_argument(
@@ -374,105 +376,139 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
     else:
         argv = list(argv)
         
+    if argv and argv[0] == "audit" and not Path(argv[0]).is_file():
+        argv = argv[1:]
+        
     if argv and argv[0] == "knowledge":
         return run_knowledge_cli(argv[1:])
 
     args = build_parser().parse_args(argv)
     _force_utf8_stdout()
 
-    if getattr(args, "offline", False):
-        if getattr(args, "allow_llm", False) or getattr(args, "vendor", None) in ("llm", "hybrid"):
-            print("error: LLM and Hybrid parsers are not supported in --offline mode.", file=sys.stderr)
+    import contextlib
+    import socket
+
+    @contextlib.contextmanager
+    def network_guard(active: bool):
+        if not active:
+            yield
+            return
+        original_socket = socket.socket
+        def blocked_socket(*args, **kwargs):
+            raise RuntimeError("Network connection attempted in offline mode!")
+        socket.socket = blocked_socket
+        try:
+            yield
+        finally:
+            socket.socket = original_socket
+
+    with network_guard(getattr(args, "offline", False)):
+        if getattr(args, "offline", False):
+            if getattr(args, "allow_llm", False) or getattr(args, "vendor", None) in ("llm", "hybrid"):
+                print("error: LLM and Hybrid parsers are not supported in --offline mode.", file=sys.stderr)
+                return EXIT_ERROR
+            args.allow_llm = False
+            print("Knowledge Base: Loaded locally", file=sys.stderr)
+            print("API: Not required", file=sys.stderr)
+            print("LLM: Not required", file=sys.stderr)
+            print("Internet: Not required", file=sys.stderr)
+
+        frameworks_to_run = args.framework or [DEFAULT_FRAMEWORK]
+
+        if not args.config:
+            print("error: at least one configuration path is required.", file=sys.stderr)
             return EXIT_ERROR
-        args.allow_llm = False
-        print("Knowledge Base: Loaded locally", file=sys.stderr)
-        print("API: Not required", file=sys.stderr)
-        print("LLM: Not required", file=sys.stderr)
-        print("Internet: Not required", file=sys.stderr)
 
-    frameworks_to_run = args.framework or [DEFAULT_FRAMEWORK]
+        if args.bulk:
+            if args.pdf_path is not None:
+                print(
+                    "error: --pdf-out writes one file. Use --pdf-dir DIR with --bulk to write "
+                    "one PDF per device.",
+                    file=sys.stderr,
+                )
+                return EXIT_ERROR
+            return _run_bulk(args, frameworks_to_run)
 
-    if not args.config:
-        print("error: at least one configuration path is required.", file=sys.stderr)
-        return EXIT_ERROR
-
-    if args.bulk:
-        if args.pdf_path is not None:
+        if args.pdf_dir is not None:
             print(
-                "error: --pdf-out writes one file. Use --pdf-dir DIR with --bulk to write "
-                "one PDF per device.",
+                "error: --pdf-dir requires --bulk. For a single config, use --pdf-out PATH.",
                 file=sys.stderr,
             )
             return EXIT_ERROR
-        return _run_bulk(args, frameworks_to_run)
 
-    if args.pdf_dir is not None:
-        print(
-            "error: --pdf-dir requires --bulk. For a single config, use --pdf-out PATH.",
-            file=sys.stderr,
-        )
-        return EXIT_ERROR
+        if len(args.config) > 1:
+            print(
+                "error: several configuration paths were given without --bulk. "
+                "Pass --bulk to ingest them as a batch, or name one file.",
+                file=sys.stderr,
+            )
+            return EXIT_ERROR
+        args.config = args.config[0]
 
-    if len(args.config) > 1:
-        print(
-            "error: several configuration paths were given without --bulk. "
-            "Pass --bulk to ingest them as a batch, or name one file.",
-            file=sys.stderr,
-        )
-        return EXIT_ERROR
-    args.config = args.config[0]
-
-    try:
-        config_text = _read_config(args.config)
-        parser_cls, confidence = _select_parser(config_text, args.vendor, args.allow_llm)
-        parser = _instantiate(parser_cls, args)
-        baseline = pipeline.parse_config(
-            parser,
-            config_text,
-            source_file=str(args.config),
-            parser_cls=parser_cls,
-            confidence=confidence,
-        )
-        report = pipeline.audit_baseline(
-            baseline,
-            frameworks_to_run,
-            rules_path=args.rules,
-            include_baseline=not args.no_baseline,
-        )
-        primary_framework = report.framework
-    except (ParserError, RuleLoadError, RuleEvaluationError, LLMUnavailableError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
-        return EXIT_ERROR
-
-    if not args.quiet:
-        print(render_report(report, color=False if args.no_color else None))
-
-    if not args.no_json:
-        if args.rules:
-            fw_suffix = "rules"
-        elif len(frameworks_to_run) > 1:
-            fw_suffix = "multi"
-        else:
-            fw_suffix = primary_framework.name.lower()
-        destination = args.json_path or _default_json_path(args.config, fw_suffix)
-        written = write_json_report(report, destination, include_baseline=not args.no_baseline)
-        print(f"JSON report written to {written}")
-
-    if args.pdf_path is not None:
-        from .ingest import record_from_audit  # deferred: only a PDF run needs it
-
-        record = record_from_audit(report, config_text, args.config, baseline=baseline)
-        destination = (
-            _default_pdf_path(args.config) if args.pdf_path is _PDF_DEFAULT else Path(args.pdf_path)
-        )
         try:
-            written = write_device_pdf(record, destination, version=__version__)
-        except PdfUnavailableError as exc:
+            config_text = _read_config(args.config)
+            try:
+                parser_cls, confidence = _select_parser(config_text, args.vendor, args.allow_llm)
+                parser = _instantiate(parser_cls, args)
+                baseline = pipeline.parse_config(
+                    parser,
+                    config_text,
+                    source_file=str(args.config),
+                    parser_cls=parser_cls,
+                    confidence=confidence,
+                )
+                report = pipeline.audit_baseline(
+                    baseline,
+                    frameworks_to_run,
+                    rules_path=args.rules,
+                    include_baseline=not args.no_baseline,
+                )
+            except ParserError as exc:
+                if getattr(args, "offline", False):
+                    # Handle unknown/unsupported vendor by producing NEEDS_REVIEW results
+                    report = pipeline.audit_unknown_vendor_offline(
+                        config_text,
+                        str(args.config),
+                        frameworks_to_run,
+                        error_msg=str(exc),
+                        include_baseline=not args.no_baseline
+                    )
+                else:
+                    raise
+            primary_framework = report.framework
+        except (ParserError, RuleLoadError, RuleEvaluationError, LLMUnavailableError) as exc:
             print(f"error: {exc}", file=sys.stderr)
             return EXIT_ERROR
-        print(f"PDF report written to {written}")
 
-    return _exit_code(report, strict=args.strict)
+        if not args.quiet:
+            print(render_report(report, color=False if args.no_color else None))
+
+        if not args.no_json:
+            if args.rules:
+                fw_suffix = "rules"
+            elif len(frameworks_to_run) > 1:
+                fw_suffix = "multi"
+            else:
+                fw_suffix = primary_framework.name.lower() if primary_framework else "unknown"
+            destination = args.json_path or _default_json_path(args.config, fw_suffix)
+            written = write_json_report(report, destination, include_baseline=not args.no_baseline)
+            print(f"JSON report written to {written}")
+
+        if args.pdf_path is not None:
+            from .ingest import record_from_audit  # deferred: only a PDF run needs it
+
+            record = record_from_audit(report, config_text, args.config, baseline=baseline)
+            destination = (
+                _default_pdf_path(args.config) if args.pdf_path is _PDF_DEFAULT else Path(args.pdf_path)
+            )
+            try:
+                written = write_device_pdf(record, destination, version=__version__)
+            except PdfUnavailableError as exc:
+                print(f"error: {exc}", file=sys.stderr)
+                return EXIT_ERROR
+            print(f"PDF report written to {written}")
+
+        return _exit_code(report, strict=args.strict)
 
 
 def _run_bulk(args, frameworks_to_run: List[str]) -> int:
@@ -506,6 +542,7 @@ def _run_bulk(args, frameworks_to_run: List[str]) -> int:
         allow_llm=args.allow_llm,
         rules_path=args.rules,
         parser_factory=lambda parser_cls: _instantiate(parser_cls, args),
+        offline=getattr(args, "offline", False),
     )
 
     for warning in inventory.warnings:

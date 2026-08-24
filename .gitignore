@@ -11,3 +11,6 @@ reports/
 
 # Bulk-ingestion output: regenerate with `python -m auditor --bulk ... --inventory-out`.
 /inventory.json
+
+# SQLite local knowledge database
+auditor/rules/knowledge.db

@@ -211,3 +211,128 @@ def audit_baseline(
     """Evaluate then assemble: the second half of a single-file audit."""
     outcome = evaluate(baseline, frameworks, rules_path=rules_path, resolver=resolver)
     return build_report(baseline, outcome, include_baseline=include_baseline)
+
+
+def audit_unknown_vendor_offline(
+    config_text: str,
+    source_file: str,
+    frameworks: Sequence[str],
+    *,
+    error_msg: str,
+    include_baseline: bool = True,
+) -> AuditReport:
+    """Produce an AuditReport for an unknown/unsupported vendor when offline.
+    
+    All controls for the requested frameworks will be reported as NEEDS_REVIEW.
+    """
+    import hashlib
+    from .models.baseline import ParserProvenance, SecurityBaselineModel
+    from .models.result import AuditReport, ControlResult, FrameworkInfo, ReportSummary, TargetInfo, Status
+    from .models.rule import Severity, Remediation
+    from .knowledge.bootstrap import bootstrap_database_if_empty
+    from .knowledge.repository import get_db_connection
+    import json
+    
+    bootstrap_database_if_empty()
+    
+    source_sha256 = hashlib.sha256(config_text.encode("utf-8", errors="replace")).hexdigest()
+    config_line_count = len(config_text.splitlines())
+    
+    # Construct a dummy baseline
+    baseline = SecurityBaselineModel(
+        source_file=source_file,
+        source_sha256=source_sha256,
+        config_line_count=config_line_count,
+        provenance=ParserProvenance(
+            parser_name="unknown",
+            parser_version="0.0.0",
+            vendor="unknown",
+            os_family="unknown",
+            detection_confidence=0.0,
+            warnings=[error_msg]
+        )
+    )
+    
+    results = []
+    framework_infos = []
+    summaries = {}
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    for fw in frameworks:
+        if ":" in fw:
+            fw_name, fw_ver = fw.split(":", 1)
+        else:
+            fw_name = fw
+            fw_ver = None
+            
+        # Query controls for this framework in knowledge.db
+        query = """
+        SELECT DISTINCT control_id, title, description, severity, source_location, framework_display_name, framework_version, references_json
+        FROM controls
+        WHERE LOWER(framework) = LOWER(?)
+        """
+        params = [fw_name]
+        if fw_ver:
+            query += " AND framework_version = ?"
+            params.append(fw_ver)
+            
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        
+        fw_disp = fw_name
+        actual_ver = fw_ver or "1.0"
+        
+        fw_results = []
+        for row in rows:
+            fw_disp = row["framework_display_name"] or fw_name
+            actual_ver = row["framework_version"]
+            
+            # Create a NEEDS_REVIEW result
+            res = ControlResult(
+                rule_id=row["control_id"],
+                control_id=row["control_id"],
+                control_ref=row["source_location"],
+                title=row["title"],
+                description=row["description"] or "",
+                framework=fw_disp,
+                severity=Severity(row["severity"].lower()),
+                status=Status.NEEDS_REVIEW,
+                message=f"Unsupported vendor configuration offline. Manual review required. (Parser error: {error_msg})",
+                evidence=[],
+                remediation=Remediation(summary="Verify configuration settings manually for this device.", cli=[]),
+                references=json.loads(row["references_json"]) if row["references_json"] else [],
+                device=baseline.hostname.value or source_file,
+                vendor="unknown",
+                parser="unknown",
+                knowledge_version=actual_ver,
+                source_reference=row["source_location"],
+                evaluation_result=Status.NEEDS_REVIEW.value,
+                reason=f"Unsupported vendor configuration offline. Manual review required. (Parser error: {error_msg})"
+            )
+            fw_results.append(res)
+            
+        results.extend(fw_results)
+        
+        fw_info = FrameworkInfo(
+            name=fw_disp,
+            version=actual_ver,
+            rules_evaluated=len(fw_results),
+            source_note="No platform-specific rule mappings loaded due to unknown vendor."
+        )
+        framework_infos.append(fw_info)
+        summaries[fw_disp] = ReportSummary.from_results(fw_results)
+        
+    conn.close()
+    
+    return AuditReport(
+        tool={"name": TOOL_NAME, "version": __version__},
+        target=target_info(baseline),
+        framework=framework_infos[0] if framework_infos else None,
+        frameworks=framework_infos,
+        framework_summaries=summaries,
+        summary=ReportSummary.from_results(results),
+        results=results,
+        baseline=baseline if include_baseline else None
+    )

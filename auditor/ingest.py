@@ -171,6 +171,7 @@ def ingest_file(
     read_companion: bool = True,
     now: Optional[datetime] = None,
     resolver: Optional[pipeline.RulesetResolver] = None,
+    offline: bool = False,
 ) -> DeviceRecord:
     """Audit one configuration and return its device record.
 
@@ -215,6 +216,7 @@ def ingest_file(
             source_hash=source_hash,
             config_text=config_text,
             path=path if read_companion else None,
+            offline=offline,
         )
 
     # -- parse + evaluate: the same stages, in the same order, as one file ----
@@ -379,6 +381,7 @@ def _failed_record(
     source_hash: Optional[str] = None,
     config_text: Optional[str] = None,
     path: Optional[Path] = None,
+    offline: bool = False,
 ) -> DeviceRecord:
     """A file that produced no audit still produces a record.
 
@@ -418,6 +421,24 @@ def _failed_record(
         target=None,
         companion_file=identity.companion_file,
     )
+    
+    if status == DeviceStatus.UNKNOWN_VENDOR and offline and config_text:
+        try:
+            report = pipeline.audit_unknown_vendor_offline(
+                config_text,
+                source_file,
+                frameworks,
+                error_msg=error,
+                include_baseline=True
+            )
+            record.findings = report.results
+            record.framework_summaries = report.framework_summaries
+            record.summary = report.summary
+            record.target = report.target
+            record.frameworks = list(report.framework_summaries.keys())
+        except Exception:
+            pass
+
     _assign_key(record)
     return record
 
@@ -558,10 +579,11 @@ def ingest_paths(
     parser_factory: ParserFactory = _default_factory,
     read_companion: bool = True,
     now: Optional[datetime] = None,
+    offline: bool = False,
 ) -> DeviceInventory:
     """Ingest every configuration under ``paths`` into one inventory.
 
-    ``paths`` may mix directories, explicit files and globs. ``now`` exists so a
+    `paths`` may mix directories, explicit files and globs. ``now`` exists so a
     caller (a test, or a reproducible export) can pin the timestamps: everything
     else about the output is already deterministic, and the clock is the only
     part that is not.
@@ -585,6 +607,7 @@ def ingest_paths(
             read_companion=read_companion,
             now=generated_at,
             resolver=resolver,
+            offline=offline,
         )
         for path in collection.files
     ]

@@ -114,6 +114,7 @@ def bootstrap_database_if_empty() -> bool:
                     rem_def = remediations_data.get(control_id) or {}
                     rem_summary = rem_def.get("summary", "No remediation provided.")
                     rem_cli = rem_def.get("cli", [])
+                    rem_provenance = rem_def.get("provenance", "VERIFIED")
                     
                     # Extract fields referenced in condition for evidence_requirements
                     from ..models.rule import LeafCondition, AllOfCondition, AnyOfCondition, NotCondition
@@ -156,7 +157,8 @@ def bootstrap_database_if_empty() -> bool:
                         internal_control_id=control_id,
                         source_note=source_note_val,
                         framework_display_name=fw_display_name,
-                        verified_ref=verified_val
+                        verified_ref=verified_val,
+                        remediation_provenance=rem_provenance
                     )
                     
         except Exception as exc:
