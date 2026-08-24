@@ -108,6 +108,7 @@ class Remediation(BaseModel):
 
     summary: str
     cli: List[str] = Field(default_factory=list, description="Vendor CLI lines, in order, as given by the benchmark.")
+    provenance: Optional[str] = Field(default="VERIFIED", description="Provenance of this remediation ('VERIFIED' or 'AI_SUGGESTED').")
 
 
 class ComplianceRule(BaseModel):
@@ -130,6 +131,7 @@ class ComplianceRule(BaseModel):
     remediation: Remediation
     references: List[str] = Field(default_factory=list)
     notes: Optional[str] = None
+    knowledge_version: Optional[str] = Field(default=None, description="Local knowledge base version or snapshot identifier.")
 
     @model_validator(mode="after")
     def _sync_declared_fields(self) -> "ComplianceRule":

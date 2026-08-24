@@ -77,6 +77,7 @@ class ControlResult(BaseModel):
     """The verdict for a single control against a single device."""
 
     rule_id: str
+    control_id: Optional[str] = None
     control_ref: Optional[str] = None
     internal_control_id: Optional[str] = None
     verified_ref: bool = True
@@ -89,6 +90,13 @@ class ControlResult(BaseModel):
     evidence: List[Evidence] = Field(default_factory=list)
     remediation: Optional[Remediation] = None
     references: List[str] = Field(default_factory=list)
+    device: Optional[str] = None
+    vendor: Optional[str] = None
+    parser: Optional[str] = None
+    knowledge_version: Optional[str] = None
+    source_reference: Optional[str] = None
+    evaluation_result: Optional[str] = None
+    reason: Optional[str] = None
 
     @classmethod
     def build(
@@ -97,9 +105,14 @@ class ControlResult(BaseModel):
         status: Status,
         message: str,
         evidence: List[Evidence],
+        *,
+        device: Optional[str] = None,
+        vendor: Optional[str] = None,
+        parser: Optional[str] = None,
     ) -> "ControlResult":
         return cls(
             rule_id=rule.id,
+            control_id=rule.id,
             control_ref=rule.control_ref,
             internal_control_id=rule.internal_control_id,
             verified_ref=rule.verified_ref,
@@ -115,6 +128,13 @@ class ControlResult(BaseModel):
             # to paste commands they do not need.
             remediation=None if status is Status.PASS else rule.remediation,
             references=rule.references,
+            device=device,
+            vendor=vendor,
+            parser=parser,
+            knowledge_version=rule.knowledge_version,
+            source_reference=rule.control_ref,
+            evaluation_result=status.value,
+            reason=message,
         )
 
     @property
