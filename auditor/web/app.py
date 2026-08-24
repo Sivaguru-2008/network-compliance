@@ -187,6 +187,30 @@ def create_app(store_root: Optional[Path] = None) -> FastAPI:
             }
         )
 
+    # -- jobs listing -------------------------------------------------------
+
+    @app.get("/api/jobs")
+    async def jobs_list() -> JSONResponse:
+        """Every stored job with its summary metrics, for the history panel."""
+        result = []
+        for jid in store.job_ids():
+            job = store.get(jid)
+            if job is None:
+                continue
+            inv = job.inventory
+            scores = {
+                fw: round(s.compliance_score, 2)
+                for fw, s in inv.framework_rollup.items()
+            }
+            result.append({
+                "job_id": jid,
+                "uploaded_at": inv.generated_at.isoformat() if inv.generated_at else None,
+                "device_count": inv.counts.total,
+                "frameworks": list(inv.frameworks),
+                "compliance_scores": scores,
+            })
+        return JSONResponse(result)
+
     # -- retrieval ----------------------------------------------------------
 
     def _require_job(job_id: str):

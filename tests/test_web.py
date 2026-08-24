@@ -360,3 +360,59 @@ def test_cli_bulk_still_works(tmp_path, capsys):
 def test_empty_upload_is_a_clean_400(client):
     response = client.post("/api/upload", files=[], data={})
     assert response.status_code in (400, 422)
+
+
+# ---------------------------------------------------------------------------
+# 11. GET /api/jobs listing
+# ---------------------------------------------------------------------------
+
+
+def test_jobs_empty_when_no_uploads(client):
+    response = client.get("/api/jobs")
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_jobs_lists_uploaded_jobs_with_summary(client):
+    _upload(client, [("hardened_ios.conf", _sample_bytes("hardened_ios.conf"))], frameworks=["CIS"])
+    _upload(client, [("junos_srx.conf", _sample_bytes("junos_srx.conf"))], frameworks=["CIS"])
+
+    response = client.get("/api/jobs")
+    assert response.status_code == 200
+    jobs = response.json()
+    assert len(jobs) == 2
+
+    for job in jobs:
+        assert "job_id" in job
+        assert "uploaded_at" in job
+        assert "device_count" in job
+        assert "frameworks" in job
+        assert "compliance_scores" in job
+        assert job["device_count"] >= 1
+        assert "CIS" in job["compliance_scores"]
+
+
+def test_jobs_compliance_scores_match_inventory_rollup(client):
+    resp = _upload(
+        client,
+        [("hardened_ios.conf", _sample_bytes("hardened_ios.conf"))],
+        frameworks=["CIS"],
+    )
+    job_id = resp.json()["job_id"]
+    inv = resp.json()["inventory"]
+
+    jobs = client.get("/api/jobs").json()
+    job = next(j for j in jobs if j["job_id"] == job_id)
+
+    for fw, summary in inv.get("framework_rollup", {}).items():
+        assert abs(job["compliance_scores"][fw] - summary["compliance_score"]) < 0.01
+
+
+def test_existing_endpoints_still_work_after_jobs_added(client):
+    resp = _upload(client, [("hardened_ios.conf", _sample_bytes("hardened_ios.conf"))])
+    assert resp.status_code == 200
+    job_id = resp.json()["job_id"]
+
+    assert client.get(f"/api/inventory/{job_id}").status_code == 200
+    assert client.get(f"/api/device/{job_id}/0").status_code == 200
+    assert client.get(f"/api/device/{job_id}/0/pdf").status_code == 200
