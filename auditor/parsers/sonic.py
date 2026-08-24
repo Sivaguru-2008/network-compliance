@@ -339,9 +339,11 @@ class SonicParser(VendorParser):
             )
             return
 
-        baseline.snmp_communities = Observation[List[SnmpCommunity]].absent(
-            [],
-            "No SNMP_COMMUNITY or SNMP configuration in config_db.",
+        baseline.snmp_communities = Observation[List[SnmpCommunity]].unknown(
+            "No SNMP_COMMUNITY or SNMP tables in config_db. On SONiC an SNMPv2c "
+            "community (default 'public') is commonly configured in /etc/sonic/snmp.yml, "
+            "which is not represented in config_db -- so the community configuration "
+            "cannot be confirmed from this file and must be reviewed manually.",
         )
 
     # -- logging -----------------------------------------------------------
