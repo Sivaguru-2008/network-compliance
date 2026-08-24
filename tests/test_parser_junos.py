@@ -27,7 +27,7 @@ from auditor.rules import load_framework
 
 SAMPLES = Path(__file__).resolve().parents[1] / "samples"
 SRX_TEXT = (SAMPLES / "junos_srx.conf").read_text(encoding="utf-8")
-FORTIOS_TEXT = (SAMPLES / "fortios_unknown.conf").read_text(encoding="utf-8")
+FORTIOS_TEXT = (SAMPLES / "fortios_fgt.conf").read_text(encoding="utf-8")
 
 # The same device as samples/junos_srx.conf, as `show configuration` renders it.
 BRACES_TEXT = """\
@@ -38,6 +38,7 @@ system {
         encrypted-password "$6$mR7vQpLb$8rTfYh1WqZd6JsEuA4iKmPnVxCbGyRt3pLhBc7YrUeIoAtFgNjW";
     }
     login {
+        message "Authorised access only. Activity is logged and monitored.";
         idle-timeout 0;
         user netops {
             class super-user;
@@ -57,6 +58,9 @@ system {
                 system-generated-certificate;
             }
         }
+    }
+    ntp {
+        server 10.20.30.41;
     }
     syslog {
         host 10.20.30.40 {
@@ -168,6 +172,9 @@ def test_a_file_with_no_junos_statements_is_refused():
         ("logging_enabled", True),
         ("logging_hosts", ["10.20.30.40"]),
         ("logging_buffered", True),
+        ("login_banner_present", True),
+        ("management_acl_applied", False),
+        ("ntp_servers", ["10.20.30.41"]),
     ],
 )
 def test_sample_values(srx: SecurityBaselineModel, field: str, expected_value):
@@ -181,10 +188,15 @@ def test_sample_snmp_communities_are_the_defaults(srx: SecurityBaselineModel):
     assert [(c.name, c.access) for c in communities] == [("public", "ro"), ("private", "rw")]
 
 
-def test_the_whole_sample_is_conclusive(srx: SecurityBaselineModel):
-    """Junos configurations are complete documents, so nothing should escalate."""
+def test_only_the_release_dependent_default_escalates(srx: SecurityBaselineModel):
+    """A Junos config is a complete document, so almost nothing should escalate.
+
+    The exception is the one setting whose effective value comes from a default
+    rather than from the text - which is exactly the case the IOS parser also
+    refuses to guess at.
+    """
     undetected = [f for f in SecurityBaselineModel.observable_fields() if not getattr(srx, f).detected]
-    assert undetected == []
+    assert undetected == ["password_min_length"]
 
 
 def test_reported_line_numbers_match_the_source_file(srx: SecurityBaselineModel):
@@ -413,6 +425,56 @@ def test_a_class_that_never_times_out_beats_every_configured_timeout():
     assert "disables the idle timeout" in baseline.vty_exec_timeout_seconds.note
 
 
+def test_the_loopback_filter_is_what_restricts_management_access():
+    """Junos has no per-line access-class: lo0 is where the control plane is guarded."""
+    guarded = parse(
+        "set system host-name FW\n"
+        "set firewall family inet filter PROTECT-RE term MGMT then accept\n"
+        "set interfaces lo0 unit 0 family inet filter input PROTECT-RE\n"
+    )
+    assert guarded.management_acl_applied.value is True
+    assert "lo0" in guarded.management_acl_applied.note
+
+    unguarded = parse(
+        "set system host-name FW\nset interfaces ge-0/0/0 unit 0 family inet filter input EDGE\n"
+    )
+    assert unguarded.management_acl_applied.value is False, "a filter on a data port is not RE protection"
+
+
+def test_an_output_only_loopback_filter_does_not_restrict_who_may_connect():
+    baseline = parse(
+        "set system host-name FW\nset interfaces lo0 unit 0 family inet filter output ACCOUNTING\n"
+    )
+
+    assert baseline.management_acl_applied.value is False
+
+
+@pytest.mark.parametrize("statement", ["message", "announcement"])
+def test_either_banner_statement_counts(statement: str):
+    baseline = parse(f'set system host-name FW\nset system login {statement} "Notice."\n')
+
+    assert baseline.login_banner_present.value is True
+
+
+def test_ntp_servers_are_collected_and_deduplicated():
+    baseline = parse(
+        "set system host-name FW\n"
+        "set system ntp server 10.20.30.41\n"
+        "set system ntp server 10.20.30.41 prefer\n"
+        "set system ntp server 10.20.30.42\n"
+    )
+
+    assert baseline.ntp_servers.value == ["10.20.30.41", "10.20.30.42"]
+
+
+def test_an_explicit_password_minimum_is_read_rather_than_escalated():
+    baseline = parse("set system host-name FW\nset system login password minimum-length 12\n")
+
+    assert baseline.password_min_length.detected is True
+    assert baseline.password_min_length.value == 12
+    assert baseline.provenance.warnings == []
+
+
 def test_a_plain_text_password_is_a_stored_credential_failure():
     baseline = parse(
         "set system host-name FW\nset system root-authentication plain-text-password\n"
@@ -430,7 +492,7 @@ def test_centralised_authentication_needs_both_an_order_and_a_server():
         "set system tacplus-server 10.20.30.45 secret abc\n"
     )
     assert both.aaa_enabled.value is True
-    assert both.provenance.warnings == []
+    assert not any("authentication-order" in w for w in both.provenance.warnings)
 
     server_only = parse("set system host-name FW\nset system radius-server 10.20.30.46 secret abc\n")
     assert server_only.aaa_enabled.value is True
@@ -505,6 +567,12 @@ def test_statement_paths_are_matched_by_prefix_not_substring():
         ("CIS-JUNOS-ROOT-AUTH-HASHED", Status.PASS),
         ("CIS-JUNOS-SSH-V2", Status.PASS),
         ("CIS-JUNOS-SYSLOG-DESTINATION", Status.PASS),
+        ("CIS-JUNOS-MGMT-FILTER", Status.FAIL),
+        ("CIS-JUNOS-SNMP-NO-WRITE", Status.FAIL),
+        ("CIS-JUNOS-LOGIN-BANNER", Status.PASS),
+        ("CIS-JUNOS-NTP-CONFIGURED", Status.PASS),
+        # The one control on this device the configuration text cannot settle.
+        ("CIS-JUNOS-PASSWORD-MIN-LENGTH", Status.NEEDS_REVIEW),
     ],
 )
 def test_sample_verdicts(junos_results, rule_id: str, expected: Status):
@@ -521,11 +589,13 @@ def test_remediating_the_sample_turns_every_control_green():
         .replace("set system login idle-timeout 0", "set system login class ops idle-timeout 10")
         + "set system authentication-order [ tacplus password ]\n"
         + "set system tacplus-server 10.20.30.45 secret abc\n"
+        + "set system login password minimum-length 8\n"
+        + "set interfaces lo0 unit 0 family inet filter input PROTECT-RE\n"
     )
     engine = ComplianceEngine(load_framework("CIS", "juniper_junos"))
     results = engine.evaluate(JunosParser().parse(remediated))
 
-    assert [r.status for r in results] == [Status.PASS] * 8, {
+    assert [r.status for r in results] == [Status.PASS] * 13, {
         r.rule_id: (r.status, r.reason) for r in results if r.status is not Status.PASS
     }
 

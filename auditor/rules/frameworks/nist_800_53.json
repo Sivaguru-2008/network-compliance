@@ -1,0 +1,47 @@
+{
+  "framework_id": "nist_800_53",
+  "name": "NIST SP 800-53",
+  "version": "Rev. 5",
+  "description": "Security and Privacy Controls for Information Systems and Organizations",
+  "mappings": {
+    "aaa_enabled": {
+      "default": { "id": "NIST-AC-2", "control_ref": "AC-2", "verified": true }
+    },
+    "secure_vty_transport": {
+      "default": { "id": "NIST-AC-17", "control_ref": "AC-17", "verified": true }
+    },
+    "vty_idle_timeout": {
+      "default": { "id": "NIST-AC-12", "control_ref": "AC-12", "verified": true }
+    },
+    "enable_secret_encrypted": {
+      "default": { "id": "NIST-IA-5", "control_ref": "IA-5", "verified": true }
+    },
+    "no_default_snmp_community": {
+      "default": { "id": "NIST-SC-12-INTERNAL", "control_ref": null, "verified": false }
+    },
+    "http_server_disabled": {
+      "default": { "id": "NIST-SC-7", "control_ref": "SC-7", "verified": true }
+    },
+    "ssh_version_2": {
+      "default": { "id": "NIST-SC-13", "control_ref": "SC-13", "verified": true }
+    },
+    "logging_enabled": {
+      "default": { "id": "NIST-AU-2", "control_ref": "AU-2", "verified": true }
+    },
+    "management_acl": {
+      "default": { "id": "NIST-AC-3", "control_ref": "AC-3", "verified": true }
+    },
+    "login_banner": {
+      "default": { "id": "NIST-AC-8", "control_ref": "AC-8", "verified": true }
+    },
+    "password_min_length": {
+      "default": { "id": "NIST-IA-5-1", "control_ref": "IA-5(1)", "verified": true }
+    },
+    "ntp_configured": {
+      "default": { "id": "NIST-AU-8", "control_ref": "AU-8", "verified": true }
+    },
+    "no_write_snmp_community": {
+      "default": { "id": "NIST-SC-12-RW-INTERNAL", "control_ref": null, "verified": false }
+    }
+  }
+}

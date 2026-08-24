@@ -18,6 +18,11 @@ EXPECTED_CONTROL_IDS = {
     "CIS-IOS-2.1.1.6",
     "CIS-IOS-2.1-HTTP-SERVER",
     "CIS-IOS-2.2.2-2.2.4",
+    "CIS-IOS-1.2-VTY-ACCESS-CLASS",
+    "CIS-IOS-1.6-LOGIN-BANNER",
+    "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+    "CIS-IOS-2.3-NTP-CONFIGURED",
+    "CIS-IOS-1.5-SNMP-NO-WRITE",
 }
 
 
@@ -31,7 +36,7 @@ def test_cis_pack_is_discovered():
     assert ("CIS", "cisco_ios") in discover_packs()
 
 
-def test_pack_contains_the_expected_eight_controls(ruleset: RuleSet):
+def test_pack_contains_the_expected_controls(ruleset: RuleSet):
     assert {rule.id for rule in ruleset.rules} == EXPECTED_CONTROL_IDS
 
 
@@ -66,6 +71,11 @@ def test_severities_match_the_agreed_risk_ranking(ruleset: RuleSet):
         "CIS-IOS-1.2.9": Severity.MEDIUM,
         "CIS-IOS-2.2.2-2.2.4": Severity.MEDIUM,
         "CIS-IOS-1.1.1": Severity.MEDIUM,
+        "CIS-IOS-1.2-VTY-ACCESS-CLASS": Severity.HIGH,
+        "CIS-IOS-1.5-SNMP-NO-WRITE": Severity.HIGH,
+        "CIS-IOS-1.1-PASSWORD-MIN-LENGTH": Severity.MEDIUM,
+        "CIS-IOS-2.3-NTP-CONFIGURED": Severity.MEDIUM,
+        "CIS-IOS-1.6-LOGIN-BANNER": Severity.LOW,
     }
     assert {rule.id: rule.severity for rule in ruleset.rules} == expected
 
@@ -130,9 +140,9 @@ def test_cli_prints_a_table_and_writes_json(tmp_path, capsys):
     payload = json.loads(output.read_text(encoding="utf-8"))
     assert payload["target"]["hostname"] == "BRANCH-SW-07"
     assert payload["framework"]["name"] == "CIS"
-    assert payload["summary"]["failed"] == 7
+    assert payload["summary"]["failed"] == 12
     assert payload["summary"]["needs_review"] == 1
-    assert len(payload["results"]) == 8
+    assert len(payload["results"]) == 13
     assert payload["baseline"]["telnet_enabled"]["value"] is True
 
 

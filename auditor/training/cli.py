@@ -68,6 +68,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     adjudicate.add_argument("--note", default=None, help="Free-text reasoning.")
     adjudicate.add_argument("--store", type=Path, default=DEFAULT_WORKDIR / "adjudications.jsonl")
+
+    server = sub.add_parser("server", help="Start the web training dashboard server.")
+    server.add_argument("--port", type=int, default=8080, help="Port to run the server on.")
+    server.add_argument("--store", type=Path, default=DEFAULT_WORKDIR / "learned_mappings.jsonl", help="Where mappings are stored.")
+    server.add_argument("--stats", type=Path, default=DEFAULT_WORKDIR / "stats.json", help="Where stats are stored.")
+
     return parser
 
 
@@ -286,6 +292,16 @@ def render_policy(policy: ThresholdPolicy) -> str:
     return "\n".join(lines)
 
 
+def command_server(args) -> int:
+    from .server import run_server
+    try:
+        run_server(port=args.port, store_path=args.store, stats_path=args.stats)
+    except Exception as e:
+        print(f"error: {e}", file=sys.stderr)
+        return EXIT_ERROR
+    return EXIT_OK
+
+
 def run(argv: Optional[Sequence[str]] = None) -> int:
     args = build_parser().parse_args(argv)
     _force_utf8_stdout()
@@ -295,6 +311,8 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
         return command_report(args)
     if args.command == "adjudicate":
         return command_adjudicate(args)
+    if args.command == "server":
+        return command_server(args)
     return EXIT_ERROR
 
 

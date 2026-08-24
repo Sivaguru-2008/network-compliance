@@ -40,6 +40,9 @@ class Evidence(BaseModel):
     origin: Origin = Origin.DETERMINISTIC
     confidence: float = 1.0
     note: Optional[str] = None
+    mapping_id: Optional[str] = None
+    original_line_number: Optional[int] = None
+    original_line: Optional[str] = None
 
     @classmethod
     def from_observation(cls, field: str, obs: Observation) -> "Evidence":
@@ -52,10 +55,17 @@ class Evidence(BaseModel):
             origin=obs.origin,
             confidence=obs.confidence,
             note=obs.note,
+            mapping_id=getattr(obs, "mapping_id", None),
+            original_line_number=getattr(obs, "original_line_number", None),
+            original_line=getattr(obs, "original_line", None),
         )
 
     @property
     def display(self) -> str:
+        if self.origin == Origin.LEARNED or self.mapping_id:
+            source = f"Administrator-trained mapping #{self.mapping_id or 'unknown'}"
+            evidence = f"line {self.original_line_number or self.line_number or '?'}: {self.original_line or self.source_line or ''}"
+            return f"{source} (Evidence: {evidence})"
         if self.source_line:
             return f"L{self.line_number}: {self.source_line}" if self.line_number else self.source_line
         if self.detected:
@@ -68,6 +78,8 @@ class ControlResult(BaseModel):
 
     rule_id: str
     control_ref: Optional[str] = None
+    internal_control_id: Optional[str] = None
+    verified_ref: bool = True
     title: str
     description: str
     framework: str
@@ -89,6 +101,8 @@ class ControlResult(BaseModel):
         return cls(
             rule_id=rule.id,
             control_ref=rule.control_ref,
+            internal_control_id=rule.internal_control_id,
+            verified_ref=rule.verified_ref,
             title=rule.title,
             description=rule.description,
             framework=rule.framework,
@@ -196,6 +210,8 @@ class AuditReport(BaseModel):
     tool: Dict[str, str] = Field(default_factory=dict)
     target: TargetInfo
     framework: FrameworkInfo
+    frameworks: List[FrameworkInfo] = Field(default_factory=list)
+    framework_summaries: Dict[str, ReportSummary] = Field(default_factory=dict)
     summary: ReportSummary
     results: List[ControlResult] = Field(default_factory=list)
     baseline: Optional[SecurityBaselineModel] = Field(

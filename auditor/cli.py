@@ -1,10 +1,16 @@
 """Command-line entry point.
 
     python -m auditor samples/insecure_ios.conf --framework CIS
+    python -m auditor --bulk samples/configs/ --framework CIS --inventory-out inventory.json
 
 The CLI is a thin shell over the four pipeline stages -- read, parse, evaluate,
 report.  It holds no compliance logic of its own, so an API server or a batch
 runner added later can call the same three objects directly.
+
+``--bulk`` is the batch runner that was always anticipated: it adds no auditing
+of its own, it loops ``auditor.ingest`` over the same ``auditor.pipeline``
+stages this module calls for one file.  Without ``--bulk`` the single-file path
+below runs exactly as it always has.
 """
 
 import argparse
@@ -12,28 +18,50 @@ import sys
 from pathlib import Path
 from typing import List, Optional, Sequence
 
-from . import __version__
-from .engine import ComplianceEngine, RuleEvaluationError
-from .models.result import AuditReport, Status
+from . import __version__, pipeline
+from .engine import RuleEvaluationError
+from .models.result import AuditReport
 from .parsers import HybridParser, LLMParser, ParserError, VendorParser, registry
 from .parsers.llm.client import DEFAULT_MODEL, AnthropicClient, LLMUnavailableError
-from .report import render_report, write_json_report
-from .rules import (
-    RuleLoadError,
-    available_frameworks,
-    load_framework,
-    load_ruleset,
-    platform_mismatch_note,
+from .pipeline import DEFAULT_FRAMEWORK, TOOL_NAME
+from .report import (
+    PdfUnavailableError,
+    render_inventory,
+    render_report,
+    write_device_pdf,
+    write_inventory_pdfs,
+    write_json_report,
 )
-
-TOOL_NAME = "netaudit"
+from .rules import RuleLoadError, available_frameworks
 
 EXIT_OK = 0
 EXIT_FINDINGS = 1
 EXIT_ERROR = 2
 EXIT_REVIEW = 3
 
+#: Sentinel for a bare ``--pdf`` with no path: use the default next to the JSON.
+_PDF_DEFAULT = object()
+
 _EPILOG = """\
+bulk ingestion:
+  python -m auditor --bulk samples/configs/ --framework cis --framework nist_800_53
+  python -m auditor --bulk a.conf b.conf c.conf --framework stig
+  python -m auditor --bulk "configs/**/*.conf" --inventory-out inventory.json
+
+  Directories are scanned recursively. Each file is parsed once and evaluated
+  against every requested framework; a file that cannot be read, parsed, or
+  identified becomes a record with a status and a reason, and the batch
+  continues.
+
+PDF reporting:
+  python -m auditor samples/hardened_ios.conf --framework cis --framework stig --pdf-out report.pdf
+  python -m auditor --bulk samples/configs/ --framework cis --pdf-dir reports/
+
+  One comprehensive PDF per device -- identity, per-framework tallies, every
+  control result, and vendor-specific remediation for the ones that did not
+  pass. Every framework named with --framework appears inside that one file;
+  the PDF renders the finished audit and evaluates nothing itself.
+
 exit codes:
   0  completed (or, with --strict, every control passed)
   1  --strict and at least one control FAILED
@@ -41,7 +69,9 @@ exit codes:
   3  --strict and at least one control needs review (no outright failures)
 
 Without --strict the tool always exits 0 on a successful run, so it can be used
-in a pipeline that collects reports without gating on them.
+in a pipeline that collects reports without gating on them.  Under --bulk,
+--strict grades the batch by its worst device, and a file that could not be
+audited counts as needing review.
 """
 
 
@@ -52,11 +82,56 @@ def build_parser() -> argparse.ArgumentParser:
         epilog=_EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("config", type=Path, help="Path to the device configuration file.")
+    parser.add_argument(
+        "config",
+        type=Path,
+        nargs="*",
+        help=(
+            "Path to the device configuration file. With --bulk, one or more files, "
+            "directories or globs to ingest as a batch."
+        ),
+    )
+    parser.add_argument(
+        "--bulk",
+        action="store_true",
+        help=(
+            "Ingest every configuration under the given paths as a batch, producing a device "
+            "inventory instead of a single-device report. Directories are scanned recursively."
+        ),
+    )
+    parser.add_argument(
+        "--inventory-out",
+        dest="inventory_path",
+        type=Path,
+        default=None,
+        metavar="PATH",
+        help="With --bulk, write the full device inventory as JSON to PATH.",
+    )
+    parser.add_argument(
+        "--pdf-out",
+        "--pdf",
+        dest="pdf_path",
+        nargs="?",
+        const=_PDF_DEFAULT,
+        default=None,
+        metavar="PATH",
+        help="Write the comprehensive per-device PDF report to PATH "
+        "(default: reports/<config-name>.pdf). One file, covering every framework "
+        "given with --framework. Requires reportlab: pip install -r requirements-pdf.txt",
+    )
+    parser.add_argument(
+        "--pdf-dir",
+        dest="pdf_dir",
+        type=Path,
+        default=None,
+        metavar="DIR",
+        help="With --bulk, write one PDF per device into DIR.",
+    )
     parser.add_argument(
         "--framework",
-        default="CIS",
-        help="Compliance framework to evaluate (default: CIS). Available: %s"
+        action="append",
+        default=None,
+        help="Compliance framework to evaluate (can specify multiple). Available: %s"
         % (", ".join(available_frameworks()) or "none found"),
     )
     parser.add_argument(
@@ -134,10 +209,7 @@ def _read_config(path: Path) -> str:
 
 def _select_parser(config_text: str, vendor: Optional[str], allow_llm: bool):
     """Explicit --vendor wins; otherwise rank the registered parsers."""
-    if vendor:
-        parser_cls = registry.get(vendor)
-        return parser_cls, parser_cls.detect(config_text)
-    return registry.detect(config_text, allow_fallback=allow_llm)
+    return pipeline.select_parser(config_text, vendor, allow_llm)
 
 
 def _instantiate(parser_cls, args) -> "VendorParser":
@@ -179,39 +251,64 @@ def _default_json_path(config: Path, framework: str) -> Path:
     return Path("reports") / f"{config.stem}.{framework.lower()}.json"
 
 
+def _default_pdf_path(config: Path) -> Path:
+    return Path("reports") / f"{config.stem}.pdf"
+
+
 def run(argv: Optional[Sequence[str]] = None) -> int:
     args = build_parser().parse_args(argv)
     _force_utf8_stdout()
+
+    frameworks_to_run = args.framework or [DEFAULT_FRAMEWORK]
+
+    if not args.config:
+        print("error: at least one configuration path is required.", file=sys.stderr)
+        return EXIT_ERROR
+
+    if args.bulk:
+        if args.pdf_path is not None:
+            print(
+                "error: --pdf-out writes one file. Use --pdf-dir DIR with --bulk to write "
+                "one PDF per device.",
+                file=sys.stderr,
+            )
+            return EXIT_ERROR
+        return _run_bulk(args, frameworks_to_run)
+
+    if args.pdf_dir is not None:
+        print(
+            "error: --pdf-dir requires --bulk. For a single config, use --pdf-out PATH.",
+            file=sys.stderr,
+        )
+        return EXIT_ERROR
+
+    if len(args.config) > 1:
+        print(
+            "error: several configuration paths were given without --bulk. "
+            "Pass --bulk to ingest them as a batch, or name one file.",
+            file=sys.stderr,
+        )
+        return EXIT_ERROR
+    args.config = args.config[0]
 
     try:
         config_text = _read_config(args.config)
         parser_cls, confidence = _select_parser(config_text, args.vendor, args.allow_llm)
         parser = _instantiate(parser_cls, args)
-        baseline = parser.parse(config_text, source_file=str(args.config))
-        if parser_cls not in (LLMParser, HybridParser):
-            # The LLM parser reports the vendor it identified, and the hybrid parser
-            # carries the confidence of the deterministic parser it built on. Neither
-            # is improved by the registry's score for the class itself.
-            baseline.provenance.detection_confidence = confidence
-
-        # Platform comes from the parsed baseline, not the parser class: the LLM
-        # fallback only learns the vendor by reading the configuration.
-        platform_key = f"{baseline.provenance.vendor}_{baseline.provenance.os_family}"
-        if args.rules:
-            ruleset = load_ruleset(args.rules)
-        else:
-            ruleset = load_framework(args.framework, platform_key, allow_cross_platform=True)
-
-        engine = ComplianceEngine(ruleset)
-        report = engine.build_report(
-            baseline,
-            tool_name=TOOL_NAME,
-            tool_version=__version__,
-            include_baseline=not args.no_baseline,
-            platform_note=platform_mismatch_note(
-                ruleset, baseline.provenance.vendor, baseline.provenance.os_family
-            ),
+        baseline = pipeline.parse_config(
+            parser,
+            config_text,
+            source_file=str(args.config),
+            parser_cls=parser_cls,
+            confidence=confidence,
         )
+        report = pipeline.audit_baseline(
+            baseline,
+            frameworks_to_run,
+            rules_path=args.rules,
+            include_baseline=not args.no_baseline,
+        )
+        primary_framework = report.framework
     except (ParserError, RuleLoadError, RuleEvaluationError, LLMUnavailableError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_ERROR
@@ -220,11 +317,89 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
         print(render_report(report, color=False if args.no_color else None))
 
     if not args.no_json:
-        destination = args.json_path or _default_json_path(args.config, ruleset.framework)
+        if args.rules:
+            fw_suffix = "rules"
+        elif len(frameworks_to_run) > 1:
+            fw_suffix = "multi"
+        else:
+            fw_suffix = primary_framework.name.lower()
+        destination = args.json_path or _default_json_path(args.config, fw_suffix)
         written = write_json_report(report, destination, include_baseline=not args.no_baseline)
         print(f"JSON report written to {written}")
 
+    if args.pdf_path is not None:
+        from .ingest import record_from_audit  # deferred: only a PDF run needs it
+
+        record = record_from_audit(report, config_text, args.config, baseline=baseline)
+        destination = (
+            _default_pdf_path(args.config) if args.pdf_path is _PDF_DEFAULT else Path(args.pdf_path)
+        )
+        try:
+            written = write_device_pdf(record, destination, version=__version__)
+        except PdfUnavailableError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return EXIT_ERROR
+        print(f"PDF report written to {written}")
+
     return _exit_code(report, strict=args.strict)
+
+
+def _run_bulk(args, frameworks_to_run: List[str]) -> int:
+    """Ingest a batch and report the inventory.
+
+    Deliberately has no try/except around the batch: per-file failures are
+    already contained inside the orchestrator and come back as records. Letting
+    the batch itself abort here would undo exactly the property this path
+    exists to provide.
+    """
+    from .ingest import ingest_paths, write_inventory
+
+    # A misspelled framework is one mistake, not one per device. Caught here so
+    # bulk reports it the way the single-file path does -- once, and clearly --
+    # instead of repeating it as a failure on every file in the batch.
+    if not args.rules:
+        known = {name.upper() for name in available_frameworks()}
+        unknown = [name for name in frameworks_to_run if name.upper() not in known]
+        if unknown:
+            print(
+                f"error: unknown framework(s): {', '.join(unknown)}. "
+                f"Available: {', '.join(sorted(known))}.",
+                file=sys.stderr,
+            )
+            return EXIT_ERROR
+
+    inventory = ingest_paths(
+        [str(path) for path in args.config],
+        frameworks_to_run,
+        vendor=args.vendor,
+        allow_llm=args.allow_llm,
+        rules_path=args.rules,
+        parser_factory=lambda parser_cls: _instantiate(parser_cls, args),
+    )
+
+    for warning in inventory.warnings:
+        print(f"warning: {warning}", file=sys.stderr)
+
+    if not inventory.devices:
+        print("error: no configuration files were found to ingest.", file=sys.stderr)
+        return EXIT_ERROR
+
+    if not args.quiet:
+        print(render_inventory(inventory, color=False if args.no_color else None))
+
+    if args.inventory_path:
+        written = write_inventory(inventory, args.inventory_path)
+        print(f"Inventory JSON written to {written}")
+
+    if args.pdf_dir is not None:
+        try:
+            pdfs = write_inventory_pdfs(inventory, args.pdf_dir, version=__version__)
+        except PdfUnavailableError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return EXIT_ERROR
+        print(f"{len(pdfs)} per-device PDF report(s) written to {Path(args.pdf_dir)}")
+
+    return _inventory_exit_code(inventory, strict=args.strict)
 
 
 def _exit_code(report: AuditReport, *, strict: bool) -> int:
@@ -233,6 +408,23 @@ def _exit_code(report: AuditReport, *, strict: bool) -> int:
     if report.summary.failed:
         return EXIT_FINDINGS
     if report.summary.needs_review:
+        return EXIT_REVIEW
+    return EXIT_OK
+
+
+def _inventory_exit_code(inventory, *, strict: bool) -> int:
+    """The single-file gating rule, applied to the worst device in the batch.
+
+    A file that could not be audited counts as needing review rather than as a
+    failure: nothing was proven about the device, and NEEDS_REVIEW is precisely
+    the verdict this tool uses for "no conclusive evidence".
+    """
+    if not strict:
+        return EXIT_OK
+    if any(summary.failed for summary in inventory.framework_rollup.values()):
+        return EXIT_FINDINGS
+    unaudited = inventory.counts.total - inventory.counts.audited
+    if unaudited or any(summary.needs_review for summary in inventory.framework_rollup.values()):
         return EXIT_REVIEW
     return EXIT_OK
 

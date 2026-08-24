@@ -115,6 +115,8 @@ class ComplianceRule(BaseModel):
 
     id: str
     control_ref: Optional[str] = Field(default=None, description="Clause number within the framework, e.g. '1.2.2'.")
+    internal_control_id: Optional[str] = Field(default=None, description="Internal mapping or semantic control identifier.")
+    verified_ref: bool = Field(default=True, description="Whether this framework reference has been verified from an authoritative source.")
     title: str
     description: str
     framework: str = "CIS"

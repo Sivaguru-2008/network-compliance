@@ -1,0 +1,141 @@
+{
+  "aaa_enabled": {
+    "summary": "Enable AAA authentication, then define methods before disconnecting.",
+    "cli": [
+      "configure",
+      " aaa authentication login default local",
+      " end",
+      "write memory"
+    ],
+    "notes": "Enabling AAA changes login behaviour immediately. Configure a local fallback in the same session to avoid lockout."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable telnet under the management telnet block.",
+    "cli": [
+      "configure",
+      " management telnet",
+      "  shutdown",
+      " end",
+      "write memory"
+    ],
+    "notes": "EOS uses 'management telnet' and 'management ssh' blocks rather than 'line vty' transport input."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set an idle timeout of 10 minutes or less under management ssh.",
+    "cli": [
+      "configure",
+      " management ssh",
+      "  idle-timeout 10",
+      " end",
+      "write memory"
+    ],
+    "notes": "Idle timeout is in minutes. Also consider setting it under 'management console'."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Configure a hashed enable secret and enable password encryption.",
+    "cli": [
+      "configure",
+      " enable secret sha512 <strong-password>",
+      " no enable password",
+      " service password-encryption",
+      " end",
+      "write memory"
+    ],
+    "notes": "EOS supports sha512 hashing for enable secrets. Remove any legacy enable password."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default community strings and replace with unique values.",
+    "cli": [
+      "configure",
+      " no snmp-server community public",
+      " no snmp-server community private",
+      " snmp-server community <unique-string> ro <acl-name>",
+      " end",
+      "write memory"
+    ],
+    "notes": "Prefer SNMPv3 with authPriv over any v1/v2c community."
+  },
+  "http_server_disabled": {
+    "summary": "Disable the HTTP protocol under management api http-commands.",
+    "cli": [
+      "configure",
+      " management api http-commands",
+      "  no protocol http",
+      " end",
+      "write memory"
+    ],
+    "notes": "Use HTTPS only or disable the management API entirely with 'shutdown'."
+  },
+  "ssh_version_2": {
+    "summary": "EOS 4.x enforces SSHv2 exclusively; verify by running 'show management ssh'.",
+    "cli": [],
+    "notes": "Arista EOS does not expose the SSH protocol version in configuration text. Modern EOS releases enforce SSHv2; confirm with 'show management ssh' output."
+  },
+  "logging_enabled": {
+    "summary": "Enable logging to a local buffer and a remote syslog collector.",
+    "cli": [
+      "configure",
+      " logging buffered 50000 informational",
+      " logging host <syslog-server-ip>",
+      " end",
+      "write memory"
+    ],
+    "notes": "Configure both a local buffer and a remote syslog host for resilience."
+  },
+  "management_acl": {
+    "summary": "Apply an inbound ACL to restrict SSH management access.",
+    "cli": [
+      "configure",
+      " ip access-list MGMT-ACL",
+      "  10 permit ip <management-subnet> any",
+      " management ssh",
+      "  ip access-group MGMT-ACL in",
+      " end",
+      "write memory"
+    ],
+    "notes": "Verify your management IP is inside the permitted range before applying."
+  },
+  "login_banner": {
+    "summary": "Set a login banner warning unauthorized users.",
+    "cli": [
+      "configure",
+      " banner login",
+      "Authorised access only. Activity is logged and monitored.",
+      "EOF",
+      " end",
+      "write memory"
+    ],
+    "notes": "Do not include device details in the banner."
+  },
+  "password_min_length": {
+    "summary": "Enforce a minimum password length.",
+    "cli": [
+      "configure",
+      " security password minimum-length 8",
+      " end",
+      "write memory"
+    ],
+    "notes": "Applies to passwords set after the command."
+  },
+  "ntp_configured": {
+    "summary": "Configure at least two NTP time sources.",
+    "cli": [
+      "configure",
+      " ntp server 10.20.30.41",
+      " ntp server 10.20.30.42",
+      " end",
+      "write memory"
+    ],
+    "notes": "Two sources let the device detect a lying one."
+  },
+  "no_write_snmp_community": {
+    "summary": "Remove all read-write SNMP communities.",
+    "cli": [
+      "configure",
+      " no snmp-server community <rw-string> rw",
+      " end",
+      "write memory"
+    ],
+    "notes": "Use SNMPv3 for write access instead of v2c communities."
+  }
+}

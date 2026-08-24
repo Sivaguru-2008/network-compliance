@@ -98,7 +98,15 @@ def render_report(report: AuditReport, *, color: Optional[bool] = None, width: i
         f"  Parsed as     : {target.vendor}/{target.os_family} via {target.parser} v{target.parser_version} "
         f"(detection confidence {target.detection_confidence:.2f})"
     )
-    out.append(f"  Framework     : {report.framework.name} - {report.framework.version}")
+    
+    if report.frameworks:
+        fws_str = ", ".join(f"{f.name} ({f.version})" for f in report.frameworks)
+        out.append(f"  Frameworks    : {fws_str}")
+    elif report.framework:
+        out.append(f"  Framework     : {report.framework.name} - {report.framework.version}")
+    else:
+        out.append("  Framework     : None")
+
     llm_fields = _llm_field_count(report)
     if llm_fields:
         out.append(
@@ -112,37 +120,77 @@ def render_report(report: AuditReport, *, color: Optional[bool] = None, width: i
     if target.source_sha256:
         out.append(f"  Config SHA256 : {target.source_sha256}")
     out.append("=" * width)
-    if report.framework.platform_note:
+
+    platform_note = None
+    if report.frameworks:
+        platform_note = next((f.platform_note for f in report.frameworks if f.platform_note), None)
+    elif report.framework:
+        platform_note = report.framework.platform_note
+
+    if platform_note:
         out.append("")
-        for line in _wrap(f"! {report.framework.platform_note}", width):
+        for line in _wrap(f"! {platform_note}", width):
             out.append(paint(line, _COLORS[Status.NEEDS_REVIEW]))
     out.append("")
 
+    # -- framework summary table ------------------------------------------
+    if report.framework_summaries and len(report.framework_summaries) > 1:
+        out.append(paint("FRAMEWORK SUMMARY", "\033[1m"))
+        out.append("─" * width)
+        for fw_name, fw_sum in report.framework_summaries.items():
+            out.append(f"  {fw_name}")
+            out.append(
+                "    "
+                + paint(f"PASS: {fw_sum.passed}", _COLORS[Status.PASS])
+                + "    "
+                + paint(f"FAIL: {fw_sum.failed}", _COLORS[Status.FAIL])
+                + "    "
+                + paint(f"REVIEW: {fw_sum.needs_review}", _COLORS[Status.NEEDS_REVIEW])
+                + f"    of {fw_sum.total} controls"
+            )
+        out.append("─" * width)
+        out.append("")
+
     # -- control table ----------------------------------------------------
-    id_w, sev_w, status_w = 24, 6, 6
-    fixed = id_w + sev_w + status_w + 3 * 3 + 4
-    title_w = 34
-    evidence_w = max(24, width - fixed - title_w)
-    widths = [id_w, sev_w, status_w, title_w, evidence_w]
+    show_fw_col = bool(report.framework_summaries and len(report.framework_summaries) > 1)
+    
+    if show_fw_col:
+        fw_col_w = 15
+        id_w = 20
+        sev_w = 6
+        status_w = 6
+        title_w = 34
+        evidence_w = max(24, width - id_w - sev_w - status_w - title_w - fw_col_w - 5 * 3 - 4)
+        widths = [fw_col_w, id_w, sev_w, status_w, title_w, evidence_w]
+        headers = ["FRAMEWORK", "CONTROL", "SEV", "RESULT", "TITLE", "EVIDENCE"]
+    else:
+        id_w, sev_w, status_w = 24, 6, 6
+        title_w = 34
+        evidence_w = max(24, width - id_w - sev_w - status_w - title_w - 3 * 3 - 4)
+        widths = [id_w, sev_w, status_w, title_w, evidence_w]
+        headers = ["CONTROL", "SEV", "RESULT", "TITLE", "EVIDENCE"]
 
     rows = []
     for result in report.results:
-        rows.append(
-            [
-                _truncate(result.rule_id, id_w),
-                paint(_truncate(result.severity.value, sev_w), _SEVERITY_COLORS.get(result.severity)),
-                paint(_STATUS_MARK[result.status], _COLORS.get(result.status)),
-                _truncate(result.title, title_w),
-                _truncate(_evidence_cell(result), evidence_w),
-            ]
-        )
-    out.extend(_render_table(["CONTROL", "SEV", "RESULT", "TITLE", "EVIDENCE"], rows, widths))
+        evidence_cell = _evidence_cell(result)
+        row_data = [
+            _truncate(result.rule_id, id_w),
+            paint(_truncate(result.severity.value, sev_w), _SEVERITY_COLORS.get(result.severity)),
+            paint(_STATUS_MARK[result.status], _COLORS.get(result.status)),
+            _truncate(result.title, title_w),
+            _truncate(evidence_cell, evidence_w),
+        ]
+        if show_fw_col:
+            row_data.insert(0, _truncate(result.framework, fw_col_w))
+        rows.append(row_data)
+
+    out.extend(_render_table(headers, rows, widths))
     out.append("")
 
     # -- findings detail --------------------------------------------------
     actionable = [r for r in report.results if r.status is not Status.PASS]
     if actionable:
-        out.append(paint("FINDINGS", "\033[1m"))
+        out.append(paint("DETAILED FINDINGS", "\033[1m"))
         out.append("-" * width)
         for result in actionable:
             out.extend(_render_finding(result, paint, width))
@@ -152,7 +200,7 @@ def render_report(report: AuditReport, *, color: Optional[bool] = None, width: i
 
     # -- summary ----------------------------------------------------------
     summary = report.summary
-    out.append(paint("SUMMARY", "\033[1m"))
+    out.append(paint("OVERALL SUMMARY", "\033[1m"))
     out.append("-" * width)
     out.append(
         "  "
@@ -230,9 +278,24 @@ def _render_finding(result: ControlResult, paint: _Painter, width: int) -> List[
         + paint(_STATUS_MARK[result.status], _COLORS.get(result.status))
         + f"  [{result.severity.value.upper()}]  {result.rule_id}  -  {result.title}",
     ]
-    if result.control_ref:
-        lines.append(f"    Control     : {result.framework} {result.control_ref}")
+    
+    # Framework
+    lines.append(f"    Framework   : {result.framework}")
+    
+    # Control (verified vs unverified)
+    if result.control_ref and result.verified_ref:
+        lines.append(f"    Control     : {result.control_ref} (verified reference)")
+    elif result.internal_control_id:
+        lines.append(f"    Control     : {result.internal_control_id} (internal semantic mapping)")
+    elif result.control_ref:
+        lines.append(f"    Control     : {result.control_ref} (internal semantic mapping)")
+    else:
+        lines.append("    Control     : None (internal semantic mapping)")
+
+    # Explanation
+    lines.append(f"    Explanation : {_truncate(result.description, width - 18)}")
     lines.append(f"    Why         : {_truncate(result.message, width - 18)}")
+    
     lines.append("    Evidence    :")
     for item in result.evidence:
         prefix = f"      - {item.field}: {_origin_tag(item)}"
@@ -240,6 +303,7 @@ def _render_finding(result: ControlResult, paint: _Painter, width: int) -> List[
         if item.source_line and item.note:
             note_prefix = "          note: "
             lines.append(note_prefix + _truncate(item.note, max(24, width - len(note_prefix))))
+            
     if result.remediation:
         lines.append(f"    Remediation : {_truncate(result.remediation.summary, width - 18)}")
         for command in result.remediation.cli:

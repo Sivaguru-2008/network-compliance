@@ -30,6 +30,7 @@ class Origin(str, Enum):
     #: Ruled on by a person. Outranks every parser, including a deterministic
     #: one: if a reviewer says the parser was wrong, the parser was wrong.
     HUMAN = "human"
+    LEARNED = "learned"
 
 
 class Observation(BaseModel, Generic[T]):
@@ -61,6 +62,9 @@ class Observation(BaseModel, Generic[T]):
     origin: Origin = Origin.DETERMINISTIC
     confidence: float = Field(default=1.0, ge=0.0, le=1.0)
     note: Optional[str] = None
+    mapping_id: Optional[str] = None
+    original_line_number: Optional[int] = None
+    original_line: Optional[str] = None
 
     # -- constructors: the three ways a setting can be known ---------------
 
