@@ -1272,6 +1272,130 @@ the failures are simply missing looks complete when it is not.
 ### Scope
 
 Steps 8 and 9 deliver the ingestion, inventory and per-device reporting backend.
-The web dashboard follows; it consumes `inventory.json` and can render the same
-`ReportDocument` without reimplementing any decision about what belongs in a
-device report.
+The web dashboard (below) consumes this exact `DeviceInventory` contract and
+serves this exact PDF, without reimplementing any decision about what belongs
+in either.
+
+## Web Dashboard
+
+A thin presentation and orchestration layer over the same core the CLI drives —
+upload configurations, browse the resulting inventory, drill into a device's
+findings, download its PDF. It is the **Unified Ingestion Engine** the problem
+statement asks for: a dashboard for uploading single or bulk configuration
+files from any network device this tool supports.
+
+### Architecture: two frontends, one core
+
+```text
+                    ┌──────────── CLI (existing) ───────────┐
+CONFIG(s) ──►  pipeline / ingest ──► DeviceInventory ──► PDF renderer
+                    └──────────── Web API (new) ────────────┘
+```
+
+`auditor/web/app.py` calls `auditor.ingest.ingest_paths` — the identical
+function `netaudit --bulk` calls — and `auditor.report.pdf.write_device_pdf` —
+the identical function `--pdf-dir` calls. Nothing in `auditor/web/` parses a
+configuration, evaluates a control, or draws a page. The dependency direction is
+one-way and enforced by nothing more than discipline: `auditor/web/` imports the
+core; no file under `auditor/` outside `web/` imports `auditor.web`. Delete the
+`web/` package and the CLI loses nothing.
+
+**Why FastAPI.** Typed request/response models, native `UploadFile` streaming
+for multipart uploads, `FileResponse` for the PDF download, and a free
+`/docs` OpenAPI page — the right amount of framework for a demo backend that
+still has to stream large files safely. Served with `uvicorn`.
+
+### Running it
+
+```bash
+pip install -r requirements-web.txt
+uvicorn auditor.web.app:app --port 8000
+```
+
+Then open `http://localhost:8000/`. The single-page UI at `auditor/web/static/index.html`
+is plain HTML/CSS/JS — no build step, no CDN dependency — so it renders from a
+checkout with nothing installed but the server it talks to.
+
+### Endpoints
+
+| | |
+|---|---|
+| `POST /api/upload` | Multipart: one or many config files (`files`) + `frameworks` (repeatable form field, e.g. `cis`, `stig`). Runs the same ingest path `netaudit --bulk` uses. Returns `{job_id, frameworks, inventory}`, where `inventory` is the Step 8 `DeviceInventory`, verbatim. |
+| `GET /api/inventory/{job_id}` | The `DeviceInventory` for that upload — device list, counts, framework rollup, duplicate groups. Identical to what `netaudit --bulk --inventory out.json` writes for the same files. |
+| `GET /api/device/{job_id}/{device_id}` | One `DeviceRecord`: identity, findings (each with its `evidence[].origin`), framework summaries, and a `pdf_url`. `device_id` is the device's position in the inventory — an integer, never a client-supplied path. |
+| `GET /api/device/{job_id}/{device_id}/pdf` | The Step 9 PDF for that device, rendered via `write_device_pdf` (cached on disk after the first request) and served as `application/pdf` with `Content-Disposition: attachment`, named by the same `{hostname}_{vendor}_{shorthash}.pdf` scheme the CLI uses. |
+| `GET /api/frameworks` | The frameworks discovered from the installed rule packs — what the upload form's checkboxes offer. |
+
+Frameworks selected at upload time are validated once against
+`available_frameworks()` and passed straight into `ingest_paths` — no second
+selection logic, no re-derivation of what a framework name means.
+
+### The two honesty surfaces
+
+* **`NEEDS_REVIEW` is never rendered as `PASS`.** In the API it is its own enum
+  value on `ControlResult.status`, counted in its own `summary.needs_review`
+  field. In the UI it gets a dashed amber card and a dashed-border finding —
+  visually distinct from both the green PASS and the red FAIL treatments, never
+  sharing a palette with either. A finding the tool could not verify is shown as
+  unverified, not quietly folded into a passing count.
+* **Provenance badge per finding.** Each piece of evidence already carries
+  `origin` (`deterministic` / `learned` / `llm` / `hybrid` / `human`) — set by
+  the parser or training pipeline that produced it, not invented by the web
+  layer. The device view reads this straight off `evidence[].origin` and shows
+  it as a small badge next to every finding, so a reviewer can tell at a glance
+  what was hard-parsed from a grammar versus inferred by a model or an
+  administrator's trained mapping.
+
+### File-upload security
+
+Uploads are untrusted input reaching disk, so `auditor/web/uploads.py` enforces,
+in order:
+
+1. **Filename rejection before anything is touched.** A filename containing a
+   path separator, a `..` segment, or a drive letter (`C:...`) is refused
+   outright — a browser file picker never produces one, so anything that does
+   is a probe, and the response is a clean `413`, not a silent sanitize.
+2. **Extension allow-list**, checked against the same `CONFIG_SUFFIXES` the
+   CLI's directory scanner uses.
+3. **Generated filenames.** The client's filename is never used as a write
+   path. The name that reaches disk is `{index:04d}_{sanitized-stem}` — the
+   index this server assigned, plus whatever survives stripping everything
+   outside `[A-Za-z0-9._-]` from the original, kept only so a human can
+   recognise their own file.
+4. **Containment check** on the resolved path immediately before opening it —
+   independent of the two checks above, so a bug in either cannot produce a
+   write outside the job directory.
+5. **Streamed size enforcement.** Each chunk is checked against a 2 MB
+   per-file cap and a 64 MB per-request budget *as it is read*, not after
+   buffering the whole part — a cap checked post-hoc is a description, not an
+   enforcement. A part that exceeds either cap is rejected and its partial
+   file removed immediately.
+6. **A 200-file cap per request.**
+
+Uploaded content is data end to end: it is read as text and handed to a parser,
+never executed, never `eval`'d, never interpolated into a shell command.
+
+### Job store
+
+A job is a directory: `{tempdir}/netaudit-web/{uuid4-hex}/`, holding the
+uploaded configs, the `inventory.json` written with the same
+`auditor.ingest.write_inventory` the CLI uses, and PDFs generated on first
+request. No database, no ORM, no migrations — disk is the source of truth, an
+in-process dict is only a cache, and a server restart mid-demo still serves
+every job whose `inventory.json` survived it, because it's read back with the
+same `read_inventory` the CLI reads with. Job ids are generated as 32-character
+lowercase hex and validated against that shape before ever touching the
+filesystem, so a malformed or guessed id 404s instead of resolving to a path.
+Job directories live under the OS temp directory by default, never inside the
+repository tree.
+
+### Status
+
+No authentication, no multi-tenancy, no RBAC — explicitly out of scope for this
+step, and nothing here half-builds toward it. Anyone who can reach the port can
+upload and read back any job. Fine for a local demo; not for anything beyond
+one.
+
+**Next:** the in-browser training GUI (Step 11) — exposing the existing
+learned-mapping / training flow so an administrator teaches an unknown vendor
+from this dashboard and re-audits without a code change.
