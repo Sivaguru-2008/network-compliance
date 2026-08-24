@@ -65,11 +65,17 @@ class ComplianceEngine:
     def evaluate_rule(self, rule: ComplianceRule, baseline: SecurityBaselineModel) -> ControlResult:
         outcome = evaluate_condition(rule.condition, baseline)
         status = _TERNARY_TO_STATUS[outcome.ternary]
+        device = baseline.hostname.value or baseline.source_file
+        vendor = baseline.provenance.vendor
+        parser = baseline.provenance.parser_name
         return ControlResult.build(
             rule=rule,
             status=status,
             message=self._message(status, outcome),
             evidence=self._evidence(outcome),
+            device=device,
+            vendor=vendor,
+            parser=parser,
         )
 
     def evaluate(self, baseline: SecurityBaselineModel) -> List[ControlResult]:

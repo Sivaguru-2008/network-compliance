@@ -1,7 +1,29 @@
 """Deterministic Arista EOS parser.
 
-Arista EOS uses a configuration format extremely similar to Cisco IOS.
-We leverage CiscoConfParse to normalize Arista EOS configurations.
+Arista EOS shares its CLI heritage with Cisco IOS but diverges in how
+management access is organised.  The ``management ssh`` / ``management
+telnet`` / ``management api http-commands`` block structure replaces
+IOS's ``line vty`` + ``ip http server`` model.
+
+Detection relies on EOS-specific constructs: ``management ssh`` and
+``management api http-commands`` blocks, the ``! device:`` comment
+header, and ``vrf instance``.
+
+Normalization policy
+--------------------
+CONCLUSIVE ABSENCE -- the command is off by default and always written
+    when configured.
+        management telnet (default shutdown)
+        management api http-commands (default shutdown)
+        snmp-server community / logging host / ntp server / banner
+        enable secret / enable password / service password-encryption
+
+AMBIGUOUS ABSENCE -- the effective value comes from a platform default
+    that varies by EOS release.
+        management ssh block absent (SSH on by default but settings unknown)
+        idle-timeout absent (default varies by release)
+        SSH protocol version (EOS 4.x enforces v2 but the config does not
+        state it; older releases may differ)
 """
 
 import hashlib
@@ -14,19 +36,33 @@ from ..models.baseline import ParserProvenance, SecurityBaselineModel, SnmpCommu
 from ..models.observation import Observation
 from .base import ParserError, VendorParser, registry
 
+_LOGGING_NON_HOST_KEYWORDS = (
+    "on|buffered|trap|console|monitor|facility|source-interface|"
+    "synchronous|enable|level|event|policy|vrf|format"
+)
+
 _EOS_MARKERS: Sequence[Tuple[str, float]] = (
-    (r"(?im)^\s*management api http-commands\b", 0.45),
-    (r"(?im)^\s*management ssh\b", 0.40),
-    (r"(?im)^\s*peer-link\b", 0.40),
-    (r"(?im)\barista\b", 0.30),
-    (r"(?im)\beos\b", 0.30),
-    (r"(?im)^\s*hostname\s+\S+", 0.05),
+    (r"(?im)^\s*!\s*device:\s*\S+", 0.40),
+    (r"(?im)^\s*management ssh\s*$", 0.25),
+    (r"(?im)^\s*management api http-commands\s*$", 0.25),
+    (r"(?im)^\s*management telnet\s*$", 0.15),
+    (r"(?im)^\s*management console\s*$", 0.10),
+    (r"(?im)^\s*vrf instance\s+\S+", 0.15),
+    (r"(?im)^\s*hostname \S+", 0.10),
+    (r"(?im)^\s*daemon \S+", 0.10),
+    (r"(?im)^\s*enable secret\b", 0.05),
+    (r"(?im)^\s*snmp-server\b", 0.05),
 )
 
 _NON_EOS_MARKERS: Sequence[Tuple[str, float]] = (
-    (r"(?im)^\s*config system global\b", 0.90),  # FortiOS
-    (r"(?im)^\s*set system host-name\b", 0.90),  # Junos set-format
-    (r"(?im)^\s*system \{", 0.90),               # Junos curly-brace format
+    (r"(?im)^\s*line vty\b", 0.40),
+    (r"(?im)^\s*ip http server\s*$", 0.30),
+    (r"(?im)^\s*set system host-name\b", 0.90),
+    (r"(?im)^\s*system \{", 0.90),
+    (r"(?im)^\s*config system global\b", 0.90),
+    (r"(?im)^\s*sysname \S+", 0.90),
+    (r"(?im)^\s*ASA Version\b", 0.80),
+    (r"(?im)^\s*<\?xml", 0.90),
 )
 
 
@@ -44,8 +80,8 @@ class AristaEOSParser(VendorParser):
     def detect(cls, config_text: str) -> float:
         if not config_text or not config_text.strip():
             return 0.0
-        score = sum(weight for pattern, weight in _EOS_MARKERS if re.search(pattern, config_text))
-        score -= sum(weight for pattern, weight in _NON_EOS_MARKERS if re.search(pattern, config_text))
+        score = sum(w for p, w in _EOS_MARKERS if re.search(p, config_text))
+        score -= sum(w for p, w in _NON_EOS_MARKERS if re.search(p, config_text))
         return max(0.0, min(1.0, score))
 
     def parse(self, config_text: str, *, source_file: Optional[str] = None) -> SecurityBaselineModel:
@@ -55,9 +91,9 @@ class AristaEOSParser(VendorParser):
         raw_lines = config_text.splitlines()
         self._warnings: List[str] = []
         try:
-            parse = CiscoConfParse(config=raw_lines, syntax="ios")
+            self._parse = CiscoConfParse(config=raw_lines, syntax="ios")
         except Exception as exc:
-            raise ParserError(f"ciscoconfparse2 could not parse this configuration: {exc}") from exc
+            raise ParserError(f"Could not parse this configuration: {exc}") from exc
 
         baseline = SecurityBaselineModel(
             provenance=ParserProvenance(
@@ -72,299 +108,508 @@ class AristaEOSParser(VendorParser):
             config_line_count=len(raw_lines),
         )
 
-        baseline.hostname = self._hostname(parse)
-        self._normalize_vty(parse, baseline)
-        self._normalize_ssh(parse, baseline)
-        self._normalize_http(parse, baseline)
-        self._normalize_banner(parse, baseline)
-        self._normalize_credentials(parse, baseline)
-        self._normalize_aaa(parse, baseline)
-        self._normalize_snmp(parse, baseline)
-        self._normalize_logging(parse, baseline)
-        self._normalize_ntp(parse, baseline)
+        baseline.hostname = self._hostname()
+        self._normalize_management_ssh(baseline)
+        self._normalize_management_telnet(baseline)
+        self._derive_vty_transport(baseline)
+        self._normalize_management_api(baseline)
+        self._normalize_idle_timeout(baseline)
+        self._normalize_banner(baseline)
+        self._normalize_credentials(baseline)
+        self._normalize_aaa(baseline)
+        self._normalize_snmp(baseline)
+        self._normalize_logging(baseline)
+        self._normalize_ntp(baseline)
 
         baseline.provenance.warnings = self._warnings
         return baseline
+
+    # -- helpers -----------------------------------------------------------
 
     @staticmethod
     def _lineno(obj) -> int:
         return obj.linenum + 1
 
-    @staticmethod
-    def _find(parse: CiscoConfParse, pattern: str) -> List:
-        return list(parse.find_objects(pattern))
+    def _find(self, pattern: str) -> List:
+        return list(self._parse.find_objects(pattern))
 
-    @classmethod
-    def _first(cls, parse: CiscoConfParse, pattern: str):
-        found = cls._find(parse, pattern)
+    def _first(self, pattern: str):
+        found = self._find(pattern)
         return found[0] if found else None
 
     def _warn(self, message: str) -> None:
         if message not in self._warnings:
             self._warnings.append(message)
 
-    def _hostname(self, parse: CiscoConfParse) -> Observation[str]:
-        obj = self._first(parse, r"(?i)^\s*hostname\s+\S+")
+    @staticmethod
+    def _has_child(block, pattern: str) -> Optional[object]:
+        for child in block.children:
+            if re.match(pattern, child.text, re.IGNORECASE):
+                return child
+        return None
+
+    @staticmethod
+    def _block_shutdown(block) -> Optional[bool]:
+        """Return True if the block has 'shutdown', False if 'no shutdown', None if unstated."""
+        for child in block.children:
+            stripped = child.text.strip().lower()
+            if stripped == "no shutdown":
+                return False
+            if stripped == "shutdown":
+                return True
+        return None
+
+    # -- hostname ----------------------------------------------------------
+
+    def _hostname(self) -> Observation[str]:
+        obj = self._first(r"(?i)^\s*hostname\s+\S+")
         if obj is None:
             return Observation[str].unknown("No 'hostname' statement found.")
         return Observation[str].found(obj.text.split()[1], obj.text, self._lineno(obj))
 
-    def _normalize_vty(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
-        vty_blocks = self._find(parse, r"(?i)^\s*line vty\b")
-        if not vty_blocks:
-            note = "No 'line vty' blocks found."
-            baseline.telnet_enabled = Observation[bool].absent(False, note)
-            baseline.vty_transport_input = Observation[List[str]].absent([], note)
-            baseline.vty_exec_timeout_seconds = Observation[int].absent(0, note)
-            baseline.management_acl_applied = Observation[bool].absent(False, note)
+    # -- management ssh ----------------------------------------------------
+
+    def _normalize_management_ssh(self, baseline: SecurityBaselineModel) -> None:
+        blocks = self._find(r"(?i)^\s*management ssh\s*$")
+        if not blocks:
+            note = (
+                "No 'management ssh' block found. EOS enables SSH by default, "
+                "but the exact configuration cannot be determined from this excerpt."
+            )
+            self._warn(note)
+            baseline.ssh_enabled = Observation[bool].unknown(note)
+            baseline.ssh_version = Observation[int].unknown(note)
+            baseline.management_acl_applied = Observation[bool].unknown(
+                "No 'management ssh' block found; management ACL state cannot be determined."
+            )
             return
 
-        transports: Dict[str, Tuple[str, int]] = {}
-        blocks_without_transport = 0
-        blocks_without_timeout = 0
-        blocks_without_access_class = 0
-        access_classes: List[Tuple[str, int]] = []
+        block = blocks[0]
+        is_shutdown = self._block_shutdown(block)
+
+        if is_shutdown is True:
+            baseline.ssh_enabled = Observation[bool].found(
+                False, block.text, self._lineno(block),
+                note="SSH is explicitly disabled with 'shutdown' under 'management ssh'.",
+            )
+        else:
+            baseline.ssh_enabled = Observation[bool].found(
+                True, block.text, self._lineno(block),
+                note="SSH is enabled under 'management ssh'.",
+            )
+
+        note = (
+            "EOS does not expose the SSH protocol version in the configuration text. "
+            "Modern EOS releases (4.x) enforce SSHv2 exclusively, but this cannot be "
+            "confirmed from the running-config alone."
+        )
+        self._warn(note)
+        baseline.ssh_version = Observation[int].unknown(note)
+
+        acl_child = self._has_child(block, r"(?i)^\s*ip access-group\s+\S+\s+in\b")
+        if acl_child is not None:
+            baseline.management_acl_applied = Observation[bool].found(
+                True, acl_child.text, self._lineno(acl_child),
+                note="An inbound ACL is applied to SSH management access.",
+            )
+        else:
+            baseline.management_acl_applied = Observation[bool].absent(
+                False,
+                "No 'ip access-group ... in' under 'management ssh'. EOS writes this "
+                "statement when an ACL is applied, so its absence means SSH management "
+                "is reachable from any source address.",
+            )
+
+    # -- management telnet -------------------------------------------------
+
+    def _normalize_management_telnet(self, baseline: SecurityBaselineModel) -> None:
+        blocks = self._find(r"(?i)^\s*management telnet\s*$")
+        if not blocks:
+            baseline.telnet_enabled = Observation[bool].unknown(
+                "No 'management telnet' block found. EOS disables telnet by default, "
+                "but the state cannot be confirmed from this excerpt."
+            )
+            return
+
+        block = blocks[0]
+        is_shutdown = self._block_shutdown(block)
+
+        if is_shutdown is False:
+            baseline.telnet_enabled = Observation[bool].found(
+                True, block.text, self._lineno(block),
+                note="Telnet is enabled with 'no shutdown' under 'management telnet'.",
+            )
+        else:
+            baseline.telnet_enabled = Observation[bool].found(
+                False, block.text, self._lineno(block),
+                note="Telnet is disabled under 'management telnet' (default or explicit shutdown).",
+            )
+
+    # -- VTY transport (derived) -------------------------------------------
+
+    def _derive_vty_transport(self, baseline: SecurityBaselineModel) -> None:
+        transports: List[str] = []
+        evidence_line = None
+        evidence_lineno = None
+
+        if baseline.ssh_enabled.detected and baseline.ssh_enabled.value:
+            transports.append("ssh")
+            evidence_line = baseline.ssh_enabled.source_line
+            evidence_lineno = baseline.ssh_enabled.line_number
+        if baseline.telnet_enabled.detected and baseline.telnet_enabled.value:
+            transports.append("telnet")
+            if not evidence_line:
+                evidence_line = baseline.telnet_enabled.source_line
+                evidence_lineno = baseline.telnet_enabled.line_number
+
+        if not baseline.ssh_enabled.detected or not baseline.telnet_enabled.detected:
+            baseline.vty_transport_input = Observation[List[str]].unknown(
+                "Cannot determine full management transport list because SSH or telnet "
+                "configuration is incomplete."
+            )
+            return
+
+        if evidence_line:
+            baseline.vty_transport_input = Observation[List[str]].found(
+                sorted(transports), evidence_line or "", evidence_lineno,
+            )
+        else:
+            baseline.vty_transport_input = Observation[List[str]].absent(
+                [], "No management transport is enabled.",
+            )
+
+    # -- management api http-commands --------------------------------------
+
+    def _normalize_management_api(self, baseline: SecurityBaselineModel) -> None:
+        blocks = self._find(r"(?i)^\s*management api http-commands\s*$")
+        if not blocks:
+            baseline.http_server_enabled = Observation[bool].absent(
+                False,
+                "No 'management api http-commands' block present. EOS does not serve the "
+                "HTTP/HTTPS management API unless configured, so absence means disabled.",
+            )
+            baseline.https_server_enabled = Observation[bool].absent(
+                False,
+                "No 'management api http-commands' block present. EOS does not serve the "
+                "HTTP/HTTPS management API unless configured, so absence means disabled.",
+            )
+            return
+
+        block = blocks[0]
+        is_shutdown = self._block_shutdown(block)
+
+        if is_shutdown is True:
+            baseline.http_server_enabled = Observation[bool].found(
+                False, block.text, self._lineno(block),
+                note="The management API is disabled ('shutdown').",
+            )
+            baseline.https_server_enabled = Observation[bool].found(
+                False, block.text, self._lineno(block),
+                note="The management API is disabled ('shutdown').",
+            )
+            return
+
+        no_http = self._has_child(block, r"(?i)^\s*no protocol http\s*$")
+        yes_http = self._has_child(block, r"(?i)^\s*protocol http\s*$")
+        no_https = self._has_child(block, r"(?i)^\s*no protocol https\s*$")
+        yes_https = self._has_child(block, r"(?i)^\s*protocol https\s*$")
+
+        if no_http:
+            baseline.http_server_enabled = Observation[bool].found(
+                False, no_http.text, self._lineno(no_http),
+                note="HTTP protocol explicitly disabled under management API.",
+            )
+        elif yes_http:
+            baseline.http_server_enabled = Observation[bool].found(
+                True, yes_http.text, self._lineno(yes_http),
+                note="HTTP protocol explicitly enabled under management API.",
+            )
+        else:
+            baseline.http_server_enabled = Observation[bool].unknown(
+                "The management API is enabled but no explicit 'protocol http' or "
+                "'no protocol http' statement is present; the default varies by EOS release."
+            )
+
+        if no_https:
+            baseline.https_server_enabled = Observation[bool].found(
+                False, no_https.text, self._lineno(no_https),
+                note="HTTPS protocol explicitly disabled under management API.",
+            )
+        elif yes_https:
+            baseline.https_server_enabled = Observation[bool].found(
+                True, yes_https.text, self._lineno(yes_https),
+                note="HTTPS protocol explicitly enabled under management API.",
+            )
+        else:
+            baseline.https_server_enabled = Observation[bool].unknown(
+                "The management API is enabled but no explicit 'protocol https' or "
+                "'no protocol https' statement is present; the default varies by EOS release."
+            )
+
+    # -- idle timeout ------------------------------------------------------
+
+    def _normalize_idle_timeout(self, baseline: SecurityBaselineModel) -> None:
         timeouts: List[Tuple[int, str, int]] = []
 
-        for block in vty_blocks:
-            transport_lines = [c for c in block.children if re.match(r"(?i)^\s*transport input\b", c.text)]
-            if not transport_lines:
-                blocks_without_transport += 1
-            for child in transport_lines:
-                for token in child.text.split()[2:]:
-                    token = token.lower()
-                    if token == "none":
-                        continue
-                    elif token == "all":
-                        expanded = {"telnet", "ssh"}
-                    else:
-                        expanded = {token}
-                    for transport in expanded:
-                        transports.setdefault(transport, (child.text, self._lineno(child)))
+        for block_pattern in (r"(?i)^\s*management ssh\s*$", r"(?i)^\s*management console\s*$"):
+            for block in self._find(block_pattern):
+                child = self._has_child(block, r"(?i)^\s*idle-timeout\s+\d+")
+                if child:
+                    match = re.search(r"(\d+)", child.text)
+                    if match:
+                        minutes = int(match.group(1))
+                        timeouts.append((minutes * 60, child.text, self._lineno(child)))
 
-            timeout_lines = [c for c in block.children if re.match(r"(?i)^\s*exec-timeout\b", c.text)]
-            if not timeout_lines:
-                blocks_without_timeout += 1
-            for child in timeout_lines:
-                seconds = self._exec_timeout_seconds(child.text)
-                if seconds is not None:
-                    timeouts.append((seconds, child.text, self._lineno(child)))
-
-            inbound_acl = [
-                c for c in block.children if re.match(r"(?i)^\s*access-class\s+\S+\s+in\b", c.text)
-            ]
-            if not inbound_acl:
-                blocks_without_access_class += 1
-            for child in inbound_acl:
-                access_classes.append((child.text, self._lineno(child)))
-
-        self._resolve_transports(baseline, transports, blocks_without_transport)
-        self._resolve_exec_timeout(baseline, timeouts, blocks_without_timeout)
-        self._resolve_management_acl(baseline, access_classes, blocks_without_access_class)
-
-    @staticmethod
-    def _exec_timeout_seconds(text: str) -> Optional[int]:
-        match = re.match(r"(?i)^\s*exec-timeout\s+(\d+)(?:\s+(\d+))?\s*$", text)
-        if not match:
-            return None
-        minutes = int(match.group(1))
-        seconds = int(match.group(2) or 0)
-        return minutes * 60 + seconds
-
-    def _resolve_transports(
-        self,
-        baseline: SecurityBaselineModel,
-        transports: Dict[str, Tuple[str, int]],
-        blocks_without_transport: int,
-    ) -> None:
-        plaintext = sorted(t for t in transports if t == "telnet")
-        found = sorted(transports)
-
-        if plaintext:
-            worst = plaintext[0]
-            line, lineno = transports[worst]
-            baseline.telnet_enabled = Observation[bool].found(
-                True, line, lineno, note="Plaintext transport(s) permitted on VTY."
+        if not timeouts:
+            note = (
+                "No 'idle-timeout' found under 'management ssh' or 'management console'. "
+                "The effective idle timeout is a platform default and cannot be determined "
+                "from the configuration text."
             )
-            baseline.vty_transport_input = Observation[List[str]].found(found, line, lineno)
+            self._warn(note)
+            baseline.vty_exec_timeout_seconds = Observation[int].unknown(note)
             return
 
-        if blocks_without_transport:
-            note = "Some 'line vty' blocks have no 'transport input' statement."
-            baseline.telnet_enabled = Observation[bool].unknown(note)
-            baseline.vty_transport_input = Observation[List[str]].unknown(note)
-            return
-
-        line, lineno = transports[found[0]] if found else ("", None)
-        baseline.telnet_enabled = Observation[bool].found(
-            False, line, lineno, note="No plaintext transport permitted on VTY."
-        )
-        baseline.vty_transport_input = Observation[List[str]].found(found, line, lineno)
-
-    def _resolve_exec_timeout(
-        self,
-        baseline: SecurityBaselineModel,
-        timeouts: List[Tuple[int, str, int]],
-        blocks_without_timeout: int,
-    ) -> None:
         never = [t for t in timeouts if t[0] == 0]
         if never:
             seconds, line, lineno = never[0]
             baseline.vty_exec_timeout_seconds = Observation[int].found(
-                seconds, line, lineno, note="Idle timeout disabled."
+                0, line, lineno,
+                note="'idle-timeout 0' disables the idle timeout entirely.",
             )
             return
 
-        if blocks_without_timeout or not timeouts:
-            note = "Some 'line vty' blocks have no 'exec-timeout' statement."
-            baseline.vty_exec_timeout_seconds = Observation[int].unknown(note)
-            return
-
-        seconds, line, lineno = max(timeouts, key=lambda item: item[0])
+        seconds, line, lineno = max(timeouts, key=lambda t: t[0])
         baseline.vty_exec_timeout_seconds = Observation[int].found(
-            seconds, line, lineno, note="Worst-case VTY idle timeout."
+            seconds, line, lineno,
+            note="Longest idle timeout configured across management sessions.",
         )
 
-    def _resolve_management_acl(
-        self,
-        baseline: SecurityBaselineModel,
-        access_classes: List[Tuple[str, int]],
-        blocks_without_access_class: int,
-    ) -> None:
-        if blocks_without_access_class:
-            line, lineno = access_classes[0] if access_classes else (None, None)
-            note = "Some VTY lines are missing access-class."
-            baseline.management_acl_applied = (
-                Observation[bool].found(False, line, lineno, note=note)
-                if line
-                else Observation[bool].absent(False, note)
-            )
-            return
+    # -- banner ------------------------------------------------------------
 
-        line, lineno = access_classes[0]
-        baseline.management_acl_applied = Observation[bool].found(
-            True, line, lineno, note="Access-class applied to all VTY lines."
-        )
-
-    def _normalize_banner(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
-        obj = self._first(parse, r"(?i)^\s*banner\s+(login|motd)\b")
+    def _normalize_banner(self, baseline: SecurityBaselineModel) -> None:
+        obj = self._first(r"(?i)^\s*banner\s+(login|motd)\b")
         if obj is not None:
             baseline.login_banner_present = Observation[bool].found(
-                True, obj.text, self._lineno(obj)
+                True, obj.text, self._lineno(obj),
             )
             return
         baseline.login_banner_present = Observation[bool].absent(
-            False, "No login banner configured."
+            False,
+            "No 'banner login' or 'banner motd' statement present. EOS writes "
+            "banner configuration to the running-config, so absence means no "
+            "banner is shown.",
         )
 
-    def _normalize_ntp(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
-        servers = self._find(parse, r"(?i)^\s*ntp server\b")
-        if not servers:
-            baseline.ntp_servers = Observation[List[str]].absent(
-                [], "No NTP servers configured."
+    # -- credentials -------------------------------------------------------
+
+    def _normalize_credentials(self, baseline: SecurityBaselineModel) -> None:
+        secret = self._first(r"(?i)^\s*enable secret\b")
+        if secret is not None:
+            baseline.enable_secret_set = Observation[bool].found(
+                True, secret.text, self._lineno(secret),
+            )
+        else:
+            baseline.enable_secret_set = Observation[bool].absent(
+                False,
+                "No 'enable secret' statement present. EOS writes this command to "
+                "the running-config when configured, so its absence means no "
+                "enable secret is set.",
+            )
+
+        legacy = self._first(r"(?i)^\s*enable password\b")
+        if legacy is not None:
+            baseline.enable_password_present = Observation[bool].found(
+                True, legacy.text, self._lineno(legacy),
+                note="Legacy 'enable password' in use.",
+            )
+        else:
+            baseline.enable_password_present = Observation[bool].absent(
+                False, "No 'enable password' statement present.",
+            )
+
+        encryption = self._first(r"(?i)^\s*(no\s+)?service password-encryption\s*$")
+        if encryption is not None:
+            enabled = not encryption.text.strip().lower().startswith("no ")
+            baseline.password_encryption = Observation[bool].found(
+                enabled, encryption.text, self._lineno(encryption),
+            )
+        else:
+            baseline.password_encryption = Observation[bool].absent(
+                False,
+                "No 'service password-encryption' statement present. The feature is "
+                "disabled by default and is written to the running-config when enabled, "
+                "so absence means disabled.",
+            )
+
+        min_len = self._first(r"(?i)^\s*security password minimum-length\s+\d+")
+        if min_len is not None:
+            baseline.password_min_length = Observation[int].found(
+                int(re.search(r"(\d+)\s*$", min_len.text).group(1)),
+                min_len.text,
+                self._lineno(min_len),
+            )
+        else:
+            baseline.password_min_length = Observation[int].absent(
+                0,
+                "No 'security password minimum-length' statement present. EOS enforces "
+                "no minimum password length unless this is configured.",
+            )
+
+    # -- AAA ---------------------------------------------------------------
+
+    def _normalize_aaa(self, baseline: SecurityBaselineModel) -> None:
+        obj = self._first(r"(?i)^\s*aaa authentication\b")
+        if obj is not None:
+            baseline.aaa_enabled = Observation[bool].found(
+                True, obj.text, self._lineno(obj),
+                note="AAA authentication is configured.",
             )
             return
 
-        addresses = [obj.text.split()[2] for obj in servers if len(obj.text.split()) > 2]
-        first = servers[0]
-        baseline.ntp_servers = Observation[List[str]].found(
-            sorted(set(addresses)), first.text, self._lineno(first)
+        baseline.aaa_enabled = Observation[bool].absent(
+            False,
+            "No 'aaa authentication' statement present. EOS writes AAA configuration "
+            "to the running-config when configured, so its absence means AAA is not enabled.",
         )
 
-    def _normalize_ssh(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
-        version_obj = self._first(parse, r"(?i)^\s*ip ssh version\s+\d")
-        if version_obj is not None:
-            value = int(re.search(r"(\d+)\s*$", version_obj.text).group(1))
-            baseline.ssh_version = Observation[int].found(value, version_obj.text, self._lineno(version_obj))
-        else:
-            baseline.ssh_version = Observation[int].absent(2, "Default SSH version on EOS is 2.")
+    # -- SNMP --------------------------------------------------------------
 
-        ssh_obj = self._first(parse, r"(?i)^\s*management ssh\b")
-        if ssh_obj is not None:
-            baseline.ssh_enabled = Observation[bool].found(True, ssh_obj.text, self._lineno(ssh_obj))
-        else:
-            baseline.ssh_enabled = Observation[bool].absent(True, "SSH is enabled by default.")
-
-    def _normalize_http(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
-        http_obj = self._first(parse, r"(?i)^\s*(no\s+)?management api http-commands\b")
-        if http_obj is not None:
-            enabled = not http_obj.text.strip().lower().startswith("no ")
-            baseline.http_server_enabled = Observation[bool].found(enabled, http_obj.text, self._lineno(http_obj))
-            baseline.https_server_enabled = Observation[bool].found(enabled, http_obj.text, self._lineno(http_obj))
-        else:
-            baseline.http_server_enabled = Observation[bool].absent(False, "HTTP server disabled by default.")
-            baseline.https_server_enabled = Observation[bool].absent(False, "HTTPS server disabled by default.")
-
-    def _normalize_credentials(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
-        secret = self._first(parse, r"(?i)^\s*enable secret\b")
-        if secret is not None:
-            baseline.enable_secret_set = Observation[bool].found(True, secret.text, self._lineno(secret))
-        else:
-            baseline.enable_secret_set = Observation[bool].absent(False, "No enable secret configured.")
-
-        baseline.enable_password_present = Observation[bool].absent(False, "No legacy enable password configured.")
-
-        encryption = self._first(parse, r"(?i)^\s*(no\s+)?service password-encryption\s*$")
-        if encryption is not None:
-            enabled = not encryption.text.strip().lower().startswith("no ")
-            baseline.password_encryption = Observation[bool].found(enabled, encryption.text, self._lineno(encryption))
-        else:
-            baseline.password_encryption = Observation[bool].absent(True, "Password encryption enabled by default on EOS.")
-
-        min_length = self._first(parse, r"(?i)^\s*security passwords min-length\s+\d+")
-        if min_length is not None:
-            baseline.password_min_length = Observation[int].found(
-                int(re.search(r"(\d+)\s*$", min_length.text).group(1)),
-                min_length.text,
-                self._lineno(min_length),
-            )
-        else:
-            baseline.password_min_length = Observation[int].absent(0, "No minimum password length enforced.")
-
-    def _normalize_aaa(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
-        obj = self._first(parse, r"(?i)^\s*aaa new-model\s*$")
-        if obj is not None:
-            baseline.aaa_enabled = Observation[bool].found(True, obj.text, self._lineno(obj))
-        else:
-            baseline.aaa_enabled = Observation[bool].absent(False, "AAA not enabled.")
-
-    def _normalize_snmp(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
-        community_objs = self._find(parse, r"(?i)^\s*snmp-server community\b")
+    def _normalize_snmp(self, baseline: SecurityBaselineModel) -> None:
+        community_objs = self._find(r"(?i)^\s*snmp-server community\b")
         if community_objs:
-            communities = []
-            for obj in community_objs:
-                tokens = obj.text.split()[2:]
-                name = tokens[0] if tokens else ""
-                access = "rw" if "rw" in [t.lower() for t in tokens] else "ro"
-                communities.append(SnmpCommunity(name=name, access=access, source_line=obj.text.strip(), line_number=self._lineno(obj)))
+            communities = [self._parse_community(obj) for obj in community_objs]
             first = community_objs[0]
             baseline.snmp_communities = Observation[List[SnmpCommunity]].found(
-                communities, first.text, self._lineno(first)
+                communities, first.text, self._lineno(first),
+                note=f"{len(communities)} SNMP v1/v2c community string(s) configured.",
             )
-        else:
-            baseline.snmp_communities = Observation[List[SnmpCommunity]].absent([], "No SNMP communities configured.")
+            return
 
-    def _normalize_logging(self, parse: CiscoConfParse, baseline: SecurityBaselineModel) -> None:
-        disabled = self._first(parse, r"(?i)^\s*no logging on\s*$")
-        host_objs = self._find(parse, r"(?i)^\s*logging host\s+\S+")
-        buffered = self._first(parse, r"(?i)^\s*logging buffered\b")
+        if self._find(r"(?i)^\s*snmp-server\b"):
+            baseline.snmp_communities = Observation[List[SnmpCommunity]].absent(
+                [],
+                "SNMP is configured but no 'snmp-server community' statements are present "
+                "(consistent with an SNMPv3-only deployment).",
+            )
+            return
 
-        hosts = [obj.text.split()[2] for obj in host_objs if len(obj.text.split()) > 2]
+        baseline.snmp_communities = Observation[List[SnmpCommunity]].absent(
+            [],
+            "No 'snmp-server' configuration present. EOS writes SNMP configuration to "
+            "the running-config, so absence means no community strings are defined.",
+        )
+
+    def _parse_community(self, obj) -> SnmpCommunity:
+        tokens = obj.text.split()[2:]
+        name = tokens[0] if tokens else ""
+        access: Optional[str] = None
+        acl: Optional[str] = None
+        view: Optional[str] = None
+
+        index = 1
+        while index < len(tokens):
+            token = tokens[index]
+            lowered = token.lower()
+            if lowered == "view" and index + 1 < len(tokens):
+                view = tokens[index + 1]
+                index += 2
+                continue
+            if lowered in ("ro", "rw"):
+                access = lowered
+            elif lowered == "ipv6" and index + 1 < len(tokens):
+                acl = tokens[index + 1]
+                index += 2
+                continue
+            else:
+                acl = token
+            index += 1
+
+        return SnmpCommunity(
+            name=name, access=access, acl=acl, view=view,
+            source_line=obj.text.strip(), line_number=self._lineno(obj),
+        )
+
+    # -- logging -----------------------------------------------------------
+
+    def _normalize_logging(self, baseline: SecurityBaselineModel) -> None:
+        disabled = self._first(r"(?i)^\s*no logging on\s*$")
+
+        candidates = self._find(r"(?i)^\s*logging\s+\S+")
+        host_objs = [
+            obj for obj in candidates
+            if not re.match(
+                rf"(?i)^\s*logging\s+(?:{_LOGGING_NON_HOST_KEYWORDS})\b", obj.text
+            )
+        ]
+        buffered = self._first(r"(?i)^\s*logging buffered\b")
+
+        hosts = []
+        for obj in host_objs:
+            tokens = obj.text.split()
+            host = tokens[2] if len(tokens) > 2 and tokens[1].lower() == "host" else tokens[1]
+            if host not in hosts:
+                hosts.append(host)
+
         if hosts:
             first = host_objs[0]
-            baseline.logging_hosts = Observation[List[str]].found(hosts, first.text, self._lineno(first))
+            baseline.logging_hosts = Observation[List[str]].found(
+                hosts, first.text, self._lineno(first),
+            )
         else:
-            baseline.logging_hosts = Observation[List[str]].absent([], "No remote logging hosts.")
+            baseline.logging_hosts = Observation[List[str]].absent(
+                [], "No 'logging host' statement present; no remote syslog destination.",
+            )
 
         if buffered is not None:
-            baseline.logging_buffered = Observation[bool].found(True, buffered.text, self._lineno(buffered))
+            baseline.logging_buffered = Observation[bool].found(
+                True, buffered.text, self._lineno(buffered),
+            )
         else:
-            baseline.logging_buffered = Observation[bool].absent(False, "No logging buffer configured.")
+            baseline.logging_buffered = Observation[bool].absent(
+                False, "No 'logging buffered' statement present.",
+            )
 
         if disabled is not None:
-            baseline.logging_enabled = Observation[bool].found(False, disabled.text, self._lineno(disabled))
+            baseline.logging_enabled = Observation[bool].found(
+                False, disabled.text, self._lineno(disabled),
+                note="Logging explicitly disabled with 'no logging on'.",
+            )
         elif hosts or buffered is not None:
             evidence = host_objs[0] if hosts else buffered
-            baseline.logging_enabled = Observation[bool].found(True, evidence.text, self._lineno(evidence))
+            baseline.logging_enabled = Observation[bool].found(
+                True, evidence.text, self._lineno(evidence),
+                note="At least one log destination is configured.",
+            )
         else:
-            baseline.logging_enabled = Observation[bool].absent(False, "Logging disabled.")
+            baseline.logging_enabled = Observation[bool].absent(
+                False,
+                "No 'logging host' or 'logging buffered' statement present. Both are "
+                "written to the running-config when configured, so absence means no "
+                "log destination exists.",
+            )
+
+    # -- NTP ---------------------------------------------------------------
+
+    def _normalize_ntp(self, baseline: SecurityBaselineModel) -> None:
+        servers = self._find(r"(?i)^\s*ntp server\b")
+        if not servers:
+            baseline.ntp_servers = Observation[List[str]].absent(
+                [],
+                "No 'ntp server' statement present. EOS writes NTP configuration to "
+                "the running-config, so absence means the clock is not synchronised.",
+            )
+            return
+
+        addresses: List[str] = []
+        for obj in servers:
+            tokens = obj.text.split()[2:]
+            if tokens[:1] == ["vrf"]:
+                tokens = tokens[2:]
+            if tokens:
+                addresses.append(tokens[0])
+        first = servers[0]
+        baseline.ntp_servers = Observation[List[str]].found(
+            sorted(set(addresses)), first.text, self._lineno(first),
+            note=f"{len(set(addresses))} NTP time source(s) configured.",
+        )

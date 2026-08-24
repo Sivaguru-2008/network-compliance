@@ -7,9 +7,11 @@ security baseline, evaluates it against a CIS Benchmark rule pack, and reports
 `PASS` / `FAIL` / `NEEDS_REVIEW` per control — each verdict backed by the exact
 configuration line it came from.
 
-Five parsers implement one interface: deterministic parsers for
-**[Cisco IOS](#three-deterministic-vendors)**, **[Juniper Junos](#three-deterministic-vendors)**
-and **[Fortinet FortiOS](#three-deterministic-vendors)**, an
+Seven parsers implement one interface: deterministic parsers for
+**[Cisco IOS](#five-deterministic-vendors)**, **[Juniper Junos](#five-deterministic-vendors)**,
+**[Fortinet FortiOS](#five-deterministic-vendors)**,
+**[Arista EOS](#five-deterministic-vendors)** and
+**[SONiC](#five-deterministic-vendors)**, an
 **[LLM fallback](#the-llm-fallback-parser)** for vendors nothing deterministic
 recognises, and a **[hybrid](#the-hybrid-parser)** that runs the deterministic
 pass first and lets the model fill only what it could not settle. The engine
@@ -20,12 +22,15 @@ cannot tell them apart — that is the design.
 | Cisco IOS / IOS-XE | `cisco_ios` | **deterministic** — grammar, no model call |
 | Juniper Junos | `juniper_junos` | **deterministic** — grammar, both config formats |
 | Fortinet FortiOS | `fortinet_fortios` | **deterministic** — grammar, block walk |
+| Arista EOS | `arista_eos` | **deterministic** — grammar, management-block structure |
+| SONiC | `sonic` | **deterministic** — JSON config_db.json |
 | anything else | `llm` | **LLM fallback**, opt-in with `--allow-llm` |
 | a recognised vendor with gaps | `hybrid` | deterministic first; the model fills only what it could not settle |
 
-Three configuration languages with nothing in common — indented IOS commands,
-Junos braces or `set` paths, FortiOS `config`/`edit`/`next`/`end` blocks — are
-normalized by three vendor-specific parsers into **one** audit model. Everything
+Five configuration languages with nothing in common — indented IOS commands,
+Junos braces or `set` paths, FortiOS `config`/`edit`/`next`/`end` blocks,
+Arista EOS management blocks, and SONiC JSON config_db — are normalized by
+five vendor-specific parsers into **one** audit model. Everything
 downstream of that model is written once: one engine, one condition grammar, one
 report. A vendor is a parser and a rule pack, never a change to the pipeline.
 
@@ -349,22 +354,28 @@ deciding to.
 
 ---
 
-## Three deterministic vendors
+## Five deterministic vendors
 
-Cisco IOS, Juniper Junos and Fortinet FortiOS are all read by grammar, not by a
-model. Each was added for a reason the previous one could not settle:
+Cisco IOS, Juniper Junos, Fortinet FortiOS, Arista EOS and SONiC are all read
+by grammar, not by a model. Each was added for a reason the previous one could
+not settle:
 
 - **Cisco IOS** proved the pipeline end to end.
 - **Junos** tested whether `SecurityBaselineModel` was genuinely vendor-neutral
   or Cisco vocabulary wearing neutral names.
 - **FortiOS** tested whether a *setting* in this tool means the effective state
   of the device or merely a line that appears in a file.
+- **Arista EOS** tested vendor detection isolation against a closely related CLI
+  syntax (EOS shares IOS heritage but organises management access differently).
+- **SONiC** tested a fundamentally different configuration format (JSON
+  config_db.json), where many security settings live at the Linux level and
+  cannot be confirmed from config_db alone.
 
-Adding the second and third vendor each required **no change to the baseline,
-the engine, the operators, the report layer, or the CLI** — a parser file and a
-rule pack, exactly as the pipeline section promises. Three configuration
-languages go in; one `SecurityBaselineModel` comes out; from there the code path
-is shared, byte for byte.
+Adding each new vendor required **no change to the baseline, the engine, the
+operators, the report layer, or the CLI** — a parser file and a remediation
+file, exactly as the pipeline section promises. Five configuration languages go
+in; one `SecurityBaselineModel` comes out; from there the code path is shared,
+byte for byte.
 
 ### Junos: two formats, one reading
 
@@ -478,10 +489,10 @@ has nothing to match.
 
 ## The LLM fallback parser
 
-`LLMParser` handles configurations no deterministic parser recognises — Arista,
-Huawei, Palo Alto, whatever walks in. Cisco IOS, Junos and FortiOS are **not**
-in that set any more: each has a deterministic parser, and the registry always
-prefers one. It implements the *same* `VendorParser` contract as
+`LLMParser` handles configurations no deterministic parser recognises — Huawei,
+Palo Alto, whatever walks in. Cisco IOS, Junos, FortiOS, Arista EOS and SONiC
+are **not** in that set: each has a deterministic parser, and the registry
+always prefers one. It implements the *same* `VendorParser` contract as
 `CiscoIOSParser`:
 
 ```python
@@ -701,6 +712,8 @@ auditor/
     cisco_ios.py     CiscoIOSParser — ciscoconfparse2, absence policy, worst-case aggregation
     junos.py         JunosParser — set + braces format, deactivate/inactive, Junos absence policy
     fortios.py       FortiosParser — config/edit block walk, unset/delete, configured vs in force
+    arista_eos.py    AristaEOSParser — ciscoconfparse2, management-block structure, EOS absence policy
+    sonic.py         SonicParser — JSON config_db.json, Linux-level NEEDS_REVIEW policy
     hybrid.py        HybridParser — deterministic first, model only for the gaps
     llm/
       parser.py      LLMParser — the fallback for unrecognised vendors
@@ -735,7 +748,9 @@ auditor/
   ingest.py          bulk orchestration over pipeline.py - collection, isolation, dedup
   cli.py             argument parsing and wiring only
 samples/             hardened_ios.conf, insecure_ios.conf, junos_srx.conf,
-                     fortios_fgt.conf, unknown_vendor.conf
+                     fortios_fgt.conf, unknown_vendor.conf,
+                     arista/ (secure/insecure/ambiguous/unknown/malformed),
+                     sonic/ (secure/insecure/ambiguous/unknown/malformed)
 samples/configs/     a seven-file fleet for --bulk, including a companion capture,
                      a drifted second snapshot, an unknown vendor and an empty file
 tests/               670 tests (622, plus 48 PDF tests that skip without reportlab)
@@ -971,8 +986,8 @@ STIG or ISO — `extract_identity()` does not even take a framework argument.
 
 | Field | Type | Extractable from a config alone? |
 | --- | --- | --- |
-| `vendor` | `cisco_ios` \| `juniper_junos` \| `fortinet_fortios` \| `unknown` | yes — from the parser that claimed the file |
-| `os_family` | `ios` \| `junos` \| `fortios` \| `unknown` | yes |
+| `vendor` | `cisco_ios` \| `juniper_junos` \| `fortinet_fortios` \| `arista_eos` \| `sonic` \| `unknown` | yes — from the parser that claimed the file |
+| `os_family` | `ios` \| `junos` \| `fortios` \| `eos` \| `sonic` \| `unknown` | yes |
 | `hostname` | observation | **yes, all three vendors** |
 | `os_version` | observation | Cisco `version 15.7`; Junos `set version ...`; FortiOS `#config-version=` header |
 | `model` | observation | FortiOS only (platform code in the header); Cisco only if `license udi` is present |
@@ -1272,6 +1287,224 @@ the failures are simply missing looks complete when it is not.
 ### Scope
 
 Steps 8 and 9 deliver the ingestion, inventory and per-device reporting backend.
-The web dashboard follows; it consumes `inventory.json` and can render the same
-`ReportDocument` without reimplementing any decision about what belongs in a
-device report.
+The web dashboard (below) consumes this exact `DeviceInventory` contract and
+serves this exact PDF, without reimplementing any decision about what belongs
+in either.
+
+## Web Dashboard
+
+A thin presentation and orchestration layer over the same core the CLI drives —
+upload configurations, browse the resulting inventory, drill into a device's
+findings, download its PDF. It is the **Unified Ingestion Engine** the problem
+statement asks for: a dashboard for uploading single or bulk configuration
+files from any network device this tool supports.
+
+### Architecture: two frontends, one core
+
+```text
+                    ┌──────────── CLI (existing) ───────────┐
+CONFIG(s) ──►  pipeline / ingest ──► DeviceInventory ──► PDF renderer
+                    └──────────── Web API (new) ────────────┘
+```
+
+`auditor/web/app.py` calls `auditor.ingest.ingest_paths` — the identical
+function `netaudit --bulk` calls — and `auditor.report.pdf.write_device_pdf` —
+the identical function `--pdf-dir` calls. Nothing in `auditor/web/` parses a
+configuration, evaluates a control, or draws a page. The dependency direction is
+one-way and enforced by nothing more than discipline: `auditor/web/` imports the
+core; no file under `auditor/` outside `web/` imports `auditor.web`. Delete the
+`web/` package and the CLI loses nothing.
+
+**Why FastAPI.** Typed request/response models, native `UploadFile` streaming
+for multipart uploads, `FileResponse` for the PDF download, and a free
+`/docs` OpenAPI page — the right amount of framework for a demo backend that
+still has to stream large files safely. Served with `uvicorn`.
+
+### Running it
+
+```bash
+pip install -r requirements-web.txt
+uvicorn auditor.web.app:app --port 8000
+```
+
+Then open `http://localhost:8000/`. The single-page UI at `auditor/web/static/index.html`
+is plain HTML/CSS/JS — no build step, no CDN dependency — so it renders from a
+checkout with nothing installed but the server it talks to.
+
+### Endpoints
+
+| | |
+|---|---|
+| `POST /api/upload` | Multipart: one or many config files (`files`) + `frameworks` (repeatable form field, e.g. `cis`, `stig`). Runs the same ingest path `netaudit --bulk` uses. Returns `{job_id, frameworks, inventory}`, where `inventory` is the Step 8 `DeviceInventory`, verbatim. |
+| `GET /api/inventory/{job_id}` | The `DeviceInventory` for that upload — device list, counts, framework rollup, duplicate groups. Identical to what `netaudit --bulk --inventory out.json` writes for the same files. |
+| `GET /api/device/{job_id}/{device_id}` | One `DeviceRecord`: identity, findings (each with its `evidence[].origin`), framework summaries, and a `pdf_url`. `device_id` is the device's position in the inventory — an integer, never a client-supplied path. |
+| `GET /api/device/{job_id}/{device_id}/pdf` | The Step 9 PDF for that device, rendered via `write_device_pdf` (cached on disk after the first request) and served as `application/pdf` with `Content-Disposition: attachment`, named by the same `{hostname}_{vendor}_{shorthash}.pdf` scheme the CLI uses. |
+| `GET /api/frameworks` | The frameworks discovered from the installed rule packs — what the upload form's checkboxes offer. |
+| `GET /api/jobs` | Lists all stored jobs with summary metrics: `job_id`, `uploaded_at`, `device_count`, `frameworks`, and `compliance_scores` (per-framework). Reads from `JobStore` and the already-persisted `inventory.json` per job — no new persistence. |
+
+Frameworks selected at upload time are validated once against
+`available_frameworks()` and passed straight into `ingest_paths` — no second
+selection logic, no re-derivation of what a framework name means.
+
+### The two honesty surfaces
+
+* **`NEEDS_REVIEW` is never rendered as `PASS`.** In the API it is its own enum
+  value on `ControlResult.status`, counted in its own `summary.needs_review`
+  field. In the UI it gets a dashed amber card and a dashed-border finding —
+  visually distinct from both the green PASS and the red FAIL treatments, never
+  sharing a palette with either. A finding the tool could not verify is shown as
+  unverified, not quietly folded into a passing count.
+* **Provenance badge per finding.** Each piece of evidence already carries
+  `origin` (`deterministic` / `learned` / `llm` / `hybrid` / `human`) — set by
+  the parser or training pipeline that produced it, not invented by the web
+  layer. The device view reads this straight off `evidence[].origin` and shows
+  it as a small badge next to every finding, so a reviewer can tell at a glance
+  what was hard-parsed from a grammar versus inferred by a model or an
+  administrator's trained mapping.
+
+### File-upload security
+
+Uploads are untrusted input reaching disk, so `auditor/web/uploads.py` enforces,
+in order:
+
+1. **Filename rejection before anything is touched.** A filename containing a
+   path separator, a `..` segment, or a drive letter (`C:...`) is refused
+   outright — a browser file picker never produces one, so anything that does
+   is a probe, and the response is a clean `413`, not a silent sanitize.
+2. **Extension allow-list**, checked against the same `CONFIG_SUFFIXES` the
+   CLI's directory scanner uses.
+3. **Generated filenames.** The client's filename is never used as a write
+   path. The name that reaches disk is `{index:04d}_{sanitized-stem}` — the
+   index this server assigned, plus whatever survives stripping everything
+   outside `[A-Za-z0-9._-]` from the original, kept only so a human can
+   recognise their own file.
+4. **Containment check** on the resolved path immediately before opening it —
+   independent of the two checks above, so a bug in either cannot produce a
+   write outside the job directory.
+5. **Streamed size enforcement.** Each chunk is checked against a 2 MB
+   per-file cap and a 64 MB per-request budget *as it is read*, not after
+   buffering the whole part — a cap checked post-hoc is a description, not an
+   enforcement. A part that exceeds either cap is rejected and its partial
+   file removed immediately.
+6. **A 200-file cap per request.**
+
+Uploaded content is data end to end: it is read as text and handed to a parser,
+never executed, never `eval`'d, never interpolated into a shell command.
+
+### Job store
+
+A job is a directory: `{tempdir}/netaudit-web/{uuid4-hex}/`, holding the
+uploaded configs, the `inventory.json` written with the same
+`auditor.ingest.write_inventory` the CLI uses, and PDFs generated on first
+request. No database, no ORM, no migrations — disk is the source of truth, an
+in-process dict is only a cache, and a server restart mid-demo still serves
+every job whose `inventory.json` survived it, because it's read back with the
+same `read_inventory` the CLI reads with. Job ids are generated as 32-character
+lowercase hex and validated against that shape before ever touching the
+filesystem, so a malformed or guessed id 404s instead of resolving to a path.
+Job directories live under the OS temp directory by default, never inside the
+repository tree.
+
+### Status
+
+No authentication, no multi-tenancy, no RBAC — explicitly out of scope for this
+step, and nothing here half-builds toward it. Anyone who can reach the port can
+upload and read back any job. Fine for a local demo; not for anything beyond
+one.
+
+### Administrator Training
+
+When the parser encounters an unknown configuration pattern, it produces `NEEDS_REVIEW` rather than guessing.
+
+An administrator can review the evidence, create a normalized mapping, preview its effect, and explicitly approve it.
+
+Approved mappings are persisted in `LearnedMappingStore` and automatically consumed by subsequent `HybridParser` executions.
+
+#### Canonical Training Store
+All approved mappings are saved in `training/learned_mappings.jsonl` (or dynamically under the test's temporary store root during unit/integration tests). No SQLite or secondary databases are introduced.
+
+#### Training Workflow
+1. Upload configuration files via the main dashboard.
+2. If any lines are unrecognized, click **Training Center** in the top header.
+3. The queue displays the unrecognized config lines.
+4. Select a queue item to view its details (line content, line number, surrounding context, vendor, and device identity).
+5. Specify a mapping pattern, choose a target baseline field, select an extraction strategy, and write a regex pattern if necessary.
+6. Click **Preview Mapping** to execute a validation check on the configuration line without saving.
+7. Click **Approve & Save** to add the mapping to the store.
+
+#### Approval Semantics
+Mappings are saved with a version history. When a mapping is explicitly approved, it moves to `status = "approved"` and `approval_state = "approved"`, which makes it active. A rejected mapping has `status = "rejected"` and `approval_state = "rejected"`, meaning it remains in history but does not affect the parser's behavior.
+
+#### Security Model
+- Mappings only permit standard, safe extraction strategies (`exact`, `token`, `token_list`, `regex`) already defined in the core pipeline.
+- No arbitrary Python (`eval`, `exec`), shell commands, or executable scripts are supported or executed.
+- Regular expressions are validated and compiled (`re.compile`) prior to mapping creation.
+- Unknown baseline fields are rejected at creation time.
+
+#### How to Run Training Tests
+To run the Step 12 Training GUI tests:
+```bash
+pytest tests/test_training_gui.py
+```
+To run the entire test suite and verify baseline regression:
+```bash
+pytest
+```
+
+### Fleet Analytics
+
+The dashboard includes a fleet-wide compliance analytics view — a read-only
+presentation layer over the data the engine already produces. All analytics are
+computed client-side from the `DeviceInventory` JSON the API returns. No new
+models, no new database, no new persistence.
+
+#### Summary tiles
+
+Six at-a-glance metrics appear above the inventory table after upload: total
+devices, fleet compliance score, critical findings (FAIL + high severity),
+needs-review count, vendor count, and frameworks evaluated. Score tiles are
+colour-coded by tier: green above 80%, amber 50–80%, red below 50%.
+
+#### Charts (inline SVG, no external libraries)
+
+- **Framework comparison** — horizontal bar chart with one bar per framework,
+  coloured by score tier, with a subtle 0/25/50/75/100% grid.
+- **Vendor distribution** — donut chart with a 6-colour palette distinct from the
+  verdict colours. Single-vendor fleets skip the donut and show a text summary.
+- **Severity breakdown** — stacked horizontal bar with PASS/FAIL/NEEDS_REVIEW
+  segments per severity level (high/medium/low).
+- **Control compliance heatmap** — grid of controls (rows) × devices (columns),
+  cells coloured by verdict, sorted by worst fleet pass rate. Scrolls horizontally
+  for large fleets.
+- **Device compliance ranking** — sortable table with inline progress bars,
+  click-through to device detail.
+
+All charts use CSS custom properties for colours and render correctly in both
+light and dark contexts. Responsive from 375px to 1280px+ viewports.
+
+#### Upload history and comparison
+
+`GET /api/jobs` lists all stored jobs with summary metrics. The history panel
+lets users load any previous upload into the analytics view or select two uploads
+for side-by-side comparison — compliance score deltas per framework and per
+control, with ↑/↓ indicators colour-coded green (improvement) or red (regression).
+
+#### CSV export
+
+An "Export CSV" button generates a CSV of all findings across all devices,
+entirely client-side from the already-fetched inventory JSON. Columns:
+`hostname, vendor, framework, control_id, control_title, severity, status,
+evidence_summary, remediation_summary`. Includes a BOM prefix for Excel
+compatibility.
+
+#### Print readiness
+
+A `@media print` block hides the header, navigation, and action buttons; sets
+white backgrounds; ensures SVG charts render with explicit colours; and adds a
+"Fleet Compliance Report — {date}" header visible only in print.
+
+#### How to run analytics tests
+
+```bash
+pytest tests/test_analytics.py
+```

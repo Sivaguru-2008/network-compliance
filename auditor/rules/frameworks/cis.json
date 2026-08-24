@@ -4,12 +4,16 @@
   "versions": {
     "cisco_ios": "CIS Cisco IOS Benchmark (v4.x control numbering)",
     "juniper_junos": "CIS Juniper OS Benchmark (control intent; clause numbers not asserted)",
-    "fortinet_fortios": "CIS Fortinet FortiGate Benchmark (control intent; clause numbers not asserted)"
+    "fortinet_fortios": "CIS Fortinet FortiGate Benchmark (control intent; clause numbers not asserted)",
+    "arista_eos": "CIS Arista EOS Benchmark (control intent; clause numbers not asserted)",
+    "sonic": "CIS SONiC Benchmark (control intent; clause numbers not asserted)"
   },
   "source_notes": {
     "cisco_ios": "Conditions and remediation follow the CIS Cisco IOS Benchmark. Clause numbers are given for traceability and should be re-confirmed against your licensed copy of the benchmark for the exact IOS train you audit; rules whose clause could not be pinned exactly carry a section-level control_ref and a note.",
     "juniper_junos": "The conditions in this pack are identical to those in the Cisco IOS pack, because both read the same vendor-neutral baseline fields - that is the point of the baseline. What is Junos-specific is the remediation, which is Junos CLI. Clause numbers are deliberately NOT asserted: the control intent below follows the CIS Juniper OS Benchmark, but the exact clause numbering could not be verified against a licensed copy, and inventing one would be worse than omitting it. Map each rule to its clause from your own copy before citing this output in a formal audit.",
-    "fortinet_fortios": "The conditions in this pack are byte-for-byte the conditions in the Cisco IOS and Junos packs, because all three read the same vendor-neutral baseline fields - that is what the baseline is for. What is FortiOS-specific is the remediation, which is FortiOS CLI. Clause numbers are deliberately NOT asserted: the control intent follows the CIS Fortinet FortiGate Benchmark, but the exact clause numbering could not be verified against a licensed copy, and inventing one would be worse than omitting it. Map each rule to its clause from your own copy before citing this output in a formal audit."
+    "fortinet_fortios": "The conditions in this pack are byte-for-byte the conditions in the Cisco IOS and Junos packs, because all three read the same vendor-neutral baseline fields - that is what the baseline is for. What is FortiOS-specific is the remediation, which is FortiOS CLI. Clause numbers are deliberately NOT asserted: the control intent follows the CIS Fortinet FortiGate Benchmark, but the exact clause numbering could not be verified against a licensed copy, and inventing one would be worse than omitting it. Map each rule to its clause from your own copy before citing this output in a formal audit.",
+    "arista_eos": "The conditions read the same vendor-neutral baseline fields as every other vendor pack. What is EOS-specific is the remediation, which is Arista EOS CLI. Clause numbers are deliberately NOT asserted: the control intent follows the CIS benchmark, but the exact clause numbering could not be verified against a licensed copy, and inventing one would be worse than omitting it.",
+    "sonic": "The conditions read the same vendor-neutral baseline fields as every other vendor pack. What is SONiC-specific is the remediation, which is SONiC CLI or Linux-level configuration. Clause numbers are deliberately NOT asserted."
   },
   "description": "Center for Internet Security Benchmarks",
   "mappings": {
@@ -17,79 +21,92 @@
       "cisco_ios": { "id": "CIS-IOS-1.1.1", "control_ref": "1.1.1", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-AAA-CENTRALISED", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-AAA", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-AAA-CENTRALISED", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-AAA-CENTRALISED", "control_ref": null, "verified": false }
     },
     "secure_vty_transport": {
       "cisco_ios": { "id": "CIS-IOS-1.2.2", "control_ref": "1.2.2", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-NO-CLEARTEXT-ACCESS", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-VTY-SECURE", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false }
     },
     "vty_idle_timeout": {
       "cisco_ios": { "id": "CIS-IOS-1.2.9", "control_ref": "1.2.9", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-VTY-TIMEOUT", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-IDLE-TIMEOUT", "control_ref": null, "verified": false }
     },
     "enable_secret_encrypted": {
       "cisco_ios": { "id": "CIS-IOS-1.4.1-1.4.2", "control_ref": "1.4.1, 1.4.2", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-ROOT-AUTH-HASHED", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-ADMIN-PASSWORD-HASHED", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-ENABLE-HASH", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-ENABLE-SECRET-HASHED", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-ADMIN-PASSWORD-HASHED", "control_ref": null, "verified": false }
     },
     "no_default_snmp_community": {
       "cisco_ios": { "id": "CIS-IOS-1.5.2-1.5.3", "control_ref": "1.5.2, 1.5.3", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-SNMP-NO-DEFAULT", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false }
     },
     "http_server_disabled": {
       "cisco_ios": { "id": "CIS-IOS-2.1-HTTP-SERVER", "control_ref": "2.1", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-NO-JWEB-HTTP", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-NO-HTTP-ADMIN", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-HTTP-DISABLE", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-NO-HTTP-API", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-NO-REST-API", "control_ref": null, "verified": false }
     },
     "ssh_version_2": {
       "cisco_ios": { "id": "CIS-IOS-2.1.1.6", "control_ref": "2.1.1.6", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-SSH-V2", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-SSH-V2", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-SSH-V2", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-SSH-V2", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-SSH-V2", "control_ref": null, "verified": false }
     },
     "logging_enabled": {
       "cisco_ios": { "id": "CIS-IOS-2.2.2-2.2.4", "control_ref": "2.2.2, 2.2.4", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-LOGGING", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-SYSLOG-DESTINATION", "control_ref": null, "verified": false }
     },
     "management_acl": {
       "cisco_ios": { "id": "CIS-IOS-1.2-VTY-ACCESS-CLASS", "control_ref": "1.2", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-MGMT-FILTER", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-ADMIN-TRUSTHOST", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-MGMT-ACL", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-MGMT-ACL", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-CTRLPLANE-ACL", "control_ref": null, "verified": false }
     },
     "login_banner": {
       "cisco_ios": { "id": "CIS-IOS-1.6-LOGIN-BANNER", "control_ref": "1.6", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-LOGIN-BANNER", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-BANNER", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-LOGIN-BANNER", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-LOGIN-BANNER", "control_ref": null, "verified": false }
     },
     "password_min_length": {
       "cisco_ios": { "id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH", "control_ref": "1.1", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false }
     },
     "ntp_configured": {
       "cisco_ios": { "id": "CIS-IOS-2.3-NTP-CONFIGURED", "control_ref": "2.3", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-NTP-CONFIGURED", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-NTP-CONFIGURED", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-NTP-CONFIGURED", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-NTP-CONFIGURED", "control_ref": null, "verified": false }
     },
     "no_write_snmp_community": {
       "cisco_ios": { "id": "CIS-IOS-1.5-SNMP-NO-WRITE", "control_ref": "1.5", "verified": true },
       "juniper_junos": { "id": "CIS-JUNOS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
       "fortinet_fortios": { "id": "CIS-FORTIOS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "default": { "id": "CIS-GENERIC-SNMP-NO-WRITE", "control_ref": null, "verified": false }
+      "arista_eos": { "id": "CIS-EOS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
+      "sonic": { "id": "CIS-SONIC-SNMP-NO-WRITE", "control_ref": null, "verified": false }
     }
   }
 }

@@ -197,6 +197,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Return a non-zero exit code when controls fail or need review.",
     )
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="Run audit in strict offline mode, ensuring no API/LLM/external calls are made.",
+    )
     parser.add_argument("--version", action="version", version=f"{TOOL_NAME} {__version__}")
     return parser
 
@@ -255,9 +260,135 @@ def _default_pdf_path(config: Path) -> Path:
     return Path("reports") / f"{config.stem}.pdf"
 
 
+def run_knowledge_cli(argv: List[str]) -> int:
+    parser = argparse.ArgumentParser(prog="python -m auditor knowledge")
+    subparsers = parser.add_subparsers(dest="subcommand", required=True)
+    
+    # ingest
+    ingest_p = subparsers.add_parser("ingest", help="Ingest compliance source")
+    ingest_p.add_argument("source", type=Path, help="Path to JSON or text document")
+    ingest_p.add_argument("--use-llm", action="store_true", help="Extract using Anthropic LLM")
+    ingest_p.add_argument("--api-key", default=None, help="Anthropic API Key")
+    
+    # approve
+    approve_p = subparsers.add_parser("approve", help="Approve control")
+    approve_p.add_argument("control_id", help="Control ID to approve")
+    approve_p.add_argument("--framework", default=None, help="Filter by framework")
+    approve_p.add_argument("--platform", default=None, help="Filter by platform")
+    
+    # reject
+    reject_p = subparsers.add_parser("reject", help="Reject control")
+    reject_p.add_argument("control_id", help="Control ID to reject")
+    reject_p.add_argument("--framework", default=None, help="Filter by framework")
+    reject_p.add_argument("--platform", default=None, help="Filter by platform")
+    
+    # list
+    list_p = subparsers.add_parser("list", help="List controls")
+    list_p.add_argument("--framework", default=None, help="Filter by framework")
+    list_p.add_argument("--platform", default=None, help="Filter by platform")
+    list_p.add_argument("--status", default=None, help="Filter by validation status")
+    
+    # export
+    export_p = subparsers.add_parser("export", help="Export compliance database")
+    export_p.add_argument("path", type=Path, help="Export target file path")
+    
+    # import
+    import_p = subparsers.add_parser("import", help="Import compliance database")
+    import_p.add_argument("path", type=Path, help="Import source file path")
+    
+    # status
+    status_p = subparsers.add_parser("status", help="Show offline compliance auditor status")
+    
+    args = parser.parse_args(argv)
+    
+    from .knowledge.bootstrap import bootstrap_database_if_empty
+    bootstrap_database_if_empty()
+    
+    from .knowledge.repository import approve_control, reject_control, list_controls, export_db, import_db
+    from .knowledge.ingest import ingest_from_json, ingest_from_text_with_llm
+    
+    if args.subcommand == "ingest":
+        try:
+            if args.use_llm:
+                c_ids = ingest_from_text_with_llm(args.source, api_key=args.api_key)
+            else:
+                c_ids = ingest_from_json(args.source)
+            print(f"Successfully ingested {len(c_ids)} candidate controls into local knowledge base.")
+            return EXIT_OK
+        except Exception as exc:
+            print(f"Error ingesting knowledge source: {exc}", file=sys.stderr)
+            return EXIT_ERROR
+            
+    elif args.subcommand == "approve":
+        count = approve_control(args.control_id, args.framework, args.platform)
+        print(f"Approved {count} matching control(s).")
+        return EXIT_OK
+        
+    elif args.subcommand == "reject":
+        count = reject_control(args.control_id, args.framework, args.platform)
+        print(f"Rejected {count} matching control(s).")
+        return EXIT_OK
+        
+    elif args.subcommand == "list":
+        controls = list_controls(args.framework, args.platform, args.status)
+        if not controls:
+            print("No controls found.")
+            return EXIT_OK
+        print(f"{'Control ID':<30} {'Framework':<12} {'Platform':<15} {'Status':<20} {'Severity':<10} {'Title'}")
+        print("-" * 100)
+        for c in controls:
+            print(f"{c['control_id']:<30} {c['framework']:<12} {c['platform']:<15} {c['validation_status']:<20} {c['severity']:<10} {c['title']}")
+        return EXIT_OK
+        
+    elif args.subcommand == "export":
+        try:
+            export_db(args.path)
+            print(f"Exported compliance knowledge database to {args.path}")
+            return EXIT_OK
+        except Exception as exc:
+            print(f"Failed to export: {exc}", file=sys.stderr)
+            return EXIT_ERROR
+            
+    elif args.subcommand == "import":
+        try:
+            import_db(args.path)
+            print(f"Imported compliance knowledge database from {args.path}")
+            return EXIT_OK
+        except Exception as exc:
+            print(f"Failed to import: {exc}", file=sys.stderr)
+            return EXIT_ERROR
+            
+    elif args.subcommand == "status":
+        print("Knowledge Base: Loaded locally")
+        print("API: Not required")
+        print("LLM: Not required")
+        print("Internet: Not required")
+        return EXIT_OK
+        
+    return EXIT_ERROR
+
+
 def run(argv: Optional[Sequence[str]] = None) -> int:
+    if argv is None:
+        argv = sys.argv[1:]
+    else:
+        argv = list(argv)
+        
+    if argv and argv[0] == "knowledge":
+        return run_knowledge_cli(argv[1:])
+
     args = build_parser().parse_args(argv)
     _force_utf8_stdout()
+
+    if getattr(args, "offline", False):
+        if getattr(args, "allow_llm", False) or getattr(args, "vendor", None) in ("llm", "hybrid"):
+            print("error: LLM and Hybrid parsers are not supported in --offline mode.", file=sys.stderr)
+            return EXIT_ERROR
+        args.allow_llm = False
+        print("Knowledge Base: Loaded locally", file=sys.stderr)
+        print("API: Not required", file=sys.stderr)
+        print("LLM: Not required", file=sys.stderr)
+        print("Internet: Not required", file=sys.stderr)
 
     frameworks_to_run = args.framework or [DEFAULT_FRAMEWORK]
 

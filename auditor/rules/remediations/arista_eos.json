@@ -1,143 +1,141 @@
 {
   "aaa_enabled": {
-    "summary": "Enable the AAA subsystem on Arista EOS, then define authentication methods.",
+    "summary": "Enable AAA authentication, then define methods before disconnecting.",
     "cli": [
-      "configure terminal",
-      " aaa new-model",
+      "configure",
+      " aaa authentication login default local",
       " end",
       "write memory"
     ],
-    "notes": "Enabling AAA changes login behaviour immediately. Configure local fallback authentication to avoid lockout."
+    "notes": "Enabling AAA changes login behaviour immediately. Configure a local fallback in the same session to avoid lockout."
   },
   "secure_vty_transport": {
-    "summary": "Restrict VTY line transport input to SSH.",
+    "summary": "Disable telnet under the management telnet block.",
     "cli": [
-      "configure terminal",
-      " line vty 0 15",
-      "  transport input ssh",
+      "configure",
+      " management telnet",
+      "  shutdown",
       " end",
       "write memory"
     ],
-    "notes": "Ensure no plaintext administrative access is permitted."
+    "notes": "EOS uses 'management telnet' and 'management ssh' blocks rather than 'line vty' transport input."
   },
   "vty_idle_timeout": {
-    "summary": "Set VTY session idle timeout to 10 minutes or less.",
+    "summary": "Set an idle timeout of 10 minutes or less under management ssh.",
     "cli": [
-      "configure terminal",
-      " line vty 0 15",
-      "  exec-timeout 10 0",
+      "configure",
+      " management ssh",
+      "  idle-timeout 10",
       " end",
       "write memory"
     ],
-    "notes": "Timeout must be non-zero to tear down inactive sessions."
+    "notes": "Idle timeout is in minutes. Also consider setting it under 'management console'."
   },
   "enable_secret_encrypted": {
-    "summary": "Configure a secure enable secret password.",
+    "summary": "Configure a hashed enable secret and enable password encryption.",
     "cli": [
-      "configure terminal",
-      " enable secret <strong-password>",
+      "configure",
+      " enable secret sha512 <strong-password>",
+      " no enable password",
       " service password-encryption",
       " end",
       "write memory"
     ],
-    "notes": "Always use enable secret instead of enable password."
+    "notes": "EOS supports sha512 hashing for enable secrets. Remove any legacy enable password."
   },
   "no_default_snmp_community": {
-    "summary": "Remove default public and private SNMP community strings.",
+    "summary": "Remove default community strings and replace with unique values.",
     "cli": [
-      "configure terminal",
+      "configure",
       " no snmp-server community public",
       " no snmp-server community private",
-      " snmp-server community <unique-string> RO",
+      " snmp-server community <unique-string> ro <acl-name>",
       " end",
       "write memory"
     ],
-    "notes": "Replace with a strong community name."
+    "notes": "Prefer SNMPv3 with authPriv over any v1/v2c community."
   },
   "http_server_disabled": {
-    "summary": "Disable administrative http/https access if not required, or disable unencrypted HTTP.",
+    "summary": "Disable the HTTP protocol under management api http-commands.",
     "cli": [
-      "configure terminal",
-      " no management api http-commands",
+      "configure",
+      " management api http-commands",
+      "  no protocol http",
       " end",
       "write memory"
     ],
-    "notes": "Disable unencrypted API access to protect credentials."
+    "notes": "Use HTTPS only or disable the management API entirely with 'shutdown'."
   },
   "ssh_version_2": {
-    "summary": "Enforce SSH protocol version 2.",
-    "cli": [
-      "configure terminal",
-      " ip ssh version 2",
-      " end",
-      "write memory"
-    ],
-    "notes": "Arista EOS defaults to SSH version 2."
+    "summary": "EOS 4.x enforces SSHv2 exclusively; verify by running 'show management ssh'.",
+    "cli": [],
+    "notes": "Arista EOS does not expose the SSH protocol version in configuration text. Modern EOS releases enforce SSHv2; confirm with 'show management ssh' output."
   },
   "logging_enabled": {
-    "summary": "Enable remote logging and sized local buffers.",
+    "summary": "Enable logging to a local buffer and a remote syslog collector.",
     "cli": [
-      "configure terminal",
+      "configure",
+      " logging buffered 50000 informational",
       " logging host <syslog-server-ip>",
-      " logging buffered 64000 informational",
       " end",
       "write memory"
     ],
-    "notes": "Send syslog to central NMS."
+    "notes": "Configure both a local buffer and a remote syslog host for resilience."
   },
   "management_acl": {
-    "summary": "Apply access-class to restrict administrative access to authorized subnets.",
+    "summary": "Apply an inbound ACL to restrict SSH management access.",
     "cli": [
-      "configure terminal",
-      " ip access-list standard MGMT-ACL",
-      "  permit 10.20.30.0/24",
-      " line vty 0 15",
-      "  access-class MGMT-ACL in",
+      "configure",
+      " ip access-list MGMT-ACL",
+      "  10 permit ip <management-subnet> any",
+      " management ssh",
+      "  ip access-group MGMT-ACL in",
       " end",
       "write memory"
     ],
-    "notes": "Apply to all VTY lines."
+    "notes": "Verify your management IP is inside the permitted range before applying."
   },
   "login_banner": {
-    "summary": "Define login banner.",
+    "summary": "Set a login banner warning unauthorized users.",
     "cli": [
-      "configure terminal",
+      "configure",
       " banner login",
-      "Authorized Access Only. Activity is logged.",
+      "Authorised access only. Activity is logged and monitored.",
       "EOF",
       " end",
       "write memory"
     ],
-    "notes": "Ensure warning is displayed before access is granted."
+    "notes": "Do not include device details in the banner."
   },
   "password_min_length": {
-    "summary": "Configure minimum password length for local accounts.",
+    "summary": "Enforce a minimum password length.",
     "cli": [
-      "configure terminal",
-      " security passwords min-length 8",
+      "configure",
+      " security password minimum-length 8",
       " end",
       "write memory"
     ],
-    "notes": "Ensures minimal complexity on local logins."
+    "notes": "Applies to passwords set after the command."
   },
   "ntp_configured": {
-    "summary": "Configure NTP synchronization.",
+    "summary": "Configure at least two NTP time sources.",
     "cli": [
-      "configure terminal",
+      "configure",
       " ntp server 10.20.30.41",
+      " ntp server 10.20.30.42",
       " end",
       "write memory"
     ],
-    "notes": "Use time synchronization for accurate audit logs."
+    "notes": "Two sources let the device detect a lying one."
   },
   "no_write_snmp_community": {
-    "summary": "Remove write communities for SNMP.",
+    "summary": "Remove all read-write SNMP communities.",
     "cli": [
-      "configure terminal",
-      " no snmp-server community <rw-string> RW",
+      "configure",
+      " no snmp-server community <rw-string> rw",
       " end",
       "write memory"
     ],
-    "notes": "Only read-only communities should be configured."
+    "notes": "Use SNMPv3 for write access instead of v2c communities."
   }
 }

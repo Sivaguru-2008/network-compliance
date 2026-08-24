@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from auditor.parsers.llm.client import redact_secrets, MockProvider, LocalProvider
 from auditor.training import db
 from auditor.models.identity import DeviceIdentity
+from auditor.models.observation import Observation
 from auditor.models.inventory import DeviceRecord, DeviceStatus, DeviceKeyTier
 from auditor.models.result import ReportSummary, ControlResult, Status, Severity
 
@@ -77,7 +78,7 @@ def test_sqlite_database_roundtrip():
         
         # Build dummy DeviceRecord
         record = DeviceRecord(
-            identity=DeviceIdentity(vendor="arista", os_family="eos"),
+            identity=DeviceIdentity(vendor="arista", os_family="eos", hostname=Observation[str](value="arista-sw-01", detected=True)),
             source_file="samples/arista/sample.conf",
             source_hash="ab12cd34ef56gh78ab12cd34ef56gh78ab12cd34ef56gh78ab12cd34ef56gh78",
             ingested_at=datetime.now(timezone.utc),

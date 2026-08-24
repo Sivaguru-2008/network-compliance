@@ -107,30 +107,41 @@ class HybridParser(VendorParser):
             )
             return baseline
 
-        llm_baseline = self._llm.parse(config_text, source_file=source_file)
-        self.last_llm_baseline = llm_baseline
+        try:
+            llm_baseline = self._llm.parse(config_text, source_file=source_file)
+            self.last_llm_baseline = llm_baseline
 
-        filled: List[str] = []
-        for field in gaps:
-            candidate = getattr(llm_baseline, field)
-            if not candidate.detected:
-                continue
-            setattr(baseline, field, candidate.model_copy(update={"origin": Origin.HYBRID}))
-            filled.append(field)
+            filled: List[str] = []
+            for field in gaps:
+                candidate = getattr(llm_baseline, field)
+                if not candidate.detected:
+                    continue
+                setattr(baseline, field, candidate.model_copy(update={"origin": Origin.HYBRID}))
+                filled.append(field)
 
-        self.filled_fields = filled
-        baseline.provenance.parser_name = self.name
-        baseline.provenance.parser_version = (
-            f"{self.version} ({deterministic.name} v{deterministic.version} + {self._llm.name})"
-        )
-        baseline.provenance.warnings = [
-            *baseline.provenance.warnings,
-            *llm_baseline.provenance.warnings,
-            (
-                f"Hybrid parse: {len(filled)} of {len(gaps)} field(s) the deterministic parser "
-                f"could not establish were filled by a language model"
-                + (f" ({', '.join(filled)})" if filled else "")
-                + ". Deterministic findings were never overruled."
-            ),
-        ]
+            self.filled_fields = filled
+            baseline.provenance.parser_name = self.name
+            baseline.provenance.parser_version = (
+                f"{self.version} ({deterministic.name} v{deterministic.version} + {self._llm.name})"
+            )
+            baseline.provenance.warnings = [
+                *baseline.provenance.warnings,
+                *llm_baseline.provenance.warnings,
+                (
+                    f"Hybrid parse: {len(filled)} of {len(gaps)} field(s) the deterministic parser "
+                    f"could not establish were filled by a language model"
+                    + (f" ({', '.join(filled)})" if filled else "")
+                    + ". Deterministic findings were never overruled."
+                ),
+            ]
+        except Exception as exc:
+            self.filled_fields = []
+            baseline.provenance.parser_name = self.name
+            baseline.provenance.parser_version = (
+                f"{self.version} ({deterministic.name} v{deterministic.version})"
+            )
+            baseline.provenance.warnings = [
+                *baseline.provenance.warnings,
+                f"Hybrid parse: LLM is unavailable or failed ({exc}). Remaining gaps left as NEEDS_REVIEW."
+            ]
         return baseline

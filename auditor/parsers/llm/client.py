@@ -506,6 +506,7 @@ def _import_anthropic():
         import anthropic
     except ImportError as exc:
         raise LLMUnavailableError(
-            "The 'anthropic' package is required for the LLM parser."
+            "The 'anthropic' package is required for the LLM parser. Install it with "
+            "`pip install anthropic`, or audit this device with a deterministic parser."
         ) from exc
     return anthropic

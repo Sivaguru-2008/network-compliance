@@ -172,9 +172,7 @@ class LLMParser(VendorParser):
         # Fallback to LLM call
         client = self._resolve_client()
         try:
-            from .client import redact_secrets
-            redacted_config = redact_secrets(config_text)
-            extraction = client.extract(redacted_config)
+            extraction = client.extract(config_text)
         except (LLMUnavailableError, LLMResponseError) as exc:
             raise ParserError(str(exc)) from exc
 

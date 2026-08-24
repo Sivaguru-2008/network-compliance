@@ -72,8 +72,8 @@ _NON_IOS_MARKERS: Sequence[Tuple[str, float]] = (
     (r"(?im)^\s*sysname \S+", 0.90),             # Huawei VRP / H3C
     (r"(?im)^\s*config system global\b", 0.90),  # FortiOS
     (r"(?im)^\s*<\?xml", 0.90),                  # NETCONF / XML dumps
-    (r"(?im)\barista\b", 0.90),                  # Arista
-    (r"(?im)^\s*management api http-commands\b", 0.90), # Arista EOS API
+    (r"(?im)^\s*management ssh\s*$", 0.40),      # Arista EOS
+    (r"(?im)^\s*management api http-commands\s*$", 0.40),  # Arista EOS
 )
 
 
