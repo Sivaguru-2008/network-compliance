@@ -173,6 +173,24 @@ Each stage is ignorant of its neighbours' internals:
 3. **Aggregation is worst-case.** If any VTY block permits telnet, the device
    permits telnet.
 
+### Input assumption: a complete running-config
+
+The auditor assumes each input is a **complete** running-configuration, as
+produced by `show running-config` (IOS/EOS), `show configuration` (Junos),
+`show full-configuration` (FortiOS), or `config_db.json` (SONiC). Invariant #2
+depends on it: "this setting is absent, therefore it is not configured" is only
+sound when the whole config is present.
+
+Feeding a **partial excerpt** — a single feature section pasted out of a larger
+config — breaks that assumption and can produce misleading verdicts: a section
+that was simply not pasted looks identical to one that was never configured. An
+excerpt missing the admin/password-policy sections may show false `FAIL`s; an
+excerpt containing only what happens to be compliant may show false `PASS`es.
+The tool cannot distinguish "not configured" from "not included," so audit
+complete configs. This is a deliberate contract, not a defect — automatic
+partial-config detection is a possible future enhancement, deliberately out of
+scope here.
+
 ---
 
 ## Multi-framework compliance
