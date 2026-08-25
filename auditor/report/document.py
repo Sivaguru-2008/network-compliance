@@ -320,6 +320,27 @@ def _source_section(record: DeviceRecord) -> Section:
                 Field_(label="Config lines", value=str(target.config_line_count), evidence=""),
             ]
         )
+        
+        # Calculate AI / Training Mappings provenance
+        ai_confirmed = 0
+        admin_trained = 0
+        for fnd in record.findings:
+            for ev in fnd.evidence:
+                origin_str = str(ev.origin.value if hasattr(ev.origin, "value") else ev.origin).lower()
+                if "learned" in origin_str or ev.mapping_id:
+                    admin_trained += 1
+                elif "llm" in origin_str or "hybrid" in origin_str:
+                    ai_confirmed += 1
+                    
+        if ai_confirmed > 0 or admin_trained > 0:
+            fields.append(
+                Field_(
+                    label="AI Interpretation",
+                    value=f"{ai_confirmed} AI-confirmed; {admin_trained} administrator-trained",
+                    evidence="Dynamic baseline mappings resolved during audit"
+                )
+            )
+
         if target.parser_warnings:
             fields.append(
                 Field_(
