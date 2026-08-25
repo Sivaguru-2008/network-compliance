@@ -125,13 +125,16 @@ def load_framework(
         
         from ..knowledge.repository import get_controls_for_framework, get_latest_framework_version
         
-        if ":" in framework:
-            framework_name, fw_version = framework.split(":", 1)
+        if framework.upper() == "CIS" and platform_key == "paloalto":
+            db_rules = []
         else:
-            framework_name = framework
-            fw_version = get_latest_framework_version(framework_name, platform_key)
-            
-        db_rules = get_controls_for_framework(framework_name, platform_key, fw_version)
+            if ":" in framework:
+                framework_name, fw_version = framework.split(":", 1)
+            else:
+                framework_name = framework
+                fw_version = get_latest_framework_version(framework_name, platform_key)
+                
+            db_rules = get_controls_for_framework(framework_name, platform_key, fw_version)
         if db_rules:
             rules = []
             for row in db_rules:
@@ -170,6 +173,8 @@ def load_framework(
                 os_family = "fortios"
             elif vendor == "juniper":
                 os_family = "junos"
+            elif vendor == "paloalto":
+                os_family = "panos"
                 
             source_note_val = db_rules[0]["source_note"] or f"Loaded from local compliance knowledge base (version {fw_version or '1.0'})."
             fw_disp = db_rules[0]["framework_display_name"] or framework_name
@@ -218,6 +223,8 @@ def load_framework(
         os_family = "fortios"
     elif vendor == "juniper":
         os_family = "junos"
+    elif vendor == "paloalto":
+        os_family = "panos"
 
     try:
         fw_data = json.loads(fw_path.read_text(encoding="utf-8"))

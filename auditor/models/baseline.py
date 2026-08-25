@@ -119,6 +119,81 @@ class SecurityBaselineModel(BaseModel):
         description="Configured NTP time sources. Log timestamps are only evidence if the clock is.",
     )
 
+    # -- extended hardening settings --------------------------------------
+    dns_servers: Observation[List[str]] = Field(
+        default_factory=_unknown(List[str]),
+        description="Configured DNS servers for device name resolution.",
+    )
+    usb_auto_install_disabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="USB auto-install of config/firmware is disabled.",
+    )
+    ssl_static_key_ciphers_disabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="SSL static key ciphers are disabled.",
+    )
+    strong_crypto_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="Strong cryptographic ciphers are enforced for administrative access.",
+    )
+    admin_tls13_only: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="Administrative HTTPS access restricted to TLS 1.3 only.",
+    )
+    management_min_tls_version: Observation[str] = Field(
+        default_factory=_unknown(str),
+        description="Minimum TLS version enforced for administrative access (e.g. '1.3').",
+    )
+    gui_cdn_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="GUI CDN usage is enabled for FortiGuard web filtering.",
+    )
+    log_single_cpu_high_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="Logging of single-CPU-high events is enabled.",
+    )
+    admin_lockout_threshold: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Number of failed login attempts before account lockout; 0 means disabled.",
+    )
+    admin_lockout_duration: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Duration in seconds an account remains locked after reaching the threshold.",
+    )
+    admin_default_ports_changed: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="Administrative HTTP/HTTPS ports are changed from defaults (80/443).",
+    )
+    pre_login_banner_present: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="A banner is presented before login.",
+    )
+    post_login_banner_present: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="A banner is presented after login.",
+    )
+    snmp_agent_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if the SNMP agent is enabled.",
+    )
+    snmp_v3_users_present: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if at least one SNMPv3 user is configured.",
+    )
+    event_logging_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if all event logging is enabled under config log eventfilter.",
+    )
+    ntp_redundant: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if redundant (at least two) NTP servers are configured.",
+    )
+    verify_update_server_identity: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if update server identity verification is enabled.",
+    )
+
+
     # -- introspection used by the engine ---------------------------------
 
     @classmethod

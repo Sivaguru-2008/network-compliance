@@ -261,7 +261,26 @@ class FortiosParser(VendorParser):
         self._normalize_aaa(baseline)
         self._normalize_snmp(baseline)
         self._normalize_logging(baseline)
+        self._normalize_event_logging(baseline)
         self._normalize_ntp(baseline)
+
+        self._normalize_dns(baseline)
+        self._normalize_usb_auto_install(baseline)
+        self._normalize_global_security(baseline)
+        self._normalize_admin_lockout(baseline)
+        self._normalize_admin_ports(baseline)
+
+        # Ensure all baseline fields are answered
+        for field in baseline.observable_fields():
+            observation = getattr(baseline, field)
+            if observation.note == "Parser did not evaluate this field.":
+                setattr(
+                    baseline,
+                    field,
+                    type(observation).unknown(
+                        "FortiOS parser does not evaluate this field."
+                    )
+                )
 
         baseline.provenance.warnings = self._warnings
         return baseline
@@ -721,20 +740,40 @@ class FortiosParser(VendorParser):
 
     def _normalize_banner(self, baseline: SecurityBaselineModel) -> None:
         """`set pre-login-banner` / `post-login-banner`, both `disable` by default."""
-        for attribute in ("pre-login-banner", "post-login-banner"):
-            setting = self.first("system", "global", attribute)
-            if self._is_enabled(setting):
-                baseline.login_banner_present = Observation[bool].found(
-                    True, *self._evidence(setting)
-                )
-                return
+        pre_setting = self.first("system", "global", "pre-login-banner")
+        if self._is_enabled(pre_setting):
+            baseline.pre_login_banner_present = Observation[bool].found(
+                True, *self._evidence(pre_setting)
+            )
+        else:
+            baseline.pre_login_banner_present = Observation[bool].absent(
+                False,
+                "pre-login-banner is either disabled or absent (factory default is disable).",
+            )
 
-        baseline.login_banner_present = Observation[bool].absent(
-            False,
-            "Neither 'set pre-login-banner enable' nor 'set post-login-banner enable' is "
-            "present. Both default to disable in every FortiOS release and are written when "
-            "turned on, so absence means no banner is shown.",
-        )
+        post_setting = self.first("system", "global", "post-login-banner")
+        if self._is_enabled(post_setting):
+            baseline.post_login_banner_present = Observation[bool].found(
+                True, *self._evidence(post_setting)
+            )
+        else:
+            baseline.post_login_banner_present = Observation[bool].absent(
+                False,
+                "post-login-banner is either disabled or absent (factory default is disable).",
+            )
+
+        # For backward compatibility
+        if baseline.pre_login_banner_present.value or baseline.post_login_banner_present.value:
+            evidence = pre_setting if baseline.pre_login_banner_present.value else post_setting
+            baseline.login_banner_present = Observation[bool].found(True, *self._evidence(evidence))
+        else:
+            baseline.login_banner_present = Observation[bool].absent(
+                False,
+                "Neither 'set pre-login-banner enable' nor 'set post-login-banner enable' is "
+                "present. Both default to disable in every FortiOS release and are written when "
+                "turned on, so absence means no banner is shown.",
+            )
+
 
     def _normalize_credentials(self, baseline: SecurityBaselineModel) -> None:
         """`set password ENC <hash>` versus `set password <cleartext>`.
@@ -921,17 +960,55 @@ class FortiosParser(VendorParser):
         one turned off cannot be queried, so it is not reported as a finding.
         """
         agent_enabled = self.status_of("system", "snmp", "sysinfo")
-        entries = self.entries("system", "snmp", "community")
+
+        # Populate snmp_agent_enabled
+        if agent_enabled is not None:
+            baseline.snmp_agent_enabled = Observation[bool].found(
+                agent_enabled,
+                *self._evidence(self.first("system", "snmp", "sysinfo", "status") or self.block("system", "snmp", "sysinfo")),
+                note=f"SNMP agent status is configured as {agent_enabled}."
+            )
+        else:
+            # FortiOS Snmp agent is disabled by default
+            baseline.snmp_agent_enabled = Observation[bool].absent(
+                False,
+                "SNMP agent status is not configured and defaults to disable."
+            )
 
         if agent_enabled is False:
-            evidence = self.first("system", "snmp", "sysinfo", "status")
+            status_setting = self.first("system", "snmp", "sysinfo", "status")
             baseline.snmp_communities = Observation[List[SnmpCommunity]].found(
                 [],
-                *self._evidence(evidence),
-                note="The SNMP agent is switched off with 'set status disable', so no "
-                f"community is reachable ({len(entries)} configured).",
+                *self._evidence(status_setting or self.block("system", "snmp", "sysinfo")),
+                note="The SNMP agent is globally disabled under 'config system snmp sysinfo', "
+                "so all configured communities are unreachable.",
             )
             return
+
+        # Check SNMPv3 users
+        v3_users = self.entries("system", "snmp", "user")
+        if v3_users:
+            baseline.snmp_v3_users_present = Observation[bool].found(
+                True,
+                *self._evidence(v3_users[0]),
+                note=f"{len(v3_users)} SNMPv3 user(s) configured."
+            )
+        else:
+            v3_block = self.block("system", "snmp", "user")
+            evidence_node = v3_block or self.block("system", "snmp")
+            if evidence_node:
+                baseline.snmp_v3_users_present = Observation[bool].found(
+                    False,
+                    *self._evidence(evidence_node),
+                    note="SNMPv3 user block exists but is empty."
+                )
+            else:
+                baseline.snmp_v3_users_present = Observation[bool].absent(
+                    False,
+                    "No SNMPv3 users configured (config system snmp user is absent)."
+                )
+
+        entries = self.entries("system", "snmp", "community")
 
         if not entries:
             baseline.snmp_communities = Observation[List[SnmpCommunity]].absent(
@@ -966,11 +1043,16 @@ class FortiosParser(VendorParser):
             return
 
         first = self.first(*entries[0].path, "name") or entries[0]
+        note_str = f"{len(communities)} SNMP v1/v2c community string(s) configured."
+        if agent_enabled is False:
+            note_str += " Note: unreachable since SNMP agent is disabled."
+
         baseline.snmp_communities = Observation[List[SnmpCommunity]].found(
             communities,
             *self._evidence(first),
-            note=f"{len(communities)} reachable SNMP v1/v2c community string(s) configured.",
+            note=note_str,
         )
+
 
     def _community(
         self, entry: FortiosScope, name: Optional[FortiosSetting]
@@ -1006,7 +1088,7 @@ class FortiosParser(VendorParser):
             server = self.first(*path, "server")
             if server is None or not server.values:
                 continue
-            if self.status_of(*path) is False:
+            if self.status_of(*path) is not True:
                 configured_but_off += 1
                 continue
             hosts.append((server.value, server))
@@ -1134,3 +1216,244 @@ class FortiosParser(VendorParser):
         )
         self._warn(note)
         baseline.ntp_servers = Observation[List[str]].unknown(note)
+
+    # -- extended CIS controls (batch 2) -----------------------------------
+
+    def _normalize_dns(self, baseline: SecurityBaselineModel) -> None:
+        """`config system dns` → `set primary` / `set secondary`."""
+        primary = self.first("system", "dns", "primary")
+        secondary = self.first("system", "dns", "secondary")
+
+        servers: List[str] = []
+        evidence_setting = None
+        for setting in (primary, secondary):
+            if setting is not None and setting.values and setting.value != "0.0.0.0":
+                servers.append(setting.value)
+                if evidence_setting is None:
+                    evidence_setting = setting
+
+        if servers:
+            baseline.dns_servers = Observation[List[str]].found(
+                servers, *self._evidence(evidence_setting),
+                note=f"{len(servers)} DNS server(s) explicitly configured.",
+            )
+            return
+
+        if self.block("system", "dns") is not None:
+            blk = self.block("system", "dns")
+            baseline.dns_servers = Observation[List[str]].found(
+                [], *self._evidence(blk),
+                note="'config system dns' is present but no valid server address is set.",
+            )
+            return
+
+        baseline.dns_servers = Observation[List[str]].unknown(
+            "No 'config system dns' block is present. FortiOS uses FortiGuard DNS servers "
+            "by default, and a 'show' output omits settings at their factory value."
+        )
+
+    def _normalize_usb_auto_install(self, baseline: SecurityBaselineModel) -> None:
+        """`config system auto-install` → `auto-install-config` / `auto-install-image`."""
+        config_setting = self.first("system", "auto-install", "auto-install-config")
+        image_setting = self.first("system", "auto-install", "auto-install-image")
+
+        if config_setting is None and image_setting is None:
+            baseline.usb_auto_install_disabled = Observation[bool].unknown(
+                "No 'config system auto-install' settings are present. The factory default "
+                "varies by FortiOS version."
+            )
+            return
+
+        config_disabled = config_setting is not None and config_setting.value.lower() == "disable"
+        image_disabled = image_setting is not None and image_setting.value.lower() == "disable"
+
+        if config_setting is not None and not config_disabled:
+            baseline.usb_auto_install_disabled = Observation[bool].found(
+                False, *self._evidence(config_setting),
+                note="USB auto-install of configuration is enabled.",
+            )
+            return
+
+        if image_setting is not None and not image_disabled:
+            baseline.usb_auto_install_disabled = Observation[bool].found(
+                False, *self._evidence(image_setting),
+                note="USB auto-install of firmware image is enabled.",
+            )
+            return
+
+        if config_disabled and image_disabled:
+            baseline.usb_auto_install_disabled = Observation[bool].found(
+                True, *self._evidence(config_setting),
+                note="Both auto-install-config and auto-install-image are disabled.",
+            )
+            return
+
+        evidence = config_setting or image_setting
+        baseline.usb_auto_install_disabled = Observation[bool].unknown(
+            "Only one auto-install setting is stated; the other is at a version-dependent default."
+        )
+
+    def _simple_global_bool(
+        self,
+        baseline: SecurityBaselineModel,
+        field_name: str,
+        setting_name: str,
+        pass_value: str,
+        description: str,
+    ) -> None:
+        """Read a single enable/disable setting from `config system global`."""
+        setting = self.first("system", "global", setting_name)
+        if setting is None:
+            setattr(baseline, field_name, Observation[bool].unknown(
+                f"No 'set {setting_name}' under 'config system global'. The effective value "
+                "is a factory default that a 'show' output does not state."
+            ))
+            return
+
+        matches = setting.value.lower() == pass_value.lower()
+        setattr(baseline, field_name, Observation[bool].found(
+            matches, *self._evidence(setting),
+            note=(
+                f"{description} is set to '{setting.value}'."
+            ),
+        ))
+
+    def _normalize_global_security(self, baseline: SecurityBaselineModel) -> None:
+        """Simple system global security settings: each a single 'set' statement."""
+        self._simple_global_bool(
+            baseline, "ssl_static_key_ciphers_disabled",
+            "ssl-static-key-ciphers", "disable", "SSL static key ciphers",
+        )
+        self._simple_global_bool(
+            baseline, "strong_crypto_enabled",
+            "strong-crypto", "enable", "Strong cryptography",
+        )
+        self._simple_global_bool(
+            baseline, "gui_cdn_enabled",
+            "gui-cdn-usage", "enable", "GUI CDN usage",
+        )
+        self._simple_global_bool(
+            baseline, "log_single_cpu_high_enabled",
+            "log-single-cpu-high", "enable", "Single-CPU-high event logging",
+        )
+        self._normalize_admin_tls(baseline)
+
+    def _normalize_admin_tls(self, baseline: SecurityBaselineModel) -> None:
+        """`set admin-https-ssl-versions`: CIS wants TLS 1.3 only."""
+        setting = self.first("system", "global", "admin-https-ssl-versions")
+        if setting is None:
+            msg = (
+                "No 'set admin-https-ssl-versions' under 'config system global'. The default "
+                "TLS versions allowed for administrative HTTPS vary by FortiOS release."
+            )
+            baseline.admin_tls13_only = Observation[bool].unknown(msg)
+            baseline.management_min_tls_version = Observation[str].unknown(msg)
+            return
+
+        versions = {v.lower() for v in setting.values}
+        tls13_only = versions == {"tlsv1-3"}
+        
+        min_v = None
+        if "tlsv1-1" in versions:
+            min_v = "1.1"
+        elif "tlsv1-2" in versions:
+            min_v = "1.2"
+        elif "tlsv1-3" in versions:
+            min_v = "1.3"
+
+        evidence = self._evidence(setting)
+
+        baseline.admin_tls13_only = Observation[bool].found(
+            tls13_only, *evidence,
+            note=(
+                "Administrative HTTPS is restricted to TLS 1.3 only."
+                if tls13_only
+                else f"Administrative HTTPS allows {', '.join(sorted(versions))}; "
+                     "not restricted to TLS 1.3 only."
+            ),
+        )
+
+        if min_v:
+            baseline.management_min_tls_version = Observation[str].found(
+                min_v, *evidence,
+                note=f"Minimum administrative HTTPS TLS version is {min_v}."
+            )
+        else:
+            baseline.management_min_tls_version = Observation[str].unknown(
+                "Could not determine minimum TLS version from administrative HTTPS settings."
+            )
+
+    def _normalize_admin_lockout(self, baseline: SecurityBaselineModel) -> None:
+        """`set admin-lockout-threshold` / `set admin-lockout-duration`."""
+        threshold = self.first("system", "global", "admin-lockout-threshold")
+        duration = self.first("system", "global", "admin-lockout-duration")
+
+        if threshold is not None and threshold.value.isdigit():
+            baseline.admin_lockout_threshold = Observation[int].found(
+                int(threshold.value), *self._evidence(threshold),
+                note=(
+                    f"Admin lockout after {threshold.value} failed attempts."
+                    if int(threshold.value) > 0
+                    else "Admin lockout is disabled (threshold set to 0)."
+                ),
+            )
+        else:
+            baseline.admin_lockout_threshold = Observation[int].absent(
+                3,
+                "No 'set admin-lockout-threshold' under 'config system global'. Defaults to 3.",
+            )
+
+        if duration is not None and duration.value.isdigit():
+            baseline.admin_lockout_duration = Observation[int].found(
+                int(duration.value), *self._evidence(duration),
+                note=f"Locked accounts recover after {duration.value} seconds.",
+            )
+        else:
+            baseline.admin_lockout_duration = Observation[int].absent(
+                60,
+                "No 'set admin-lockout-duration' under 'config system global'. Defaults to 60 seconds.",
+            )
+
+    def _normalize_admin_ports(self, baseline: SecurityBaselineModel) -> None:
+        """`set admin-sport` / `set admin-port`: CIS wants non-default ports."""
+        sport_setting = self.first("system", "global", "admin-sport")
+        port_setting = self.first("system", "global", "admin-port")
+
+        sport_val = int(sport_setting.value) if (sport_setting and sport_setting.value.isdigit()) else 443
+        port_val = int(port_setting.value) if (port_setting and port_setting.value.isdigit()) else 80
+
+        https_changed = sport_val != 443
+        http_changed = port_val != 80
+        both_changed = https_changed and http_changed
+
+        evidence = sport_setting or port_setting
+
+        if evidence:
+            baseline.admin_default_ports_changed = Observation[bool].found(
+                both_changed,
+                *self._evidence(evidence),
+                note=f"HTTPS admin port={sport_val} (changed: {https_changed}), HTTP admin port={port_val} (changed: {http_changed})."
+            )
+        else:
+            baseline.admin_default_ports_changed = Observation[bool].absent(
+                False,
+                "Neither admin-sport nor admin-port is configured. Both are at default values (443 and 80)."
+            )
+
+    def _normalize_event_logging(self, baseline: SecurityBaselineModel) -> None:
+        """`config log eventfilter` -> check if `set event` is set to `enable` or default."""
+        setting = self.first("log", "eventfilter", "event")
+        if setting is not None:
+            enabled = setting.value.lower() == "enable"
+            baseline.event_logging_enabled = Observation[bool].found(
+                enabled,
+                *self._evidence(setting),
+                note=f"Event filter 'event' is set to '{setting.value}'."
+            )
+        else:
+            # Default is enable in FortiOS
+            baseline.event_logging_enabled = Observation[bool].absent(
+                True,
+                "No 'config log eventfilter' event configuration is present; defaults to enable."
+            )
+

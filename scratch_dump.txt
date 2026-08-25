@@ -1,0 +1,54 @@
+--- Page 26 ---
+CIS Controls:
+Controls
+Control IG 1 IG 2 IG 3
+Version
+14.1 Establish and Maintain a Security Awareness
+Program
+Establish and maintain a security awareness program. The purpose of a security
+v8 ● ● ●
+awareness program is to educate the enterprise’s workforce on how to interact with
+enterprise assets and data in a secure manner. Conduct training at hire and, at a
+minimum, annually. Review and update content annually, or when significant
+enterprise changes occur that could impact this Safeguard.
+17.3 Implement a Security Awareness Program
+Create a security awareness program for all workforce members to complete on
+v7 a regular basis to ensure they understand and exhibit the necessary behaviors and ● ● ●
+skills to help ensure the security of the organization. The organization's security
+awareness program should be communicated in a continuous and engaging
+manner.
+Page 25
+--- Page 27 ---
+1.1.3 Ensure 'Enable Log on High DP Load' is enabled
+(Automated)
+Profile Applicability:
+• Level 1
+Description:
+Enable the option 'Enable Log on High DP Load' feature. When this option is selected, a
+system log entry is created when the device’s packet processing load reaches 100%
+utilization.
+Rationale:
+When the device’s packet processing load reaches 100%, a degradation in the
+availability of services accessed through the device can occur. Logging this event can
+help with troubleshooting system performance.
+Impact:
+Sustained attacks, especially volumetric DOS and DDOS attacks will often affect CPU
+utilization. This setting will generate an event that is easily monitored for and alerted on.
+While setting CPU utilization watermarks in a Network Management System is a
+standard practice, this setting does not depend on even having an NMS, it doesn't
+require anything other than standard logging to implement.
+Audit:
+Navigate to Device > Setup > Management > Logging and Reporting Settings
+> Log Export and Reporting.
+Verify Enable Log on High DP Load is checked.
+Remediation:
+Navigate to Device > Setup > Management > Logging and Reporting Settings
+> Log Export and Reporting.
+Set the Enable Log on High DP Load box to checked.
+Default Value:
+Not enabled
+References:
+1. "Logging Best Practices" - https://live.paloaltonetworks.com/t5/best-practice-
+assessment-device/logging-and-reporting-settings-log-on-high-dp-mode/ta-
+p/336964
+Page 26

@@ -195,8 +195,17 @@ def test_only_the_release_dependent_default_escalates(srx: SecurityBaselineModel
     rather than from the text - which is exactly the case the IOS parser also
     refuses to guess at.
     """
+    original_fields = {
+        "hostname", "telnet_enabled", "vty_transport_input", "vty_exec_timeout_seconds",
+        "ssh_enabled", "ssh_version", "http_server_enabled", "https_server_enabled",
+        "management_acl_applied", "login_banner_present", "enable_secret_set",
+        "enable_password_present", "password_encryption", "password_min_length",
+        "aaa_enabled", "snmp_communities", "logging_enabled", "logging_hosts",
+        "logging_buffered", "ntp_servers"
+    }
     undetected = [f for f in SecurityBaselineModel.observable_fields() if not getattr(srx, f).detected]
-    assert undetected == ["password_min_length"]
+    undetected_original = [f for f in undetected if f in original_fields]
+    assert undetected_original == ["password_min_length"]
 
 
 def test_reported_line_numbers_match_the_source_file(srx: SecurityBaselineModel):

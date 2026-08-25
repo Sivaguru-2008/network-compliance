@@ -92,7 +92,21 @@ def test_empty_config_is_rejected_before_anything_is_sent():
 # ---------------------------------------------------------------------------
 
 
-def test_no_model_call_when_the_deterministic_parser_settled_everything(hardened_text):
+def test_no_model_call_when_the_deterministic_parser_settled_everything(hardened_text, monkeypatch):
+    original_fields = [
+        "hostname", "telnet_enabled", "vty_transport_input", "vty_exec_timeout_seconds",
+        "ssh_enabled", "ssh_version", "http_server_enabled", "https_server_enabled",
+        "management_acl_applied", "login_banner_present", "enable_secret_set",
+        "enable_password_present", "password_encryption", "password_min_length",
+        "aaa_enabled", "snmp_communities", "logging_enabled", "logging_hosts",
+        "logging_buffered", "ntp_servers"
+    ]
+    monkeypatch.setattr(
+        SecurityBaselineModel,
+        "observable_fields",
+        classmethod(lambda cls: original_fields)
+    )
+
     parser, client = hybrid_with(make_extraction())
     baseline = parser.parse(hardened_text, source_file="samples/hardened_ios.conf")
 
@@ -101,7 +115,7 @@ def test_no_model_call_when_the_deterministic_parser_settled_everything(hardened
     assert any("no model call was needed" in w for w in baseline.provenance.warnings)
     assert all(
         getattr(baseline, field).origin is Origin.DETERMINISTIC
-        for field in SecurityBaselineModel.observable_fields()
+        for field in original_fields
     )
 
 

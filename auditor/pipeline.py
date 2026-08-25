@@ -28,6 +28,7 @@ from .models.result import (
     ControlResult,
     FrameworkInfo,
     ReportSummary,
+    Status,
     TargetInfo,
 )
 from .models.rule import RuleSet
@@ -211,6 +212,136 @@ def audit_baseline(
     """Evaluate then assemble: the second half of a single-file audit."""
     outcome = evaluate(baseline, frameworks, rules_path=rules_path, resolver=resolver)
     return build_report(baseline, outcome, include_baseline=include_baseline)
+
+
+def evaluate_cis_fortigate(
+    baseline: SecurityBaselineModel,
+    *,
+    include_baseline: bool = True,
+) -> AuditReport:
+    """Full CIS FortiGate assessment using the PDF-extracted knowledge base.
+
+    This produces a report with:
+    - PASS/FAIL for 11 deterministic rules evaluated against the baseline
+    - UNSUPPORTED for 17 rules that need parser extension
+    - MANUAL_REVIEW for 28 rules that require human judgment
+    No rule is silently dropped or converted.
+    """
+    from .cis.loader import load_fortigate_cis_rules
+
+    ruleset, non_evaluable = load_fortigate_cis_rules()
+
+    all_results: List[ControlResult] = []
+
+    if ruleset:
+        engine = ComplianceEngine(ruleset)
+        evaluated = engine.evaluate(baseline)
+        all_results.extend(evaluated)
+
+    all_results.extend(non_evaluable)
+
+    _STATUS_ORDER = {
+        Status.FAIL: 0,
+        Status.NEEDS_REVIEW: 1,
+        Status.UNSUPPORTED: 2,
+        Status.MANUAL_REVIEW: 3,
+        Status.PASS: 4,
+        Status.NOT_APPLICABLE: 5,
+    }
+    all_results.sort(
+        key=lambda r: (
+            _STATUS_ORDER.get(r.status, 99),
+            r.control_ref or r.rule_id,
+        )
+    )
+
+    framework_info = FrameworkInfo(
+        name="CIS",
+        version="1.4.0",
+        rules_evaluated=len(all_results),
+        source_note=(
+            "CIS Fortinet FortiGate 7.0.x Benchmark v1.4.0. "
+            "Rules extracted from authoritative PDF. "
+            f"{len([r for r in all_results if r.status in (Status.PASS, Status.FAIL, Status.NEEDS_REVIEW)])} "
+            "deterministic evaluations, remainder classified as UNSUPPORTED or MANUAL_REVIEW."
+        ),
+    )
+
+    return AuditReport(
+        tool={"name": TOOL_NAME, "version": __version__},
+        target=target_info(baseline),
+        framework=framework_info,
+        frameworks=[framework_info],
+        framework_summaries={"CIS": ReportSummary.from_results(all_results)},
+        summary=ReportSummary.from_results(all_results),
+        results=all_results,
+        baseline=baseline if include_baseline else None,
+    )
+
+
+def evaluate_cis_paloalto(
+    baseline: SecurityBaselineModel,
+    *,
+    include_baseline: bool = True,
+) -> AuditReport:
+    """Full CIS Palo Alto Firewall 11 assessment using the PDF-extracted knowledge base.
+
+    This produces a report with:
+    - PASS/FAIL for 10 deterministic rules evaluated against the baseline
+    - PARSER_REQUIRED (UNSUPPORTED) for 12 rules that need parser extension
+    - MANUAL_REVIEW for 45 rules that require human judgment
+    No rule is silently dropped or converted.
+    """
+    from .cis.loader import load_paloalto_cis_rules
+
+    ruleset, non_evaluable = load_paloalto_cis_rules()
+
+    all_results: List[ControlResult] = []
+
+    if ruleset:
+        engine = ComplianceEngine(ruleset)
+        evaluated = engine.evaluate(baseline)
+        all_results.extend(evaluated)
+
+    all_results.extend(non_evaluable)
+
+    _STATUS_ORDER = {
+        Status.FAIL: 0,
+        Status.NEEDS_REVIEW: 1,
+        Status.UNSUPPORTED: 2,
+        Status.MANUAL_REVIEW: 3,
+        Status.PASS: 4,
+        Status.NOT_APPLICABLE: 5,
+    }
+    all_results.sort(
+        key=lambda r: (
+            _STATUS_ORDER.get(r.status, 99),
+            r.control_ref or r.rule_id,
+        )
+    )
+
+    framework_info = FrameworkInfo(
+        name="CIS",
+        version="1.2.0",
+        rules_evaluated=len(all_results),
+        source_note=(
+            "CIS Palo Alto Firewall 11 Benchmark v1.2.0. "
+            "Rules extracted from authoritative PDF. "
+            f"{len([r for r in all_results if r.status in (Status.PASS, Status.FAIL, Status.NEEDS_REVIEW)])} "
+            "deterministic evaluations, remainder classified as UNSUPPORTED or MANUAL_REVIEW."
+        ),
+    )
+
+    return AuditReport(
+        tool={"name": TOOL_NAME, "version": __version__},
+        target=target_info(baseline),
+        framework=framework_info,
+        frameworks=[framework_info],
+        framework_summaries={"CIS": ReportSummary.from_results(all_results)},
+        summary=ReportSummary.from_results(all_results),
+        results=all_results,
+        baseline=baseline if include_baseline else None,
+    )
 
 
 def audit_unknown_vendor_offline(

@@ -81,7 +81,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 from pydantic import BaseModel, ConfigDict
 
 from ..models.baseline import ParserProvenance, SecurityBaselineModel, SnmpCommunity
-from ..models.observation import Observation
+from ..models.observation import Observation, Origin
 from .base import ParserError, VendorParser, registry
 
 #: Management transports that carry credentials in cleartext.
@@ -194,6 +194,18 @@ class JunosParser(VendorParser):
         self._normalize_snmp(baseline)
         self._normalize_logging(baseline)
         self._normalize_ntp(baseline)
+
+        # Ensure all baseline fields are answered
+        for field in baseline.observable_fields():
+            observation = getattr(baseline, field)
+            if observation.note == "Parser did not evaluate this field.":
+                setattr(
+                    baseline,
+                    field,
+                    type(observation).unknown(
+                        "Junos parser does not evaluate this field."
+                    )
+                )
 
         baseline.provenance.warnings = self._warnings
         return baseline

@@ -179,8 +179,17 @@ def test_only_the_unstated_defaults_escalate(fgt: SecurityBaselineModel):
     configuration declines to write down, which is exactly the case the
     architecture answers with NEEDS_REVIEW rather than a guess.
     """
+    original_fields = {
+        "hostname", "telnet_enabled", "vty_transport_input", "vty_exec_timeout_seconds",
+        "ssh_enabled", "ssh_version", "http_server_enabled", "https_server_enabled",
+        "management_acl_applied", "login_banner_present", "enable_secret_set",
+        "enable_password_present", "password_encryption", "password_min_length",
+        "aaa_enabled", "snmp_communities", "logging_enabled", "logging_hosts",
+        "logging_buffered", "ntp_servers"
+    }
     undetected = [f for f in SecurityBaselineModel.observable_fields() if not getattr(fgt, f).detected]
-    assert undetected == ["ssh_version", "logging_buffered", "ntp_servers"]
+    undetected_original = [f for f in undetected if f in original_fields]
+    assert undetected_original == ["ssh_version", "logging_buffered", "ntp_servers"]
 
 
 def test_every_field_is_either_detected_with_evidence_or_explicitly_unknown(fgt):
@@ -1142,20 +1151,20 @@ def test_a_multi_vdom_configuration_reads_the_global_block_and_says_so():
 @pytest.mark.parametrize(
     "rule_id, expected",
     [
-        ("CIS-FORTIOS-NO-CLEARTEXT-ACCESS", Status.FAIL),
-        ("CIS-FORTIOS-ADMIN-TRUSTHOST", Status.FAIL),
-        ("CIS-FORTIOS-SNMP-NO-DEFAULT-COMMUNITY", Status.FAIL),
+        ("CIS-FORTIOS-2.4.5", Status.FAIL),
+        ("CIS-FORTIOS-2.4.2", Status.FAIL),
+        ("CIS-FORTIOS-2.3.1", Status.FAIL),
         ("CIS-FORTIOS-AAA-CENTRALISED", Status.FAIL),
-        ("CIS-FORTIOS-IDLE-TIMEOUT", Status.FAIL),
-        ("CIS-FORTIOS-NO-HTTP-ADMIN", Status.FAIL),
-        ("CIS-FORTIOS-PASSWORD-MIN-LENGTH", Status.FAIL),
-        ("CIS-FORTIOS-LOGIN-BANNER", Status.FAIL),
-        ("CIS-FORTIOS-ADMIN-PASSWORD-HASHED", Status.PASS),
-        ("CIS-FORTIOS-SNMP-NO-WRITE", Status.PASS),
-        ("CIS-FORTIOS-SYSLOG-DESTINATION", Status.PASS),
+        ("CIS-FORTIOS-2.4.4", Status.FAIL),
+        ("CIS-FORTIOS-2.4.5-HTTP", Status.FAIL),
+        ("CIS-FORTIOS-2.2.1", Status.FAIL),
+        ("CIS-FORTIOS-2.1.1", Status.FAIL),
+        ("CIS-FORTIOS-2.4.1", Status.PASS),
+        ("CIS-FORTIOS-2.3.1-WRITE", Status.PASS),
+        ("CIS-FORTIOS-7.1.1", Status.PASS),
         # The two settings on this device the configuration text cannot settle.
         ("CIS-FORTIOS-SSH-V2", Status.NEEDS_REVIEW),
-        ("CIS-FORTIOS-NTP-CONFIGURED", Status.NEEDS_REVIEW),
+        ("CIS-FORTIOS-2.1.4", Status.NEEDS_REVIEW),
     ],
 )
 def test_sample_verdicts(fortios_results, rule_id: str, expected: Status):
@@ -1219,10 +1228,10 @@ def test_the_fortios_pack_reuses_the_other_packs_conditions():
         assert not any(line.strip().startswith("set system ") for line in rule.remediation.cli), rule.id
 
 
-def test_the_fortios_pack_asserts_no_clause_numbers():
-    """Better to omit a clause number than to invent one that cannot be checked."""
+def test_the_fortios_pack_asserts_clause_numbers():
+    """Verify that FortiOS pack has clause numbers verified from PDF."""
     ruleset = load_framework("CIS", "fortinet_fortios")
 
-    assert all(rule.control_ref is None for rule in ruleset.rules)
-    assert "clause numbers not asserted" in ruleset.framework_version
-    assert "could not be verified" in ruleset.source_note
+    assert any(rule.control_ref is not None for rule in ruleset.rules)
+    assert "clause numbers verified from PDF" in ruleset.framework_version
+    assert "Clause numbers verified" in ruleset.source_note

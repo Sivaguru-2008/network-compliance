@@ -1,0 +1,577 @@
+{
+  "1.1": {
+    "cis_id": "1.1",
+    "baseline_field": "dns_servers",
+    "internal_control": "dns_configured",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "dns_servers",
+      "operator": "is_not_empty"
+    },
+    "gap_note": ""
+  },
+  "1.2": {
+    "cis_id": "1.2",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Requires reviewing zone configuration per-zone. Config text varies by deployment."
+  },
+  "1.3": {
+    "cis_id": "1.3",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Requires identifying WAN interfaces and checking allowaccess. Topology-dependent."
+  },
+  "2.1.1": {
+    "cis_id": "2.1.1",
+    "baseline_field": "pre_login_banner_present",
+    "internal_control": "login_banner",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "pre_login_banner_present",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.1.2": {
+    "cis_id": "2.1.2",
+    "baseline_field": "post_login_banner_present",
+    "internal_control": "login_banner",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "post_login_banner_present",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.1.3": {
+    "cis_id": "2.1.3",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Timezone correctness is deployment-specific."
+  },
+  "2.1.4": {
+    "cis_id": "2.1.4",
+    "baseline_field": "ntp_servers",
+    "internal_control": "ntp_configured",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "ntp_servers",
+      "operator": "is_not_empty"
+    },
+    "gap_note": ""
+  },
+  "2.1.5": {
+    "cis_id": "2.1.5",
+    "baseline_field": "hostname",
+    "internal_control": null,
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "all_of": [
+        {
+          "field": "hostname",
+          "operator": "not_equals",
+          "value": ""
+        },
+        {
+          "field": "hostname",
+          "operator": "not_equals",
+          "value": "none"
+        }
+      ]
+    },
+    "gap_note": ""
+  },
+  "2.1.6": {
+    "cis_id": "2.1.6",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Firmware version check requires comparing against latest available release."
+  },
+  "2.1.7": {
+    "cis_id": "2.1.7",
+    "baseline_field": "usb_auto_install_disabled",
+    "internal_control": "usb_auto_install",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "usb_auto_install_disabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.1.8": {
+    "cis_id": "2.1.8",
+    "baseline_field": "ssl_static_key_ciphers_disabled",
+    "internal_control": "ssl_static_key_ciphers",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "ssl_static_key_ciphers_disabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.1.9": {
+    "cis_id": "2.1.9",
+    "baseline_field": "strong_crypto_enabled",
+    "internal_control": "strong_crypto",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "strong_crypto_enabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.1.10": {
+    "cis_id": "2.1.10",
+    "baseline_field": "admin_tls13_only",
+    "internal_control": "admin_tls_version",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "admin_tls13_only",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.1.11": {
+    "cis_id": "2.1.11",
+    "baseline_field": "gui_cdn_enabled",
+    "internal_control": "gui_cdn_usage",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "gui_cdn_enabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.1.12": {
+    "cis_id": "2.1.12",
+    "baseline_field": "log_single_cpu_high_enabled",
+    "internal_control": "log_single_cpu_high",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "log_single_cpu_high_enabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.2.1": {
+    "cis_id": "2.2.1",
+    "baseline_field": "password_min_length",
+    "internal_control": "password_min_length",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "password_min_length",
+      "operator": "greater_or_equal",
+      "value": 8
+    },
+    "gap_note": ""
+  },
+  "2.2.2": {
+    "cis_id": "2.2.2",
+    "baseline_field": "admin_lockout_threshold",
+    "internal_control": "admin_lockout",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "all_of": [
+        {
+          "field": "admin_lockout_threshold",
+          "operator": "equals",
+          "value": 3
+        },
+        {
+          "field": "admin_lockout_duration",
+          "operator": "equals",
+          "value": 900
+        }
+      ]
+    },
+    "gap_note": ""
+  },
+  "2.3.1": {
+    "cis_id": "2.3.1",
+    "baseline_field": "snmp_communities",
+    "internal_control": "no_default_snmp_community",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "all_of": [
+        {
+          "field": "snmp_agent_enabled",
+          "operator": "is_true"
+        },
+        {
+          "field": "snmp_communities",
+          "operator": "is_empty"
+        },
+        {
+          "field": "snmp_v3_users_present",
+          "operator": "is_true"
+        }
+      ]
+    },
+    "gap_note": ""
+  },
+  "2.3.2": {
+    "cis_id": "2.3.2",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "SNMPv3 trusted host verification requires per-user inspection."
+  },
+  "2.4.1": {
+    "cis_id": "2.4.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Default password detection requires comparing password hash to known default. Cannot be checked from config alone."
+  },
+  "2.4.2": {
+    "cis_id": "2.4.2",
+    "baseline_field": "management_acl_applied",
+    "internal_control": "management_acl",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "management_acl_applied",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.4.3": {
+    "cis_id": "2.4.3",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Admin profile assignment review is deployment-specific."
+  },
+  "2.4.4": {
+    "cis_id": "2.4.4",
+    "baseline_field": "vty_exec_timeout_seconds",
+    "internal_control": "vty_idle_timeout",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "all_of": [
+        {
+          "field": "vty_exec_timeout_seconds",
+          "operator": "greater_than",
+          "value": 0
+        },
+        {
+          "field": "vty_exec_timeout_seconds",
+          "operator": "less_or_equal",
+          "value": 600
+        }
+      ]
+    },
+    "gap_note": ""
+  },
+  "2.4.5": {
+    "cis_id": "2.4.5",
+    "baseline_field": "telnet_enabled",
+    "internal_control": "secure_vty_transport",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "all_of": [
+        {
+          "field": "telnet_enabled",
+          "operator": "is_false"
+        },
+        {
+          "field": "http_server_enabled",
+          "operator": "is_false"
+        }
+      ]
+    },
+    "gap_note": ""
+  },
+  "2.4.6": {
+    "cis_id": "2.4.6",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Local-in policy review is deployment-specific."
+  },
+  "2.4.7": {
+    "cis_id": "2.4.7",
+    "baseline_field": "admin_default_ports_changed",
+    "internal_control": "admin_ports",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "admin_default_ports_changed",
+      "operator": "is_true"
+    },
+    "gap_note": ""
+  },
+  "2.4.8": {
+    "cis_id": "2.4.8",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Virtual patching on management interface is an operational setting."
+  },
+  "2.5.1": {
+    "cis_id": "2.5.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs ha_enabled baseline field. Parser can extract 'config system ha'."
+  },
+  "2.5.2": {
+    "cis_id": "2.5.2",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs ha_monitor_interfaces baseline field."
+  },
+  "2.5.3": {
+    "cis_id": "2.5.3",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "HA reserved management interface is deployment-specific."
+  },
+  "3.1": {
+    "cis_id": "3.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Unused policy review requires policy hit-count data not in config text."
+  },
+  "3.2": {
+    "cis_id": "3.2",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs firewall_policies baseline field. Parser can scan 'config firewall policy' for service ALL."
+  },
+  "3.3": {
+    "cis_id": "3.3",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Tor/malicious IP blocking depends on external threat intelligence and address objects."
+  },
+  "3.4": {
+    "cis_id": "3.4",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Per-policy logging verification requires full policy enumeration."
+  },
+  "4.1.1": {
+    "cis_id": "4.1.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "Botnet detection profile configuration varies by deployment."
+  },
+  "4.1.2": {
+    "cis_id": "4.1.2",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "IPS profile application to policies requires policy-by-policy check."
+  },
+  "4.2.1": {
+    "cis_id": "4.2.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs av_push_updates baseline field. Parser can extract from 'config system autoupdate push-update'."
+  },
+  "4.2.2": {
+    "cis_id": "4.2.2",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "AV profile application to policies requires policy-by-policy check."
+  },
+  "4.2.3": {
+    "cis_id": "4.2.3",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs outbreak_prevention baseline field. Parser can extract from AV profile."
+  },
+  "4.2.4": {
+    "cis_id": "4.2.4",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs ai_malware_detection baseline field. Parser can extract from AV profile."
+  },
+  "4.2.5": {
+    "cis_id": "4.2.5",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs grayware_detection baseline field. Parser can extract from AV profile."
+  },
+  "4.2.6": {
+    "cis_id": "4.2.6",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "FortiGuard inline scanning requires subscription verification."
+  },
+  "4.3.1": {
+    "cis_id": "4.3.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs botnet_dns_filter baseline field. Parser can extract from DNS filter profile."
+  },
+  "4.3.2": {
+    "cis_id": "4.3.2",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "DNS filter logging configuration requires per-profile inspection."
+  },
+  "4.3.3": {
+    "cis_id": "4.3.3",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "DNS filter profile application to policies requires policy-by-policy check."
+  },
+  "4.4.1": {
+    "cis_id": "4.4.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "High-risk category blocking depends on category definitions."
+  },
+  "4.4.2": {
+    "cis_id": "4.4.2",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs app_control_non_default_port baseline field."
+  },
+  "4.4.3": {
+    "cis_id": "4.4.3",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "App control traffic logging requires per-profile inspection."
+  },
+  "4.4.4": {
+    "cis_id": "4.4.4",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "App control profile application to policies requires policy-by-policy check."
+  },
+  "5.1.1": {
+    "cis_id": "5.1.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs compromised_host_quarantine baseline field. Parser can extract from automation config."
+  },
+  "5.2.1.1": {
+    "cis_id": "5.2.1.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Needs security_fabric_enabled baseline field. Parser can extract from 'config system csf'."
+  },
+  "6.1.1": {
+    "cis_id": "6.1.1",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "VPN certificate verification requires operational 'get vpn ssl settings'."
+  },
+  "6.1.2": {
+    "cis_id": "6.1.2",
+    "baseline_field": null,
+    "internal_control": null,
+    "evaluation_type": "MANUAL",
+    "condition_json": null,
+    "gap_note": "SSL VPN TLS version restriction. May be checkable via 'config vpn ssl settings'."
+  },
+  "7.1.1": {
+    "cis_id": "7.1.1",
+    "baseline_field": "logging_enabled",
+    "internal_control": "logging_enabled",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "all_of": [
+        {
+          "field": "logging_enabled",
+          "operator": "is_true"
+        },
+        {
+          "field": "event_logging_enabled",
+          "operator": "is_true"
+        }
+      ]
+    },
+    "gap_note": ""
+  },
+  "7.2.1": {
+    "cis_id": "7.2.1",
+    "baseline_field": "logging_hosts",
+    "internal_control": null,
+    "evaluation_type": "PARSER_REQUIRED",
+    "condition_json": null,
+    "gap_note": "Log encryption check needs log_encryption_enabled baseline field."
+  },
+  "7.3.1": {
+    "cis_id": "7.3.1",
+    "baseline_field": "logging_hosts",
+    "internal_control": "logging_enabled",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "all_of": [
+        {
+          "field": "logging_enabled",
+          "operator": "is_true"
+        },
+        {
+          "field": "logging_hosts",
+          "operator": "is_not_empty"
+        }
+      ]
+    },
+    "gap_note": ""
+  }
+}

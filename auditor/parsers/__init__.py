@@ -6,10 +6,9 @@ from .cisco_ios import CiscoIOSParser
 from .fortios import FortiosParser
 from .hybrid import HybridParser
 from .junos import JunosParser
-from .arista_eos import AristaEOSParser
 from .sonic import SonicParser
+from .paloalto import PaloAltoParser
 from .llm import LLMClient, LLMParser, LLMResponseError, LLMUnavailableError
-from .sonic import SonicParser
 
 __all__ = [
     "AristaEOSParser",
@@ -17,15 +16,14 @@ __all__ = [
     "FortiosParser",
     "HybridParser",
     "JunosParser",
-    "AristaEOSParser",
     "SonicParser",
+    "PaloAltoParser",
     "LLMClient",
     "LLMParser",
     "LLMResponseError",
     "LLMUnavailableError",
     "ParserError",
     "ParserRegistry",
-    "SonicParser",
     "VendorParser",
     "registry",
 ]

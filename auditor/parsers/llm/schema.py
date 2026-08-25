@@ -109,6 +109,24 @@ class LLMExtraction(BaseModel):
     logging_hosts: TextListFinding
     logging_buffered: BooleanFinding
     ntp_servers: TextListFinding
+    dns_servers: TextListFinding
+    usb_auto_install_disabled: BooleanFinding
+    ssl_static_key_ciphers_disabled: BooleanFinding
+    strong_crypto_enabled: BooleanFinding
+    admin_tls13_only: BooleanFinding
+    management_min_tls_version: TextFinding
+    gui_cdn_enabled: BooleanFinding
+    log_single_cpu_high_enabled: BooleanFinding
+    admin_lockout_threshold: IntegerFinding
+    admin_lockout_duration: IntegerFinding
+    admin_default_ports_changed: BooleanFinding
+    pre_login_banner_present: BooleanFinding
+    post_login_banner_present: BooleanFinding
+    snmp_agent_enabled: BooleanFinding
+    snmp_v3_users_present: BooleanFinding
+    event_logging_enabled: BooleanFinding
+    ntp_redundant: BooleanFinding
+    verify_update_server_identity: BooleanFinding
 
     @classmethod
     def finding_fields(cls) -> List[str]:

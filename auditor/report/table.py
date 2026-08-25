@@ -21,13 +21,23 @@ _COLORS = {
     Status.PASS: "\033[32m",           # green
     Status.FAIL: "\033[31m",           # red
     Status.NEEDS_REVIEW: "\033[33m",   # yellow
+    Status.UNSUPPORTED: "\033[35m",    # magenta
+    Status.MANUAL_REVIEW: "\033[34m",  # blue
+    Status.NOT_APPLICABLE: "\033[37m", # light grey
 }
 _SEVERITY_COLORS = {
     Severity.HIGH: "\033[31m",
     Severity.MEDIUM: "\033[33m",
     Severity.LOW: "\033[36m",
 }
-_STATUS_MARK = {Status.PASS: "PASS", Status.FAIL: "FAIL", Status.NEEDS_REVIEW: "REVIEW"}
+_STATUS_MARK = {
+    Status.PASS: "PASS",
+    Status.FAIL: "FAIL",
+    Status.NEEDS_REVIEW: "REVIEW",
+    Status.UNSUPPORTED: "UNSUPPORT",
+    Status.MANUAL_REVIEW: "MANUAL",
+    Status.NOT_APPLICABLE: "N/A",
+}
 
 
 def supports_color(stream=None) -> bool:

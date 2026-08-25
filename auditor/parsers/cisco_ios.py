@@ -35,7 +35,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 from ciscoconfparse2 import CiscoConfParse
 
 from ..models.baseline import ParserProvenance, SecurityBaselineModel, SnmpCommunity
-from ..models.observation import Observation
+from ..models.observation import Observation, Origin
 from .base import ParserError, VendorParser, registry
 
 # Transports that carry credentials and session data in cleartext.
@@ -133,6 +133,18 @@ class CiscoIOSParser(VendorParser):
         self._normalize_snmp(parse, baseline)
         self._normalize_logging(parse, baseline)
         self._normalize_ntp(parse, baseline)
+
+        # Ensure all baseline fields are answered
+        for field in baseline.observable_fields():
+            observation = getattr(baseline, field)
+            if observation.note == "Parser did not evaluate this field.":
+                setattr(
+                    baseline,
+                    field,
+                    type(observation).unknown(
+                        "Cisco IOS parser does not evaluate this field."
+                    )
+                )
 
         baseline.provenance.warnings = self._warnings
         return baseline

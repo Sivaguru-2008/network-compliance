@@ -14,17 +14,30 @@ REPORT_SCHEMA_VERSION = "1.0"
 
 
 class Status(str, Enum):
-    """The three verdicts this tool is allowed to reach.
+    """Verdicts this tool is allowed to reach.
 
     ``NEEDS_REVIEW`` is a designed outcome, not a failure mode: it means the
     configuration carried no conclusive evidence either way, so the tool
     escalates to a human instead of guessing.  Missing evidence is never
     silently upgraded to PASS.
+
+    ``NOT_APPLICABLE`` means the control does not apply to this device type
+    or deployment scenario.
+
+    ``UNSUPPORTED`` means the tool cannot evaluate this control from config
+    text alone — it requires operational commands, GUI checks, or external
+    data.  UNSUPPORTED is never silently converted to PASS or NOT_APPLICABLE.
+
+    ``MANUAL_REVIEW`` means the control requires human judgment even with
+    full config access.
     """
 
     PASS = "PASS"
     FAIL = "FAIL"
     NEEDS_REVIEW = "NEEDS_REVIEW"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+    UNSUPPORTED = "UNSUPPORTED"
+    MANUAL_REVIEW = "MANUAL_REVIEW"
 
 
 class Evidence(BaseModel):
@@ -159,15 +172,18 @@ class ReportSummary(BaseModel):
     passed: int = 0
     failed: int = 0
     needs_review: int = 0
+    not_applicable: int = 0
+    unsupported: int = 0
+    manual_review: int = 0
     failed_by_severity: Dict[str, int] = Field(default_factory=dict)
     needs_review_by_severity: Dict[str, int] = Field(default_factory=dict)
     compliance_score: float = Field(
         default=0.0,
-        description="passed / total, as a percentage. NEEDS_REVIEW counts against the score.",
+        description="passed / (total - not_applicable - unsupported - manual_review). Only counts controls the tool could actually evaluate.",
     )
     adjudicated_score: float = Field(
         default=0.0,
-        description="passed / (passed + failed), as a percentage. Excludes NEEDS_REVIEW from the denominator.",
+        description="passed / (passed + failed). Excludes NEEDS_REVIEW, NOT_APPLICABLE, UNSUPPORTED, MANUAL_REVIEW.",
     )
 
     @classmethod
@@ -175,16 +191,23 @@ class ReportSummary(BaseModel):
         passed = [r for r in results if r.status is Status.PASS]
         failed = [r for r in results if r.status is Status.FAIL]
         review = [r for r in results if r.status is Status.NEEDS_REVIEW]
+        na = [r for r in results if r.status is Status.NOT_APPLICABLE]
+        unsupported = [r for r in results if r.status is Status.UNSUPPORTED]
+        manual = [r for r in results if r.status is Status.MANUAL_REVIEW]
         total = len(results)
+        evaluable = total - len(na) - len(unsupported) - len(manual)
         adjudicated = len(passed) + len(failed)
         return cls(
             total=total,
             passed=len(passed),
             failed=len(failed),
             needs_review=len(review),
+            not_applicable=len(na),
+            unsupported=len(unsupported),
+            manual_review=len(manual),
             failed_by_severity=_count_by_severity(failed),
             needs_review_by_severity=_count_by_severity(review),
-            compliance_score=round(100.0 * len(passed) / total, 1) if total else 0.0,
+            compliance_score=round(100.0 * len(passed) / evaluable, 1) if evaluable else 0.0,
             adjudicated_score=round(100.0 * len(passed) / adjudicated, 1) if adjudicated else 0.0,
         )
 

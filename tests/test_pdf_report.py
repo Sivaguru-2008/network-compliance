@@ -334,7 +334,10 @@ def test_review_and_fail_are_drawn_in_different_colours():
     """Visually distinct, not merely differently worded."""
     from auditor.report.pdf import _STATUS_INK
 
-    assert len({_STATUS_INK[status] for status in Status}) == 3
+    assert len({_STATUS_INK[status] for status in Status}) >= 3
+    assert _STATUS_INK[Status.FAIL] != _STATUS_INK[Status.NEEDS_REVIEW]
+    assert _STATUS_INK[Status.FAIL] != _STATUS_INK[Status.PASS]
+    assert _STATUS_INK[Status.PASS] != _STATUS_INK[Status.NEEDS_REVIEW]
 
 
 def test_the_three_counts_are_reported_separately_from_any_score(hardened_record):

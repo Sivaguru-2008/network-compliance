@@ -206,6 +206,10 @@ class MockProvider(AIProvider):
             "logging_buffered": BooleanFinding.model_validate(make_finding(True, "logging buffered")),
             "ntp_servers": TextListFinding.model_validate(make_finding(["10.20.30.41"], "ntp server 10.20.30.41"))
         }
+        for field, info in LLMExtraction.model_fields.items():
+            if field not in payload and field not in ("vendor", "os_family", "identification_confidence"):
+                payload[field] = info.annotation.model_validate(make_finding(None, None, determined=False))
+
         return LLMExtraction.model_validate(payload)
 
     def propose_mapping(self, vendor: str, os_family: str, line: str) -> dict:

@@ -39,7 +39,7 @@ from auditor.engine import ComplianceEngine
 from auditor.models.baseline import SecurityBaselineModel
 from auditor.models.observation import Observation, Origin
 from auditor.models.result import AuditReport, Status
-from auditor.parsers import CiscoIOSParser, FortiosParser, JunosParser, ParserError
+from auditor.parsers import CiscoIOSParser, FortiosParser, JunosParser, PaloAltoParser, ParserError
 from auditor.parsers.arista_eos import AristaEOSParser
 from auditor.parsers.sonic import SonicParser
 from auditor.parsers.base import VendorParser
@@ -56,9 +56,10 @@ VENDORS = [
     pytest.param(FortiosParser, "fortios_fgt.conf", "fortinet_fortios", id="fortinet_fortios"),
     pytest.param(AristaEOSParser, "arista/insecure.conf", "arista_eos", id="arista_eos"),
     pytest.param(SonicParser, "sonic/insecure.conf", "sonic_sonic", id="sonic"),
+    pytest.param(PaloAltoParser, "paloalto_panos.xml", "paloalto", id="paloalto"),
 ]
 
-ALL_PARSERS = [CiscoIOSParser, JunosParser, FortiosParser, AristaEOSParser, SonicParser]
+ALL_PARSERS = [CiscoIOSParser, JunosParser, FortiosParser, AristaEOSParser, SonicParser, PaloAltoParser]
 
 
 def read(sample: str) -> str:
@@ -241,7 +242,7 @@ def test_the_samples_are_different_devices():
     vendors = {r.target.vendor for r in reports}
 
     assert len(fingerprints) == len(VENDORS)
-    assert vendors == {"cisco", "juniper", "fortinet", "arista", "sonic"}
+    assert vendors == {"cisco", "juniper", "fortinet", "arista", "sonic", "paloalto"}
 
 
 # ---------------------------------------------------------------------------
@@ -296,7 +297,7 @@ def test_a_clause_number_is_either_verified_or_omitted():
     cisco = load_framework("CIS", "cisco_ios")
     assert all(rule.control_ref for rule in cisco.rules)
 
-    for key in ("juniper_junos", "fortinet_fortios", "arista_eos", "sonic_sonic"):
+    for key in ("juniper_junos", "arista_eos", "sonic_sonic"):
         ruleset = load_framework("CIS", key)
         assert all(rule.control_ref is None for rule in ruleset.rules), key
         assert "clause numbers not asserted" in ruleset.framework_version, key

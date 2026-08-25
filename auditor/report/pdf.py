@@ -42,6 +42,9 @@ _STATUS_INK = {
     Status.PASS: "#1a7f37",
     Status.FAIL: "#b42318",
     Status.NEEDS_REVIEW: "#a15c00",
+    Status.NOT_APPLICABLE: "#6b6b6b",
+    Status.UNSUPPORTED: "#7b5ea7",
+    Status.MANUAL_REVIEW: "#a15c00",
 }
 _SEVERITY_INK = {"high": "#b42318", "medium": "#a15c00", "low": "#2c5aa0"}
 _DEVICE_STATUS_INK = {

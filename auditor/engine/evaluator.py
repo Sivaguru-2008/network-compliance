@@ -28,7 +28,14 @@ _TERNARY_TO_STATUS = {
 }
 
 # Report order: worst first, so an operator reads the urgent rows without scrolling.
-_STATUS_ORDER = {Status.FAIL: 0, Status.NEEDS_REVIEW: 1, Status.PASS: 2}
+_STATUS_ORDER = {
+    Status.FAIL: 0,
+    Status.NEEDS_REVIEW: 1,
+    Status.UNSUPPORTED: 2,
+    Status.MANUAL_REVIEW: 3,
+    Status.PASS: 4,
+    Status.NOT_APPLICABLE: 5,
+}
 
 
 class ComplianceEngine:

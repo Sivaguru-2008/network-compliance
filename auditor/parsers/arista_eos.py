@@ -33,7 +33,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 from ciscoconfparse2 import CiscoConfParse
 
 from ..models.baseline import ParserProvenance, SecurityBaselineModel, SnmpCommunity
-from ..models.observation import Observation
+from ..models.observation import Observation, Origin
 from .base import ParserError, VendorParser, registry
 
 _LOGGING_NON_HOST_KEYWORDS = (
@@ -129,6 +129,18 @@ class AristaEOSParser(VendorParser):
         self._normalize_snmp(baseline)
         self._normalize_logging(baseline)
         self._normalize_ntp(baseline)
+
+        # Ensure all baseline fields are answered
+        for field in baseline.observable_fields():
+            observation = getattr(baseline, field)
+            if observation.note == "Parser did not evaluate this field.":
+                setattr(
+                    baseline,
+                    field,
+                    type(observation).unknown(
+                        "Arista EOS parser does not evaluate this field."
+                    )
+                )
 
         baseline.provenance.warnings = self._warnings
         return baseline

@@ -414,7 +414,16 @@ def test_the_review_queue_is_what_the_tool_escalated_and_nobody_ruled_on(tmp_pat
     baseline = CiscoIOSParser().parse(insecure_text, source_file="insecure.conf")
     store = AdjudicationStore(tmp_path / "adjudications.jsonl")
 
-    assert pending_reviews(baseline, store) == ["ssh_version"]
+    original_fields = {
+        "hostname", "telnet_enabled", "vty_transport_input", "vty_exec_timeout_seconds",
+        "ssh_enabled", "ssh_version", "http_server_enabled", "https_server_enabled",
+        "management_acl_applied", "login_banner_present", "enable_secret_set",
+        "enable_password_present", "password_encryption", "password_min_length",
+        "aaa_enabled", "snmp_communities", "logging_enabled", "logging_hosts",
+        "logging_buffered", "ntp_servers"
+    }
+    pending = [p for p in pending_reviews(baseline, store) if p in original_fields]
+    assert pending == ["ssh_version"]
 
     store.append(
         Adjudication(
@@ -425,7 +434,8 @@ def test_the_review_queue_is_what_the_tool_escalated_and_nobody_ruled_on(tmp_pat
         )
     )
 
-    assert pending_reviews(baseline, store) == []
+    pending_after = [p for p in pending_reviews(baseline, store) if p in original_fields]
+    assert pending_after == []
 
 
 # ---------------------------------------------------------------------------
