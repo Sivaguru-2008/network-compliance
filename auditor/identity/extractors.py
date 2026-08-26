@@ -310,6 +310,29 @@ def _extract_sonic(
     return fields
 
 
+# ---------------------------------------------------------------------------
+# Huawei VRP
+# ---------------------------------------------------------------------------
+
+_HUAWEI_VERSION = re.compile(r"(?i)^\s*!\s*Software Version\s+(\S+)\s*$")
+
+
+def _extract_huawei(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _HUAWEI_VERSION)
+    fields["os_version"] = (
+        _found(version)
+        if version
+        else Observation[str].unknown("No 'Software Version' statement in this configuration.")
+    )
+    fields["model"] = _missing("model", "huawei_vrp")
+    fields["serial_number"] = _missing("serial_number", "huawei_vrp")
+    return fields
+
+
 _EXTRACTORS: Dict[
     str, Callable[[List[str], Optional[SecurityBaselineModel]], Dict[str, Observation]]
 ] = {
@@ -318,6 +341,7 @@ _EXTRACTORS: Dict[
     "fortinet_fortios": _extract_fortios,
     "arista_eos": _extract_arista_eos,
     "sonic_sonic": _extract_sonic,
+    "huawei_vrp": _extract_huawei,
 }
 
 

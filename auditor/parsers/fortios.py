@@ -270,6 +270,13 @@ class FortiosParser(VendorParser):
         self._normalize_admin_lockout(baseline)
         self._normalize_admin_ports(baseline)
 
+        self._normalize_ha(baseline)
+        self._normalize_av_push(baseline)
+        self._normalize_security_fabric(baseline)
+        self._normalize_av_settings(baseline)
+        self._normalize_log_encryption(baseline)
+
+
         # Ensure all baseline fields are answered
         for field in baseline.observable_fields():
             observation = getattr(baseline, field)
@@ -1455,5 +1462,168 @@ class FortiosParser(VendorParser):
             baseline.event_logging_enabled = Observation[bool].absent(
                 True,
                 "No 'config log eventfilter' event configuration is present; defaults to enable."
+            )
+
+    def _normalize_ha(self, baseline: SecurityBaselineModel) -> None:
+        """`config system ha` -> check mode and monitor interfaces."""
+        ha_block = self.block("system", "ha")
+        if ha_block is None:
+            baseline.ha_enabled = Observation[bool].absent(False, "No 'config system ha' block is present.")
+            baseline.ha_monitor_interfaces = Observation[List[str]].absent([], "No 'config system ha' block is present.")
+        else:
+            mode_setting = self.first("system", "ha", "mode")
+            if mode_setting is None:
+                # Default mode in FortiOS is standalone (HA disabled)
+                baseline.ha_enabled = Observation[bool].found(
+                    False, *self._evidence(ha_block),
+                    note="HA block exists but 'set mode' is not configured (defaults to standalone)."
+                )
+            else:
+                is_ha = mode_setting.value.lower() != "standalone"
+                baseline.ha_enabled = Observation[bool].found(
+                    is_ha, *self._evidence(mode_setting),
+                    note=f"HA mode is set to '{mode_setting.value}'."
+                )
+
+            monitor_setting = self.first("system", "ha", "monitor")
+            if monitor_setting is not None and monitor_setting.values:
+                baseline.ha_monitor_interfaces = Observation[List[str]].found(
+                    list(monitor_setting.values), *self._evidence(monitor_setting),
+                    note=f"HA monitors interfaces: {', '.join(monitor_setting.values)}."
+                )
+            else:
+                baseline.ha_monitor_interfaces = Observation[List[str]].found(
+                    [], *self._evidence(ha_block),
+                    note="HA monitor interfaces setting is not configured."
+                )
+
+    def _normalize_av_push(self, baseline: SecurityBaselineModel) -> None:
+        """`config system autoupdate schedule` -> check status=enable and frequency=automatic.
+
+        CIS 4.2.1 audit/remediation procedures reference the schedule block,
+        not push-update.  See fortigate_4_2_1_resolution.md for the full analysis.
+        """
+        sched_block = self.block("system", "autoupdate", "schedule")
+        status_setting = self.first("system", "autoupdate", "schedule", "status")
+        freq_setting = self.first("system", "autoupdate", "schedule", "frequency")
+        if sched_block is None:
+            baseline.av_push_updates_enabled = Observation[bool].absent(
+                False, "No 'config system autoupdate schedule' block is present."
+            )
+        elif status_setting is not None:
+            status_ok = status_setting.value.lower() == "enable"
+            freq_ok = freq_setting is None or freq_setting.value.lower() == "automatic"
+            compliant = status_ok and freq_ok
+            if freq_setting is not None:
+                evidence_node = freq_setting if status_ok else status_setting
+                note = (f"Autoupdate schedule status='{status_setting.value}', "
+                        f"frequency='{freq_setting.value}'.")
+            else:
+                evidence_node = status_setting
+                note = (f"Autoupdate schedule status='{status_setting.value}', "
+                        f"frequency not set (default automatic).")
+            baseline.av_push_updates_enabled = Observation[bool].found(
+                compliant, *self._evidence(evidence_node), note=note
+            )
+        else:
+            baseline.av_push_updates_enabled = Observation[bool].found(
+                False, *self._evidence(sched_block),
+                note="'config system autoupdate schedule' is present but status is not configured."
+            )
+
+    def _normalize_security_fabric(self, baseline: SecurityBaselineModel) -> None:
+        """`config system csf` -> check if status is enable."""
+        csf_block = self.block("system", "csf")
+        status_setting = self.first("system", "csf", "status")
+        if csf_block is None:
+            baseline.security_fabric_enabled = Observation[bool].absent(
+                False, "No 'config system csf' block is present."
+            )
+        elif status_setting is not None:
+            enabled = status_setting.value.lower() == "enable"
+            baseline.security_fabric_enabled = Observation[bool].found(
+                enabled, *self._evidence(status_setting),
+                note=f"Security Fabric status is set to '{status_setting.value}'."
+            )
+        else:
+            baseline.security_fabric_enabled = Observation[bool].found(
+                False, *self._evidence(csf_block),
+                note="'config system csf' block is present but status is not configured."
+            )
+
+    def _normalize_av_settings(self, baseline: SecurityBaselineModel) -> None:
+        """`config antivirus settings` -> AI detection + grayware."""
+        av_block = self.block("antivirus", "settings")
+        ml_setting = self.first("antivirus", "settings", "machine-learning-detection")
+        gw_setting = self.first("antivirus", "settings", "grayware")
+
+        if av_block is None:
+            baseline.av_ai_detection_enabled = Observation[bool].absent(
+                False, "No 'config antivirus settings' block is present."
+            )
+            baseline.av_grayware_enabled = Observation[bool].absent(
+                False, "No 'config antivirus settings' block is present."
+            )
+        else:
+            if ml_setting is not None:
+                enabled = ml_setting.value.lower() == "enable"
+                baseline.av_ai_detection_enabled = Observation[bool].found(
+                    enabled, *self._evidence(ml_setting),
+                    note=f"AI/heuristic malware detection is '{ml_setting.value}'."
+                )
+            else:
+                baseline.av_ai_detection_enabled = Observation[bool].found(
+                    False, *self._evidence(av_block),
+                    note="'config antivirus settings' present but machine-learning-detection not set."
+                )
+
+            if gw_setting is not None:
+                enabled = gw_setting.value.lower() == "enable"
+                baseline.av_grayware_enabled = Observation[bool].found(
+                    enabled, *self._evidence(gw_setting),
+                    note=f"Grayware detection is '{gw_setting.value}'."
+                )
+            else:
+                baseline.av_grayware_enabled = Observation[bool].found(
+                    False, *self._evidence(av_block),
+                    note="'config antivirus settings' present but grayware not set."
+                )
+
+    def _normalize_log_encryption(self, baseline: SecurityBaselineModel) -> None:
+        """`config log fortianalyzer setting` -> enc-algorithm high + reliable enable."""
+        faz_block = self.block("log", "fortianalyzer", "setting")
+        enc_setting = self.first("log", "fortianalyzer", "setting", "enc-algorithm")
+        rel_setting = self.first("log", "fortianalyzer", "setting", "reliable")
+
+        if faz_block is None:
+            baseline.log_encryption_enabled = Observation[bool].absent(
+                False, "No 'config log fortianalyzer setting' block is present."
+            )
+        elif enc_setting is not None and rel_setting is not None:
+            enc_ok = enc_setting.value.lower() == "high"
+            rel_ok = rel_setting.value.lower() == "enable"
+            compliant = enc_ok and rel_ok
+            evidence_node = enc_setting if not enc_ok else rel_setting
+            baseline.log_encryption_enabled = Observation[bool].found(
+                compliant, *self._evidence(evidence_node),
+                note=(f"Log encryption: enc-algorithm='{enc_setting.value}', "
+                      f"reliable='{rel_setting.value}'.")
+            )
+        elif enc_setting is not None:
+            baseline.log_encryption_enabled = Observation[bool].found(
+                False, *self._evidence(enc_setting),
+                note=(f"Log encryption: enc-algorithm='{enc_setting.value}', "
+                      f"reliable not configured.")
+            )
+        elif rel_setting is not None:
+            baseline.log_encryption_enabled = Observation[bool].found(
+                False, *self._evidence(rel_setting),
+                note=(f"Log encryption: enc-algorithm not configured, "
+                      f"reliable='{rel_setting.value}'.")
+            )
+        else:
+            baseline.log_encryption_enabled = Observation[bool].found(
+                False, *self._evidence(faz_block),
+                note="'config log fortianalyzer setting' present but encryption not configured."
             )
 

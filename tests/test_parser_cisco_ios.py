@@ -368,9 +368,9 @@ def test_registry_auto_detects_the_cisco_parser(hardened_text: str):
 
 
 def test_registry_refuses_to_guess_on_an_unrecognised_vendor():
-    """Huawei VRP: Junos and FortiOS both have deterministic parsers now."""
+    """Allied Telesis/unrecognized: Junos, FortiOS and VRP both have deterministic parsers now."""
     with pytest.raises(ParserError, match="Could not confidently identify"):
-        registry.detect("sysname SW01\nuser-interface vty 0 4\n protocol inbound ssh\n")
+        registry.detect("create config=test.cfg\nadd ip interface=vlan1\n")
 
 
 def test_empty_config_is_an_error_not_a_clean_bill_of_health():

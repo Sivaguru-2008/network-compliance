@@ -193,6 +193,65 @@ class SecurityBaselineModel(BaseModel):
         description="True if update server identity verification is enabled.",
     )
 
+    # -- Priority 1 Batch 1 Controls addition --
+    ha_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if High Availability is configured and enabled.",
+    )
+    ha_monitor_interfaces: Observation[List[str]] = Field(
+        default_factory=_unknown(List[str]),
+        description="List of interfaces monitored by High Availability.",
+    )
+    av_push_updates_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if antivirus automatic updates are enabled (config system autoupdate schedule).",
+    )
+    security_fabric_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if Security Fabric (CSF) is enabled.",
+    )
+    password_min_uppercase: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Minimum number of uppercase characters required in passwords.",
+    )
+    password_min_lowercase: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Minimum number of lowercase characters required in passwords.",
+    )
+    password_min_numeric: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Minimum number of numeric characters required in passwords.",
+    )
+    password_min_special: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Minimum number of special characters required in passwords.",
+    )
+    password_max_age_days: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Maximum allowed lifetime of passwords in days.",
+    )
+    password_new_diff_chars: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Minimum number of characters that must differ between new and old passwords.",
+    )
+    password_history_reuse_limit: Observation[int] = Field(
+        default_factory=_unknown(int),
+        description="Number of previous passwords remembered to prevent reuse.",
+    )
+
+    # -- Priority 2 Batch 1 Controls addition --
+    av_ai_detection_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if AI/heuristic-based malware detection is enabled (config antivirus settings).",
+    )
+    av_grayware_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if grayware detection is enabled (config antivirus settings).",
+    )
+    log_encryption_enabled: Observation[bool] = Field(
+        default_factory=_unknown(bool),
+        description="True if log encryption to FortiAnalyzer/FortiManager is enabled (enc-algorithm high + reliable enable).",
+    )
 
     # -- introspection used by the engine ---------------------------------
 

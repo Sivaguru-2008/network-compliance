@@ -136,6 +136,13 @@ class TestFortiGatePipeline:
         assert results_by_ref["2.4.5"].status == Status.FAIL  # telnet + HTTP enabled
         assert results_by_ref["2.3.1"].status == Status.FAIL  # public SNMP community
         assert results_by_ref["2.4.7"].status == Status.FAIL  # admin-sport at default 443
+        assert results_by_ref["2.5.1"].status == Status.FAIL  # HA not configured
+        assert results_by_ref["2.5.2"].status == Status.FAIL  # HA monitor interfaces empty
+        assert results_by_ref["4.2.1"].status == Status.FAIL  # AV push updates not configured
+        assert results_by_ref["4.2.4"].status == Status.FAIL  # AI malware detection not configured
+        assert results_by_ref["4.2.5"].status == Status.FAIL  # Grayware detection not configured
+        assert results_by_ref["5.2.1.1"].status == Status.FAIL # CSF not configured
+        assert results_by_ref["7.2.1"].status == Status.FAIL  # Log encryption not configured
 
     def test_sample_config_expected_passes(self, report):
         results_by_ref = {r.control_ref: r for r in report.results}
@@ -145,8 +152,8 @@ class TestFortiGatePipeline:
 
     def test_compliance_score_excludes_non_evaluable(self, report):
         evaluable = report.summary.passed + report.summary.failed + report.summary.needs_review
-        assert evaluable == 20
-        assert report.summary.unsupported == 12
+        assert evaluable == 27
+        assert report.summary.unsupported == 5
         assert report.summary.manual_review == 24
 
     def test_evidence_present_on_evaluated(self, report):

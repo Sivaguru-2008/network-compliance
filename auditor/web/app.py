@@ -530,6 +530,45 @@ def create_app(store_root: Optional[Path] = None) -> FastAPI:
             "reason": "Pattern unrecognized by deterministic parser.",
         })
 
+    # -- AI suggestion endpoint -----------------------------------------------
+
+    class SuggestRequest(BaseModel):
+        line: str
+        context: str = ""
+        vendor: str = "unknown"
+
+    @app.post("/training/suggest")
+    async def training_suggest(req: SuggestRequest) -> JSONResponse:
+        from ..training.suggest import suggest_mapping
+        from ..parsers.llm.client import LLMUnavailableError
+
+        llm_client = None
+        try:
+            from ..parsers.llm.client import AnthropicClient
+            llm_client = AnthropicClient()
+        except Exception:
+            pass
+
+        suggestion = await run_in_threadpool(
+            suggest_mapping,
+            req.line,
+            req.context,
+            req.vendor,
+            llm_client,
+        )
+
+        return JSONResponse({
+            "field": suggestion.field,
+            "pattern": suggestion.pattern,
+            "extraction_strategy": suggestion.extraction_strategy,
+            "regex_pattern": suggestion.regex_pattern,
+            "confidence": suggestion.confidence,
+            "reasoning": suggestion.reasoning,
+            "compliance_relevance": suggestion.compliance_relevance,
+            "source": suggestion.source,
+            "alternatives": suggestion.alternatives,
+        })
+
     return app
 
 

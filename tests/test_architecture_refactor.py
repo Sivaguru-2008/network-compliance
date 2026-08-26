@@ -121,8 +121,8 @@ def test_rule_loading():
     """Verify that compliance rules load correctly from the database and declarative mapping."""
     ruleset, non_evaluable = load_fortigate_cis_rules(include_unapproved=True)
     assert ruleset is not None
-    assert len(ruleset.rules) == 20
-    assert len(non_evaluable) == 36
+    assert len(ruleset.rules) == 27
+    assert len(non_evaluable) == 29
 
     # Verify specific rules in the loaded ruleset
     rule_ids = {r.control_ref for r in ruleset.rules}
@@ -226,9 +226,9 @@ def test_fortigate_regression():
     # Check totals
     assert report.summary.total == 56
     assert report.summary.passed == 3
-    assert report.summary.failed == 9
+    assert report.summary.failed == 16
     assert report.summary.needs_review == 8
-    assert report.summary.unsupported == 12
+    assert report.summary.unsupported == 5
     assert report.summary.manual_review == 24
     assert report.summary.not_applicable == 0
 

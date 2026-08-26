@@ -70,6 +70,20 @@ FIELD_TYPES: Dict[str, Any] = {
     "event_logging_enabled": bool,
     "ntp_redundant": bool,
     "verify_update_server_identity": bool,
+    "ha_enabled": bool,
+    "ha_monitor_interfaces": List[str],
+    "av_push_updates_enabled": bool,
+    "security_fabric_enabled": bool,
+    "av_ai_detection_enabled": bool,
+    "av_grayware_enabled": bool,
+    "log_encryption_enabled": bool,
+    "password_min_uppercase": int,
+    "password_min_lowercase": int,
+    "password_min_numeric": int,
+    "password_min_special": int,
+    "password_max_age_days": int,
+    "password_new_diff_chars": int,
+    "password_history_reuse_limit": int,
 }
 
 _FALLBACK_SCORE = 0.05

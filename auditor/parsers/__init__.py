@@ -8,6 +8,7 @@ from .hybrid import HybridParser
 from .junos import JunosParser
 from .sonic import SonicParser
 from .paloalto import PaloAltoParser
+from .huawei_vrp import HuaweiVRPParser
 from .llm import LLMClient, LLMParser, LLMResponseError, LLMUnavailableError
 
 __all__ = [
@@ -18,6 +19,7 @@ __all__ = [
     "JunosParser",
     "SonicParser",
     "PaloAltoParser",
+    "HuaweiVRPParser",
     "LLMClient",
     "LLMParser",
     "LLMResponseError",

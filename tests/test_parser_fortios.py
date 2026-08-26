@@ -1235,3 +1235,273 @@ def test_the_fortios_pack_asserts_clause_numbers():
     assert any(rule.control_ref is not None for rule in ruleset.rules)
     assert "clause numbers verified from PDF" in ruleset.framework_version
     assert "Clause numbers verified" in ruleset.source_note
+
+
+# ── New Priority 1 Automation tests ──────────────────────────────────────────
+
+def test_ha_parsing():
+    # 1. Compliant
+    config_compliant = """config system ha
+        set mode a-p
+        set monitor port1 port2
+    end"""
+    b = parse(config_compliant)
+    assert b.ha_enabled.value is True
+    assert b.ha_enabled.line_number == 2
+    assert b.ha_enabled.source_line == "set mode a-p"
+    assert b.ha_monitor_interfaces.value == ["port1", "port2"]
+    assert b.ha_monitor_interfaces.line_number == 3
+    assert b.ha_monitor_interfaces.source_line == "set monitor port1 port2"
+
+    # 2. Non-compliant (explicit standalone)
+    config_non_compliant = """config system ha
+        set mode standalone
+    end"""
+    b = parse(config_non_compliant)
+    assert b.ha_enabled.value is False
+    assert b.ha_enabled.source_line == "set mode standalone"
+    assert b.ha_monitor_interfaces.value == []
+
+    # 3. Absent
+    config_absent = """config system global
+        set hostname FGT
+    end"""
+    b = parse(config_absent)
+    assert b.ha_enabled.detected is True
+    assert b.ha_enabled.value is False
+    assert b.ha_enabled.source_line is None
+    assert b.ha_monitor_interfaces.value == []
+    assert b.ha_monitor_interfaces.source_line is None
+
+
+def test_av_push_parsing():
+    # 1. Compliant — status enable + frequency automatic (explicit)
+    config_compliant = """config system autoupdate schedule
+        set status enable
+        set frequency automatic
+    end"""
+    b = parse(config_compliant)
+    assert b.av_push_updates_enabled.value is True
+    assert b.av_push_updates_enabled.source_line == "set frequency automatic"
+
+    # 2. Compliant — status enable, frequency absent (default automatic)
+    config_default_freq = """config system autoupdate schedule
+        set status enable
+    end"""
+    b = parse(config_default_freq)
+    assert b.av_push_updates_enabled.value is True
+    assert b.av_push_updates_enabled.source_line == "set status enable"
+
+    # 3. Non-compliant — status disable
+    config_disabled = """config system autoupdate schedule
+        set status disable
+    end"""
+    b = parse(config_disabled)
+    assert b.av_push_updates_enabled.value is False
+    assert b.av_push_updates_enabled.source_line == "set status disable"
+
+    # 4. Non-compliant — status enable but frequency not automatic
+    config_daily = """config system autoupdate schedule
+        set status enable
+        set frequency daily
+    end"""
+    b = parse(config_daily)
+    assert b.av_push_updates_enabled.value is False
+
+    # 5. Absent
+    config_absent = """config system global
+        set hostname FGT
+    end"""
+    b = parse(config_absent)
+    assert b.av_push_updates_enabled.detected is True
+    assert b.av_push_updates_enabled.value is False
+
+    # 6. Block present but no status — non-compliant
+    config_no_status = """config system autoupdate schedule
+    end"""
+    b = parse(config_no_status)
+    assert b.av_push_updates_enabled.value is False
+
+
+def test_security_fabric_parsing():
+    # 1. Compliant
+    config_compliant = """config system csf
+        set status enable
+    end"""
+    b = parse(config_compliant)
+    assert b.security_fabric_enabled.value is True
+    assert b.security_fabric_enabled.line_number == 2
+    assert b.security_fabric_enabled.source_line == "set status enable"
+
+    # 2. Non-compliant
+    config_non_compliant = """config system csf
+        set status disable
+    end"""
+    b = parse(config_non_compliant)
+    assert b.security_fabric_enabled.value is False
+    assert b.security_fabric_enabled.source_line == "set status disable"
+
+    # 3. Absent
+    config_absent = """config system global
+        set hostname FGT
+    end"""
+    b = parse(config_absent)
+    assert b.security_fabric_enabled.detected is True
+    assert b.security_fabric_enabled.value is False
+
+
+def test_av_ai_detection_parsing():
+    # 1. Compliant — machine-learning-detection enable
+    config_compliant = """config antivirus settings
+        set machine-learning-detection enable
+    end"""
+    b = parse(config_compliant)
+    assert b.av_ai_detection_enabled.value is True
+    assert b.av_ai_detection_enabled.source_line == "set machine-learning-detection enable"
+
+    # 2. Non-compliant — machine-learning-detection disable
+    config_disabled = """config antivirus settings
+        set machine-learning-detection disable
+    end"""
+    b = parse(config_disabled)
+    assert b.av_ai_detection_enabled.value is False
+    assert b.av_ai_detection_enabled.source_line == "set machine-learning-detection disable"
+
+    # 3. Absent — no antivirus settings block
+    config_absent = """config system global
+        set hostname FGT
+    end"""
+    b = parse(config_absent)
+    assert b.av_ai_detection_enabled.detected is True
+    assert b.av_ai_detection_enabled.value is False
+
+    # 4. Block present but setting absent — non-compliant
+    config_no_setting = """config antivirus settings
+        set default-db extended
+    end"""
+    b = parse(config_no_setting)
+    assert b.av_ai_detection_enabled.value is False
+
+
+def test_av_grayware_parsing():
+    # 1. Compliant — grayware enable
+    config_compliant = """config antivirus settings
+        set grayware enable
+    end"""
+    b = parse(config_compliant)
+    assert b.av_grayware_enabled.value is True
+    assert b.av_grayware_enabled.source_line == "set grayware enable"
+
+    # 2. Non-compliant — grayware disable
+    config_disabled = """config antivirus settings
+        set grayware disable
+    end"""
+    b = parse(config_disabled)
+    assert b.av_grayware_enabled.value is False
+    assert b.av_grayware_enabled.source_line == "set grayware disable"
+
+    # 3. Absent — no antivirus settings block
+    config_absent = """config system global
+        set hostname FGT
+    end"""
+    b = parse(config_absent)
+    assert b.av_grayware_enabled.detected is True
+    assert b.av_grayware_enabled.value is False
+
+    # 4. Block present but setting absent — non-compliant (default disabled)
+    config_no_setting = """config antivirus settings
+        set default-db extended
+    end"""
+    b = parse(config_no_setting)
+    assert b.av_grayware_enabled.value is False
+
+
+def test_av_settings_combined():
+    """Both AI detection and grayware from the same config block."""
+    config = """config antivirus settings
+        set machine-learning-detection enable
+        set grayware enable
+    end"""
+    b = parse(config)
+    assert b.av_ai_detection_enabled.value is True
+    assert b.av_grayware_enabled.value is True
+
+    config_mixed = """config antivirus settings
+        set machine-learning-detection enable
+        set grayware disable
+    end"""
+    b = parse(config_mixed)
+    assert b.av_ai_detection_enabled.value is True
+    assert b.av_grayware_enabled.value is False
+
+
+def test_log_encryption_parsing():
+    # 1. Compliant — enc-algorithm high + reliable enable
+    config_compliant = """config log fortianalyzer setting
+        set enc-algorithm high
+        set reliable enable
+    end"""
+    b = parse(config_compliant)
+    assert b.log_encryption_enabled.value is True
+
+    # 2. Non-compliant — enc-algorithm not high
+    config_low_enc = """config log fortianalyzer setting
+        set enc-algorithm low
+        set reliable enable
+    end"""
+    b = parse(config_low_enc)
+    assert b.log_encryption_enabled.value is False
+
+    # 3. Non-compliant — reliable not enable
+    config_no_reliable = """config log fortianalyzer setting
+        set enc-algorithm high
+        set reliable disable
+    end"""
+    b = parse(config_no_reliable)
+    assert b.log_encryption_enabled.value is False
+
+    # 4. Non-compliant — enc-algorithm only, no reliable
+    config_enc_only = """config log fortianalyzer setting
+        set enc-algorithm high
+    end"""
+    b = parse(config_enc_only)
+    assert b.log_encryption_enabled.value is False
+
+    # 5. Non-compliant — reliable only, no enc-algorithm
+    config_rel_only = """config log fortianalyzer setting
+        set reliable enable
+    end"""
+    b = parse(config_rel_only)
+    assert b.log_encryption_enabled.value is False
+
+    # 6. Absent — no fortianalyzer setting block
+    config_absent = """config system global
+        set hostname FGT
+    end"""
+    b = parse(config_absent)
+    assert b.log_encryption_enabled.detected is True
+    assert b.log_encryption_enabled.value is False
+
+    # 7. Block present but empty — non-compliant
+    config_empty = """config log fortianalyzer setting
+    end"""
+    b = parse(config_empty)
+    assert b.log_encryption_enabled.value is False
+
+    # 8. False-PASS guard — non-compliant config must not pass
+    config_wrong = """config log fortianalyzer setting
+        set enc-algorithm default
+        set reliable enable
+    end"""
+    b = parse(config_wrong)
+    assert b.log_encryption_enabled.value is False
+
+    # 9. False-FAIL guard — fully compliant config must pass
+    config_correct = """config log fortianalyzer setting
+        set reliable enable
+        set enc-algorithm high
+        set status enable
+    end"""
+    b = parse(config_correct)
+    assert b.log_encryption_enabled.value is True
+

@@ -484,10 +484,13 @@
                 <input type="text" id="map-regex" style="width:100%; padding:6px; border:1px solid var(--line); border-radius:4px;">
               </div>
 
-              <div style="display: flex; gap: 8px; margin-top: 16px;">
+              <div style="display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;">
+                <button type="button" id="btn-ai-suggest" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px; background: #7c3aed;">AI Suggest</button>
                 <button type="button" id="btn-preview" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px;">Preview Mapping</button>
                 <button type="button" id="btn-approve" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px; background: var(--pass);">Approve &amp; Save</button>
                 <button type="button" id="btn-reject" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px; background: var(--fail);">Reject</button>
+              </div>
+              <div id="ai-suggestion-info" class="hidden" style="margin-top: 12px; padding: 12px; border-radius: 4px; background: #f5f3ff; border: 1px solid #ddd6fe;">
               </div>
             </form>
 
@@ -1569,6 +1572,7 @@ function initTrainingCenter() {
     $("map-regex-group").classList.toggle("hidden", this.value !== "regex");
   });
 
+  $("btn-ai-suggest").addEventListener("click", aiSuggestMapping);
   $("btn-preview").addEventListener("click", previewMapping);
   $("btn-approve").addEventListener("click", approveMapping);
   $("btn-reject").addEventListener("click", rejectMapping);
@@ -1639,6 +1643,87 @@ function selectQueueItem(id) {
 
       $("mapping-editor").classList.remove("hidden");
       $("preview-result").classList.add("hidden");
+      $("ai-suggestion-info").classList.add("hidden");
+    });
+}
+
+function aiSuggestMapping() {
+  var line = $("map-source-line").value;
+  var vendor = $("map-vendor").value;
+  if (!line) return;
+
+  var btn = $("btn-ai-suggest");
+  btn.disabled = true;
+  btn.textContent = "Analyzing...";
+
+  var infoBox = $("ai-suggestion-info");
+  infoBox.classList.remove("hidden");
+  infoBox.style.background = "#f5f3ff";
+  infoBox.style.border = "1px solid #ddd6fe";
+  infoBox.innerHTML = '<span style="color: #7c3aed;">Analyzing configuration line...</span>';
+
+  fetch("/training/suggest", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ line: line, vendor: vendor, context: "" })
+  })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      btn.disabled = false;
+      btn.textContent = "AI Suggest";
+      if (!res.ok) {
+        infoBox.style.background = "var(--fail-bg)";
+        infoBox.style.border = "1px solid var(--fail)";
+        infoBox.innerHTML = '<span style="color: var(--fail);">Suggestion failed:</span> ' + esc(res.body.detail || "Unknown error");
+        return;
+      }
+      var s = res.body;
+      if (s.field) {
+        $("map-pattern").value = s.pattern || "";
+        $("map-field").value = s.field;
+        $("map-strategy").value = s.extraction_strategy || "exact";
+        $("map-regex-group").classList.toggle("hidden", s.extraction_strategy !== "regex");
+        if (s.regex_pattern) $("map-regex").value = s.regex_pattern;
+      }
+
+      var sourceLabel = s.source === "ai" ? "AI Model" : s.source === "heuristic" ? "Heuristic" : "Fallback";
+      var confPct = Math.round((s.confidence || 0) * 100);
+      var confColor = confPct >= 70 ? "var(--pass)" : confPct >= 40 ? "var(--review)" : "var(--fail)";
+
+      var html =
+        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+          '<strong style="color: #7c3aed;">Suggestion (' + esc(sourceLabel) + ')</strong>' +
+          '<span style="color:' + confColor + ';font-weight:bold;">' + confPct + '% confidence</span>' +
+        '</div>';
+      if (s.field) {
+        html += '<div style="margin-top:6px;"><strong>Field:</strong> <code>' + esc(s.field) + '</code></div>';
+        html += '<div><strong>Pattern:</strong> <code>' + esc(s.pattern) + '</code></div>';
+        html += '<div><strong>Strategy:</strong> ' + esc(s.extraction_strategy) + '</div>';
+      }
+      if (s.reasoning) {
+        html += '<div style="margin-top:6px;font-size:13px;color:var(--muted);">' + esc(s.reasoning) + '</div>';
+      }
+      if (s.compliance_relevance) {
+        html += '<div style="font-size:13px;color:var(--muted);"><strong>Relevance:</strong> ' + esc(s.compliance_relevance) + '</div>';
+      }
+      if (s.alternatives && s.alternatives.length > 0) {
+        html += '<div style="margin-top:8px;font-size:12px;color:var(--muted);"><strong>Alternatives:</strong>';
+        s.alternatives.forEach(function(alt) {
+          html += ' <code>' + esc(alt.field) + '</code> (' + Math.round((alt.confidence || 0) * 100) + '%)';
+        });
+        html += '</div>';
+      }
+      if (!s.field) {
+        html += '<div style="margin-top:6px;color:var(--review);">No confident match found. Please select the target field manually.</div>';
+      }
+      infoBox.innerHTML = html;
+    })
+    .catch(function(e) {
+      btn.disabled = false;
+      btn.textContent = "AI Suggest";
+      infoBox.style.background = "var(--fail-bg)";
+      infoBox.style.border = "1px solid var(--fail)";
+      infoBox.innerHTML = '<span style="color: var(--fail);">Network error:</span> ' + esc(e.message);
     });
 }
 

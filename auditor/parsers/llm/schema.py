@@ -127,6 +127,21 @@ class LLMExtraction(BaseModel):
     event_logging_enabled: BooleanFinding
     ntp_redundant: BooleanFinding
     verify_update_server_identity: BooleanFinding
+    ha_enabled: BooleanFinding
+    ha_monitor_interfaces: TextListFinding
+    av_push_updates_enabled: BooleanFinding
+    security_fabric_enabled: BooleanFinding
+    av_ai_detection_enabled: BooleanFinding
+    av_grayware_enabled: BooleanFinding
+    log_encryption_enabled: BooleanFinding
+    password_min_uppercase: IntegerFinding
+    password_min_lowercase: IntegerFinding
+    password_min_numeric: IntegerFinding
+    password_min_special: IntegerFinding
+    password_max_age_days: IntegerFinding
+    password_new_diff_chars: IntegerFinding
+    password_history_reuse_limit: IntegerFinding
+
 
     @classmethod
     def finding_fields(cls) -> List[str]:

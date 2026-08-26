@@ -7,14 +7,16 @@
     "fortinet_fortios": "CIS Fortinet FortiGate 7.0.x Benchmark v1.4.0 (clause numbers verified from PDF)",
     "arista_eos": "CIS Arista EOS Benchmark (control intent; clause numbers not asserted)",
     "sonic_sonic": "CIS SONiC Benchmark (control intent; clause numbers not asserted)",
-    "paloalto": "CIS Palo Alto Firewall 11 Benchmark v1.2.0"
+    "paloalto": "CIS Palo Alto Firewall 11 Benchmark v1.2.0",
+    "huawei_vrp": "CIS Huawei VRP Benchmark (control intent; clause numbers not asserted)"
   },
   "source_notes": {
     "cisco_ios": "Conditions and remediation follow the CIS Cisco IOS Benchmark. Clause numbers are given for traceability and should be re-confirmed against your licensed copy of the benchmark for the exact IOS train you audit; rules whose clause could not be pinned exactly carry a section-level control_ref and a note.",
     "juniper_junos": "The conditions in this pack are identical to those in the Cisco IOS pack, because both read the same vendor-neutral baseline fields - that is the point of the baseline. What is Junos-specific is the remediation, which is Junos CLI. Clause numbers are deliberately NOT asserted: the control intent below follows the CIS Juniper OS Benchmark, but the exact clause numbering could not be verified against a licensed copy, and inventing one would be worse than omitting it. Map each rule to its clause from your own copy before citing this output in a formal audit.",
     "fortinet_fortios": "Clause numbers verified from CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf (SHA256: 1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b). For the full 56-recommendation CIS assessment, use the evaluate_cis_fortigate() pipeline which loads all rules from the knowledge base with PDF provenance.",
     "arista_eos": "The conditions read the same vendor-neutral baseline fields as every other vendor pack. What is EOS-specific is the remediation, which is Arista EOS CLI. Clause numbers are deliberately NOT asserted: the control intent follows the CIS benchmark, but the exact clause numbering could not be verified against a licensed copy, and inventing one would be worse than omitting it.",
-    "sonic_sonic": "The conditions read the same vendor-neutral baseline fields as every other vendor pack. What is SONiC-specific is the remediation, which is SONiC CLI or Linux-level configuration. Clause numbers are deliberately NOT asserted."
+    "sonic_sonic": "The conditions read the same vendor-neutral baseline fields as every other vendor pack. What is SONiC-specific is the remediation, which is SONiC CLI or Linux-level configuration. Clause numbers are deliberately NOT asserted.",
+    "huawei_vrp": "The conditions read the same vendor-neutral baseline fields as every other vendor pack. What is VRP-specific is the remediation, which is Huawei VRP CLI. Clause numbers are deliberately NOT asserted."
   },
   "description": "Center for Internet Security Benchmarks",
   "mappings": {
@@ -24,7 +26,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-AAA-CENTRALISED", "control_ref": null, "verified": false, "note": "No direct CIS FortiGate clause maps to centralized AAA; closest is admin profile assignment (2.4.3)" },
       "arista_eos": { "id": "CIS-EOS-AAA-CENTRALISED", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.3.10", "control_ref": "1.3.10", "verified": false }
+      "paloalto": { "id": "CIS-PALOALTO-1.3.10", "control_ref": "1.3.10", "verified": false },
+      "huawei_vrp": { "id": "CIS-HUAWEI-AAA-CENTRALISED", "control_ref": null, "verified": false }
     },
     "secure_vty_transport": {
       "cisco_ios": { "id": "CIS-IOS-1.2.2", "control_ref": "1.2.2", "verified": true },
@@ -32,7 +35,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.5", "control_ref": "2.4.5", "verified": true },
       "arista_eos": { "id": "CIS-EOS-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.2.3", "control_ref": "1.2.3", "verified": true }
+      "paloalto": { "id": "CIS-PALOALTO-1.2.3", "control_ref": "1.2.3", "verified": true },
+      "huawei_vrp": { "id": "CIS-HUAWEI-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false }
     },
     "vty_idle_timeout": {
       "cisco_ios": { "id": "CIS-IOS-1.2.9", "control_ref": "1.2.9", "verified": true },
@@ -40,7 +44,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.4", "control_ref": "2.4.4", "verified": true },
       "arista_eos": { "id": "CIS-EOS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.4.1", "control_ref": "1.4.1", "verified": true }
+      "paloalto": { "id": "CIS-PALOALTO-1.4.1", "control_ref": "1.4.1", "verified": true },
+      "huawei_vrp": { "id": "CIS-HUAWEI-IDLE-TIMEOUT", "control_ref": null, "verified": false }
     },
     "enable_secret_encrypted": {
       "cisco_ios": { "id": "CIS-IOS-1.4.1-1.4.2", "control_ref": "1.4.1, 1.4.2", "verified": true },
@@ -48,7 +53,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.1", "control_ref": "2.4.1", "verified": true, "note": "FortiOS hashes admin passwords by default; CIS 2.4.1 checks the default admin password is changed" },
       "arista_eos": { "id": "CIS-EOS-ENABLE-SECRET-HASHED", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-ADMIN-PASSWORD-HASHED", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.3.2", "control_ref": "1.3.2", "verified": false }
+      "paloalto": { "id": "CIS-PALOALTO-1.3.2", "control_ref": "1.3.2", "verified": false },
+      "huawei_vrp": { "id": "CIS-HUAWEI-SUPER-PASSWORD-HASHED", "control_ref": null, "verified": false }
     },
     "no_default_snmp_community": {
       "cisco_ios": { "id": "CIS-IOS-1.5.2-1.5.3", "control_ref": "1.5.2, 1.5.3", "verified": true },
@@ -56,7 +62,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.3.1", "control_ref": "2.3.1", "verified": true },
       "arista_eos": { "id": "CIS-EOS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.5.1", "control_ref": "1.5.1", "verified": true }
+      "paloalto": { "id": "CIS-PALOALTO-1.5.1", "control_ref": "1.5.1", "verified": true },
+      "huawei_vrp": { "id": "CIS-HUAWEI-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false }
     },
     "http_server_disabled": {
       "cisco_ios": { "id": "CIS-IOS-2.1-HTTP-SERVER", "control_ref": "2.1", "verified": true },
@@ -64,7 +71,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.5-HTTP", "control_ref": "2.4.5", "verified": true, "note": "CIS 2.4.5 covers disabling HTTP admin access as part of encrypted-only channels" },
       "arista_eos": { "id": "CIS-EOS-NO-HTTP-API", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-NO-REST-API", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.2.3-HTTP", "control_ref": "1.2.3", "verified": true }
+      "paloalto": { "id": "CIS-PALOALTO-1.2.3-HTTP", "control_ref": "1.2.3", "verified": true },
+      "huawei_vrp": { "id": "CIS-HUAWEI-NO-HTTP-SERVER", "control_ref": null, "verified": false }
     },
     "ssh_version_2": {
       "cisco_ios": { "id": "CIS-IOS-2.1.1.6", "control_ref": "2.1.1.6", "verified": true },
@@ -72,7 +80,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-SSH-V2", "control_ref": null, "verified": false, "note": "CIS FortiGate benchmark does not have a specific SSH v2 recommendation; FortiOS 7.x defaults to SSHv2" },
       "arista_eos": { "id": "CIS-EOS-SSH-V2", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-SSH-V2", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-SSH-V2", "control_ref": null, "verified": false }
+      "paloalto": { "id": "CIS-PALOALTO-SSH-V2", "control_ref": null, "verified": false },
+      "huawei_vrp": { "id": "CIS-HUAWEI-SSH-V2", "control_ref": null, "verified": false }
     },
     "logging_enabled": {
       "cisco_ios": { "id": "CIS-IOS-2.2.2-2.2.4", "control_ref": "2.2.2, 2.2.4", "verified": true },
@@ -80,7 +89,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-7.1.1", "control_ref": "7.1.1", "verified": true },
       "arista_eos": { "id": "CIS-EOS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.1.1.1", "control_ref": "1.1.1.1", "verified": true }
+      "paloalto": { "id": "CIS-PALOALTO-1.1.1.1", "control_ref": "1.1.1.1", "verified": true },
+      "huawei_vrp": { "id": "CIS-HUAWEI-SYSLOG-DESTINATION", "control_ref": null, "verified": false }
     },
     "management_acl": {
       "cisco_ios": { "id": "CIS-IOS-1.2-VTY-ACCESS-CLASS", "control_ref": "1.2", "verified": true },
@@ -88,7 +98,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.2", "control_ref": "2.4.2", "verified": true },
       "arista_eos": { "id": "CIS-EOS-MGMT-ACL", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-CTRLPLANE-ACL", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.2.1", "control_ref": "1.2.1", "verified": false }
+      "paloalto": { "id": "CIS-PALOALTO-1.2.1", "control_ref": "1.2.1", "verified": false },
+      "huawei_vrp": { "id": "CIS-HUAWEI-MGMT-ACL", "control_ref": null, "verified": false }
     },
     "login_banner": {
       "cisco_ios": { "id": "CIS-IOS-1.6-LOGIN-BANNER", "control_ref": "1.6", "verified": true },
@@ -96,7 +107,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.1.1", "control_ref": "2.1.1, 2.1.2", "verified": true },
       "arista_eos": { "id": "CIS-EOS-LOGIN-BANNER", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.1.2", "control_ref": "1.1.2", "verified": true }
+      "paloalto": { "id": "CIS-PALOALTO-1.1.2", "control_ref": "1.1.2", "verified": true },
+      "huawei_vrp": { "id": "CIS-HUAWEI-LOGIN-BANNER", "control_ref": null, "verified": false }
     },
     "password_min_length": {
       "cisco_ios": { "id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH", "control_ref": "1.1", "verified": true },
@@ -104,7 +116,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.2.1", "control_ref": "2.2.1", "verified": true },
       "arista_eos": { "id": "CIS-EOS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.3.2-LEN", "control_ref": "1.3.2", "verified": true }
+      "paloalto": { "id": "CIS-PALOALTO-1.3.2-LEN", "control_ref": "1.3.2", "verified": true },
+      "huawei_vrp": { "id": "CIS-HUAWEI-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false }
     },
     "ntp_configured": {
       "cisco_ios": { "id": "CIS-IOS-2.3-NTP-CONFIGURED", "control_ref": "2.3", "verified": true },
@@ -112,7 +125,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.1.4", "control_ref": "2.1.4", "verified": true },
       "arista_eos": { "id": "CIS-EOS-NTP-CONFIGURED", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.6.2", "control_ref": "1.6.2", "verified": true }
+      "paloalto": { "id": "CIS-PALOALTO-1.6.2", "control_ref": "1.6.2", "verified": true },
+      "huawei_vrp": { "id": "CIS-HUAWEI-NTP-CONFIGURED", "control_ref": null, "verified": false }
     },
     "no_write_snmp_community": {
       "cisco_ios": { "id": "CIS-IOS-1.5-SNMP-NO-WRITE", "control_ref": "1.5", "verified": true },
@@ -120,7 +134,8 @@
       "fortinet_fortios": { "id": "CIS-FORTIOS-2.3.1-WRITE", "control_ref": "2.3.1", "verified": true, "note": "CIS 2.3.1 covers SNMPv3-only which implicitly prevents v1/v2c write communities" },
       "arista_eos": { "id": "CIS-EOS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
       "sonic_sonic": { "id": "CIS-SONIC-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.5.1-WRITE", "control_ref": "1.5.1", "verified": true }
+      "paloalto": { "id": "CIS-PALOALTO-1.5.1-WRITE", "control_ref": "1.5.1", "verified": true },
+      "huawei_vrp": { "id": "CIS-HUAWEI-SNMP-NO-WRITE", "control_ref": null, "verified": false }
     }
   }
 }

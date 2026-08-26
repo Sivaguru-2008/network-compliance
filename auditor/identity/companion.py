@@ -98,10 +98,23 @@ _GENERIC_RULES = _rules(
     ]
 )
 
+_HUAWEI_RULES = _rules(
+    [
+        (r"(?im)^\s*Product\s*Name\s*:\s*(\S+)", "model"),
+        (r"(?im)^\s*Model\s*[:=]?\s*(\S+)", "model"),
+        (r"(?im)^\s*Huawei\s+(\S+)\s+uptime", "model"),
+        (r"(?im)^\s*Equipment\s+serial\s+number\s*:\s*(\S+)", "serial_number"),
+        (r"(?im)^\s*Serial\s*Number\s*[:=]\s*(\S+)", "serial_number"),
+        (r"(?im)^.*VRP.*?Version\s+([^\s,()]+)", "os_version"),
+        (r"(?im)^.*VRP\s*\(R\)\s*[Ss]oftware,\s*Version\s+([^\s,]+)", "os_version"),
+    ]
+)
+
 _RULES_BY_VENDOR: Dict[str, List[_Rule]] = {
     "cisco_ios": _CISCO_RULES,
     "juniper_junos": _JUNOS_RULES,
     "fortinet_fortios": _FORTIOS_RULES,
+    "huawei_vrp": _HUAWEI_RULES,
 }
 
 

@@ -322,19 +322,25 @@
   },
   "2.5.1": {
     "cis_id": "2.5.1",
-    "baseline_field": null,
-    "internal_control": null,
-    "evaluation_type": "PARSER_REQUIRED",
-    "condition_json": null,
-    "gap_note": "Needs ha_enabled baseline field. Parser can extract 'config system ha'."
+    "baseline_field": "ha_enabled",
+    "internal_control": "ha_enabled",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "ha_enabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
   },
   "2.5.2": {
     "cis_id": "2.5.2",
-    "baseline_field": null,
-    "internal_control": null,
-    "evaluation_type": "PARSER_REQUIRED",
-    "condition_json": null,
-    "gap_note": "Needs ha_monitor_interfaces baseline field."
+    "baseline_field": "ha_monitor_interfaces",
+    "internal_control": "ha_monitor_interfaces",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "ha_monitor_interfaces",
+      "operator": "is_not_empty"
+    },
+    "gap_note": ""
   },
   "2.5.3": {
     "cis_id": "2.5.3",
@@ -394,11 +400,14 @@
   },
   "4.2.1": {
     "cis_id": "4.2.1",
-    "baseline_field": null,
-    "internal_control": null,
-    "evaluation_type": "PARSER_REQUIRED",
-    "condition_json": null,
-    "gap_note": "Needs av_push_updates baseline field. Parser can extract from 'config system autoupdate push-update'."
+    "baseline_field": "av_push_updates_enabled",
+    "internal_control": "av_push_updates_enabled",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "av_push_updates_enabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
   },
   "4.2.2": {
     "cis_id": "4.2.2",
@@ -418,19 +427,25 @@
   },
   "4.2.4": {
     "cis_id": "4.2.4",
-    "baseline_field": null,
-    "internal_control": null,
-    "evaluation_type": "PARSER_REQUIRED",
-    "condition_json": null,
-    "gap_note": "Needs ai_malware_detection baseline field. Parser can extract from AV profile."
+    "baseline_field": "av_ai_detection_enabled",
+    "internal_control": "av_ai_detection",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "av_ai_detection_enabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
   },
   "4.2.5": {
     "cis_id": "4.2.5",
-    "baseline_field": null,
-    "internal_control": null,
-    "evaluation_type": "PARSER_REQUIRED",
-    "condition_json": null,
-    "gap_note": "Needs grayware_detection baseline field. Parser can extract from AV profile."
+    "baseline_field": "av_grayware_enabled",
+    "internal_control": "av_grayware",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "av_grayware_enabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
   },
   "4.2.6": {
     "cis_id": "4.2.6",
@@ -506,11 +521,14 @@
   },
   "5.2.1.1": {
     "cis_id": "5.2.1.1",
-    "baseline_field": null,
-    "internal_control": null,
-    "evaluation_type": "PARSER_REQUIRED",
-    "condition_json": null,
-    "gap_note": "Needs security_fabric_enabled baseline field. Parser can extract from 'config system csf'."
+    "baseline_field": "security_fabric_enabled",
+    "internal_control": "security_fabric_enabled",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "security_fabric_enabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
   },
   "6.1.1": {
     "cis_id": "6.1.1",
@@ -549,11 +567,14 @@
   },
   "7.2.1": {
     "cis_id": "7.2.1",
-    "baseline_field": "logging_hosts",
-    "internal_control": null,
-    "evaluation_type": "PARSER_REQUIRED",
-    "condition_json": null,
-    "gap_note": "Log encryption check needs log_encryption_enabled baseline field."
+    "baseline_field": "log_encryption_enabled",
+    "internal_control": "log_encryption",
+    "evaluation_type": "DETERMINISTIC",
+    "condition_json": {
+      "field": "log_encryption_enabled",
+      "operator": "is_true"
+    },
+    "gap_note": ""
   },
   "7.3.1": {
     "cis_id": "7.3.1",
