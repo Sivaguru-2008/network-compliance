@@ -1,0 +1,126 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure external AAA authentication servers (RADIUS or TACACS+) for centralized management authentication.",
+    "cli": [
+      "add aaa radius-servers priority 1 host <RADIUS-IP> secret <SHARED-SECRET> timeout 5",
+      "add aaa radius-servers priority 2 host <BACKUP-RADIUS-IP> secret <SHARED-SECRET> timeout 5",
+      "save config"
+    ],
+    "notes": "Gaia supports RADIUS and TACACS+ for centralized authentication. Configure at least two servers for redundancy. Ref: R81 Gaia Admin Guide - Authentication Servers."
+  },
+  "secure_vty_transport": {
+    "summary": "Gaia OS provides SSH and HTTPS access only; telnet is not available. No remediation needed.",
+    "cli": ["# Gaia does not expose a telnet service; SSH and HTTPS only."],
+    "notes": "Gaia does not expose a telnet service. SSH is always available for CLI management and HTTPS for the Gaia Portal."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set the CLI inactivity timeout to 10 minutes or less.",
+    "cli": [
+      "set inactivity-timeout 10",
+      "save config"
+    ],
+    "notes": "The inactivity-timeout value is in minutes (range 1-720, default 10). Ref: R81 Gaia Admin Guide - Session."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Configure a strong password hash type and enforce password complexity.",
+    "cli": [
+      "set password-controls password-hash-type SHA512",
+      "set password-controls complexity 4",
+      "save config"
+    ],
+    "notes": "SHA512 is the strongest hash option. Complexity 4 requires characters from all four categories (upper, lower, digit, special). Ref: R81 Gaia Admin Guide - Password Policy."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP community strings and restrict to SNMPv3.",
+    "cli": [
+      "delete snmp community public",
+      "delete snmp community private",
+      "set snmp agent-version v3-Only",
+      "save config"
+    ],
+    "notes": "SNMPv3 with authentication and encryption is recommended. Ref: R81 Gaia Admin Guide - SNMP."
+  },
+  "no_write_snmp_community": {
+    "summary": "Remove all read-write SNMP community strings; use SNMPv3 for write access.",
+    "cli": [
+      "delete snmp community <WRITE-COMMUNITY>",
+      "set snmp agent-version v3-Only",
+      "save config"
+    ],
+    "notes": "Read-write SNMP communities allow remote configuration changes. Use SNMPv3 with auth+priv instead. Ref: R81 Gaia Admin Guide - SNMP."
+  },
+  "http_server_disabled": {
+    "summary": "Gaia does not serve HTTP management traffic. No remediation needed.",
+    "cli": ["# Gaia Portal is HTTPS-only by default; no action required."],
+    "notes": "The Gaia Portal is HTTPS-only by default."
+  },
+  "ssh_version_2": {
+    "summary": "Gaia OS supports SSHv2 only by default. No remediation needed.",
+    "cli": ["# Gaia OS enforces SSHv2 natively; no action required."],
+    "notes": "SSHv1 is not supported on Gaia OS."
+  },
+  "management_acl": {
+    "summary": "Configure external AAA servers to restrict management authentication.",
+    "cli": [
+      "add aaa radius-servers priority 1 host <RADIUS-IP> secret <SHARED-SECRET> timeout 5",
+      "save config"
+    ],
+    "notes": "On Gaia, management access restriction is achieved through external AAA servers and firewall policy. Ref: R81 Gaia Admin Guide - Authentication Servers."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote syslog servers and enable audit logging.",
+    "cli": [
+      "add syslog log-remote-address <SYSLOG-IP> level info",
+      "set syslog cplogs on",
+      "set syslog mgmtauditlogs on",
+      "set syslog auditlog permanent",
+      "save config"
+    ],
+    "notes": "Configure at least one remote syslog server. Enable CP logs and management audit logs for complete visibility. Ref: R81 Gaia Admin Guide - System Logging."
+  },
+  "ntp_configured": {
+    "summary": "Configure primary and secondary NTP servers for time synchronization.",
+    "cli": [
+      "set ntp active on",
+      "set ntp server primary <NTP-IP-1> version 4",
+      "set ntp server secondary <NTP-IP-2> version 4",
+      "save config"
+    ],
+    "notes": "At least two NTP servers should be configured for redundancy. Ref: R81 Gaia Admin Guide - Time and Date."
+  },
+  "login_banner": {
+    "summary": "Configure a login banner with an authorized-use notice.",
+    "cli": [
+      "set message banner on msgvalue \"Authorized access only. All activity is monitored and logged.\"",
+      "save config"
+    ],
+    "notes": "A legal notice banner is required before login. Ref: R81 Gaia Admin Guide - Messages."
+  },
+  "password_min_length": {
+    "summary": "Set minimum password length to at least 8 characters.",
+    "cli": [
+      "set password-controls min-password-length 8",
+      "save config"
+    ],
+    "notes": "Range is 6-128 characters. Ref: R81 Gaia Admin Guide - Password Policy."
+  },
+  "password_expiration": {
+    "summary": "Set password expiration to 90 days or less.",
+    "cli": [
+      "set password-controls password-expiration 90",
+      "set password-controls expiration-warning-days 14",
+      "save config"
+    ],
+    "notes": "Range is 1-1827 days or 'never'. Ref: R81 Gaia Admin Guide - Password Policy."
+  },
+  "lockout_configured": {
+    "summary": "Enable account lockout after failed login attempts.",
+    "cli": [
+      "set password-controls deny-on-fail enable on",
+      "set password-controls deny-on-fail failures-allowed 5",
+      "set password-controls deny-on-fail allow-after 1800",
+      "save config"
+    ],
+    "notes": "The allow-after value is in seconds (range 60-604800). Ref: R81 Gaia Admin Guide - Password Policy."
+  }
+}

@@ -9,10 +9,13 @@ from .junos import JunosParser
 from .sonic import SonicParser
 from .paloalto import PaloAltoParser
 from .huawei_vrp import HuaweiVRPParser
+from .checkpoint_gaia import CheckPointGaiaParser
+from .mikrotik_routeros import MikroTikROSParser
 from .llm import LLMClient, LLMParser, LLMResponseError, LLMUnavailableError
 
 __all__ = [
     "AristaEOSParser",
+    "CheckPointGaiaParser",
     "CiscoIOSParser",
     "FortiosParser",
     "HybridParser",
@@ -20,6 +23,7 @@ __all__ = [
     "SonicParser",
     "PaloAltoParser",
     "HuaweiVRPParser",
+    "MikroTikROSParser",
     "LLMClient",
     "LLMParser",
     "LLMResponseError",

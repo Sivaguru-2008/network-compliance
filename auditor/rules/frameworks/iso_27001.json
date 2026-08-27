@@ -11,7 +11,7 @@
       "default": { "id": "ISO-A.8.20", "control_ref": "A.8.20", "verified": true }
     },
     "vty_idle_timeout": {
-      "default": { "id": "ISO-A.8.19", "control_ref": "A.8.19", "verified": true }
+      "default": { "id": "ISO-A.8.5", "control_ref": "A.8.5", "verified": true }
     },
     "enable_secret_encrypted": {
       "default": { "id": "ISO-A.5.17-ENC", "control_ref": null, "verified": false }
@@ -26,7 +26,7 @@
       "default": { "id": "ISO-A.8.20-SSH", "control_ref": null, "verified": false }
     },
     "logging_enabled": {
-      "default": { "id": "ISO-A.8.10", "control_ref": "A.8.10", "verified": true }
+      "default": { "id": "ISO-A.8.15", "control_ref": "A.8.15", "verified": true }
     },
     "management_acl": {
       "default": { "id": "ISO-A.8.22-ACL", "control_ref": null, "verified": false }
@@ -38,7 +38,7 @@
       "default": { "id": "ISO-A.5.17", "control_ref": "A.5.17", "verified": true }
     },
     "ntp_configured": {
-      "default": { "id": "ISO-A.8.10-NTP", "control_ref": null, "verified": false }
+      "default": { "id": "ISO-A.8.17-NTP", "control_ref": null, "verified": false }
     },
     "no_write_snmp_community": {
       "default": { "id": "ISO-A.8.24-RW", "control_ref": null, "verified": false }

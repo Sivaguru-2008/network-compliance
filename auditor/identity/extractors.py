@@ -60,6 +60,8 @@ _HARDWARE_SOURCE = {
     "fortinet_fortios": "get system status",
     "arista_eos": "show version / show inventory",
     "sonic": "show platform summary",
+    "checkpoint_gaia": "cpstat os / fw ver",
+    "mikrotik_routeros": "system resource print / system routerboard print",
     UNKNOWN_VENDOR: "the vendor's show-version equivalent",
 }
 
@@ -333,6 +335,49 @@ def _extract_huawei(
     return fields
 
 
+def _extract_checkpoint_gaia(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    fields["os_version"] = Observation[str].unknown(
+        "Gaia OS version is not stored in 'show configuration' output; "
+        "it requires 'cpstat os' or 'fw ver' command output."
+    )
+    fields["model"] = _missing("model", "checkpoint_gaia")
+    fields["serial_number"] = _missing("serial_number", "checkpoint_gaia")
+    return fields
+
+
+_ROS_VERSION = re.compile(r"(?i)^\s*#.*by RouterOS\s+(\S+)")
+_ROS_MODEL = re.compile(r"(?i)^\s*#\s*model\s*=\s*(\S+)")
+
+
+def _extract_mikrotik_routeros(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _ROS_VERSION)
+    fields["os_version"] = (
+        _found(version, note="RouterOS version from export header.")
+        if version
+        else Observation[str].unknown(
+            "No '# ... by RouterOS <version>' header in this export."
+        )
+    )
+
+    model = _scan(lines, _ROS_MODEL)
+    fields["model"] = (
+        _found(model, note="Hardware model from export header comment.")
+        if model
+        else _missing("model", "mikrotik_routeros")
+    )
+
+    fields["serial_number"] = _missing("serial_number", "mikrotik_routeros")
+    return fields
+
+
 _EXTRACTORS: Dict[
     str, Callable[[List[str], Optional[SecurityBaselineModel]], Dict[str, Observation]]
 ] = {
@@ -342,6 +387,8 @@ _EXTRACTORS: Dict[
     "arista_eos": _extract_arista_eos,
     "sonic_sonic": _extract_sonic,
     "huawei_vrp": _extract_huawei,
+    "checkpoint_gaia": _extract_checkpoint_gaia,
+    "mikrotik_routeros": _extract_mikrotik_routeros,
 }
 
 
