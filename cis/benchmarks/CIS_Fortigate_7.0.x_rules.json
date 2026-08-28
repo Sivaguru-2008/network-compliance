@@ -1,0 +1,1873 @@
+{
+  "benchmark_id": "CIS_Fortigate_7.0.x",
+  "framework": "CIS",
+  "vendor": "Fortinet",
+  "product": "FortiGate",
+  "product_version": "7.0.x",
+  "benchmark_version": "1.4.0",
+  "publication_date": "2025-12-17",
+  "source_file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+  "source_hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+  "pages": 177,
+  "profiles": [
+    "Level 1",
+    "Level 2"
+  ],
+  "sections": [
+    "1 Network Settings",
+    "2 System Settings",
+    "3 Policy and Objects",
+    "4 Security Profiles",
+    "5 Security Fabric",
+    "6 VPN",
+    "7 Logs and Reports"
+  ],
+  "recommendations": [
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "1.1",
+      "title": "Ensure DNS server is configured",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Fortinet uses the Domain Name Service (DNS) to translate host names into IP\naddresses. To enable DNS lookups, you must specify the primary DNS server for your\nsystem. You can also specify secondary and tertiary DNS servers. When resolving host\nnames, the system consults the primary name server. If a failure or time-out occurs, the\nsystem consults the secondary name server.\nFor security purpose, trusted DNS servers should be configured to prevent man-in-the-\nmiddle attacks.",
+      "rationale": "The purpose is to perform the resolution of system hostnames to Internet Protocol (IP)\naddresses using trusted DNS servers.",
+      "impact": "",
+      "audit": "In CLI:\nFGT1 # config system dns\nFGT1 (dns) # show\nconfig system dns\nset primary <ip_address>\nset secondary <ip_address>\n...\nend\nIn the GUI:\nNavigate to Networks > DNS. The FortiGate uses either the default FortiGuard DNS or\ncustomized DNS",
+      "remediation": "In this example, we will assign 8.8.8.8 as primary DNS and 8.8.4.4 as secondary DNS.\nIn CLI:\nFGT1 # config system dns\nFGT1 (dns) # set primary 8.8.8.8\nFGT1 (dns) # set secondary 8.8.4.4\nFGT1 (dns) # end\nFGT1 #\nPage 16\nInternal Only - General\nIn the GUI:\nNavigate to Networks > DNS. Select \"Specify\" and enter 8.8.8.8 as \"Primary DNS\nServer\" and 8.8.4.4 as \"Secondary DNS Server\"",
+      "default_value": "Default primary DNS server is 96.45.45.45. Default secondary DNS server is\n96.45.46.46.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-guide/903162"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.9 Configure Trusted DNS Servers on Enterprise Assets\nv8 Configure trusted DNS servers on enterprise assets. Example implementations ● ●\ninclude: configuring assets to use enterprise-controlled DNS servers and/or\nreputable externally accessible DNS servers.\n11.1 Maintain Standard Security Configurations for\nv7 Network Devices ● ●\nMaintain standard, documented security configuration standards for all\nauthorized network devices.\nPage 17\nInternal Only - General",
+      "additional_info": "",
+      "section": "Network Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 17,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "1.2",
+      "title": "Ensure intra-zone traffic is not always allowed",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "This is to make sure that only specific, authorized traffic is allowed between networks in\nthe same zone.",
+      "rationale": "This adds an extra layer of protection between different networks.",
+      "impact": "",
+      "audit": "In this example, we'll verify the zone DMZ. In CLI:\nFGT1 # config system zone\nFGT1 (zone) # edit DMZ\nFGT1 (DMZ) # show full\nconfig system zone\nedit \"DMZ\"\n...\nset intrazone deny\n...\nnext\nend\nIn the GUI, click on Network -> Interfaces, select the zone and click on \"Edit\". Make\nsure that the option \"Block intra-zone traffic\" is enabled.",
+      "remediation": "In this example, we'll turn off intra-zone traffic in the zone DMZ. In CLI:\nFGT1 # config system zone\nFGT1 (zone) # edit DMZ\nFGT1 (DMZ) # set intrazone deny\nFGT1 (DMZ) # end\nFGT1 #\nIn the GUI, click on Network -> Interfaces, select the zone and click on \"Edit\" and turn\non \"Block intra-zone traffic\"",
+      "default_value": "By default, intra-zone traffic is blocked\nPage 18\nInternal Only - General",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.7/cli-reference/68620/config-",
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-guide/116821"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.2 Establish and Maintain a Secure Configuration\nProcess for Network Infrastructure\nv8\nEstablish and maintain a secure configuration process for network devices.\n● ● ●\nReview and update documentation annually, or when significant enterprise\nchanges occur that could impact this Safeguard.\n2.10 Physically or Logically Segregate High Risk\nApplications\nv7\nPhysically or logically segregated systems should be used to isolate and run\n●\nsoftware that is required for business operations but incur higher risk for the\norganization.\nPage 19\nInternal Only - General",
+      "additional_info": "",
+      "section": "Network Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 19,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "1.3",
+      "title": "Disable all management related services on WAN port",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Enabling any management related services on WAN interface is high risk. Management\nrelated services such as HTTPS, HTTP, ping, SSH, SNMP, and Radius should be\ndisabled on WAN.",
+      "rationale": "Management related services should only be enabled on management interface. This is\npart of defending the firewall from attacks and reducing the attack surface. For WAN\nrelated services such as IPSec and SSLVPN, make use of local-in-policy (refer to CIS\nSection 2.4) to tighten firewall defenses.",
+      "impact": "Enabling management related services on WAN port is convenient, but it exposes the\nfirewall to unnecessary risks. Vulnerabilities found on vendor devices are commonly\nrelated to management services, and opening access to these allows attackers to\nexploit its vulnerabilities.",
+      "audit": "On GUI:\nGo to \"Network\" > \"Interfaces\".\nIdentify WAN interface and validate that HTTPS, HTTP, PING, SSH, SNMP, and\nRadius Accounting is not enabled in \"Administrative Access\" section.\nOn CLI:\n`FGT1 # show system interface`\nIdentify WAN interface and validate that \"set allowaccess\" does not have ping, https,\nhttp, ssh, snmp or radius-acct configured.",
+      "remediation": "On GUI:\nGo to \"Network\" > \"Interfaces\".\nReview WAN interface and disable HTTPS, HTTP, ping, SSH, SNMP, and Radius\nservices.\nPage 20\nInternal Only - General\nOn CLI:\nFGT1 # config system interface\nFGT1 (interface) # edit \"port1\"\nFGT1 (port1) # unselect allowaccess ping https ssh snmp http radius-acct\nNote:\n1. Interface name may differ based on deployment. For this example, port1 is\ndeployed as WAN interface.\n2. \"unselect allowaccess\" will only show services that you have enabled. If you\nhave not enabled snmp on that interface, then snmp option will not be available.",
+      "default_value": "",
+      "references": [],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.2 Establish and Maintain a Secure Configuration\nProcess for Network Infrastructure\nv8\nEstablish and maintain a secure configuration process for network devices.\n● ● ●\nReview and update documentation annually, or when significant enterprise\nchanges occur that could impact this Safeguard.\n4.8 Uninstall or Disable Unnecessary Services on\nEnterprise Assets and Software\nv8\nUninstall or disable unnecessary services on enterprise assets and software,\n● ●\nsuch as an unused file sharing service, web application module, or service\nfunction.\n1.6 Address Unauthorized Assets\nv7\nEnsure that unauthorized assets are either removed from the network,\n● ● ●\nquarantined or the inventory is updated in a timely manner.\n2 System Settings\nThis topic contains information and best practices about FortiGate administration and\nsystem configuration.\nPage 21\nInternal Only - General\n2.1 General Settings\nPage 22\nInternal Only - General",
+      "additional_info": "",
+      "section": "Network Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 21,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.1",
+      "title": "Ensure 'Pre-Login Banner' is set",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Configure a pre-login banner, ideally approved by the organization’s legal team. This\nbanner should, at minimum, prohibit unauthorized access, provide notice of logging or\nmonitoring, and avoid using the word “welcome” or similar words of invitation.",
+      "rationale": "Through a properly stated login banner, the risk of unintentional access to the device by\nunauthorized users is reduced. Should legal action take place against a person\naccessing the device without authorization, the login banner greatly diminishes a\ndefendant’s claim of ignorance.",
+      "impact": "Login banners provide a definitive warning to any possible intruders who may want to\naccess the FortiGate that certain types of activity are illegal. At the same time, it also\nadvises the authorized and legitimate users of their obligations relating to acceptable\nuse.",
+      "audit": "Run the following command in the CLI to verify the pre-login-banner is enabled:\nFG1 # get system global\n...\npre-login-banner : enable\n...\nend\nIn the GUI, to verify the content of the pre-login disclaimer message:\n1) Go to 'System' -> 'Replacement Messages'\n2) From the top right side, select 'Extended View'\n3) Find 'Pre-login Disclaimer Message'",
+      "remediation": "Run the following command in the CLI to enable the pre-login-banner:\nFG1 # config system global\nFG1 (global) # set pre-login-banner enable\nFG1 (global) # end\nFG1 #\nIn the GUI, to edit the content of the pre-login disclaimer message:\nPage 23\nInternal Only - General\n1. Go to 'System' -> 'Replacement Messages' -> 'Extended View' -> 'Pre-login\nDisclaimer Message'. The edit screen is on the bottom right corner of the page.\nClick on \"Save\" after the editing is done.",
+      "default_value": "the 'Pre-Login Banner' is disabled by default\nFG1 # config system global\nFG1 (global) # show\nconfig system global\n...\nset pre-login-banner disable\n...\nend\nthe warning message default value is as follows:\nPRE WARNING:\nThis is a private computer system. Unauthorized access or use\nis prohibited and subject to prosecution and/or disciplinary\naction. All use of this system constitutes consent to\nmonitoring at all times and users are not entitled to any\nexpectation of privacy. If monitoring reveals possible evidence\nof violation of criminal statutes, this evidence and any other\nrelated information, including identification information about\nthe user, may be provided to law enforcement officials.\nIf monitoring reveals violations of security regulations or\nunauthorized use, employees who violate security regulations or\nmake unauthorized use of this system are subject to appropriate\ndisciplinary action.",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-Configuring-admin-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n14.1 Establish and Maintain a Security Awareness\nProgram\nEstablish and maintain a security awareness program. The purpose of a security\nv8 ● ● ●\nawareness program is to educate the enterprise’s workforce on how to interact with\nenterprise assets and data in a secure manner. Conduct training at hire and, at a\nminimum, annually. Review and update content annually, or when significant\nenterprise changes occur that could impact this Safeguard.\nPage 24\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n17.3 Implement a Security Awareness Program\nCreate a security awareness program for all workforce members to complete on\nv7 a regular basis to ensure they understand and exhibit the necessary behaviors and ● ● ●\nskills to help ensure the security of the organization. The organization's security\nawareness program should be communicated in a continuous and engaging\nmanner.\nPage 25\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 24,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.2",
+      "title": "Ensure 'Post-Login-Banner' is set",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Sets the banner after users successfully log in. This is equivalent to Message of the Day\n(MOTD) in some other systems.",
+      "rationale": "Network banners are electronic messages that provide notice of legal rights to users of\ncomputer networks. From a legal standpoint, banners have four primary functions:\nFirst, banners may be used to generate consent to real-time monitoring under Title III.\nSecond, banners may be used to generate consent to the retrieval of stored files and\nrecords pursuant to ECPA. Third, in the case of government networks, banners may\neliminate any Fourth Amendment \"reasonable expectation of privacy\" that government\nemployees or other users might otherwise retain in their use of the government's\nnetwork under O'Connor v.",
+      "impact": "When post-login banner is enabled, some automated-script might be affected because\nboth CLI and GUI need an acceptance action (press \"A\" or \"Accept\") to continue.",
+      "audit": "Run the following command in the CLI to verify the post-login-banner is enabled:\nFG1 # get system global\n...\npost-login-banner : enable\n...\nIn the GUI, to verify the content of the post-login disclaimer message:\n1) Go to 'System' -> 'Replacement Messages'\n2) From the top right side, select 'Extended View'\n3) Find 'Post-login Disclaimer Message'",
+      "remediation": "Run the following command in the CLI to enable the post-login-banner:\nFG1 # config system global\nFG1 (global) # set post-login-banner enable\nFG1 (global) # end\nFG1 #\nIn the GUI, to edit the content of the post-login disclaimer message, go to\nPage 26\nInternal Only - General\nSystem -> Replace Messages -> Extended View -> \"Post-login Disclaimer\nMessage\". The edit screen is on the bottom right corner of the page. Click on\n\"Save\" after the editing is done.",
+      "default_value": "POST WARNING: This is a private computer system. Unauthorized access or use is\nprohibited and subject to prosecution and/or disciplinary action. All use of this system\nconstitutes consent to monitoring at all times and users are not entitled to any\nexpectation of privacy. If monitoring reveals possible evidence of violation of criminal\nstatutes, this evidence and any other related information, including identification\ninformation about the user, may be provided to law enforcement officials. If monitoring\nreveals violations of security regulations or unauthorized use, employees who violate\nsecurity regulations or make unauthorized use of this system are subject to appropriate\ndisciplinary action.\n%%LAST_SUCCESSFUL_LOGIN%% %%LAST_FAILED_LOGIN%%",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-Configuring-admin-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.2 Establish and Maintain a Secure Configuration\nProcess for Network Infrastructure\nv8\nEstablish and maintain a secure configuration process for network devices.\n● ● ●\nReview and update documentation annually, or when significant enterprise\nchanges occur that could impact this Safeguard.\n11.1 Maintain Standard Security Configurations for\nv7 Network Devices ● ●\nMaintain standard, documented security configuration standards for all\nauthorized network devices.\nPage 27\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 27,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.3",
+      "title": "Ensure timezone is properly configured",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Sets the local time zone information so that the time displayed by the device is more\nrelevant to those who are viewing it.",
+      "rationale": "Having a correct time set on the device is important for two main reasons. The first\nreason is that digital certificates compare this time to the range defined by their Valid\nFrom and Valid To fields to define a specific validity period. The second reason is to\nhave relevant time stamps when logging information. Whether you are sending\nmessages to a Syslog server, sending messages to an SNMP monitoring station, or\nperforming packet captures, timestamps have little usefulness if you cannot be certain\nof their accuracy.",
+      "impact": "For many features to work, including scheduling, logging, and SSL-dependent features,\nthe FortiOS system time must be accurate.",
+      "audit": "In the CLI, do the following command and check the result of timezone filed in the\noutput\nFGT1 # get system global\n...\ntimezone : (GMT-8:00) Pacific Time (US & Canada)\n...\nOr from GUI, do the following:\n1) Login to FortiGate\n2) Go to 'System' -> 'Settings'.\n3) Time Zone and NTP settings are under 'System Time'",
+      "remediation": "In this example, we will set Eastern Timezone (GMT-5:00) for the Fortigate. Each\ntimezone will have its corresponding ID. To find the correct ID, when you type in the\ncommand \"set timezone \", also type the question mark '?' to list all of the available\ntimezones and their IDs. The ID of the Eastern Timezone is 12 In the CLI:\nPage 28\nInternal Only - General\nFGT1 # config system global\nFGT1 (global) # set timezone 12\nFGT1 (global) # end\nFGT1 #\nIn the GUI, do the following:\n1) After login to fortigate, go to 'System' -> 'Settings'\n2) Select '(GMT-5:00) Eastern Time (US & Canada)' under 'System Time'",
+      "default_value": "Default value is (GMT-8:00) Pacific Time (US & Canada)",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-Setting-the-system-",
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n8.4 Standardize Time Synchronization\nv8\nStandardize time synchronization. Configure at least two synchronized time\n● ●\nsources across enterprise assets, where supported.\n6.1 Utilize Three Synchronized Time Sources\nv7 Use at least three synchronized time sources from which all servers and ● ●\nnetwork devices retrieve time information on a regular basis so that timestamps\nin logs are consistent.\nPage 29\nInternal Only - General",
+      "additional_info": "Daylight savings time is enabled by default, and can only be configured in the CLI.",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 29,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.4",
+      "title": "Ensure correct system time is configured through NTP",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "You can either manually set the FortiOS system time, or configure the device to\nautomatically keep its system time correct by synchronizing with a Network Time\nProtocol (NTP) server.\nThese settings enable the use of primary and secondary NTP servers to provide\nredundancy in case of a failure involving the primary NTP server.",
+      "rationale": "NTP enables the device to maintain accurate time and date when receiving updates\nfrom a reliable NTP server. Accurate timestamps are critical when correlating events\nwith other systems, troubleshooting, or performing investigative work. Logs and certain\ncryptographic functions, such as those utilizing certificates, rely on accurate time and\ndate parameters. In addition, rules referencing a Schedule object will not function as\nintended if the device’s time and date are incorrect. For additional security,\nauthenticated NTP can be utilized. If Symmetric Key authentication is selected, only\nSHA1 should be used, as MD5 is considered severely compromised.",
+      "impact": "For many features to work, including scheduling, logging, and SSL-dependent features,\nthe FortiOS system time must be accurate.",
+      "audit": "In the CLI:\nPage 30\nInternal Only - General\nFGT1 # diag sys ntp status\nsynchronized: yes, ntpsync: enabled, server-mode: enabled\nipv4 server(ntp2.fortiguard.com) 208.91.114.23 -- reachable(0xff) S:3 T:54\nserver-version=4, stratum=1\nreference time is e12361d5.f27e0322 -- UTC Wed Sep 11 12:06:45 2019\nclock offset is -0.001569 sec, root delay is 0.000000 sec\nroot dispersion is 0.010269 sec, peer dispersion is 19 msec\nipv4 server(ntp1.fortiguard.com) 208.91.115.123 -- reachable(0xff) S:3 T:54\nselected\nserver-version=4, stratum=1\nreference time is e12361d4.4f8b22a5 -- UTC Wed Sep 11 12:06:44 2019\nclock offset is -0.000652 sec, root delay is 0.000000 sec\nroot dispersion is 0.010284 sec, peer dispersion is 8 msec\nipv4 server(ntp2.fortiguard.com) 208.91.113.71 -- reachable(0xff) S:3 T:54\nserver-version=4, stratum=2\nreference time is e12361d6.4caf57ab -- UTC Wed Sep 11 12:06:46 2019\nclock offset is -0.004814 sec, root delay is 0.000137 sec\nroot dispersion is 0.011154 sec, peer dispersion is 3 msec\nipv4 server(ntp1.fortiguard.com) 208.91.113.70 -- reachable(0xff) S:3 T:54\nserver-version=4, stratum=2\nreference time is e123617b.c98e2059 -- UTC Wed Sep 11 12:05:15 2019\nclock offset is -0.005106 sec, root delay is 0.000122 sec\nroot dispersion is 0.013382 sec, peer dispersion is 6 msec",
+      "remediation": "You can only customize NTP setting using CLI. In this example, we'll assign\npool.ntp.org as primary NTP server and 1.1.1.1 as secondary NTP server.\nFGT1 # config system ntp\nFGT1 (ntp) # set type custom\nFGT1 (ntp) # config ntpserver\nFGT1 (ntpserver) # edit 1\nFGT1 (1) # set server pool.ntp.org\nFGT1 (1) # next\nFGT1 (ntpserver) # edit 2\nFGT1 (2) # set server 1.1.1.1\nFGT1 (2) # end\nFGT1 (ntp) # end\nFGT1 #",
+      "default_value": "By default, Fortinet uses the NTPs server of the FortiGuard",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-Setting-the-system-",
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n8.4 Standardize Time Synchronization\nv8\nStandardize time synchronization. Configure at least two synchronized time\n● ●\nsources across enterprise assets, where supported.\n6.1 Utilize Three Synchronized Time Sources\nv7 Use at least three synchronized time sources from which all servers and ● ●\nnetwork devices retrieve time information on a regular basis so that timestamps\nin logs are consistent.\nPage 32\nInternal Only - General",
+      "additional_info": "Daylight savings time is enabled by default, and can only be configured in the CLI.",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 31,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.5",
+      "title": "Ensure hostname is set",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Changes the device default hostname.",
+      "rationale": "The device hostname plays an important role in asset inventory and identification as a\nsecurity requirement. It is also crucial in the public keys and certificate deployments, as\nwell as when correlating logs from different systems during an incident handling.",
+      "impact": "",
+      "audit": "In CLI\nget system global\n...\nhostname : FG1\n...\nIn GUI\n1) Go to 'System' > 'Settings'\n2) Check the field 'Hostname'",
+      "remediation": "In CLI, set the hostname to 'New_FGT1' as follows:\nFGT1 # config system global\nFGT1 (global) # set hostname \"New_FGT1\"\nFGT1 (global) # end\nNew_FGT1 #\nIn GUI\n1) Go to 'System' > 'Settings'\n2) Update the field 'Hostname' with the new hostname\n3) click 'Apply'",
+      "default_value": "The default value of the hostname is the model number of the unit. Example: 'FortiGate\n2000E'",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-Renaming-the-"
+      ],
+      "cis_controls": "Controls Version Control IG 1 IG 2 IG 3\nv8\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nv7\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nPage 34\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 34,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.6",
+      "title": "Ensure the latest firmware is installed",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Check against the Fortinet website to make sure that the latest stable firmware is\ninstalled.",
+      "rationale": "Fortinet periodically updates the FortiGate firmware to include new features and resolve\nimportant issues. After you have registered your FortiGate unit, firmware updates can\nbe downloaded from the Fortinet Customer Service & Support website.\nIt is important to constantly keep the firmware up to date to prevent any new well-known\nexploitation.",
+      "impact": "",
+      "audit": "First, check for the latest firmware version available by going to\nhttps://docs.fortinet.com/upgrade-tool, select your product from the Current Product\ndrop-down menu, then select the upgrade to FortiOS Version for the latest available\nversion.\nSecond, verify the current firmware on your system. In the CLI:\nFGT1 # get system status\n...\nVersion: Fortigate-100D v6.2.7,build1190,201216 (GA)\n...\nFGT1 #\nIn the GUI:\n1. Go to Dashboard > Status > System information\n2. Check for firmware.\nAt the same time, go to https://www.fortiguard.com/psirt?product=FortiOS and check for\nvulnerabilities that your existing version might have.",
+      "remediation": "First, determine the upgrade path recommended by Fortinet. If you have not upgraded\nthe system for a long time, it is not recommended to upgrade straight to the latest\nversion, as the configuration could be lost. Fortinet provides a tool to recommend an\nupgrade path for all of its products.\nPage 35\nInternal Only - General\nGo to https://docs.fortinet.com/upgrade-tool. Choose your product from the \"Current\nProduct\" drop-down menu, the \"current FortiOS version\", and the latest firmware\nversion available for that model from \"Upgrade to FortiOS Version\". Click \"Go\". Write\ndown the path and then click on \"Download\" to download all the necessary versions.\nThe second step is to download the required FortiOS firmware/s. Go to\nhttps://support.fortinet.com and login. Go to Support -> Firmware Download. Once\nthere, select the product and click on \"Upgrade Path\". Choose the specific model of the\nhardware, the current firmware version and the latest firmware version available for that\nmodel. Click \"Go\". Write down the path and then click on \"Download\" to download all\nthe necessary versions.\nThe last step is to install the new firmwares in the order provided by the \"Upgrade tool\".\nIt is recommended to use GUI to perform this task as it would be much easier.\nIn the GUI\n1. Go to System > Fabric Management\n2. Right click on device that needs to be upgraded.\n3. Then click on \"Upgrade\". You might have to perform this step multiple\ntimes if you follow the upgrade path.",
+      "default_value": "There is no default firmware. The hardware comes with the latest firmware at the time it\nwas manufactured.",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-How-to-upgrade-the-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n16.2 Establish and Maintain a Process to Accept and\nAddress Software Vulnerabilities\nEstablish and maintain a process to accept and address reports of software\nvulnerabilities, including providing a means for external entities to report. The\nprocess is to include such items as: a vulnerability handling policy that identifies\nv8\nreporting process, responsible party for handling vulnerability reports, and a process\n● ●\nfor intake, assignment, remediation, and remediation testing. As part of the process,\nuse a vulnerability tracking system that includes severity ratings, and metrics for\nmeasuring timing for identification, analysis, and remediation of\nvulnerabilities. Review and update documentation annually, or when significant\nenterprise changes occur that could impact this Safeguard. Third-party application\ndevelopers need to consider this an externally-facing policy that helps to set\nexpectations for outside stakeholders.\nPage 36\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n2.2 Ensure Software is Supported by Vendor\nEnsure that only software applications or operating systems currently supported\nv7\nby the software's vendor are added to the organization's authorized software\n● ● ●\ninventory. Unsupported software should be tagged as unsupported in the inventory\nsystem.\n8.2 Ensure Anti-Malware Software and Signatures are\nv7 Updated ● ● ●\nEnsure that the organization's anti-malware software updates its scanning\nengine and signature database on a regular basis.\n11.4 Install the Latest Stable Version of Any Security-\nv7 related Updates on All Network Devices ● ● ●\nInstall the latest stable version of any security-related updates on all network\ndevices.\nPage 37\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 36,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.7",
+      "title": "Disable USB Firmware and configuration installation",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Disable USB port auto install feature for config and firmware.",
+      "rationale": "Disabling USB port for auto install prevents a USB with a manipulated configuration or\nincorrect firmware from being connected and loaded automatically.",
+      "impact": "",
+      "audit": "CLI:\nconfig system auto-install\nget\nVerify that set auto-install-config and set auto-install-image are disabled",
+      "remediation": "CLI:\nconfig system auto-install\nset auto-install-config disable\nset auto-install-image disable\nend",
+      "default_value": "auto-install is disabled by default on 7.2.x.\nHowever, upgrading from earlier version to FortiOS 7.2.x will have auto-install\nvalues set as \"enable\".",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.7/cli-reference/106620/config-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.8 Uninstall or Disable Unnecessary Services on\nEnterprise Assets and Software\nv8\nUninstall or disable unnecessary services on enterprise assets and software,\n● ●\nsuch as an unused file sharing service, web application module, or service\nfunction.\n11.3 Use Automated Tools to Verify Standard Device\nConfigurations and Detect Changes\nv7\nCompare all network device configuration against approved security\n● ●\nconfigurations defined for each network device in use and alert when any\ndeviations are discovered.\nPage 39\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 39,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.8",
+      "title": "Disable static keys for TLS",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Disable support for static keys on TLS sessions terminating on the FortiGate",
+      "rationale": "Prevent TLS sessions terminating on the FortiGate from using static SSL keys",
+      "impact": "",
+      "audit": "CLI:\nconfig system global\nget\nValidate that ssl-static-key-ciphers disabled.",
+      "remediation": "CLI:\nconfig system global\nset ssl-static-key-ciphers disable\nend",
+      "default_value": "ssl-static-key-ciphers is enabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.7/cli-reference/1620/config-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.8 Uninstall or Disable Unnecessary Services on\nEnterprise Assets and Software\nv8\nUninstall or disable unnecessary services on enterprise assets and software,\n● ●\nsuch as an unused file sharing service, web application module, or service\nfunction.\nPage 40\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n9.2 Ensure Only Approved Ports, Protocols and Services\nv7 Are Running ● ●\nEnsure that only network ports, protocols, and services listening on a system\nwith validated business needs, are running on each system.\nPage 41\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 41,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.9",
+      "title": "Enable Global Strong Encryption",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Enable FortiOS to only use strong encryption and allow only strong ciphers for\ncommunication",
+      "rationale": "",
+      "impact": "",
+      "audit": "CLI:\nconfig system global\nget\nValidate strong-crypto is enabled.",
+      "remediation": "CLI:\nconfig system global\nset strong-crypto enable\nend",
+      "default_value": "strong-crypto is enabled by default.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.7/cli-reference/1620/config-"
+      ],
+      "cis_controls": "Controls Version Control IG 1 IG 2 IG 3\nv8\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nv7\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nPage 42\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 43,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.10",
+      "title": "Ensure management GUI listens on secure TLS version",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "As we move towards better encryption capabilities, we need to also ensure GUI access\nis properly secured. TLS 1.3 is currently the most secure SSL/TLS supported version for\nSSL-encrypted administrator access (at this time of writing).",
+      "rationale": "Use higher version of SSL/TLS to prevent MiTM attacks.",
+      "impact": "",
+      "audit": "CLI:\nconfig system global\nget\nVerify if set admin-https-ssl-versions tlsv1-3 is configured.",
+      "remediation": "CLI:\nconfig system global\nset admin-https-ssl-versions tlsv1-3",
+      "default_value": "FortiOS 7.x - TLS 1.2 and 1.3 enabled\nFortiOS 6.x - TLS 1.1, 1.2, and 1.3 enabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.7/cli-reference/1620/config-"
+      ],
+      "cis_controls": "Controls Version Control IG 1 IG 2 IG 3\nv8\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nPage 43\nInternal Only - General\nControls Version Control IG 1 IG 2 IG 3\nv7\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nPage 44\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 44,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.11",
+      "title": "Ensure CDN is enabled for improved GUI performance",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "To improve GUI performance, an option is added to enable loading static GUI artifacts\ncached in CDN (content delivery network) servers closer to the user rather than from\nthe FortiGate. On failure, the files can fall back to loading from the FortiGate.",
+      "rationale": "When accessing a remote FortiGate, GUI might experience some slowness due to\ngeographical distance. For this case, loading static GUI artifacts cached in CDN servers\nwill provide a better GUI / web management experience.",
+      "impact": "This is not a security control recommendation. Hence, there is no impact if this is not\nenabled.",
+      "audit": "On CLI:\nconfig system global\nget\nEnsure that gui-cdn-usage is enabled.",
+      "remediation": "On CLI:\nconfig system global\nset gui-cdn-usage enable\nend",
+      "default_value": "Disabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/fortios-release-"
+      ],
+      "cis_controls": "Controls Version Control IG 1 IG 2 IG 3\nv8\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nv7\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nPage 46\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 46,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.1.12",
+      "title": "Ensure single CPU core overloaded event is logged",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Add log-single-cpu-high option under config system global. When enabled, CPU single\ncore usage will be polled every three seconds, and any single CPU core usage above\nthe CPU usage threshold will report an event log. If a core is reported, that core will not\nbe checked again for the next 30 seconds.",
+      "rationale": "There are instances where overall CPU usage is low, but there is a single CPU core\nthat is overloaded. But because reporting and dashboard in FortiGate shows the overall\nCPU usage, a single CPU core spike may get overlooked on a FortiGate with multiple\nCPU cores. This causes performance issues where there are instances which traffic has\nbeen stopped processing.",
+      "impact": "",
+      "audit": "On CLI:\nconfig system global\nget\nEnsure that log-single-cpu-high is enabled.",
+      "remediation": "On CLI:\nconfig system global\nset log-single-cpu-high enable\nend",
+      "default_value": "Disabled",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-Enable-logging-for-",
+        "https://docs.fortinet.com/document/fortigate/7.2.4/fortios-release-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n8.2 Collect Audit Logs\nv8\nCollect audit logs. Ensure that logging, per the enterprise’s audit log\n● ● ●\nmanagement process, has been enabled across enterprise assets.\n8.5 Collect Detailed Audit Logs\nv8 Configure detailed audit logging for enterprise assets containing sensitive data. ● ●\nInclude event source, date, username, timestamp, source addresses, destination\naddresses, and other useful elements that could assist in a forensic investigation.\nPage 48\nInternal Only - General\n2.2 Password Policy\nThis Section contains criteria for local passwords such as complexity and restrictions.\nThe best practice is to use named accounts, and if possible a back-end authentication\nsolution such as Active Directory or (best case) a two-factor authentication solution.\nHowever, local credentials will always exist, if only to account for the failure of a back-\nend authentication solution.\nPage 49\nInternal Only - General",
+      "additional_info": "",
+      "section": "General Settings",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 48,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.2.1",
+      "title": "Ensure 'Password Policy' is enabled",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "It is important to use secure and complex passwords for preventing unauthorized\naccess to the FortiGate device.",
+      "rationale": "Attackers can use brute force password software to launch more than just dictionary\nattacks. Such attacks can discover common passwords where a letter is replaced by a\nnumber or symbol.",
+      "impact": "Weak passwords can be easily discovered by hackers, which leads to unauthorized\naccess to FortiGate. Depending on the access privilege of the compromised account,\nthe attacker may modify important settings.",
+      "audit": "Currently implemented password policy can be shown from GUI or CLI\nFrom CLI, type:\nget system password-policy\nOr from GUI as follows:\n1) Log in to FortiGate with a user with at least read-only privileges\n2) Go to 'System' > 'Settings'\n3) Find and check the status of the 'Password Policy' Section",
+      "remediation": "Can be modified from CLI or GUI.\nFrom CLI, do the following:\nPage 50\nInternal Only - General\nconfig system password-policy\nset status enable\nset apply-to admin-password ipsec-preshared-key\nset minimum-length 8\nset min-lower-case-letter 1\nset min-upper-case-letter 1\nset min-non-alphanumeric 1\nset min-number 1\nset expire-status enable\nset expire-day 90\nset reuse-password disable\nend\nOr from GUI, do the following:\n1) Log in to FortiGate as Super Admin\n2) Go to 'System' > 'Settings'\n3) Find the 'Password Policy' section\n4) Default 'Password scope' is 'Off', change it to 'Both'\n5) set 'Minimum length' to '8'\n6) Enable 'Character requirements'\n7) set minimum '1' in the filed of 'Upper Case', 'Lower Case', 'Numbers (0-\n9)' and 'Special'\n8) Disable 'Allow password reuse'\n9) Enable 'Password expiration' and set it to 90",
+      "default_value": "By default, 'Password Policy' is disabled. It can be checked from CLI as follows:\nconfig system password-policy\nset status disable\nend\nOr from GUI as follows:\n1) Log in to FortiGate as Super Admin\n2) Go to 'System' > 'Settings'\n3) Find the 'Password Policy' section\n4) Default 'Password scope' is 'Off'",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-Strong-Password-",
+        "https://docs.fortinet.com/document/fortigate/7.2.7/cli-reference/10620/config-",
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n5.2 Use Unique Passwords\nv8 Use unique passwords for all enterprise assets. Best practice implementation ● ● ●\nincludes, at a minimum, an 8-character password for accounts using MFA and a\n14-character password for accounts not using MFA.\n4.4 Use Unique Passwords\nv7 Where multi-factor authentication is not supported (such as local administrator, ● ●\nroot, or service accounts), accounts will use passwords that are unique to that\nsystem.\nPage 52\nInternal Only - General",
+      "additional_info": "Consider the following to ensure better security:\nPage 51\nInternal Only - General\n• Do not use passwords that are obvious, such as the company name,\nadministrator names, or other obvious words or phrases.\n• Use numbers in place of letters, for example: passw0rd.\n• Administrator passwords can be up to 64 characters.\n• Include a mixture of numbers, symbols, and upper and lower case letters.\n• Use multiple words together, or possibly even a sentence, for example:\ncorrecthorsebatterystaple.\n• Use a password generator.\n• Change the password regularly and always make the new password unique and\nnot a variation of the existing password. For example, do not change from\npassword to password1.\n• Make note of the password and store it in a safe place away from the\nmanagement computer, in case you forget it; or ensure at least two people know\nthe password in the event one person becomes unavailable. Alternatively, have\ntwo different admin logins.\nFortiGate allows you to create a password policy for administrators and IPsec pre-\nshared keys. With this policy, you can enforce regular changes and specific criteria for a\npassword policy, including:\n• The minimum length, between 8 and 64 characters.\n• If the password must contain uppercase (A, B, C) and/or lowercase (a, b, c)\ncharacters.\n• If the password must contain numbers (1, 2, 3).\n• If the password must contain special or non-alphanumeric characters: !, @, #, $,\n%, ^, &, *, (, and )\n• Where the password applies (admin or IPsec or both).\n• The duration of the password before a new one must be specified.\n• The minimum number of unique characters that a new password must include.",
+      "section": "Password Policy",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 51,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.2.2",
+      "title": "Ensure administrator password retries and lockout time are configured",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Failed login attempts can indicate malicious attempts to gain access to your network. To\nprevent this security risk, FortiGate is preconfigured to limit the number of failed\nadministrator login attempts. After the maximum number of failed login attempts is\nreached, access to the account is blocked for the configured lockout period.",
+      "rationale": "When you log in and fail to enter the correct password, you could potentially be a valid\nuser or a hacker attempting to gain access. For this reason, best practice dictates\nlimiting the number of failed login attempts before a lockout period in which you cannot\nlog in for a certain period of time. Lockout period will minimize hacker attempts to gain\naccess to the firewall.",
+      "impact": "Attackers will keep attempting to access the device through brute force attacks without\nany interruption, which may lead to a successful login.",
+      "audit": "To check the lockout options, from CLI:\nget system global\nfrom the output, check the value of the below fields:\n1. admin-lockout-threshold\n2. admin-lockout-duration\nEnsure that admin-lockout-threshold is set at 3 and admin-lockout-duration is\nset at 900.",
+      "remediation": "To configure the lockout options, from CLI:\nconfig system global\nset admin-lockout-threshold 3\nset admin-lockout-duration 900\nend\nLockout affects the offending IP address, not the entire account.\nPage 53\nInternal Only - General",
+      "default_value": "By default, the number of password retry attempts is set to three, allowing the\nadministrator a maximum of three attempts at logging in to their account before they are\nlocked out for a set amount of time (by default, 60 seconds).",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.7/cli-reference/1620/config-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n5.4 Restrict Administrator Privileges to Dedicated\nAdministrator Accounts\nv8 Restrict administrator privileges to dedicated administrator accounts on ● ● ●\nenterprise assets. Conduct general computing activities, such as internet\nbrowsing, email, and productivity suite use, from the user’s primary, non-privileged\naccount.\n4.3 Ensure the Use of Dedicated Administrative Accounts\nv7 Ensure that all users with administrative account access use a dedicated or ● ● ●\nsecondary account for elevated activities. This account should only be used for\nadministrative activities and not internet browsing, email, or similar activities.\nPage 54\nInternal Only - General\n2.3 SNMP\nPage 55\nInternal Only - General",
+      "additional_info": "The number of attempts and the default wait time before the administrator can try to\nenter a password again can be configured using the CLI.\nA maximum of ten retry attempts can be configured, and the lockout period can be 1 to\n2147483647 seconds (over 68 years).\nThe higher the retry attempts, the higher the risk that someone might be able to guess\nthe password.",
+      "section": "Password Policy",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 54,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.3.1",
+      "title": "Ensure only SNMPv3 is enabled",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Ensuring that only SNMPv3 service is enabled and SNMPv1, SNMPv2c are disabled.",
+      "rationale": "SNMP Version 3 provides security enhancements that are not available in SNMP\nVersion 1 or SNMP Version 2c. SNMP Versions 1 and 2c transmit data between the\nSNMP server and SNMP agent in clear text. SNMP Version 3 adds authentication and\nprivacy options to secure protocol operations. Some firewalls need to be constantly\nmonitored of its performance and status, especially if the firewalls are critical to the\noperation. Enabling SNMPv3 will ensure that the firewall is monitored properly.",
+      "impact": "Some older SNMP servers that only run SNMPv1 or SNMPv2c will not be able to query\nto this firewall.",
+      "audit": "From CLI, check to make sure that there is not any community for SNMPv1 or\nSNMPv2c and only SNMPv3 users are there. Also make sure that SNMP Agent is\nenabled:\nPage 56\nInternal Only - General\nFGT1 # config system snmp sysinfo\nFGT1 (sysinfo) # show\nconfig system snmp sysinfo\nset status enable\n...\nend\nFGT1 (sysinfo) # end\nFGT1 # config system snmp community\nFGT1 (community) # show\nconfig system snmp community\nend\nFGT1 (community) # end\nFGT1 # config system snmp user\nFGT1 (user) # show\nconfig system snmp user\nedit \"snmp_test\"\nset security-level auth-priv\nset auth-proto sha256\nset auth-pwd ENC xxxxxx\nset priv-proto aes256\nset priv-pwd ENC xxxxxx\nnext\nend\nIn the GUI, go to:\n1. System > SNMP. Make sure that SNMP agent is enabled.\n2. Make sure that there is not any SNMPv1/2c community.\n3. Make sure that there is at least 1 SNMPv3 user in the list.",
+      "remediation": "To enable SNMP agent in CLI:\nFGT1 # config system snmp sysinfo\nFGT1 (sysinfo) # set status enable\nFGT1 (sysinfo) # end\nIn GUI, go to System > SNMP and enable SNMP Agent.\nTo delete SNMPv1/2c communities. In this example, we'll delete community \"public\" in\nCLI:\nFGT1 # config system snmp community\nFGT1 (community) # delete public\nFGT1 (community) # end\nFGT #\nIn the GUI, go to:\nSystem > SNMP, select the community and click on the Delete button.\nTo add SNMPv3 user in CLI:\nPage 57\nInternal Only - General\nFGT1 # config system snmp user\nFGT1 (user) # edit \"snmp_test\"\nFGT1 (snmp_test) # set security-level auth-priv\nFGT1 (snmp_test) # set auth-proto sha256\nFGT1 (snmp_test) # set auth-pwd xxxx\nFGT1 (snmp_test) # set priv-proto aes256\nFGT1 (snmp_test) # set priv_pwd xxxx\nFGT1 (snmp_test) # end\nFGT1 #\nIn the GUI, go to:\n1. System > SNMP, under SNMPv3, click on \"Create New\" button.\n2. Select \"Authentication\" and choose SHA256 as Authentication algorithm.\n3. Click \"Change\" to type in the password.\n4. Also select option \"Private\", choose AES256 as Encryption Algorithm.\n5. Click on \"Change\" to change the password. Click \"OK\" to add the new user.\n6. Click apply to apply the new setting into the current config.",
+      "default_value": "By default, SNMP agent is disabled.",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-How-to-Configure-",
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n12.3 Securely Manage Network Infrastructure\nv8 Securely manage network infrastructure. Example implementations include ● ●\nversion-controlled-infrastructure-as-code, and the use of secure network\nprotocols, such as SSH and HTTPS.\n11.5 Manage Network Devices Using Multi-Factor\nv7 Authentication and Encrypted Sessions ● ●\nManage all network devices using multi-factor authentication and encrypted\nsessions.\nPage 58\nInternal Only - General",
+      "additional_info": "",
+      "section": "SNMP",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 57,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.3.2",
+      "title": "Allow only trusted hosts in SNMPv3",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Ensuring that only certain hosts are able to conduct SNMP GET or receive SNMP Trap.",
+      "rationale": "SNMP offers rich information that can be useful for reconnaissance activity. Hence,\nlimiting this information to only relevant devices such as NMS (Network Monitoring\nSystem) or other SNMP servers is necessary.",
+      "impact": "",
+      "audit": "From CLI:\nFGT1 # show system snmp user\nconfig system snmp user\nedit \"snmp_test\"\nset notify-hosts 192.168.1.101\nset security-level auth-priv\nset auth-proto sha512\nset auth-pwd ENC xxxxx\nset priv-proto aes256\nset priv-pwd ENC xxxxx\nnext\nend\nValidate that \"notify-hosts\" is configured with specific IP address, and there is no\n\"0.0.0.0\" configured.\nFrom GUI:\n1. System > SNMP.\n2. On SNMPv3 section, double click on the configured SNMPv3 settings.\n3. Ensure that \"Hosts\" is configured with specific IP address, and there is\nno \"0.0.0.0\" configured.",
+      "remediation": "To remove 0.0.0.0 from trusted hosts in CLI:\nFGT1 # config system snmp user\nFGT1 (user) # edit \"snmp_test\"\nFGT1 (snmp_test) # unselect notify-hosts 0.0.0.0\nFGT1 (snmp_test) # end\nFGT1 #\nFrom GUI:\nPage 59\nInternal Only - General\n1. System > SNMP.\n2. On SNMPv3 section, double click on the configured SNMPv3 settings.\n3. Remove 0.0.0.0 from \"Hosts\" option.",
+      "default_value": "By default, no SNMP is configured.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n12.3 Securely Manage Network Infrastructure\nv8 Securely manage network infrastructure. Example implementations include ● ●\nversion-controlled-infrastructure-as-code, and the use of secure network\nprotocols, such as SSH and HTTPS.\n11.1 Maintain Standard Security Configurations for\nv7 Network Devices ● ●\nMaintain standard, documented security configuration standards for all\nauthorized network devices.\n12.2 Scan for Unauthorized Connections across Trusted\nv7 Network Boundaries ● ●\nPerform regular scans from outside each trusted network boundary to detect\nany unauthorized connections which are accessible across the boundary.\nPage 60\nInternal Only - General\n2.4 Administrators and Admin Profiles\nPage 61\nInternal Only - General",
+      "additional_info": "",
+      "section": "SNMP",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 60,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.4.1",
+      "title": "Ensure default 'admin' password is changed",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Before deploying any new FortiGate, it is important to change the password of the\ndefault admin account.\nIt is also recommended that you change even the user name of the default admin\naccount, However, since you cannot change the user name of an account that is\ncurrently in use, a second administrator account must be created in order to do this.",
+      "rationale": "Default credentials are well documented by most vendors, including Fortinet. Therefore,\nit will be one of the first things that will be tried to illegally gain access to the system.",
+      "impact": "If not changed, then any scripts that use default credentials will be able to access the\nsystem.",
+      "audit": "Using both CLI and GUI, in the username field put in \"admin\", leave the password field\nblank and proceed. If it's checked out, it means that the default password is still in place\nand needs to be changed.",
+      "remediation": "In the CLI, to change the password of account \"admin\":\nFG1 # config system admin\nFG1 (admin) # edit \"admin\"\nFG1 (admin) # set password <your passwords>\nFG1 (admin) # end\nFG1 #\nTo change the default password in the GUI:\nPage 62\nInternal Only - General\n1) Login to FortiGate with admin account\n2) Go to System > Administrators.\n3) Edit the admin account.\n4) Click Change Password.\n5) If applicable, enter the current password in the Old Password field.\n6) Enter a password in the New Password field, then enter it again in the\nConfirm Password field.\n7) Click OK.",
+      "default_value": "By default, your FortiGate has an administrator account set up with the username admin\nand no password. In order to prevent unauthorized access to FortiGate, it is highly\nrecommended that you add a password to this account.\nUsername: admin The default admin account does not have any password. Just\nleave it blank",
+      "references": [
+        "https://kb.fortinet.com/kb/documentLink.do?externalID=FD48763",
+        "https://docs.fortinet.com/document/fortigate/6.2.0/cookbook/99980/default-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.7 Manage Default Accounts on Enterprise Assets and\nSoftware\nv8 Manage default accounts on enterprise assets and software, such as root, ● ● ●\nadministrator, and other pre-configured vendor accounts. Example\nimplementations can include: disabling default accounts or making them\nunusable.\n4.2 Change Default Passwords\nv7\nBefore deploying any new asset, change all default passwords to have values\n● ● ●\nconsistent with administrative level accounts.\nPage 63\nInternal Only - General",
+      "additional_info": "In FortiOS 6.2.1 and later, adding a password to the admin administrator is mandatory.\nYou will be prompted to configure it the first time you log in to the FortiGate using that\naccount, after a factory reset, and after a new image installation.",
+      "section": "Administrators and Admin Profiles",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 63,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.4.2",
+      "title": "Ensure all the login accounts having specific trusted hosts enabled",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Configure an administrative account to be accessible only to someone who is using a\ntrusted host. You can set a specific IP address for the trusted host or use a subnet.",
+      "rationale": "Access to a firewall to perform administrative tasks should only come from specific\nnetwork segments reserved for administrators only. This additional layer of security\nensures that no one from anywhere else on the network is able to log in, even with\ncorrect credentials.",
+      "impact": "All access outside of the allowed segment will be stopped, including from both\nlegitimate and illegitimate users. Thus, administrators working remotely will have to\nmake sure that they have access to jump hosts that sit in the allowed segment.",
+      "audit": "This example is to check if trusted hosts option is enabled for account \"test_admin\" and\nwhich trusted hosts are in the list:\nFG1 # config system admin\nFG1 (admin) # edit \"test_admin\"\nFG1 (test_admin) # show\nconfig system admin\nedit \"test_admin\"\n...\nset trusthost1 10.0.0.0 255.255.255.0\nset trusthost2 192.168.10.0 255.255.255.0\n...\nnext\nend\nIn the Web GUI:\nPage 64\nInternal Only - General\n1. System > Administrators.\n2. Select the account and click on edit.\n3. In the account setting page, make sure that \"Restrict login to trusted\nhosts\" is enabled and all the allowed hosts / subnets are in the list of\ntrusted host.\nPlease take note that certain versions of FortiOS will only show the first 3 trusted hosts\nin the list. If you want to see more, you have to click on the \"+\" sign as if you're adding a\nnew item into the list. Keep clicking until you see an empty field of trusted host. That's\nwhen you know that you have reached the bottom of the list.",
+      "remediation": "To remove a trusted host item from the list in CLI:\nFG1 # config system admin\nFG1 (admin) # edit \"test_admin\"\nFG1 (test_admin) # unset trusthost1\nFG1 (test_admin) # end\nFG1 #\nTo add a trusted host into the list in CLI:\nFG1 # config system admin\nFG1 (admin) # edit \"test_admin\"\nFG1 (test_admin) # set trusthost6 1.1.1.1 255.255.255.255\nFG1 (test_admin) # end\nFG1 #\nBefore adding an item, please make sure that it does not already exist. For example, if\ntrusthost3 is already in the list, using it again will override the existing host/network.\nIn the Web GUI:\n1. System > Administrators.\n2. select the account and click on edit.\n3. In the account setting page, make sure that \"Restrict login to trusted\nhosts\" is enabled and all the allowed hosts / subnets are in the list of\ntrusted host.\nPlease take note that certain versions of FortiOS will only show the first 3 trusted hosts\nin the list. If you want to see more, you have to click on the \"+\" sign as if you're adding a\nnew item into the list. Keep clicking until you see an empty field of trusted host. That's\nwhen you know that you have reached the bottom of the list. To add another trusted\nhost, fill in the empty field of the new \"Trusted Host\". To remove a trusted host, simply\nerase everything in the field of that corresponding host.",
+      "default_value": "By default, each account is accessible from everywhere. The host value is 0.0.0.0/0",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n5.4 Restrict Administrator Privileges to Dedicated\nAdministrator Accounts\nv8\nRestrict administrator privileges to dedicated administrator accounts on\n● ● ●\nenterprise assets. Conduct general computing activities, such as internet browsing,\nemail, and productivity suite use, from the user’s primary, non-privileged account.\n12.8 Establish and Maintain Dedicated Computing\nResources for All Administrative Work\nv8 Establish and maintain dedicated computing resources, either physically or ●\nlogically separated, for all administrative tasks or tasks requiring administrative\naccess. The computing resources should be segmented from the enterprise's\nprimary network and not be allowed internet access.\n4.6 Use of Dedicated Machines For All Administrative\nTasks\nv7 Ensure administrators use a dedicated machine for all administrative tasks or ●\ntasks requiring administrative access. This machine will be segmented from the\norganization's primary network and not be allowed Internet access. This machine\nwill not be used for reading e-mail, composing documents, or browsing the Internet.\n11.6 Use Dedicated Machines For All Network\nAdministrative Tasks\nv7 Ensure network engineers use a dedicated machine for all administrative tasks ● ●\nor tasks requiring elevated access. This machine shall be segmented from the\norganization's primary network and not be allowed Internet access. This machine\nshall not be used for reading e-mail, composing documents, or surfing the Internet.\n11.7 Manage Network Infrastructure Through a Dedicated\nNetwork\nv7 Manage the network infrastructure across network connections that are ● ●\nseparated from the business use of that network, relying on separate VLANs or,\npreferably, on entirely different physical connectivity for management sessions for\nnetwork devices.\nPage 66\nInternal Only - General",
+      "additional_info": "",
+      "section": "Administrators and Admin Profiles",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 65,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.4.3",
+      "title": "Ensure admin accounts with different privileges have their correct profiles assigned",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Verify that users with access to the Fortinet should only have the minimum privileges\nrequired for that particular user.",
+      "rationale": "In some organizations, it is necessary to create different levels of administrative\naccounts. For example, technicians from tier 1 support should not have total access to\nthe system compared to a tier 3 support.",
+      "impact": "",
+      "audit": "There are 2 stages to audit. Here is how to verify in the CLI:\nStage 1: Verify the profile.\nFGT1 # config system accprofile\nFGT1 (accprofile) # edit \"tier_1\"\nFGT1 (tier_1) # show full\nconfig system accprofile\nedit \"tier_1\"\nset comments ''\nset secfabgrp read\nset ftviewgrp read\nset authgrp none\nset sysgrp none\nset netgrp read\nset loggrp none\nset fwgrp custom\nset vpngrp none\nset utmgrp none\nset wifi none\nset admintimeout-override disable\nconfig fwgrp-permission\nset policy none\nset address none\nset service none\nset schedule none\nend\nnext\nend\nFGT1 (tier_1) #\nIf the following privileges are set to \"custom\", please also check the sub-privileges of the\ncustomized ones to make sure that only the right privileges are allowed: fwgrp, sysgrp,\nnetgrp, loggrp, utmgrpset.\nPage 67\nInternal Only - General\nIn the GUI, go to:\nSystem > Admin Profiles, select the profile and click on \"Edit\".\nStage 2: Verify the admin accounts.\nIn the CLI:\nFGT1 #config system admin\nFGT1 (admin) # edit \"support1\"\nFGT1 (support1) # show full\nconfig system admin\nedit \"support1\"\n...\nset accprofile \"tier_1\"\n...\nnext\nend\nIn the GUI, go to:\nSystem > Administrators, select the account and click \"Edit\"",
+      "remediation": "In this example, the goal is to provide the profile \"tier_1\" the ability to view and modify\naddress objects. This sub-privilege is under fwgrp privilege.\nIn CLI:\nFGT1 # config system accprofile\nFGT1 (accprofile) # edit \"tier_1\"\nFGT1 (tier_1) # set fwgrp custom\nFGT1 (tier_1) # config fwgrp-permission\nFGT1 (fwgrp-permission) # set address read-write\nFGT1 (fwgrp-permission) # end\nFGT1 (tier_1) # end\nFGT1 #\nFor the GUI, go to:\n1. System > Admin Profiles, select \"tier_1\" and click \"Edit\".\n2. On \"Firewall\", click on \"Custom\".\n3. Click on \"Read/Write\" option for \"Address\".\nIn the next example, assign the profile \"tier_1\" to the account \"support1\".\nIn the CLI:\nFGT1 # config system admin\nFGT1 (admin) # edit \"support1\"\nFGT1 (support1) # set accprofile \"tier_1\"\nFGT1 (support1) # end\nFGT1 #\nFor the GUI, go to:\nPage 68\nInternal Only - General\n1. System > Administrators.\n2. Select \"support1\" and click \"Edit\".\n3. Under \"Administrator Profile\", select \"tier_1\".",
+      "default_value": "By default, there are only 2 profiles: prof_admin and super_admin. You must select a\nprofile to create an admin account. The system will not automatically choose for you.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n5.4 Restrict Administrator Privileges to Dedicated\nAdministrator Accounts\nv8 Restrict administrator privileges to dedicated administrator accounts on ● ● ●\nenterprise assets. Conduct general computing activities, such as internet\nbrowsing, email, and productivity suite use, from the user’s primary, non-privileged\naccount.\n4.3 Ensure the Use of Dedicated Administrative Accounts\nv7 Ensure that all users with administrative account access use a dedicated or ● ● ●\nsecondary account for elevated activities. This account should only be used for\nadministrative activities and not internet browsing, email, or similar activities.\nPage 69\nInternal Only - General",
+      "additional_info": "You cannot change the profile of the account you are already logged in as.\nThe profile \"super_admin\" cannot be deleted or modified.",
+      "section": "Administrators and Admin Profiles",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 68,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.4.4",
+      "title": "Ensure idle timeout time is configured",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "The idle timeout period is the amount of time that an administrator will stay logged in to\nthe GUI without any activity.",
+      "rationale": "Best practice dictates setting admin idle timeout to prevent the risk of unauthorized\naccess to the device, such as someone using a logged-in GUI on a PC that has been\nleft unattended.",
+      "impact": "This is to prevent someone from accessing the FortiGate if the management PC is left\nunattended.",
+      "audit": "To check the idle timeout in the GUI:\n1) Login to FortiGate\n2) Go to 'System' > 'Settings'.\n3) In the 'Administration Settings' section, check the 'Idle timeout' value\nin minutes.\nTo check the idle timeout in the CLI:\nget system global\ncheck the value of admintimeout in minutes",
+      "remediation": "To change the idle timeout in the GUI:\n1) Login to FortiGate with Super Admin privileges\n2) Go to 'System' > 'Settings'.\n3) In the 'Administration Settings' section, set the 'Idle timeout' value to\nfive minutes by typing 5.\n4) Click Apply.\nTo change the idle timeout in the CLI:\nPage 70\nInternal Only - General\nconfig system global\nset admintimeout 5\nend",
+      "default_value": "By default, it is set to five minutes.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.2 Establish and Maintain a Secure Configuration\nProcess for Network Infrastructure\nv8\nEstablish and maintain a secure configuration process for network devices.\n● ● ●\nReview and update documentation annually, or when significant enterprise\nchanges occur that could impact this Safeguard.\n11.1 Maintain Standard Security Configurations for\nv7 Network Devices ● ●\nMaintain standard, documented security configuration standards for all\nauthorized network devices.\nPage 71\nInternal Only - General",
+      "additional_info": "A setting of higher than 15 minutes will have a negative effect on a security rating score.",
+      "section": "Administrators and Admin Profiles",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 71,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.4.5",
+      "title": "Ensure only encrypted access channels are enabled",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Allow only HTTPS access to the GUI and SSH access to the CLI.",
+      "rationale": "By only allowing encrypted access, we are making it harder to use \"Man in the Middle\"\nattacks to sniff login credentials.",
+      "impact": "",
+      "audit": "In the CLI, when verifying the network interface, make sure that http and telnet are not\nin the allowaccess list:\nFG1 # config system interface\nFG1 (interface) # edit port1\nFG1 (port1) # show\nconfig system interface\nedit \"port1\"\n...\nset allowaccess ssh https ping snmp\n...\nnext\nend\nIn the web GUI, click on:\n1. Network > Interfaces, select the interface and click \"Edit\".\n2. In the interface setting page, make sure that HTTP and Telnet are not\nselected in the section \"Administrative Access\"",
+      "remediation": "If HTTP or Telnet is in the allowaccess list, you will have to set that list again with the\nsame elements except for http or telnet.\nOn CLI:\nFG1 # config system interface\nFG1 (interface) # edit port1\nFG1 (port1) # set allowaccess ssh https ping snmp\nFG1 (port1) # end\nFG1 #\nIn the web GUI, click on:\nPage 72\nInternal Only - General\n1. Network > Interfaces, select the interface and click \"Edit\".\n2. In the interface setting page, uncheck HTTP and Telnet in the section\n\"Administrative Access\".",
+      "default_value": "By default, HTTP and Telnet are not enabled on any interface.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n3.10 Encrypt Sensitive Data in Transit\nv8\nEncrypt sensitive data in transit. Example implementations can include:\n● ●\nTransport Layer Security (TLS) and Open Secure Shell (OpenSSH).\n4.5 Use Multifactor Authentication For All Administrative\nv7 Access ● ●\nUse multi-factor authentication and encrypted channels for all administrative\naccount access.\nPage 73\nInternal Only - General",
+      "additional_info": "",
+      "section": "Administrators and Admin Profiles",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 73,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.4.6",
+      "title": "Apply Local-in Policies",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Configure Local-in Policies to control inbound traffic that is destined to a FortiGate\ninterface.",
+      "rationale": "Local-in Policies allow for more granular and specific control of all types of traffic that\nare destined for a FortiGate interface. They are not limited to management-only\nprotocols, therefore they can extend past \"trusted host\" configurations and be\nconfigured with source and destination addresses as well as specific services.",
+      "impact": "Local-in Policies are processed before \"trusted host\" configurations, so it is important to\nvalidate that management access will be maintained once the Local-in policies are put\nin place.",
+      "audit": "To review Local-in Policies in the GUI, go to:\n1. System > Feature Visibility.\n2. Turning on \"Local-in policies\" under the Additional Features Section.\nThis will then add the section under \"Policies and Objects\" there will now be a section\nfor \"Local-in Policies\"\nIt can also be viewed through the CLI:\nconfig firewall local-in-policy\nshow",
+      "remediation": "Local-in Policies can only be configured through the CLI:\nPage 74\nInternal Only - General\nconfig firewall {local-in-policy | local-in-policy6}\nedit <policy_number>\nset intf <interface>\nset srcaddr <source_address> [source_address] ...\nset dstaddr <destination_address> [destination_address] ...\nset action {accept | deny}\nset service <service_name> [service_name] ...\nset schedule <schedule_name>\nset comments <string>\nnext\nend\nFor example, to prevent the source subnet 10.10.10.0/24 from pinging port1, but allow\nadministrative access for PING on port1:\nconfig firewall address\nedit \"10.10.10.0\"\nset subnet 10.10.10.0 255.255.255.0\nnext\nend\nconfig firewall local-in-policy\nedit 1\nset intf \"port1\"\nset srcaddr \"10.10.10.0\"\nset dstaddr \"all\"\nset service \"PING\"\nset schedule \"always\"\nnext\nend",
+      "default_value": "There are no Local-in Policies in place by default.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n3.3 Configure Data Access Control Lists\nv8 Configure data access control lists based on a user’s need to know. Apply data ● ● ●\naccess control lists, also known as access permissions, to local and remote file\nsystems, databases, and applications.\n12.2 Establish and Maintain a Secure Network Architecture\nv8 Establish and maintain a secure network architecture. A secure network ● ●\narchitecture must address segmentation, least privilege, and availability, at a\nminimum.\nPage 75\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n14.6 Protect Information through Access Control Lists\nProtect all information stored on systems with file system, network share,\nv7 claims, application, or database specific access control lists. These controls will ● ● ●\nenforce the principle that only authorized individuals should have access to the\ninformation based on their need to access the information as a part of their\nresponsibilities.\nPage 76\nInternal Only - General",
+      "additional_info": "",
+      "section": "Administrators and Admin Profiles",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 75,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.4.7",
+      "title": "Ensure default Admin ports are changed",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "FortiGate admin ports listen on the common ports of 80 and 443. This is default\nbehavior. While interface access is controlled by configuring network interfaces, the\nFortiGate still listens on the admin ports that have been configured, which can also\ncause a conflict should 80 or 443 be needed as part of additional configuration later on.",
+      "rationale": "To increase security of the FortiGate Admin Ports, changing it from the default ports will\nreduce the attack surface should FortiGate Admin Access be targeted. As mentioned, a\npossible port conflict can also be avoided.",
+      "impact": "Unauthorized access to a FortiGate or any firewall could prove very costly. While this is\na single hardening step of many, it is an important one when hardening any firewall.",
+      "audit": "Log in to the GUI and click on System > Settings > Review the ports under\n'Administration Settings' section.",
+      "remediation": "config system global\nset admin-https-redirect disable\nset admin-port 8082 **(or any other uncommon port)**\nset admin-server-cert \"self-sign\"\nset admin-sport 4343 **(or any other uncommon port)**\nend\nOR\nFrom Web GUI:\n1. System > Settings\n2. Change the ports/settings under 'Administration Settings' section.\nNOTE: https redirection must be turned off as well as changing port 80. This is due to\nthe nature of how browser port redirection works. The browser will be redirected from\nport 80 to port 443 or whichever 'admin-sport' is configured, meaning that it will still\nlisten on port 80 even when the port has been reconfigured.\nPage 77\nInternal Only - General",
+      "default_value": "config system global\nset admin-https-redirect enable\nset admin-port 80\nset admin-server-cert \"self-sign\"\nset admin-sport 443",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.4/administration-",
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-How-to-change-the-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n3.3 Configure Data Access Control Lists\nv8 Configure data access control lists based on a user’s need to know. Apply ● ● ●\ndata access control lists, also known as access permissions, to local and remote\nfile systems, databases, and applications.\n12.2 Establish and Maintain a Secure Network\nArchitecture\nv8\nEstablish and maintain a secure network architecture. A secure network\n● ●\narchitecture must address segmentation, least privilege, and availability, at a\nminimum.\n9.2 Ensure Only Approved Ports, Protocols and Services\nv7 Are Running ● ●\nEnsure that only network ports, protocols, and services listening on a system\nwith validated business needs, are running on each system.\n9.4 Apply Host-based Firewalls or Port Filtering\nv7 Apply host-based firewalls or port filtering tools on end systems, with a default- ● ● ●\ndeny rule that drops all traffic except those services and ports that are explicitly\nallowed.\nPage 78\nInternal Only - General",
+      "additional_info": "TIP: Don't choose these ports:\n8080/8081 - These are very common browser proxy ports.\n4433 - This is the FortiGate default FTM push port.\n10443 - This is the FortiGate default SSL VPN port.\nOther Admin Ports such as 22 and 23 can also be changed as required.",
+      "section": "Administrators and Admin Profiles",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 78,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.4.8",
+      "title": "Virtual patching on the local-in management interface",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Allow virtual patching to be applied to traffic destined to the FortiGate by applying IPS\nsignatures to the local in interface using local in policies. Attacks geared towards GUI\nand SSH management access, for example, can be mitigated using IPS signatures\npushed from FortiGuard, thereby virtually patching these vulnerabilities.",
+      "rationale": "Patches require scheduling of downtime, which means there is some attack window\nfrom the time Fortinet announced the vulnerability to when patch is applied. To minimise\nthe risk, virtual patching on GUI and SSH management access is needed.",
+      "impact": "",
+      "audit": "On CLI:\nconfig firewall local-in-policy\nshow\nEnsure that virtual-patch is enabled for those policy that is allowing traffic.",
+      "remediation": "On CLI:\nconfig firewall local-in-policy\nedit <id>\nset virtual-patch enable\nnext\nend",
+      "default_value": "Disabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/new-features/393161/virtual-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n7.4 Perform Automated Application Patch Management\nv8\nPerform application updates on enterprise assets through automated patch\n● ● ●\nmanagement on a monthly, or more frequent, basis.\n16.2 Establish and Maintain a Process to Accept and\nAddress Software Vulnerabilities\nEstablish and maintain a process to accept and address reports of software\nvulnerabilities, including providing a means for external entities to report. The\nprocess is to include such items as: a vulnerability handling policy that identifies\nv8\nreporting process, responsible party for handling vulnerability reports, and a process\n● ●\nfor intake, assignment, remediation, and remediation testing. As part of the process,\nuse a vulnerability tracking system that includes severity ratings, and metrics for\nmeasuring timing for identification, analysis, and remediation of\nvulnerabilities. Review and update documentation annually, or when significant\nenterprise changes occur that could impact this Safeguard. Third-party application\ndevelopers need to consider this an externally-facing policy that helps to set\nexpectations for outside stakeholders.\n3.4 Deploy Automated Operating System Patch\nManagement Tools\nv7\nDeploy automated software update tools in order to ensure that the operating\n● ● ●\nsystems are running the most recent security updates provided by the software\nvendor.\nPage 80\nInternal Only - General\n2.5 High Availability\nHigh Availability (HA) subsection includes configurations for High Availability between\nFortiGate devices\nPage 81\nInternal Only - General",
+      "additional_info": "",
+      "section": "Administrators and Admin Profiles",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 80,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.5.1",
+      "title": "Ensure High Availability configuration is enabled",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Ensure that FortiGate devices are configured for High Availability (HA).",
+      "rationale": "Configuring High Availability (HA) increases system availability as well as decreases\nimpact of routine maintenance (Firmware updates, cable moves, etc.) and the the\nimpact of device failure.",
+      "impact": "Not having High Availability (HA) configured correctly and synced properly impacts the\navailability of the FortiGate devices as well as any systems that require traversing the\nFortiGates. With properly configured HA in place outages can be minimized during\nfirmware updates as well as if there are power outages or device failures.",
+      "audit": "In GUI:\n1. Navigate to \"System\" and then \"HA\"\n2. Ensure \"Mode\" is set to proper setting \"Active-Active\" or \"Active-Passive\"\n3. Review Configuration settings:\n- \"Cluster Name\" must match on devices\n- \"Password\" Must match on devices\n- \"Heartbeat Interfaces\" need to be defined on devices\n4. Click \"OK\" to save changes and exit\nIn CLI:\nFGT1 # config system ha\nFGT1 (ha) # set mode a-p ###(Active-Passive)\nFGT1 (ha) # set group-name \"FGT-HA\" ###(Set cluster name)\nFGT1 (ha) # set password ******* ###(Set password)\nFGT1 (ha) # set hbdev port10 50 ###(Set Heartbeat\nInterface and priority)\nFGT1 (ha) # end\nTo review configuration in CLI:\nPage 82\nInternal Only - General\nFGT1 # config system ha\nFGT1 (ha) # show\nconfig system ha\nset group-name \"FGT-HA\"\nset mode a-p\nset password ENC\nenrwD467hJmO6j6YW/l6FEOa1YNVYdo8Z5mCcTDEKUFpOVXcNYnPBmQDGX//ViXk6TkwNH0il5aJr\n/fZY25lq+husndQHZVWp2LIlXmCv/n81U43nkZUWaIKvqkellGFbhv0/IHoOLzQPCsVcBbyrsgopr\nYMvh6w7F06+nRriBtMNQxpOV5V+e388EcwsOOMsXBZOw==\nset hbdev \"port10\" 50\nset override disable\nend",
+      "remediation": "In GUI:\n1. Navigate to \"System\" and then \"HA\"\n2. Ensure \"Mode\" is set to proper setting \"Active-Active\" or \"Active-Passive\"\n3. Review Configuration settings:\n- \"Cluster Name\" must match on devices\n- \"Password\" Must match on devices\n- \"Heartbeat Interfaces\" need to be defined on devices\n4. Click \"OK\" to save changes and exit\nIn CLI:\nFGT1 # config system ha\nFGT1 (ha) # set mode a-p ###(Active-Passive)\nFGT1 (ha) # set group-name \"FGT-HA\" ###(Set cluster name)\nFGT1 (ha) # set password ******* ###(Set password)\nFGT1 (ha) # set hbdev port10 50 ###(Set Heartbeat\nInterface and priority)\nFGT1 (ha) # end\nTo review configuration in CLI:\nFGT1 # config system ha\nFGT1 (ha) # show\nconfig system ha\nset group-name \"FGT-HA\"\nset mode a-p\nset password ENC\nenrwD467hJmO6j6YW/l6FEOa1YNVYdo8Z5mCcTDEKUFpOVXcNYnPBmQDGX//ViXk6TkwNH0il5aJr\n/fZY25lq+husndQHZVWp2LIlXmCv/n81U43nkZUWaIKvqkellGFbhv0/IHoOLzQPCsVcBbyrsgopr\nYMvh6w7F06+nRriBtMNQxpOV5V+e388EcwsOOMsXBZOw==\nset hbdev \"port10\" 50\nset override disable\nend",
+      "default_value": "N/A\nPage 83\nInternal Only - General",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-",
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.2 Establish and Maintain a Secure Configuration\nProcess for Network Infrastructure\nv8\nEstablish and maintain a secure configuration process for network devices.\n● ● ●\nReview and update documentation annually, or when significant enterprise\nchanges occur that could impact this Safeguard.\n11.1 Maintain Standard Security Configurations for\nv7 Network Devices ● ●\nMaintain standard, documented security configuration standards for all\nauthorized network devices.\nPage 84\nInternal Only - General",
+      "additional_info": "",
+      "section": "High Availability",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 83,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.5.2",
+      "title": "Ensure \"Monitor Interfaces\" for High Availability devices is enabled",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Configure Interface Monitoring within High Availability settings. Interface Monitoring\nshould be enabled on all critical interfaces.",
+      "rationale": "With Interface Monitoring enabled on devices, failover can occur if there are\nphysical media issues or issues with the specific port to which the FortiGate is\nconnected.",
+      "impact": "Not configuring Interface Monitoring can directly impact services due to a failure to\ntrigger a High Availability failover if an interface is impacted only on the primary device\nand is not being monitored. Without the Interface Monitoring enabled, failover\nwould be limited to hardware, system, or power faults.",
+      "audit": "To validate from GUI:\n1. Go to System > HA.\n2. Under \"Monitor Interfaces\" validate all applicable interfaces are\nselected.\n3. Select \"OK\".\nTo validate from CLI:\nFGT1 # config system ha\nFGT1 (ha) # show\nconfig system ha\nset group-name \"FGT-HA\"\nset mode a-p\nset password ENC\nenrwD467hJmO6j6YW/l6FEOa1YNVYdo8Z5mCcTDEKUFpOVXcNYnPBmQDGX//ViXk6TkwNH0il5aJr\n/fZY25lq+husndQHZVWp2LIlXmCv/n81U43nkZUWaIKvqkellGFbhv0/IHoOLzQPCsVcBbyrsgopr\nYMvh6w7F06+nRriBtMNQxpiTE+12xAHz7lA3EoYZzf8A==\nset override disable\nset monitor \"port6\" \"port7\" ###Validate proper interfaces are present\nend",
+      "remediation": "To remediate from GUI:\nPage 85\nInternal Only - General\n1. Go to System > HA.\n2. Under \"Monitor Interfaces\" select all applicable interfaces.\n3. Select \"OK\".\nTo validate from CLI:\nFGT1 # config system ha\nFGT1 (ha) # set monitor \"port6\" \"port7\"\nFGT1 (ha) # show ###To Review changes to monitored interfaces before\napplying\nconfig system ha\nset group-name \"FGT-HA\"\nset mode a-p\nset password ENC\nenrwD467hJmO6j6YW/l6FEOa1YNVYdo8Z5mCcTDEKUFpOVXcNYnPBmQDGX//ViXk6TkwNH0il5aJr\n/fZY25lq+husndQHZVWp2LIlXmCv/n81U43nkZUWaIKvqkellGFbhv0/IHoOLzQPCsVcBbyrsgopr\nYMvh6w7F06+nRriBtMNQxpiTE+12xAHz7lA3EoYZzf8A==\nset override disable\nset monitor \"port6\" \"port7\"\nend",
+      "default_value": "N/A",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/6.0.0/best-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.2 Establish and Maintain a Secure Configuration\nProcess for Network Infrastructure\nv8\nEstablish and maintain a secure configuration process for network devices.\n● ● ●\nReview and update documentation annually, or when significant enterprise\nchanges occur that could impact this Safeguard.\n11.1 Maintain Standard Security Configurations for\nv7 Network Devices ● ●\nMaintain standard, documented security configuration standards for all\nauthorized network devices.\nPage 86\nInternal Only - General",
+      "additional_info": "",
+      "section": "High Availability",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 86,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "2.5.3",
+      "title": "Ensure HA Reserved Management Interface is configured",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Ensure Reserved Management Interfaces are configured on HA devices.",
+      "rationale": "To be able to access both the primary and secondary firewalls in an HA cluster,\nReserved Management Interfaces need to be configured to prevent them from\nsyncing with HA and sharing a virtual MAC address.",
+      "impact": "Not configuring Reserved Management Interfaces impacts the ability to access\nsecondary devices directly due to the primary and secondary devices syncing\nconfiguration exactly and floating a virtualized mac address between them for failover.",
+      "audit": "Review through the GUI:\n1. Go to System > HA edit the \"Master\" device.\n2. Verify that \"Management Interface Reservation\" is selected and there is an\ninterface, and gateway defined.\nReview through the CLI:\nFGT1 #config system ha\nFGT1 (ha) # show\nconfig system ha\nset group-name \"FGT-HA\"\nset mode a-p\nset password ENC\nenrwD467hJmO6j6YW/l6FEOa1YNVYdo8Z5mCcTDEKUFpOVXcNYnPBmQDGX//ViXk6TkwNH0il5aJr\n/fZY25lq+husndQHZVWp2LIlXmCv/n81U43nkZUWaIKvqkellGFbhv0/IHoOLzQPCsVcBbyrsgopr\nYMvh6w7F06+nRriBtMNQxpiTE+12xAHz7lA3EoYZzf8A==\nset ha-mgmt-status enable\nconfig ha-mgmt-interfaces\nedit 1\nset interface \"port6\"\nset gateway 10.10.10.1\nnext\nend\nset override disable\nend\nValidate that set ha-mgmt-status is enabled and that config ha-mgmt-interfaces\nhas at least one entry with an interface and gateway defined.\nPage 87\nInternal Only - General",
+      "remediation": "Remediate through the GUI:\n1. Go to System > HA edit the \"Master\" device.\n2. Enable \"Management Interface Reservation\" once this is enabled select an\nan interface, and configure the appropriate gateway.\nRemediate through the CLI:\nFGT1 #config system ha\nFGT1 (ha) # set ha-mgmt-status enable\nFGT1 (ha) # config ha-mgmt-interfaces\nFGT1 (ha-mgmt-interfaces) # edit 1\nnew entry '1' added\nFGT1 (1) # set interface port6\nFGT1 (1) # set gateway 10.10.10.1\nFGT1 (1) # end\nFGT1 (ha) # show\nconfig system ha\nset group-name \"FGT-HA\"\nset mode a-p\nset password ENC\nenrwD467hJmO6j6YW/l6FEOa1YNVYdo8Z5mCcTDEKUFpOVXcNYnPBmQDGX//ViXk6TkwNH0il5aJr\n/fZY25lq+husndQHZVWp2LIlXmCv/n81U43nkZUWaIKvqkellGFbhv0/IHoOLzQPCsVcBbyrsgopr\nYMvh6w7F06+nRriBtMNQxpiTE+12xAHz7lA3EoYZzf8A==\nset ha-mgmt-status enable\nconfig ha-mgmt-interfaces\nedit 1\nset interface \"port6\"\nset gateway 10.10.10.1\nnext\nend\nset override disable\nend\nFGT1 (ha) # end",
+      "default_value": "N/A",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.2 Establish and Maintain a Secure Configuration\nProcess for Network Infrastructure\nv8\nEstablish and maintain a secure configuration process for network devices.\n● ● ●\nReview and update documentation annually, or when significant enterprise\nchanges occur that could impact this Safeguard.\n11.1 Maintain Standard Security Configurations for\nv7 Network Devices ● ●\nMaintain standard, documented security configuration standards for all\nauthorized network devices.\nPage 89\nInternal Only - General\n3 Policy and Objects\nThis section contains best practices related to configuring firewall policies, Objects and\ntraffic shaping\nPage 90\nInternal Only - General",
+      "additional_info": "",
+      "section": "High Availability",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 88,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "3.1",
+      "title": "Ensure that unused policies are reviewed regularly",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "All firewall policies should be reviewed regularly to verify the business purpose. Unused\npolicies should be disabled and logged.\nRecommendation to review twice per year or inline with BCP practice (Business\nContinuity Plan). Some of the firewall policies will only be used during BCP, hence, the\nhit count might show 0 if the review is done too often.",
+      "rationale": "By reviewing policies regularly, we can determine if the policies are still needed by the\nbusiness purpose. Thus, we can keep the firewall policies lean and efficient. It also\nprevents traffic being allowed or blocked accidently.",
+      "impact": "",
+      "audit": "In CLI, type \"diag firewall iprope show 100004 <policy_id>\". In this example, we'll verify\npolicy with ID of 32. We'll also need to clear the counter after each review so that we\ncan tell if the policy is still being used for the next review :\nFGT1 # diag firewall iprope show 100004 32\nidx=2 pkts/bytes=144967/135758174 asic_pkts/asic_bytes=0/0 flag=0x0 hit\ncount:663\nFGT1 # diag firewall iprope clear 100004 32\nIn the GUI,\n1. Go to Policy & Objects.\n2. Click on Firewall Policy.\n3. Make sure that either the columns \"Bytes\" or \"Hit Count\" are visible. To\ndisplay either one of them, move the cursor to the top row where all the\ncolumns names are. Right click and select \"Bytes\" or \"Hit Count\" and click\nOK. To clear the counter, right click on the \"Bytes\" or \"Hit Count\" columns\nof that policy and click on \"Clear Counters\".",
+      "remediation": "The remediation is to review and decide if you should delete unused policies.",
+      "default_value": "By default, the hit count value is 0 at the beginning.",
+      "references": [
+        "https://kb.fortinet.com/kb/documentLink.do?externalID=FD44631"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.8 Uninstall or Disable Unnecessary Services on\nEnterprise Assets and Software\nv8\nUninstall or disable unnecessary services on enterprise assets and software,\n● ●\nsuch as an unused file sharing service, web application module, or service\nfunction.\n9.2 Ensure Only Approved Ports, Protocols and Services\nv7 Are Running ● ●\nEnsure that only network ports, protocols, and services listening on a system\nwith validated business needs, are running on each system.\n11.2 Document Traffic Configuration Rules\nAll configuration rules that allow traffic to flow through network devices should\nv7\nbe documented in a configuration management system with a specific business\n● ●\nreason for each rule, a specific individual’s name responsible for that business\nneed, and an expected duration of the need.\nPage 92\nInternal Only - General",
+      "additional_info": "The CLI commands are only available after FortiOS 6.0. Before that, please use GUI.",
+      "section": "Policy and Objects",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 92,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "3.2",
+      "title": "Ensure that policies do not use \"ALL\" as Service",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Ensure that all security policies in effect clearly state which protocols / services they are\nallowing.",
+      "rationale": "This is to make sure that the firewall do not allow traffic with unauthorized\nprotocols/services by mistake.",
+      "impact": "",
+      "audit": "In CLI:\nFGT1 # config firewall policy\nFGT1 (policy) # show\nTEST-FG-Third (policy) # show\nconfig firewall policy\nedit 1\nset uuid d0eed832-bb73-51e6-c3da-3cd2ec201608\nset srcintf \"internal\"\nset dstintf \"wan\"\nset srcaddr \"all\"\nset dstaddr \"all\"\nset action accept\nset schedule \"always\"\nset service \"HTTPS\" \"HTTP\"\nset ssl-ssh-profile \"__tmp_no-inspection\"\nset nat enable\nnext\nend\nIn the GUI,\n1. Go to Policy & Objects.\n2. Click on Firewall Policy.\nMake sure that none of the policies use \"ALL\" as its service.",
+      "remediation": "This is an example showing how to modify policy with ID of 2 to change the service from\n\"ALL\" to FTP and SNMP.\nIn CLI:\nPage 93\nInternal Only - General\nFGT1 # config firewall policy\nFGT1 (policy) # edit 2\nFGT1 (2) # set service \"FTP\" \"SNMP\"\nFGT1 (2) # end\nFGT1 #\nIn the GUI,\n1. Go to Policy & Objects.\n2. Click on Firewall Policy.\n3. Select the policy, click \"Edit\".\n4. In the Service section, click on it and select FTP and SNMP. Click OK.",
+      "default_value": "By default, all new policy will have \"ALL\" in its service field.",
+      "references": [],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n3.3 Configure Data Access Control Lists\nv8 Configure data access control lists based on a user’s need to know. Apply ● ● ●\ndata access control lists, also known as access permissions, to local and remote\nfile systems, databases, and applications.\n9.2 Ensure Only Approved Ports, Protocols and Services\nv7 Are Running ● ●\nEnsure that only network ports, protocols, and services listening on a system\nwith validated business needs, are running on each system.\nPage 94\nInternal Only - General",
+      "additional_info": "",
+      "section": "Policy and Objects",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 94,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "3.3",
+      "title": "Ensure firewall policy denying all traffic to/from Tor, malicious server, or scanner IP addresses using ISDB",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Firewall policies should include a deny rule for traffic going to/from Tor, malicious\nserver, or scanner IP addresses using ISDB (Internet Service Database).",
+      "rationale": "FortiGate includes Tor or malicious server related IP address using ISDB. The idea is to\nfilter out malicious traffic using firewall policies as first level filtering. This is done without\ninvolving more resource intensive processes such as IPS inspection, hence optimizing\nFortiGate's performance.",
+      "impact": "",
+      "audit": "Go to \"Policy & Objects\".\nValidate that there is a firewall policy created to block inbound connections from\nsources named \"Tor-Exit.Node\", \"Tor-Relay.Node\", \"Censys-Scanner\", \"Shodan-\nScanner\", \"Botnet-C&C.Server\", \"Phishing-Phishing.Server\", \"Proxy-Proxy.Server\",\n\"Spam-Spamming.Server\", \"VPN-Anonymous.VPN\", and \"Malicious-Malicious.Server\"\non \"All\" services.\nValidate that there is a firewall policy created to block outbound connections to\ndestination named \"Tor-Relay.Node\", \"Botnet-C&C.Server\", \"Phishing-Phishing.Server\",\n\"Proxy-Proxy.Server\", \"Spam-Spamming.Server\", \"VPN-Anonymous.VPN\", and\n\"Malicious-Malicious.Server\".",
+      "remediation": "Review firewall policies and ensure there are:\n1. A firewall policy created to block inbound connections with these settings:\nPage 95\nInternal Only - General\nFrom: Any\nTo: Any\nSource: \"Tor-Exit.Node\", \"Tor-Relay.Node\", \"Censys-Scanner\", \"Shodan-\nScanner\", \"Botnet-C&C.Server\", \"Phishing-Phishing.Server\", \"Proxy-\nProxy.Server\", \"Spam-Spamming.Server\", \"VPN-Anonymous.VPN\", and \"Malicious-\nMalicious.Server\"\nDestination: all\nSchedule: Always\nServices: All\nAction: Deny\nLog Violation Traffic: Enabled\nEnable this policy: Enabled\n2. A firewall policy created to block outbound connections with these settings:\nFrom: Any\nTo: Any\nSource: All\nDestination: \"Tor-Relay.Node\", \"Botnet-C&C.Server\", \"Phishing-\nPhishing.Server\", \"Proxy-Proxy.Server\", \"Spam-Spamming.Server\", \"VPN-\nAnonymous.VPN\", and \"Malicious-Malicious.Server\"\nSchedule: Always\nAction: Deny\nLog Violation Traffic: Enabled\nEnable this policy: Enabled",
+      "default_value": "",
+      "references": [],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.2 Establish and Maintain a Secure Configuration\nProcess for Network Infrastructure\nv8\nEstablish and maintain a secure configuration process for network devices.\n● ● ●\nReview and update documentation annually, or when significant enterprise\nchanges occur that could impact this Safeguard.\n12.2 Establish and Maintain a Secure Network\nArchitecture\nv8\nEstablish and maintain a secure network architecture. A secure network\n● ●\narchitecture must address segmentation, least privilege, and availability, at a\nminimum.\n12.2 Scan for Unauthorized Connections across Trusted\nv7 Network Boundaries ● ●\nPerform regular scans from outside each trusted network boundary to detect\nany unauthorized connections which are accessible across the boundary.\nPage 96\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n12.3 Deny Communications with Known Malicious IP\nAddresses\nv7\nDeny communications with known malicious or unused Internet IP addresses\n● ●\nand limit access only to trusted and necessary IP address ranges at each of the\norganization's network boundaries,.\n13.3 Monitor and Block Unauthorized Network Traffic\nv7 Deploy an automated tool on network perimeters that monitors for ●\nunauthorized transfer of sensitive information and blocks such transfers while\nalerting information security professionals.\nPage 97\nInternal Only - General",
+      "additional_info": "",
+      "section": "Policy and Objects",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 96,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "3.4",
+      "title": "Ensure logging is enabled on all firewall policies",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Logging should be enabled for all firewall policies including the default implicit deny\npolicy.",
+      "rationale": "Firewall policies should log for all traffic (both allow and deny policies). This enables\nSOC or security analyst to do further investigations on security incidents especially on\nthreat hunting or incident response activities. Although there are many data sources that\ncan provide DNS query logs (AD or EDR), this option should be enabled out of best\npractice and with assumption that no other data sources are available.",
+      "impact": "By default, when creating firewall policies, a logging option is not enabled. Also, the\ndefault implicit deny policy is not logged. This creates a data gap in threat hunting or\nincident response activities.",
+      "audit": "Go to \"Policy & Objects\" > \"Firewall Policy\".\nValidate that logging is enabled on all firewall policies.",
+      "remediation": "Review firewall policies and ensure that:\n1. For allowed policies, \"Log Allowed Traffic\" is set on \"All Sessions\" option.\n2. For denied policies, \"Log Violation Traffic\" is enabled.",
+      "default_value": "Logging is disabled.\nPage 98\nInternal Only - General",
+      "references": [],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n8.1 Establish and Maintain an Audit Log Management\nProcess\nEstablish and maintain an audit log management process that defines the\nv8 ● ● ●\nenterprise’s logging requirements. At a minimum, address the collection, review,\nand retention of audit logs for enterprise assets. Review and update documentation\nannually, or when significant enterprise changes occur that could impact this\nSafeguard.\n13.6 Collect Network Traffic Flow Logs\nv8\nCollect network traffic flow logs and/or network traffic to review and alert upon\n● ●\nfrom network devices.\n12.5 Configure Monitoring Systems to Record Network\nv7 Packets ● ●\nConfigure monitoring systems to record network packets passing through the\nboundary at each of the organization's network boundaries.\n12.8 Deploy NetFlow Collection on Networking Boundary\nv7 Devices ● ●\nEnable the collection of NetFlow and logging data on all network boundary\ndevices.\nPage 99\nInternal Only - General\n4 Security Profiles\nThis section contains best practices related to FortiGate security features, including:\n• Inspection modes\n• Antivirus\n• Web filter\n• Filtering based on YouTube channel\n• DNS filter\n• Application control\n• Intrusion prevention\n• File filter\n• Email filter\n• Data leak prevention\n• VoIP solutions\n• ICAP\n• Web application firewall\n• SSL & SSH Inspection\n• Custom signatures\n• Overrides\nPage 100\nInternal Only - General\n4.1 Intrusion Prevention System (IPS)\nIntrusion Prevention System (IPS) Security profiles\nPage 101\nInternal Only - General",
+      "additional_info": "",
+      "section": "Policy and Objects",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 99,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.1.1",
+      "title": "Detect Botnet connections",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Interfaces which are classified as \"WAN\" and are used by a policy should use an IPS\nsensor which blocks or monitors outgoing connections to botnet sites.",
+      "rationale": "Blocking outgoing connections to known Botnets should be utilized in a Defense In\nDepth network design.",
+      "impact": "",
+      "audit": "On GUI:\n1. Ensure that relevant IPS profile is configured with \"Scan Outgoing\nConnections to Botnet Sites\" set to \"Block\".\n2. Review all firewall policies that have a \"WAN\" interface as the\ndestination.",
+      "remediation": "On GUI:\n1. Configure relevant IPS profiles with \"Scan Outgoing Connections to Botnet\nSites\" set to \"Block\".\n2. Apply relevant IPS profile on all firewall policies with traffic exiting\nthe network to a \"WAN\" interface.",
+      "default_value": "\"Scan Outgoing Connections to Botnet Sites\" is disabled on default profile.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n13.8 Deploy a Network Intrusion Prevention Solution\nv8 Deploy a network intrusion prevention solution, where appropriate. Example ●\nimplementations include the use of a Network Intrusion Prevention System\n(NIPS) or equivalent CSP service.\n12.7 Deploy Network-Based Intrusion Prevention\nv7 Systems ●\nDeploy network-based Intrusion Prevention Systems (IPS) to block malicious\nnetwork traffic at each of the organization's network boundaries.\nPage 103\nInternal Only - General",
+      "additional_info": "",
+      "section": "Intrusion Prevention System (IPS)",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 103,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.1.2",
+      "title": "Apply IPS Security Profile to Policies",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Ensuring that traffic traversing between networks on the FortiGate have an IPS security\nprofile inspecting it.",
+      "rationale": "Traffic moving between \"interfaces\" on the FortiGate should have firewall policies\napplied with an IPS security profile applied.",
+      "impact": "",
+      "audit": "Review all firewall policies and ensure that traffic has an IPS security profile assigned\nfor inspection.",
+      "remediation": "Configure on all \"Allowed\" firewall policies to have an appropriate IPS security profile\napplied to policies.",
+      "default_value": "Not Configured",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n7.5 Perform Automated Vulnerability Scans of Internal\nEnterprise Assets\nv8\nPerform automated vulnerability scans of internal enterprise assets on a\n● ●\nquarterly, or more frequent, basis. Conduct both authenticated and\nunauthenticated scans, using a SCAP-compliant vulnerability scanning tool.\n12.7 Deploy Network-Based Intrusion Prevention Systems\nv7\nDeploy network-based Intrusion Prevention Systems (IPS) to block malicious\n●\nnetwork traffic at each of the organization's network boundaries.\nPage 104\nInternal Only - General\n4.2 Antivirus\nPage 105\nInternal Only - General",
+      "additional_info": "",
+      "section": "Intrusion Prevention System (IPS)",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 105,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.2.1",
+      "title": "Ensure Antivirus Definition Push Updates are Configured",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Ensure FortiGate is configured to accept antivirus definition push updates.",
+      "rationale": "Ensure that the FortiGate will accept push updates from FortiGuard to ensure the most\nup to date signature databases are present on the device.",
+      "impact": "",
+      "audit": "On GUI:\n1. Access the FortiGate administrative web access page and go to System >\nFortiGuard.\n2. Under \"FortiGuard Updates\" ensure that the \"Scheduled updates\" is set to\n\"Automatic\".\nOn CLI:\nconfig system autoupdate schedule\nshow (Validate that there are no output, meaning it is already set as\n\"automatic\"",
+      "remediation": "On GUI:\n1. Access the FortiGate administrative web access page and go to System >\nFortiGuard.\n2. Under \"FortiGuard Updates\" ensure that the \"Scheduled updates\" is set to\n\"Automatic\".\nOn CLI:\nconfig system autoupdate schedule\nset status enable\nset frequency automatic\nend",
+      "default_value": "Enabled and set to automatic.\nPage 106\nInternal Only - General",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n10.2 Configure Automatic Anti-Malware Signature\nv8 Updates ● ● ●\nConfigure automatic updates for anti-malware signature files on all\nenterprise assets.\n8.2 Ensure Anti-Malware Software and Signatures are\nv7 Updated ● ● ●\nEnsure that the organization's anti-malware software updates its scanning\nengine and signature database on a regular basis.\nPage 107\nInternal Only - General",
+      "additional_info": "",
+      "section": "Antivirus",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 107,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.2.2",
+      "title": "Apply Antivirus Security Profile to Policies",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Ensuring that traffic traversing between networks on the FortiGate has an Antivirus\nSecurity profile inspecting it.",
+      "rationale": "Traffic moving between \"interfaces\" on the FortiGate should have firewall policies\napplied with an antivirus security profile applied.",
+      "impact": "",
+      "audit": "Review all firewall policies and ensure that traffic has an antivirus security profile\nassigned for inspection.",
+      "remediation": "Review firewall policies and apply an appropriate antivirus security profile to policies.",
+      "default_value": "No security inspection on firewall policies.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n10.1 Deploy and Maintain Anti-Malware Software\nv8 ● ● ●\nDeploy and maintain anti-malware software on all enterprise assets.\nv8\n10.6 Centrally Manage Anti-Malware Software\n● ●\nCentrally manage anti-malware software.\n8.1 Utilize Centrally Managed Anti-malware Software\nv7\nUtilize centrally managed anti-malware software to continuously monitor and\n● ●\ndefend each of the organization's workstations and servers.\nPage 108\nInternal Only - General",
+      "additional_info": "",
+      "section": "Antivirus",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 109,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.2.3",
+      "title": "Enable Outbreak Prevention Database",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Ensure FortiGate AV inspection uses outbreak prevention database as an added layer\nof protection on top of antivirus' signature-based detection.",
+      "rationale": "Antivirus mainly uses signature for malware blocking. By enabling \"FortiGuard outbreak\nprevention database\", FortiGate can leverage on 3rd party malware hash signatures\ncurated by the FortiGuard as an additional protection layer.\nThe hash signatures are obtained from FortiGuard's Global Threat Intelligence\ndatabase. The antivirus database queries FortiGuard with the hash of a scanned file. If\nFortiGuard returns a match, the scanned file is deemed to be malicious.",
+      "impact": "",
+      "audit": "On GUI:\n1. Go to \"Security Profiles\" > \"AntiVirus\".\n2. Select AV profile.\nValidate that \"Use FortiGuard outbreak prevention database\" is enabled.\nOn CLI:\nFGT1 # config antivirus profile\nFGT1 (profile) # show\nValidate that for each traffic protocol, \"set outbreak-prevention block\" is configured.",
+      "remediation": "Review Antivirus Security Profiles and validate that \"Use FortiGuard outbreak\nprevention database\" is enabled.",
+      "default_value": "Disabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n10.1 Deploy and Maintain Anti-Malware Software\nv8 ● ● ●\nDeploy and maintain anti-malware software on all enterprise assets.\nv8\n10.6 Centrally Manage Anti-Malware Software\n● ●\nCentrally manage anti-malware software.\n8.1 Utilize Centrally Managed Anti-malware Software\nv7\nUtilize centrally managed anti-malware software to continuously monitor and\n● ●\ndefend each of the organization's workstations and servers.\n8.2 Ensure Anti-Malware Software and Signatures are\nv7 Updated ● ● ●\nEnsure that the organization's anti-malware software updates its scanning\nengine and signature database on a regular basis.\n8.3 Enable Operating System Anti-Exploitation Features/\nDeploy Anti-Exploit Technologies\nv7 Enable anti-exploitation features such as Data Execution Prevention (DEP) or ● ●\nAddress Space Layout Randomization (ASLR) that are available in an operating\nsystem or deploy appropriate toolkits that can be configured to apply protection to a\nbroader set of applications and executables.\n8.6 Centralize Anti-malware Logging\nv7\nSend all malware detection events to enterprise anti-malware administration\n● ●\ntools and event log servers for analysis and alerting.\nPage 110\nInternal Only - General",
+      "additional_info": "",
+      "section": "Antivirus",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 110,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.2.4",
+      "title": "Enable AI /heuristic based malware detection",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "AI /heuristic based detection should be enabled.",
+      "rationale": "The AV Engine AI malware detection model integrates into regular AV scanning to help\ndetect potentially malicious Windows Portable Executables (PEs) in order to mitigate\nzero-day attacks. It is an additional layer of protection on top of traditional antivirus\nprotection.\nIn version 6.x, it is named \"Heuristic detection\". On version 7.x, Fortinet has renamed\nthis to AI based detection.",
+      "impact": "",
+      "audit": "Configuration and verification can be only done on CLI.\nOn CLI:\nFGT1 # show antivirus settings | grep machine-learning-detection\nValidate that it is enabled.",
+      "remediation": "On CLI:\nFGT1 # config antivirus settings\nFGT1 (settings) # set machine-learning-detection enable",
+      "default_value": "Enabled.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/cli-reference/532620/config-",
+        "https://docs.fortinet.com/document/fortigate/7.0.0/new-features/773410/ai-based-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\nv8\n10.7 Use Behavior-Based Anti-Malware Software\n● ●\nUse behavior-based anti-malware software.\n8.1 Utilize Centrally Managed Anti-malware Software\nv7\nUtilize centrally managed anti-malware software to continuously monitor and\n● ●\ndefend each of the organization's workstations and servers.\n8.2 Ensure Anti-Malware Software and Signatures are\nv7 Updated ● ● ●\nEnsure that the organization's anti-malware software updates its scanning\nengine and signature database on a regular basis.\n8.3 Enable Operating System Anti-Exploitation Features/\nDeploy Anti-Exploit Technologies\nv7 Enable anti-exploitation features such as Data Execution Prevention (DEP) or ● ●\nAddress Space Layout Randomization (ASLR) that are available in an operating\nsystem or deploy appropriate toolkits that can be configured to apply protection to a\nbroader set of applications and executables.\nPage 112\nInternal Only - General",
+      "additional_info": "",
+      "section": "Antivirus",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 112,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.2.5",
+      "title": "Enable grayware detection on antivirus",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Grayware detection should be enabled.",
+      "rationale": "Usage of grayware is generally not allowed in strict company policies and some\ngraywares can be used for malicious intent. If the file passes the virus scan, it can be\nchecked for grayware. Grayware signatures are kept up to date in the same manner as\nthe antivirus definitions.",
+      "impact": "",
+      "audit": "CLI:\nFGT1 # show antivirus settings | grep grayware\nValidate that grayware detection is enabled.",
+      "remediation": "On CLI:\nFGT1 # config antivirus settings\nFGT1 (settings) # set grayware enable",
+      "default_value": "Disabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/cli-reference/532620/config-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n10.1 Deploy and Maintain Anti-Malware Software\nv8 ● ● ●\nDeploy and maintain anti-malware software on all enterprise assets.\nv8\n10.6 Centrally Manage Anti-Malware Software\n● ●\nCentrally manage anti-malware software.\nPage 113\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n8.1 Utilize Centrally Managed Anti-malware Software\nv7\nUtilize centrally managed anti-malware software to continuously monitor and\n● ●\ndefend each of the organization's workstations and servers.\n8.2 Ensure Anti-Malware Software and Signatures are\nv7 Updated ● ● ●\nEnsure that the organization's anti-malware software updates its scanning\nengine and signature database on a regular basis.\nPage 114\nInternal Only - General",
+      "additional_info": "",
+      "section": "Antivirus",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 114,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.2.6",
+      "title": "Ensure inline scanning with FortiGuard AI-Based Sandbox Service is enabled",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Inline scanning is supported when the FortiGate is licensed with the FortiGuard AI-\nBased Sandbox Service (FAIS). It works similar to inline scanning for the FortiSandbox\nappliance, by holding a file up to 50 seconds for the verdict to be returned. Timed out\nscans can either be set to block, log, or ignore. Inline scanning can be enabled from the\nGUI on the Cloud Sandbox configuration page.",
+      "rationale": "With FAIS, unknown malware can be detected and blocked using cloud sandboxing\ntechnology. Using inline scanning with FAIS, patient zero can also be prevented. This\ncomplements the existing antivirus signature-based detection and also acts as an\nadditional layer of defense on top of FortiGate's AV heuristics feature.",
+      "impact": "",
+      "audit": "On CLI:\nconfig system fortiguard\nget\nVerify if sandbox-inline-scan is enabled. Note that, sandbox-inline-scan will only\nshow up after sandbox region is set (this is done during initial setup). If there is no\nsandbox-inline-scan in the output, it means that this feature is not enabled.\nIf sandbox-inline-scan is enabled, check on CLI if it is enforced on AV security\nprofile:\nconfig antivirus profile\nshow\nVerify if fortisandbox-mode inline is set and on each traffic protocol, fortisandbox\nblock is set.\nOn GUI:\n1. Go to Security Fabric > Fabric Connectors and double-click the Cloud\nSandbox card.\nVerify if \"Inline scan\" is enabled.\nIf \"Inline scan\" is enabled, then:\nPage 115\nInternal Only - General\n1. Go to Security Profiles > AntiVirus and double-click the relevant AV\nprofile.\nVerify if Scan strategy is set as \"Inline\" and Action is set as \"Block\"",
+      "remediation": "On GUI:\nEnable the FortiGate Cloud feature visibility:\n1. Go to System > Feature Visibility.\n2. In the Additional Features section, enable FortiGate Cloud Sandbox.\n3. Click Apply.\nConfigure the Cloud Sandbox Fabric connector:\n1. Go to Security Fabric > Fabric Connectors and double-click the Cloud\nSandbox card.\n2. Set the Type to FortiGate Cloud.\n3. Select a Region.\n4. Enable Inline scan.\n5. Click OK.\nConfigure the antivirus profile:\n1. Go to Security Profiles > AntiVirus and click Create New.\n2. Set the Feature set to Proxy-based.\n3. Enable the protocols to inspect.\n4. Enable Send files to FortiSandbox for inspection.\n5. Set the Scan strategy to Inline, and set the Action to Block.\n6. Click OK.\nOn CLI: Disable FortiSandbox appliance and FortiSandbox Cloud:\nconfig system fortisandbox\nset status disable\nend\nConfigure FortiGate Cloud Sandbox (example given is setting it as \"Global\" region):\n# execute forticloud-sandbox region\n0 Global\n1 Europe\n2 Japan\n3 US\nPlease select cloud sandbox region[0-3]:0\nCloud sandbox region is selected: Global\nEnable inline scanning for FortiGate Cloud:\nPage 116\nInternal Only - General\nconfig system fortiguard\nset sandbox-region \"Global\"\nset sandbox-inline-scan enable\nend\nEnforced on AV security profile:\nconfig antivirus profile edit set feature-set proxy set fortisandbox-mode inline config http\nset fortisandbox block end config ftp set fortisandbox block end config imap set\nfortisandbox block ..... end",
+      "default_value": "Disabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/new-features/599740/inline-"
+      ],
+      "cis_controls": "Controls Version Control IG 1 IG 2 IG 3\nv8\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nv7\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nPage 117\nInternal Only - General\n4.3 DNS Filter\nPage 118\nInternal Only - General",
+      "additional_info": "",
+      "section": "Antivirus",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 116,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.3.1",
+      "title": "Enable Botnet C&C Domain Blocking DNS Filter",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Enable Botnet C&C domain blocking to block botnet access at the DNS name resolving\nstage.",
+      "rationale": "Blocking botnet website access at the DNS resolution stage provides an additional layer\nof defense.",
+      "impact": "",
+      "audit": "On GUI:\n1. Review DNS filters under Security Profiles > DNS Filter and ensure that\n\"Redirect botnet C&C requests to Block Portal\" is enabled.\n2. Ensure that firewall policies allowing DNS traffic have a DNS Filter\nSecurity profile applied.",
+      "remediation": "On GUI:\n1. Go to Security Profiles > DNS Filter.\n2. On the relevant security profile name, double click. Enable \"Redirect\nbotnet C&C requests to Block Portal\".\n2. Ensure that firewall policies that have DNS traffic have a DNS Filter\nsecurity profile applied with that option enabled.",
+      "default_value": "\"Redirect botnet C&C requests to Block Portal\" is enabled on default profile.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n9.2 Use DNS Filtering Services\nv8\nUse DNS filtering services on all enterprise assets to block access to known\n● ● ●\nmalicious domains.\n8.6 Centralize Anti-malware Logging\nv7\nSend all malware detection events to enterprise anti-malware administration\n● ●\ntools and event log servers for analysis and alerting.\n8.7 Enable DNS Query Logging\nv7\nEnable Domain Name System (DNS) query logging to detect hostname\n● ●\nlookups for known malicious domains.\nPage 120\nInternal Only - General",
+      "additional_info": "",
+      "section": "DNS Filter",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 120,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.3.2",
+      "title": "Ensure DNS Filter logs all DNS queries and responses",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "DNS filter should log all DNS queries and responses.",
+      "rationale": "DNS filter should log all DNS queries and responses (whether the DNS category is\nblocked, monitored, or allowed). This enables SOC or security analysts to do further\ninvestigations on security incidents, especially on threat hunting or incident response\nactivities. Although there are many data sources that can provide DNS query logs (AD\nor EDR), this option should be enabled out of best practice and with the assumption that\nno other data source is available.",
+      "impact": "By default, allowed DNS is not logged. This creates a data gap in threat hunting or\nincident response activities.",
+      "audit": "GUI:\n1. Go to \"Security Profiles\" > \"DNS Filter\".\n2. Select relevant DNS Filter profile.\nValidate that \"Log all DNS queries and responses\" is enabled.\nCLI:\nFGT1 # config dnsfilter profile\nFGT1 (profile) # show\nValidate that \"set log-all-domain enable\" is configured on DNS Filter profile.",
+      "remediation": "Review DNS Filter Security Profiles and validate that \"Log all DNS queries and\nresponses\" is enabled.",
+      "default_value": "Disabled\nPage 121\nInternal Only - General",
+      "references": [
+        "https://community.fortinet.com/t5/FortiGate/Technical-Tip-FortiGate-Static-DNS-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n8.6 Collect DNS Query Audit Logs\nv8\nCollect DNS query audit logs on enterprise assets, where appropriate and\n● ●\nsupported.\n8.7 Enable DNS Query Logging\nv7\nEnable Domain Name System (DNS) query logging to detect hostname\n● ●\nlookups for known malicious domains.\nPage 122\nInternal Only - General",
+      "additional_info": "",
+      "section": "DNS Filter",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 122,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.3.3",
+      "title": "Apply DNS Filter Security Profile to Policies",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Ensuring that traffic traversing to the Internet on the FortiGate has a DNS Filter security\nprofile inspecting it.",
+      "rationale": "Traffic outbound to the Internet on the FortiGate should have firewall policies applied\nwith an DNS Filter security profile applied.",
+      "impact": "",
+      "audit": "Review firewall policies that handle traffic outbound to Internet has an DNS Filter\nsecurity profile assigned for inspection.",
+      "remediation": "Configure on \"Allowed\" firewall policies that handle traffic outbound to Internet to have\nan appropriate DNS Filter security profile applied to policies.",
+      "default_value": "Not Configured",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n10.1 Deploy and Maintain Anti-Malware Software\nv8 ● ● ●\nDeploy and maintain anti-malware software on all enterprise assets.\n8.1 Utilize Centrally Managed Anti-malware Software\nv7\nUtilize centrally managed anti-malware software to continuously monitor and\n● ●\ndefend each of the organization's workstations and servers.\nPage 123\nInternal Only - General\n4.4 Application Control\nApplication Control Security profiles\nPage 124\nInternal Only - General",
+      "additional_info": "",
+      "section": "DNS Filter",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 124,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.4.1",
+      "title": "Block high risk categories on Application Control",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Ensure FortiGate Application Control blocks high risk applications to reduce attack\nsurface.",
+      "rationale": "High risk applications such as those in \"P2P\" and \"Proxy\" are known for spreading\nmalware. Some of this traffic is encrypted and therefore is able to bypass network\nsecurity inspection (for those without decryption implemented). Blocking these\napplications from running eliminates this risk.\nIf any application that falls under \"P2P\" and \"Proxy\" is required to be allowed based on\nan organization's policy, that specific application needs to be under \"Monitor\" mode in\nthe \"Application and Filter Override\" configuration.",
+      "impact": "",
+      "audit": "GUI:\n1. Go to \"Security Profiles\" > \"Application Control\".\n2. Select App Control profile.\nValidate that \"P2P\" and \"Proxy\" category is blocked.",
+      "remediation": "Review Application Control Security Profiles and validate that \"P2P\" and \"Proxy\"\ncategory is blocked.",
+      "default_value": "All application category \"Action\" is set as \"Monitor\" by default.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n3.3 Configure Data Access Control Lists\nv8 Configure data access control lists based on a user’s need to know. Apply data ● ● ●\naccess control lists, also known as access permissions, to local and remote file\nsystems, databases, and applications.\n13.10 Perform Application Layer Filtering\nv8\nPerform application layer filtering. Example implementations include a filtering\n●\nproxy, application layer firewall, or gateway.\n14.6 Protect Information through Access Control Lists\nProtect all information stored on systems with file system, network share,\nv7 claims, application, or database specific access control lists. These controls will ● ● ●\nenforce the principle that only authorized individuals should have access to the\ninformation based on their need to access the information as a part of their\nresponsibilities.\nPage 126\nInternal Only - General",
+      "additional_info": "",
+      "section": "Application Control",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 126,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.4.2",
+      "title": "Block applications running on non-default ports",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Ensure FortiGate Application Control blocks applications running on non-default ports.",
+      "rationale": "Running applications on non-default ports is not directly a threat, but can be an\nindication of something unexpected. For example, HTTPS runs on port 443. Potentially,\nif an attacker starts a rogue HTTPS server on port 10443, it could be used for data\nexfiltration.",
+      "impact": "",
+      "audit": "On GUI:\n1. Go to \"Security Profiles\" > \"Application Control\".\n2. Select relevant App Control profile.\nValidate that \"Block applications detected on non-default ports\" option is enabled.",
+      "remediation": "GUI:\n1. Go to \"Security Profiles\" > \"Application Control\".\n2. Select relevant App Control profile.\nEnable \"Block applications detected on non-default ports\" option.\nOn CLI:\nFGT1 # config application list\nFGT1 (list) # edit <profile name>\nFGT1 (<profile name>) # set enforce-default-app-port enable",
+      "default_value": "Disabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls Version Control IG 1 IG 2 IG 3\nv8\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nv7\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nPage 128\nInternal Only - General",
+      "additional_info": "",
+      "section": "Application Control",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 128,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.4.3",
+      "title": "Ensure all Application Control related traffic is logged",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Ensure no category is set to \"Allow\" on FortiGate Application Control.",
+      "rationale": "Any category that is set as \"Allow\" on Application Control will not be logged. This\ncreates a visibility gap on security investigation. This includes \"Unknown Applications\"\ncategory.",
+      "impact": "Visibility gap, which affects incident forensics and response.",
+      "audit": "On GUI:\n1. Review \"Security Profiles\" > \"Application Control\".\n2. Select the relevant App Control profile.\nValidate that no \"Allow\" action is set on any categories.",
+      "remediation": "On GUI:\n1. Go to \"Security Profiles\" > \"Application Control\".\n2. Select the relevant App Control profile.\n3. Change any categories with \"Allow\" action to \"Monitor\".",
+      "default_value": "\"Unknown Applications\" category is set as \"Allow\".",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n13.6 Collect Network Traffic Flow Logs\nv8\nCollect network traffic flow logs and/or network traffic to review and alert\n● ●\nupon from network devices.\nv7\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nPage 130\nInternal Only - General",
+      "additional_info": "",
+      "section": "Application Control",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 130,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "4.4.4",
+      "title": "Apply Application Control Security Profile to Policies",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Ensuring that traffic traversing between networks on the FortiGate have an Application\nControl security profile inspecting it.",
+      "rationale": "Traffic moving between \"interfaces\" on the FortiGate should have firewall policies\napplied with an Application Control security profile applied.",
+      "impact": "",
+      "audit": "Review all firewall policies and ensure that traffic has an Application Control\nsecurity profile assigned for inspection.",
+      "remediation": "Configure on all \"Allowed\" firewall policies to have an appropriate Application\nControl security profile applied to policies.",
+      "default_value": "Not Configured",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n3.3 Configure Data Access Control Lists\nv8 Configure data access control lists based on a user’s need to know. Apply data ● ● ●\naccess control lists, also known as access permissions, to local and remote file\nsystems, databases, and applications.\n9.5 Implement Application Firewalls\nv7\nPlace application firewalls in front of any critical servers to verify and validate the\n●\ntraffic going to the server. Any unauthorized traffic should be blocked and logged.\nPage 131\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n18.10 Deploy Web Application Firewalls (WAFs)\nProtect web applications by deploying web application firewalls (WAFs) that\ninspect all traffic flowing to the web application for common web application attacks.\nv7 For applications that are not web-based, specific application firewalls should be\ndeployed if such tools are available for the given application type. If the traffic is\nencrypted, the device should either sit behind the encryption or be capable of\ndecrypting the traffic prior to analysis. If neither option is appropriate, a host-based\nweb application firewall should be deployed.\nPage 132\nInternal Only - General\n5 Security Fabric\nThis Section provides best practice related to configuring Fortinet Security Fabric.\nPage 133\nInternal Only - General\n5.1 Automation\nPage 134\nInternal Only - General",
+      "additional_info": "",
+      "section": "Application Control",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 132,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "5.1.1",
+      "title": "Enable Compromised Host Quarantine",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Default automation trigger configuration for when a high severity compromised host is\ndetected.",
+      "rationale": "By enabling this feature you protect your environment against compromised hosts.\nDefault automation stitch to quarantine a high severity compromised host on FortiAPs,\nFortiSwitches, and FortiClient EMS.\nPlease note that this is only applicable if you have Fortinet's solution ecosystem\n(FortiGate with FortiAP, FortiSwitches, or FortiClient EMS).",
+      "impact": "",
+      "audit": "GUI\nSecurity Fabric > Automation\nVerify Compromised Host Quarantine is enabled.",
+      "remediation": "GUI\nSecurity Fabric > Automation\nEdit and change Disabled to Enabled\nCLI\nPage 135\nInternal Only - General\nconfig system automation-action\nedit \"Quarantine on FortiSwitch + FortiAP\"\nset description \"Default automation action configuration for\nquarantining a MAC address on FortiSwitches and FortiAPs.\"\nset action-type quarantine\nnext\nedit \"Quarantine FortiClient EMS Endpoint\"\nset description \"Default automation action configuration for\nquarantining a FortiClient EMS endpoint device.\"\nset action-type quarantine-forticlient\nnext\nend\nconfig system automation-trigger\nedit \"Compromised Host - High\"\nset description \"Default automation trigger configuration for when a\nhigh severity compromised host is detected.\"\nnext\nend\nconfig system automation-stitch\nedit \"Compromised Host Quarantine\"\nset description \"Default automation stitch to quarantine a high\nseverity compromised host on FortiAPs, FortiSwitches, and FortiClient EMS.\"\nset status enable\nset trigger \"Compromised Host - High\"\nconfig actions\nedit 1\nset action \"Quarantine on FortiSwitch + FortiAP\"\nnext\nedit 2\nset action \"Quarantine FortiClient EMS Endpoint\"\nnext\nend\nnext\nend",
+      "default_value": "Not enabled",
+      "references": [],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n13.5 Manage Access Control for Remote Assets\nManage access control for assets remotely connecting to enterprise resources.\nv8 Determine amount of access to enterprise resources based on: up-to-date anti- ● ●\nmalware software installed, configuration compliance with the enterprise’s secure\nconfiguration process, and ensuring the operating system and applications are up-\nto-date.\n13.9 Deploy Port-Level Access Control\nv8 Deploy port-level access control. Port-level access control utilizes 802.1x, or ●\nsimilar network access control protocols, such as certificates, and may incorporate\nuser and/or device authentication.\nPage 136\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n8.1 Utilize Centrally Managed Anti-malware Software\nv7\nUtilize centrally managed anti-malware software to continuously monitor and\n● ●\ndefend each of the organization's workstations and servers.\n8.3 Enable Operating System Anti-Exploitation Features/\nDeploy Anti-Exploit Technologies\nv7 Enable anti-exploitation features such as Data Execution Prevention (DEP) or ● ●\nAddress Space Layout Randomization (ASLR) that are available in an operating\nsystem or deploy appropriate toolkits that can be configured to apply protection to a\nbroader set of applications and executables.\nPage 137\nInternal Only - General\n5.2 Fabric Connectors\nSecurity Fabric Connector Configuration\nPage 138\nInternal Only - General\n5.2.1 Configure Root FortiGate for Security Fabric\nConfiguring and identifying the root FortiGate within the Security Fabric\nPage 139\nInternal Only - General",
+      "additional_info": "",
+      "section": "Automation",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 136,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "5.2.1.1",
+      "title": "Ensure Security Fabric is Configured",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Ensure Root FortiGate is configured as security fabric root.",
+      "rationale": "Without a root FortiGate configured, the security fabric is not functional and can not be\nleveraged.\nPlease note that this is only applicable if security fabric function within FortiGate is used.",
+      "impact": "Without Security Fabric enabled, visibility and management of traffic throughout an\norganization is decreased and individual FortiGate management becomes more\nintensive.",
+      "audit": "Review through the GUI:\n1. Go to \"Security Fabric\" -> Fabric Connectors and then select \"Security\nFabric Setup\".\n2. Validate that the root FortiGate has status set to enabled and the\nSecurity Fabric Role set to \"Serve as Fabric Root\".\n3. Ensure that FortiAnalyzer settings are correct and that there is a defined\nFabric name as well as interfaces selected that will \"Allow other Security\nFabric Devices to Join\".",
+      "remediation": "Remediation through the GUI:\n1. Go to \"Security Fabric\" -> Fabric Connectors and then select \"Security\nFabric Setup\".\n2. On the root FortiGate, set the status to enabled and the Security Fabric\nRole to \"Serve as Fabric Root\".\n3. Configure FortiAnalyzer settings when prompted and define a Fabric name as\nwell as interfaces that will \"Allow other Security Fabric Devices to Join\".",
+      "default_value": "Disabled\nPage 140\nInternal Only - General",
+      "references": [],
+      "cis_controls": "Controls Version Control IG 1 IG 2 IG 3\nv8\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nv7\n0.0 Explicitly Not Mapped\nExplicitly Not Mapped\nPage 141\nInternal Only - General\n6 VPN\nPage 142\nInternal Only - General\n6.1 SSL VPN\nSSL VPN Best Practices\nPage 143\nInternal Only - General",
+      "additional_info": "",
+      "section": "Security Fabric",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 141,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "6.1.1",
+      "title": "Apply a Trusted Signed Certificate for VPN Portal",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Apply a signed certificate from a trusted Certificate Authority (CA) to the SSL VPN portal\nto allow users to connect securely with confidence.",
+      "rationale": "Having an unsigned or self signed certificate leaves connections open to man-in-the-\nmiddle attacks and could allow users to connect to untrusted servers.",
+      "impact": "",
+      "audit": "GUI:\n1. Access the FortiGate administrative web access page.\n2. Go to VPN > SSL-VPN Settings and assign a signed certificate in the\ndropdown for \"Server Certificate\".",
+      "remediation": "Import a signed certificate from a trusted CA through the GUI:\n1. Go to System > Certificates > Import.\n2. Then assign the certificate to the SSL VPN portal by going to VPN > SSL-\nVPN Settings and selecting the proper certificate in the dropdown for \"Server\nCertificate\".",
+      "default_value": "Self Signed Factory installed certificate",
+      "references": [],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.2 Establish and Maintain a Secure Configuration\nProcess for Network Infrastructure\nv8\nEstablish and maintain a secure configuration process for network devices.\n● ● ●\nReview and update documentation annually, or when significant enterprise\nchanges occur that could impact this Safeguard.\n1.8 Utilize Client Certificates to Authenticate Hardware\nv7 Assets ●\nUse client certificates to authenticate hardware assets connecting to the\norganization's trusted network.\nPage 144\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n12.2 Scan for Unauthorized Connections across Trusted\nv7 Network Boundaries ● ●\nPerform regular scans from outside each trusted network boundary to detect\nany unauthorized connections which are accessible across the boundary.\nPage 145\nInternal Only - General",
+      "additional_info": "",
+      "section": "SSL VPN",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 145,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "6.1.2",
+      "title": "Enable Limited TLS Versions for SSL VPN",
+      "assessment_status": "Manual",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Enable and disable TLS versions and Cipher suites for more granular control of SSL\nVPN connections and enforcing more secure connections.",
+      "rationale": "Limiting TLS versions to more secure versions as well as enforcing stronger ciphers\nincreases the security of the SSL VPN connections.",
+      "impact": "",
+      "audit": "CLI:\nconfig vpn ssl settings\nget\nValidate that:\nssl-max-prot-ver is set to tls1-3.\nssl-min-proto-ver is set to tls1-2.\nalgorithm is set to high.",
+      "remediation": "CLI:\nconfig vpn ssl settings\nset ssl-max-prot-ver tls1-3\nset ssl-min-proto ver tls1-2\nset algorithm high",
+      "default_value": "ssl-max-proto-ver : tls1-3\nssl-min-proto-ver : tls1-2\nalgorithm : high",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.0/cli-reference/362620/config-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n4.8 Uninstall or Disable Unnecessary Services on\nEnterprise Assets and Software\nv8\nUninstall or disable unnecessary services on enterprise assets and software,\n● ●\nsuch as an unused file sharing service, web application module, or service\nfunction.\n9.2 Ensure Only Approved Ports, Protocols and Services\nv7 Are Running ● ●\nEnsure that only network ports, protocols, and services listening on a system\nwith validated business needs, are running on each system.\nPage 147\nInternal Only - General\n7 Logs and Reports\nThis section provides best practices related to logging and reporting in FortiGate.\nPage 148\nInternal Only - General\n7.1 Enable Logging\nHow to enable logging on the FortiGate device.\nPage 149\nInternal Only - General",
+      "additional_info": "",
+      "section": "SSL VPN",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 147,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "7.1.1",
+      "title": "Enable Event Logging",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Enabling event logging to allow for log generation and review.",
+      "rationale": "Enabling event logging generates logs that can be stored for later review or auditing or\ncan be ingested by another system (SIEM, Analyzer) for monitoring and response.",
+      "impact": "",
+      "audit": "CLI:\nconfig log eventfilter\nget\nValidate that all event types are enabled.",
+      "remediation": "On GUI:\n1. Go to Log & Report > Log Settings.\n2. Enable \"All\" Event Logging.\nOn CLI:\nconfig log eventfilter\nset event enable\nend",
+      "default_value": "Enabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.6/administration-guide/250999"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n8.2 Collect Audit Logs\nv8\nCollect audit logs. Ensure that logging, per the enterprise’s audit log\n● ● ●\nmanagement process, has been enabled across enterprise assets.\n8.5 Collect Detailed Audit Logs\nv8 Configure detailed audit logging for enterprise assets containing sensitive data. ● ●\nInclude event source, date, username, timestamp, source addresses, destination\naddresses, and other useful elements that could assist in a forensic investigation.\n8.9 Centralize Audit Logs\nv8\nCentralize, to the extent possible, audit log collection and retention across\n● ●\nenterprise assets.\n6.2 Activate audit logging\nv7\nEnsure that local logging has been enabled on all systems and networking\n● ● ●\ndevices.\n6.3 Enable Detailed Logging\nv7 Enable system logging to include detailed information such as an event source, ● ●\ndate, user, timestamp, source addresses, destination addresses, and other useful\nelements.\n8.8 Enable Command-line Audit Logging\nv7\nEnable command-line audit logging for command shells, such as Microsoft\n● ●\nPowershell and Bash.\nPage 151\nInternal Only - General\n7.2 Encrypt Logs Sent to FortiAnalyzer / FortiManager\nEnsure that logs sent to FortiAnalyzer or FortiManager are encrypted during\ntransmission.\nPage 152\nInternal Only - General",
+      "additional_info": "",
+      "section": "Enable Logging",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 151,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "7.2.1",
+      "title": "Encrypt Log Transmission to FortiAnalyzer / FortiManager",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 1"
+      ],
+      "description": "Enable encryption for logs that are sent to FortiAnalyzer or FortiManager.",
+      "rationale": "Provides encryption for logs that are sent to FortiAnalyzer or FortiManager to prevent\nlogs being collected and viewed as they traverse the network.",
+      "impact": "",
+      "audit": "CLI:\nconfig log fortianalyzer setting\nget\nValidate enc-algorithm is set to high.\nValidate reliable is set enabled.",
+      "remediation": "Secure log transfer settings can only be configured on CLI:\nconfig log fortianalyzer setting\nset reliable enable\nset enc-algorithm high\nend",
+      "default_value": "Disabled",
+      "references": [
+        "https://docs.fortinet.com/document/fortianalyzer/7.2.0/administration-"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n3.10 Encrypt Sensitive Data in Transit\nv8\nEncrypt sensitive data in transit. Example implementations can include:\n● ●\nTransport Layer Security (TLS) and Open Secure Shell (OpenSSH).\nv7\n14.4 Encrypt All Sensitive Information in Transit\n● ●\nEncrypt all sensitive information in transit.\nPage 154\nInternal Only - General\n7.3 Centralized Logging and Reporting\nLogging and Reporting should be done to a Centralized device\nPage 155\nInternal Only - General",
+      "additional_info": "",
+      "section": "Encrypt Logs Sent to FortiAnalyzer / FortiManager",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 154,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    },
+    {
+      "framework": "CIS",
+      "benchmark_id": "CIS_Fortigate_7.0.x",
+      "vendor": "Fortinet",
+      "product": "FortiGate",
+      "benchmark_version": "1.4.0",
+      "rule_id": "7.3.1",
+      "title": "Centralized Logging and Reporting",
+      "assessment_status": "Automated",
+      "profile": [
+        "Level 2"
+      ],
+      "description": "Device logs should be sent to a centralized device for log collection, retention, and\nreporting. This could be a SIEM. syslog device, FortiAnalyzer, FortiManager, etc.",
+      "rationale": "Centralized logging allows for more reliable log retention and more enriched log data for\nreview and reporting.",
+      "impact": "",
+      "audit": "On GUI:\n1. Go to Log & Report > Log Settings.\n2. Validate under \"Syslog logging\" that logs are being offloaded to another\ndevice.",
+      "remediation": "Configure a remote server for logs to be sent to:\n1. Go to Log & Report > Log Settings.\n2. Under \"Syslog logging\" configure a remote server to send logs to.",
+      "default_value": "Not configured.",
+      "references": [
+        "https://docs.fortinet.com/document/fortigate/7.2.6/administration-guide/250999"
+      ],
+      "cis_controls": "Controls\nControl IG 1 IG 2 IG 3\nVersion\n8.1 Establish and Maintain an Audit Log Management\nProcess\nEstablish and maintain an audit log management process that defines the\nv8 ● ● ●\nenterprise’s logging requirements. At a minimum, address the collection, review,\nand retention of audit logs for enterprise assets. Review and update documentation\nannually, or when significant enterprise changes occur that could impact this\nSafeguard.\nPage 156\nInternal Only - General\nControls\nControl IG 1 IG 2 IG 3\nVersion\n8.9 Centralize Audit Logs\nv8\nCentralize, to the extent possible, audit log collection and retention across\n● ●\nenterprise assets.\n6.3 Enable Detailed Logging\nv7 Enable system logging to include detailed information such as an event source, ● ●\ndate, user, timestamp, source addresses, destination addresses, and other useful\nelements.\n8.6 Centralize Anti-malware Logging\nv7\nSend all malware detection events to enterprise anti-malware administration\n● ●\ntools and event log servers for analysis and alerting.\nPage 157\nInternal Only - General",
+      "additional_info": "",
+      "section": "Centralized Logging and Reporting",
+      "source": {
+        "file": "CIS_Fortigate_7.0.x_Benchmark_v1.4.0.pdf",
+        "hash": "1692d30903ede16bd849aec848659520582b3d3154fd7e67de1794520b5f161b",
+        "page": 157,
+        "benchmark_id": "CIS_Fortigate_7.0.x",
+        "benchmark_version": "1.4.0"
+      },
+      "evaluation_type": "MANUAL"
+    }
+  ],
+  "extraction_warnings": []
+}

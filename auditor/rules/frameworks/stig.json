@@ -1,0 +1,47 @@
+{
+  "framework_id": "stig",
+  "name": "DISA STIG",
+  "version": "V2R1",
+  "description": "DISA Security Technical Implementation Guide",
+  "mappings": {
+    "aaa_enabled": {
+      "default": { "id": "STIG-CCI-000015", "control_ref": "CCI-000015", "verified": true }
+    },
+    "secure_vty_transport": {
+      "default": { "id": "STIG-CCI-000366", "control_ref": "CCI-000366", "verified": true }
+    },
+    "vty_idle_timeout": {
+      "default": { "id": "STIG-CCI-000057", "control_ref": "CCI-000057", "verified": true }
+    },
+    "enable_secret_encrypted": {
+      "default": { "id": "STIG-CCI-000200", "control_ref": "CCI-000200", "verified": true }
+    },
+    "no_default_snmp_community": {
+      "default": { "id": "STIG-SNMP-DEFAULT-INTERNAL", "control_ref": null, "verified": false }
+    },
+    "http_server_disabled": {
+      "default": { "id": "STIG-CCI-000381", "control_ref": "CCI-000381", "verified": true }
+    },
+    "ssh_version_2": {
+      "default": { "id": "STIG-CCI-000068", "control_ref": "CCI-000068", "verified": true }
+    },
+    "logging_enabled": {
+      "default": { "id": "STIG-CCI-000130", "control_ref": "CCI-000130", "verified": true }
+    },
+    "management_acl": {
+      "default": { "id": "STIG-MGMT-ACL-INTERNAL", "control_ref": null, "verified": false }
+    },
+    "login_banner": {
+      "default": { "id": "STIG-CCI-000048", "control_ref": "CCI-000048", "verified": true }
+    },
+    "password_min_length": {
+      "default": { "id": "STIG-CCI-000200-LEN", "control_ref": "CCI-000200", "verified": true }
+    },
+    "ntp_configured": {
+      "default": { "id": "STIG-CCI-000159", "control_ref": "CCI-000159", "verified": true }
+    },
+    "no_write_snmp_community": {
+      "default": { "id": "STIG-SNMP-RW-INTERNAL", "control_ref": null, "verified": false }
+    }
+  }
+}

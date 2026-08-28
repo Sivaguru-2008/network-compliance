@@ -1,0 +1,97 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure external TACACS+ / RADIUS authentication on SONiC.",
+    "cli": [
+      "config tacacs add 10.20.30.42"
+    ],
+    "notes": "Ensures authentication requests are processed centrally."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable telnet and ensure SSH is enabled.",
+    "cli": [
+      "config telnet disable",
+      "config ssh server start"
+    ],
+    "notes": "Disables unencrypted administrative CLI ports."
+  },
+  "vty_idle_timeout": {
+    "summary": "Configure session timeout.",
+    "cli": [
+      "config CLI timeout 600"
+    ],
+    "notes": "Sets automatic CLI shell teardown to 600 seconds."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Configure secure administrator account password.",
+    "cli": [
+      "config user add admin password <strong-password> role admin"
+    ],
+    "notes": "Use strong passwords for default administrative accounts."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP communities like public and private.",
+    "cli": [
+      "config snmp community del public",
+      "config snmp community del private",
+      "config snmp community add ro <unique-string>"
+    ],
+    "notes": "Ensure guessable communities are deactivated."
+  },
+  "http_server_disabled": {
+    "summary": "Disable the unencrypted HTTP management daemon.",
+    "cli": [
+      "config http disable"
+    ],
+    "notes": "Disable cleartext web GUI interface."
+  },
+  "ssh_version_2": {
+    "summary": "Verify SSH server protocol parameters.",
+    "cli": [
+      "config ssh server protocol version 2"
+    ],
+    "notes": "SSH version 2 is the default on modern Linux baselines."
+  },
+  "logging_enabled": {
+    "summary": "Add central remote syslog server in SONiC config.",
+    "cli": [
+      "config syslog add 10.20.30.40"
+    ],
+    "notes": "Forwards containerized and kernel logs to central syslog host."
+  },
+  "management_acl": {
+    "summary": "Configure ACL rule for management interface access.",
+    "cli": [
+      "config acl add table MGMT",
+      "config acl add rule MGMT permit_ssh --src 10.20.30.0/24 --dport 22"
+    ],
+    "notes": "Restricts access to management port by IP prefix."
+  },
+  "login_banner": {
+    "summary": "Configure metadata login banner.",
+    "cli": [
+      "config banner login \"Authorized Access Only. Activity is monitored.\""
+    ],
+    "notes": "Displays warning message on connection."
+  },
+  "password_min_length": {
+    "summary": "Configure password quality minimum length requirements.",
+    "cli": [
+      "config user password min-length 8"
+    ],
+    "notes": "Restricts users from creating weak passwords."
+  },
+  "ntp_configured": {
+    "summary": "Add NTP server.",
+    "cli": [
+      "config ntp add 10.20.30.41"
+    ],
+    "notes": "Synchronizes time across the cluster."
+  },
+  "no_write_snmp_community": {
+    "summary": "Remove read-write SNMP community access.",
+    "cli": [
+      "config snmp community del <rw-community>"
+    ],
+    "notes": "Only read-only SNMP communities are permitted."
+  }
+}

@@ -1,234 +1,252 @@
-# Network Security Compliance Auditor — deterministic core
+# Network Security Compliance Auditor
 
-SIH 2026 · PS **SIH26155** — AI-driven multi-vendor network security compliance auditor.
+**SIH 2026 &middot; PS SIH26155**
 
-This repository is **Step 1**: the deterministic vertical slice. It ingests one Cisco IOS
-configuration, normalizes it into a vendor-neutral **Security Baseline Model**, evaluates it
-against eight real CIS Benchmark controls, and emits a per-control report with severity,
-the exact evidence line, and CIS-sourced remediation CLI.
+Reads a network device configuration, normalizes it into a vendor-neutral
+security baseline, evaluates it against compliance frameworks (CIS, NIST 800-53,
+DISA STIG, ISO 27001), and reports `PASS` / `FAIL` / `NEEDS_REVIEW` per
+control -- each verdict backed by the exact configuration line it came from.
 
-There is deliberately **no LLM, no NLP, and no training loop yet** — but every seam they will
-plug into already exists and is documented at the end of this file.
+Runs fully offline. No API keys, no internet, no cloud dependency.
+
+---
+
+## Vendor support matrix
+
+| Vendor | Parser | Format | Offline |
+| --- | --- | --- | --- |
+| **Cisco IOS / IOS-XE** | `cisco_ios` | CLI grammar | yes |
+| **Juniper Junos** | `juniper_junos` | set format + braces format | yes |
+| **Fortinet FortiOS** | `fortinet_fortios` | config/edit block walk | yes |
+| **Arista EOS** | `arista_eos` | CLI grammar, management blocks | yes |
+| **SONiC** | `sonic` | JSON config_db.json | yes |
+| any other vendor | `llm` | LLM fallback (opt-in, `--allow-llm`) | no |
+| recognised vendor with gaps | `hybrid` | deterministic + LLM fill | no |
+
+Five configuration languages with nothing in common are normalized by five
+vendor-specific parsers into **one** `SecurityBaselineModel`. Everything
+downstream is written once: one engine, one condition grammar, one report.
+A new vendor is a parser and a rule pack -- no change to the pipeline.
 
 ---
 
 ## Quick start
 
+### Install
+
 ```bash
 python -m venv .venv
-.venv/Scripts/python -m pip install -r requirements.txt
+.venv\Scripts\activate        # Windows
+# source .venv/bin/activate   # Linux/macOS
+pip install -r requirements.txt
 ```
 
-Audit the deliberately weak sample:
+### Audit a single config
 
 ```bash
-.venv/Scripts/python -m auditor samples/insecure_ios.conf --framework CIS
+python -m auditor samples/insecure_ios.conf --framework CIS --offline
 ```
 
-Audit the hardened sample:
+Output: a colour-coded compliance table on stdout + `reports/insecure_ios.cis.json`.
+
+The vendor is auto-detected from the configuration text. No flags needed to tell
+it which device it is looking at.
+
+### Try every vendor
 
 ```bash
-.venv/Scripts/python -m auditor samples/hardened_ios.conf --framework CIS
+python -m auditor samples/insecure_ios.conf   --framework CIS --offline
+python -m auditor samples/junos_srx.conf      --framework CIS --offline
+python -m auditor samples/fortios_fgt.conf    --framework CIS --offline
+python -m auditor samples/arista/insecure.conf --framework CIS --offline
+python -m auditor samples/sonic/insecure.conf  --framework CIS --offline
 ```
 
-Both print a report table and write a JSON report to `reports/<config-name>.cis.json`.
+### Audit a fleet
 
-### CLI options
+```bash
+python -m auditor --bulk samples/configs/ \
+    --framework CIS --framework NIST_800_53 \
+    --inventory-out inventory.json --offline
+```
 
-| Flag | Purpose |
+### Generate PDF reports
+
+```bash
+pip install -r requirements-pdf.txt
+python -m auditor samples/insecure_ios.conf --framework CIS --pdf-out --offline
+python -m auditor --bulk samples/configs/ --framework CIS --pdf-dir reports/ --offline
+```
+
+### Run the web dashboard
+
+```bash
+pip install -r requirements-web.txt
+uvicorn auditor.web.app:app --port 8000
+```
+
+Open `http://localhost:8000/`. Upload configs, browse findings, download PDFs.
+
+### Run tests
+
+```bash
+python -m pytest
+```
+
+---
+
+## Offline / air-gapped operation
+
+The `--offline` flag enforces complete network isolation:
+
+1. **Socket guard** -- monkey-patches `socket.socket` to raise `RuntimeError`
+   on any connection attempt. No DNS, no HTTP, no API calls can leak.
+2. **No LLM dependency** -- deterministic parsers handle all 5 supported
+   vendors. The `anthropic` package is not imported.
+3. **Local knowledge database** -- compliance rules are seeded into a SQLite
+   database from the bundled JSON rule packs on first run. No external fetch.
+4. **Unknown vendor fallback** -- configurations from unsupported vendors
+   produce `NEEDS_REVIEW` findings (not crashes) by querying the local
+   knowledge DB for all controls in the requested framework.
+
+```bash
+# Works with no API keys, no internet, no environment variables
+python -m auditor samples/insecure_ios.conf --framework CIS --offline
+```
+
+### Knowledge base management
+
+```bash
+python -m auditor knowledge status           # verify offline readiness
+python -m auditor knowledge list             # list loaded controls
+python -m auditor knowledge export backup.db # export for transfer
+python -m auditor knowledge import backup.db # import on air-gapped host
+```
+
+---
+
+## CLI reference
+
+| Flag | Effect |
 | --- | --- |
-| `--framework CIS` | Benchmark to evaluate against (rule files are discovered by framework + platform). |
-| `--vendor auto\|cisco_ios` | Force a parser instead of auto-detecting from the config text. |
-| `--rules PATH` | Use an explicit rule file, overriding `--framework`. |
-| `-o, --json PATH` | Where to write the JSON report. |
-| `--no-json`, `--quiet`, `--no-color`, `--width N` | Output control. |
-| `--exit-code` | Exit `1` if any control FAILs, `2` if any is NEEDS_REVIEW. For CI gating. |
+| `--offline` | Strict offline mode: blocks all network calls, uses local knowledge DB. |
+| `--framework CIS` | Which rule pack to evaluate (repeatable; default `CIS`). |
+| `--bulk` | Ingest a directory/glob/file list as a batch. |
+| `--inventory-out PATH` | With `--bulk`, write device inventory JSON. |
+| `--pdf-out [PATH]` | Per-device PDF report (needs `requirements-pdf.txt`). |
+| `--pdf-dir DIR` | With `--bulk`, one PDF per device into DIR. |
+| `--vendor NAME` | Force a parser instead of auto-detecting. |
+| `--rules PATH` | Use an explicit rule pack JSON. |
+| `--json PATH` | Where to write the JSON report. |
+| `--no-json` / `--quiet` | Skip JSON / skip the table. |
+| `--strict` | Exit `1` on FAIL, `3` on NEEDS_REVIEW. |
+| `--allow-llm` | Permit LLM fallback (sends config to API). |
+| `--llm-model` | Model for LLM parsing. |
+| `--version` | Print version and exit. |
 
-Run the tests:
+**Exit codes:** `0` success, `1` findings (with `--strict`), `2` error,
+`3` needs review (with `--strict`).
+
+---
+
+## Pipeline
+
+```
+config text --> VendorParser --> SecurityBaselineModel --> ComplianceEngine --> AuditReport
+             (vendor-specific)   (vendor-neutral)         (framework-neutral)
+```
+
+Each stage is ignorant of its neighbours' internals:
+
+- The **parser** knows one vendor's syntax but nothing about CIS.
+- The **baseline** is the only thing the engine reads -- it never sees raw config.
+- The **engine** knows the condition grammar but nothing about Cisco or CIS specifics.
+- **Rules** are JSON data: a framework is a file in `auditor/rules/frameworks/`.
+
+### Design invariants
+
+1. **`NEEDS_REVIEW` is a first-class verdict.** Three-valued Kleene logic:
+   missing evidence is never rounded up to PASS.
+2. **Absence policy is per-vendor, per-setting.** The same silence means
+   different things on IOS vs Junos vs FortiOS; each parser declares what it
+   can conclude from what is not written.
+3. **Aggregation is worst-case.** If any VTY block permits telnet, the device
+   permits telnet.
+
+### Input assumption: a complete running-config
+
+The auditor assumes each input is a **complete** running-configuration, as
+produced by `show running-config` (IOS/EOS), `show configuration` (Junos),
+`show full-configuration` (FortiOS), or `config_db.json` (SONiC). Invariant #2
+depends on it: "this setting is absent, therefore it is not configured" is only
+sound when the whole config is present.
+
+Feeding a **partial excerpt** — a single feature section pasted out of a larger
+config — breaks that assumption and can produce misleading verdicts: a section
+that was simply not pasted looks identical to one that was never configured. An
+excerpt missing the admin/password-policy sections may show false `FAIL`s; an
+excerpt containing only what happens to be compliant may show false `PASS`es.
+The tool cannot distinguish "not configured" from "not included," so audit
+complete configs. This is a deliberate contract, not a defect — automatic
+partial-config detection is a possible future enhancement, deliberately out of
+scope here.
+
+---
+
+## Multi-framework compliance
+
+The 13 core security controls map across four frameworks:
+
+| Control area | CIS | NIST 800-53 | DISA STIG | ISO 27001 |
+| --- | --- | --- | --- | --- |
+| AAA / centralized auth | 1.1.1 | AC-2 | CCI-000015 | A.8.2 |
+| Cleartext transport | 1.2.2 | AC-17 | CCI-000366 | A.8.20 |
+| Idle timeout | 1.2.9 | AC-12 | CCI-000057 | A.8.19 |
+| Credential hashing | 1.4.1-1.4.2 | IA-5 | CCI-000200 | -- |
+| SNMP defaults | 1.5.2-1.5.3 | -- | -- | -- |
+| HTTP management | 2.1 | SC-7 | CCI-000381 | -- |
+| SSH version | 2.1.1.6 | SC-13 | CCI-000068 | -- |
+| Logging | 2.2.2-2.2.4 | AU-2 | CCI-000130 | A.8.10 |
+| Management ACL | 1.2 | AC-3 | -- | -- |
+| Login banner | 1.6 | AC-8 | CCI-000048 | -- |
+| Password policy | 1.1 | IA-5(1) | CCI-000200 | A.5.17 |
+| NTP | 2.3 | AU-8 | CCI-000159 | -- |
+| SNMP read-only | 1.5 | -- | -- | -- |
+
+Evaluate multiple frameworks in a single pass:
 
 ```bash
-.venv/Scripts/python -m pytest -q
+python -m auditor samples/insecure_ios.conf \
+    --framework CIS --framework NIST_800_53 --framework STIG --framework ISO_27001 \
+    --offline
 ```
 
 ---
 
-## What the output looks like
-
-```
-STATUS        SEV    CONTROL         TITLE                              EVIDENCE
-FAIL          HIGH   CIS-IOS-1.2.5   Set 'transport input ssh' for '... line vty 0 4 / transport...
-FAIL          MEDIUM CIS-IOS-2.1.5   Configure 'no ip http server'      L16: ip http server
-NEEDS_REVIEW  HIGH   CIS-IOS-2.1.6   Configure 'ip ssh version 2'       <no evidence>
-
- Summary    : 0 PASS   7 FAIL   1 NEEDS_REVIEW   of 8 controls
- Score      : 0.0% (NEEDS_REVIEW counts against the score: unverified is not compliant)
-```
-
-Every finding is then expanded with its reason, evidence lines, risk rationale, and the exact
-remediation commands.
-
----
-
-## Architecture
-
-Four stages, four contracts. Each stage can be replaced without touching the others.
-
-```
-config text
-    │
-    ▼  VendorParser.parse()                  parsers/
-SecurityBaselineModel   ← vendor-neutral, evidence-carrying   models/baseline.py
-    │
-    ▼  rule engine (three-valued logic)      engine/
-ControlResult[]         ← PASS / FAIL / NEEDS_REVIEW + evidence + remediation
-    │
-    ▼  report renderers                      report/
-CLI table  +  JSON report
-```
+## Project layout
 
 ```
 auditor/
-├── models/
-│   ├── observation.py   Observation[T] + Evidence: value, detected, source_line, why
-│   ├── baseline.py      SecurityBaselineModel — the parse/evaluate contract
-│   └── findings.py      Status, Severity, ControlResult, AuditReport
-├── parsers/
-│   ├── base.py          VendorParser ABC + ParserRegistry (auto-detect, fallback slot)
-│   └── cisco_ios.py     CiscoIOSParser, built on ciscoconfparse2
-├── rules/
-│   ├── schema.py        ComplianceRule, Condition, Operator — rules are inert data
-│   ├── loader.py        discovery + validation of rule files
-│   └── frameworks/
-│       └── cis_cisco_ios.json     the 8 CIS controls
-├── engine/
-│   ├── tristate.py      Kleene TRUE / FALSE / UNKNOWN
-│   ├── resolver.py      "vty_exec_timeout.total_seconds" → value + evidence
-│   ├── operators.py     the only comparisons a rule file may use
-│   └── evaluator.py     rule + baseline → ControlResult
-├── report/
-│   ├── table.py         human-readable CLI rendering
-│   └── json_report.py   structured JSON (schema generated from the model)
-├── pipeline.py          parse → normalize → evaluate → report
-└── cli.py               argparse entry point (python -m auditor)
+  parsers/           vendor-specific parsers (IOS, Junos, FortiOS, EOS, SONiC, LLM, hybrid)
+  models/            SecurityBaselineModel, Observation[T], rules, results, identity, inventory
+  engine/            ComplianceEngine + three-valued condition evaluator
+  rules/frameworks/  JSON rule packs per vendor per framework
+  knowledge/         SQLite knowledge DB for offline operation
+  pipeline.py        single-file audit stages (shared by CLI and bulk)
+  ingest.py          bulk orchestration, dedup, fleet inventory
+  cli.py             CLI entry point
+  report/            table, JSON, PDF renderers
+  training/          LLM training loop (threshold fitting, worked examples)
+  web/               FastAPI dashboard (upload, inventory, findings, PDF download)
+samples/             test configurations for all 5 vendors
+tests/               test suite
 ```
-
-### The Security Baseline Model
-
-Every security-relevant setting is an `Observation`, never a bare value:
-
-```python
-Observation(
-    value=True,                       # normalized, vendor-neutral
-    detected=True,                    # is this backed by evidence?
-    evidence_type="explicit",         # explicit | absence | none
-    source_line=" transport input telnet",
-    evidence=[Evidence(text=..., line_number=..., context="line vty 0 4")],
-    note="At least one vty line accepts cleartext telnet.",
-)
-```
-
-Current fields: `aaa_enabled`, `enable_secret_set`, `password_encryption`, `telnet_enabled`,
-`ssh_version`, `http_server_enabled`, `vty_exec_timeout`, `logging_enabled`,
-`snmp_communities`, plus `device` provenance and the structural `terminal_lines`.
-
-### Evidence policy — why NEEDS_REVIEW exists
-
-The parser is allowed to reach exactly three conclusions about any setting:
-
-| Evidence type | Meaning | `detected` | Verdict effect |
-| --- | --- | --- | --- |
-| `explicit` | A config line states the value (`ip ssh version 2`). | `True` | PASS or FAIL |
-| `absence` | The directive is one IOS *always* renders when active, so its absence proves the feature is **off** (`aaa new-model`, `service password-encryption`, `enable secret`, `logging host`). | `True` | Fails **closed** |
-| `none` | The setting genuinely cannot be read from the text — a platform default applies, or the excerpt is partial. | `False` | **NEEDS_REVIEW** |
-
-The third case is the important one. `ip http server` is on by default on some IOS images and
-off on others, so a config with neither `ip http server` nor `no ip http server` is unknowable
-from text alone. The tool says so instead of guessing. **A control we could not verify is never
-reported as compliant** — and NEEDS_REVIEW counts against the compliance score.
-
-The engine evaluates rules with three-valued (Kleene) logic, so a missing input only decides
-the outcome when it actually matters:
-
-* `telnet_disabled AND timeout_ok` → **FAIL** if telnet is proven on, even when the timeout is unknown.
-* `sshv2 OR telnet_disabled` → **PASS** if either is proven, even when the other is unknown.
-* Only when the unknown input is decisive does the control become NEEDS_REVIEW.
 
 ---
 
-## The eight CIS controls
+## Requirements
 
-| Rule id | CIS control(s) | Severity | Check (baseline field) |
-| --- | --- | --- | --- |
-| `CIS-IOS-1.1.1` | 1.1.1 | medium | `aaa_enabled` is true |
-| `CIS-IOS-1.2.5` | 1.2.5 | high | `telnet_enabled` is false (no vty accepts telnet/all) |
-| `CIS-IOS-1.2.7` | 1.2.7 | medium | `vty_exec_timeout` not disabled **and** ≤ 600 s |
-| `CIS-IOS-1.4.1` | 1.4.1, 1.4.2 | high | `enable_secret_set` **and** `password_encryption` |
-| `CIS-IOS-1.5.2` | 1.5.2, 1.5.3 | high | no `snmp_communities` named `public` / `private` |
-| `CIS-IOS-2.1.5` | 2.1.5 | medium | `http_server_enabled` is false |
-| `CIS-IOS-2.1.6` | 2.1.6 | high | `ssh_version` equals 2 |
-| `CIS-IOS-2.2.2` | 2.2.2, 2.2.3 | medium | `logging_enabled` is true |
-
-> **On the control numbers:** these follow the published CIS Cisco IOS Benchmark section
-> numbering. The check logic and the remediation commands are the substantive part and are
-> independent of the numbering — verify the exact section numbers against your licensed copy of
-> the benchmark before using the output in a formal audit.
-
-### Adding a control or a framework
-
-Rules are pure JSON — no Python, no vendor syntax:
-
-```json
-{
-  "id": "CIS-IOS-1.1.1",
-  "severity": "medium",
-  "check": { "field": "aaa_enabled", "op": "is_true" },
-  "remediation": { "summary": "...", "commands": ["configure terminal", " aaa new-model", "end"] }
-}
-```
-
-Conditions can nest with `all_of` / `any_of` / `not`, and address structured values by path
-(`vty_exec_timeout.total_seconds`) or list contents (`item_path: "name"`). A rule file is
-validated against `SecurityBaselineModel` at load time, so a typo in a field name fails loudly
-instead of silently producing NEEDS_REVIEW for every device.
-
-A new framework is a new file in `auditor/rules/frameworks/` with its own `framework` and
-`platform` header — it is discovered automatically. If a rule needs a setting nobody normalizes
-yet, add the field to the baseline model **first**, then the rule.
-
----
-
-## How the LLM parser and the training loop plug in later
-
-The single extension point is `VendorParser` (`auditor/parsers/base.py`): one method,
-`parse(config_text) -> SecurityBaselineModel`. Step 2's `LLMParser` implements that same
-interface for vendors we have no deterministic grammar for — it prompts the model to emit the
-baseline schema as JSON, validates the response with the same pydantic model (so a
-hallucinated field is a validation error, not a silent wrong answer), and marks its output with
-`DeviceInfo.parser="llm"` and a `confidence` below 1.0. It registers via
-`REGISTRY.set_fallback(LLMParser)`, so auto-detection uses the deterministic parser whenever
-one claims the config and only falls back to the model otherwise. The rule engine, the rule
-files, the report layer and the CLI need **no changes at all** — they only ever see a baseline.
-The training/feedback loop then closes on the same contract: because every `Observation`
-carries its `source_line` and every `ControlResult` carries the evidence it used, a reviewer
-correcting a NEEDS_REVIEW or a wrong value produces a `(config snippet → correct normalized
-field)` pair automatically. Those pairs become few-shot examples and fine-tuning data for the
-LLM parser, and — where a correction reveals a pattern the deterministic parser could have
-matched — a new regex in `CiscoIOSParser`, which is always preferred because it is free,
-instant, and reproducible. NEEDS_REVIEW is therefore not just a safety valve: it is the label
-queue that the learning loop feeds on.
-
----
-
-## Samples
-
-| File | Purpose |
-| --- | --- |
-| `samples/hardened_ios.conf` | Reasonably hardened device — currently 8/8 PASS. |
-| `samples/insecure_ios.conf` | Telnet on, HTTP server on, `public`/`private` SNMP, no logging, no AAA, SSHv1, plaintext enable password, `exec-timeout 0 0` — currently 8/8 FAIL. |
-
-The tests also cover a third, *ambiguous* configuration (inline in `tests/conftest.py`) that is
-silent about SSH version, HTTP server, and vty transports, and must therefore produce
-NEEDS_REVIEW rather than PASS for those three controls.
-
-Nothing is keyed to a file name: `tests/test_engine.py` patches a single line in each sample and
-asserts that exactly the affected control flips verdict.
+- **Core:** `pip install -r requirements.txt` (deterministic parsing, no network needed)
+- **PDF reports:** `pip install -r requirements-pdf.txt` (reportlab)
+- **Web dashboard:** `pip install -r requirements-web.txt` (FastAPI + uvicorn)
+- **LLM fallback:** `pip install -r requirements-llm.txt` (anthropic SDK + API key)

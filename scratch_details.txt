@@ -1,0 +1,438 @@
+=== RECOMMENDATION 1.1.2 (Automated) ===
+Title: Ensure 'Login Banner' is set
+1.1.2 Ensure 'Login Banner' is set (Automated)
+Profile Applicability:
+• Level 1
+Description:
+Configure a login banner, ideally approved by the organization’s legal team. This banner
+should, at minimum, prohibit unauthorized access, provide notice of logging or
+monitoring, and avoid using the word “welcome” or similar words of invitation.
+Rationale:
+Through a properly stated login banner, the risk of unintentional access to the device by
+unauthorized users is reduced. Should legal action take place against a person
+accessing the device without authorization, the login banner greatly diminishes a
+defendant’s claim of ignorance.
+Audit:
+Navigate to Device > Setup > Management > General Settings.
+Verify that Login Banner is set appropriately for your organization.
+Remediation:
+Navigate to Device > Setup > Management > General Settings.
+Set Login Banner as appropriate for your organization.
+Default Value:
+Not configured
+References:
+1. “PAN-OS Administrator's Guide 11.1 (English) - Configuring Logon Banners” -
+https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-admin/firewall-
+administration/use-the-web-interface/configure-banners-message-of-the-day-
+and-logos
+Page 24
+CIS Controls:
+Controls
+Control IG 1 IG 2 IG 3
+Version
+14.1 Establish and Maintain a Security Awareness
+Program
+Establish and maintain a security awareness program. The purpose of a security
+v8 ● ● ●
+awareness program is to educate the enterprise’s workforce on how to interact with
+enterprise assets and data in a secure manner. Conduct training at hire and, at a
+minimum, annually. Review and update content annually, or when significant
+enterprise changes occur that could impact this Safeguard.
+17.3 Implement a Security Awareness Program
+Create a security awareness program for all workforce members to complete on
+v7 a regular basis to ensure they understand and exhibit the necessary behaviors and ● ● ●
+skills to help ensure the security of the organization. The organization's security
+awareness program should be communicated in a continuous and engaging
+manner.
+Page 25
+
+========================================
+
+=== RECOMMENDATION 1.1.3 (Automated) ===
+Title: Ensure 'Enable Log on High DP Load' is enabled
+1.1.3 Ensure 'Enable Log on High DP Load' is enabled
+(Automated)
+Profile Applicability:
+• Level 1
+Description:
+Enable the option 'Enable Log on High DP Load' feature. When this option is selected, a
+system log entry is created when the device’s packet processing load reaches 100%
+utilization.
+Rationale:
+When the device’s packet processing load reaches 100%, a degradation in the
+availability of services accessed through the device can occur. Logging this event can
+help with troubleshooting system performance.
+Impact:
+Sustained attacks, especially volumetric DOS and DDOS attacks will often affect CPU
+utilization. This setting will generate an event that is easily monitored for and alerted on.
+While setting CPU utilization watermarks in a Network Management System is a
+standard practice, this setting does not depend on even having an NMS, it doesn't
+require anything other than standard logging to implement.
+Audit:
+Navigate to Device > Setup > Management > Logging and Reporting Settings
+> Log Export and Reporting.
+Verify Enable Log on High DP Load is checked.
+Remediation:
+Navigate to Device > Setup > Management > Logging and Reporting Settings
+> Log Export and Reporting.
+Set the Enable Log on High DP Load box to checked.
+Default Value:
+Not enabled
+References:
+1. "Logging Best Practices" - https://live.paloaltonetworks.com/t5/best-practice-
+assessment-device/logging-and-reporting-settings-log-on-high-dp-mode/ta-
+p/336964
+Page 26
+CIS Controls:
+Controls
+Control IG 1 IG 2 IG 3
+Version
+8.1 Establish and Maintain an Audit Log Management
+Process
+Establish and maintain an audit log management process that defines the
+v8 ● ● ●
+enterprise’s logging requirements. At a minimum, address the collection, review,
+and retention of audit logs for enterprise assets. Review and update documentation
+annually, or when significant enterprise changes occur that could impact this
+Safeguard.
+6.2 Activate audit logging
+v7
+Ensure that local logging has been enabled on all systems and networking
+● ● ●
+devices.
+Page 27
+1.2 Management Interface Settings
+The Management Interface settings include restrictions on how management interfaces
+are accessed, secured, and used.
+Page 28
+
+========================================
+
+=== RECOMMENDATION 1.2.3 (Automated) ===
+Title: Ensure HTTP and Telnet options are disabled for the management interface
+1.2.3 Ensure HTTP and Telnet options are disabled for the
+management interface (Automated)
+Profile Applicability:
+• Level 1
+Description:
+HTTP and Telnet options should not be enabled for device management.
+Rationale:
+Management access over cleartext services such as HTTP or Telnet could result in a
+compromise of administrator credentials and other sensitive information related to
+device management. Theft of either administrative credentials or session data is easily
+accomplished with a "Man in the Middle" attack.
+Audit:
+Navigate to Device > Setup > Interfaces > Management.
+Verify that the HTTP and Telnet options are both unchecked.
+Remediation:
+Navigate to Device > Setup > Interfaces > Management.
+Set the HTTP and Telnet boxes to unchecked.
+Default Value:
+Not set. (HTTP and Telnet are disabled by default)
+References:
+1. "How to Configure a Layer 3 Interface to act as a Management Port" -
+https://live.paloaltonetworks.com/t5/Configuration-Articles/How-to-Configure-a-
+Layer-3-Interface-to-act-as-a-Management-Port/ta-p/59024
+2. “PAN-OS Administrator's Guide 9.0 (English) - Best Practices for Securing
+Administrative Access": https://docs.paloaltonetworks.com/pan-os/9-0/pan-os-
+admin/getting-started/best-practices-for-securing-administrative-access.html#
+Page 33
+CIS Controls:
+Controls
+Control IG 1 IG 2 IG 3
+Version
+4.8 Uninstall or Disable Unnecessary Services on
+Enterprise Assets and Software
+v8
+Uninstall or disable unnecessary services on enterprise assets and software,
+● ●
+such as an unused file sharing service, web application module, or service
+function.
+9.2 Ensure Only Approved Ports, Protocols and Services
+v7 Are Running ● ●
+Ensure that only network ports, protocols, and services listening on a system
+with validated business needs, are running on each system.
+v7
+14.4 Encrypt All Sensitive Information in Transit
+● ●
+Encrypt all sensitive information in transit.
+16.5 Encrypt Transmittal of Username and
+v7 Authentication Credentials ● ●
+Ensure that all account usernames and authentication credentials are
+transmitted across networks using encrypted channels.
+Page 34
+
+========================================
+
+=== RECOMMENDATION 1.3.2 (Automated) ===
+Title: Ensure 'Minimum Length' is greater than or equal to 12
+1.3.2 Ensure 'Minimum Length' is greater than or equal to 12
+(Automated)
+Profile Applicability:
+• Level 1
+Description:
+This determines the least number of characters that make up a password for a user
+account.
+Rationale:
+A longer password is much more difficult to attack, either directly against administrative
+interfaces or cryptographically, against captured password hashes. Making a password
+of greater length will generally have a greater impact in this regard, in comparison to
+making a shorter password more complex. Passphrases are a commonly used
+recommendation, to make longer passwords more palatable to end users.
+Administrative staff however generally use "password safe" applications, so a long and
+complex password is more easily implemented for most infrastructure administrative
+interfaces.
+Impact:
+Longer passwords are much more difficult to attack. This is true of attacks against the
+administrative interfaces themselves, or of decryption attacks against captured hashes.
+A longer password will almost always have a more positive impact than a shorter but
+more complex password.
+Audit:
+Navigate to Device > Setup > Management > Minimum Password Complexity.
+Verify Minimum Length is greater than or equal to 12
+Remediation:
+Navigate to Device > Setup > Management > Minimum Password Complexity.
+Set Minimum Length to greater than or equal to 12
+Default Value:
+Not enabled.
+Page 42
+References:
+1. “PAN-OS Administrator's Guide 9.0 (English) - Best Practices for Securing
+Administrative Access” - https://docs.paloaltonetworks.com/pan-os/9-0/pan-os-
+admin/getting-started/best-practices-for-securing-administrative-access.html
+CIS Controls:
+Controls
+Control IG 1 IG 2 IG 3
+Version
+5.2 Use Unique Passwords
+v8 Use unique passwords for all enterprise assets. Best practice implementation ● ● ●
+includes, at a minimum, an 8-character password for accounts using MFA and a
+14-character password for accounts not using MFA.
+4.2 Change Default Passwords
+v7
+Before deploying any new asset, change all default passwords to have values
+● ● ●
+consistent with administrative level accounts.
+Page 43
+
+========================================
+
+=== RECOMMENDATION 1.4.1 (Automated) ===
+Title: Ensure 'Idle timeout' is less than or equal to 10 minutes for device management
+1.4.1 Ensure 'Idle timeout' is less than or equal to 10 minutes for
+device management (Automated)
+Profile Applicability:
+• Level 1
+Description:
+Set the Idle Timeout value for device management to 10 minutes or less to
+automatically close inactive sessions.
+Rationale:
+An unattended computer with an open administrative session to the device could allow
+an unauthorized user access to the firewall’s management interface.
+Audit:
+Navigate to Device > Setup > Management > Authentication Settings.
+Verify Idle Timeout is less than or equal to 10.
+Remediation:
+Navigate to Device > Setup > Management > Authentication Settings.
+Set Idle Timeout to less than or equal to 10.
+Default Value:
+Not configured
+References:
+1. “How to Change the Admin Session Timeout Value” -
+https://live.paloaltonetworks.com/docs/DOC-5557
+2. “PAN-OS Administrator's Guide 11.1 (English) - Device - Setup - Management” -
+https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-web-interface-
+help/device/device-setup-management#
+Page 61
+CIS Controls:
+Controls
+Control IG 1 IG 2 IG 3
+Version
+4.3 Configure Automatic Session Locking on Enterprise
+Assets
+v8
+Configure automatic session locking on enterprise assets after a defined period
+● ● ●
+of inactivity. For general purpose operating systems, the period must not exceed
+15 minutes. For mobile end-user devices, the period must not exceed 2 minutes.
+16.11 Lock Workstation Sessions After Inactivity
+v7 ● ● ●
+Automatically lock workstation sessions after a standard period of inactivity.
+Page 62
+
+========================================
+
+=== RECOMMENDATION 1.4.2 (Automated) ===
+Title: Ensure 'Failed Attempts' and 'Lockout Time' for Authentication Profile are properly configured
+1.4.2 Ensure 'Failed Attempts' and 'Lockout Time' for
+Authentication Profile are properly configured (Automated)
+Profile Applicability:
+• Level 1
+Description:
+Configure values for Failed Login Attempts and Account Lockout Time set to
+organization-defined values (for example, 3 failed attempts and a 15 minute lockout
+time). Do not set Failed Attempts and Lockout Time in the Authentication Settings
+section; any Failed Attempts or Lockout Time settings within the selected Authentication
+Profile do not apply in the Authentication Settings section.
+Rationale:
+Without a lockout limit, an attacker can continuously guess administrators’ passwords.
+From the other point of view, if lockout settings are configured in the Authentication
+Settings section it may be possible for an attacker to continuously lock out all
+administrative accounts from accessing the device. This potential situation indicates the
+importance of using named administrative accounts, instead of the default, single
+shared "admin" account.
+Audit:
+Navigate to Device > Authentication Profile.
+Verify Failed Attempts is set a non-zero organization-defined value.
+Verify Lockout Time is set to a non-zero organization-defined value.
+Remediation:
+Navigate to Device > Authentication Profile.
+Set Failed Attempts to the non-zero organization-defined value.
+Set Lockout Time to the non-zero organization-defined value.
+Default Value:
+Not configured
+References:
+1. “PAN-OS Administrator's Guide 11.1 (English) - Device - Setup - Management” -
+https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-web-interface-
+help/device/device-setup-management#
+Page 63
+2. “PAN-OS Administrator's Guide 11.1 (English) - Authentication Profile" -
+https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-web-interface-
+help/device/device-authentication-profile
+Additional Information:
+Both values must be set. If either value is not set, account lockout does not occur.
+CIS Controls:
+Controls
+Control IG 1 IG 2 IG 3
+Version
+4.3 Configure Automatic Session Locking on Enterprise
+Assets
+v8
+Configure automatic session locking on enterprise assets after a defined period
+● ● ●
+of inactivity. For general purpose operating systems, the period must not exceed
+15 minutes. For mobile end-user devices, the period must not exceed 2 minutes.
+16.11 Lock Workstation Sessions After Inactivity
+v7 ● ● ●
+Automatically lock workstation sessions after a standard period of inactivity.
+Page 64
+1.5 SNMP Polling Settings
+SNMP polling sets out requirements for using SNMP.
+Page 65
+
+========================================
+
+=== RECOMMENDATION 1.5.1 (Automated) ===
+Title: Ensure 'V3' is selected for SNMP polling
+1.5.1 Ensure 'V3' is selected for SNMP polling (Automated)
+Profile Applicability:
+• Level 1
+Description:
+For SNMP polling, only SNMPv3 should be used.
+Rationale:
+SNMPv3 utilizes AES-128 encryption, message integrity, user authorization, and device
+authentication security features. SNMPv2c does not provide these security features. If
+an SNMPv2c community string is intercepted or otherwise obtained, an attacker could
+gain read access to the firewall. Note that SNMP write access is not possible.
+Impact:
+Any clear-text administrative protocol (such as SNMPv2) can expose valuable
+information to any attacker that is in a position to eavesdrop on that protocol.
+Audit:
+Navigate to Device > Setup > Operations > Miscellaneous > SNMP Setup
+Verify V3 is selected.
+Remediation:
+Navigate to Device > Setup > Operations > Miscellaneous > SNMP Setup
+Select V3.
+In order to be usable, the User and View sections of this dialog should also be
+completed. These settings need to match the settings in the organization's NMS
+(Network Management System)
+Default Value:
+Not configured
+References:
+1. https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-web-interface-
+help/device/device-setup-operations/enable-snmp-monitoring
+Page 66
+CIS Controls:
+Controls
+Control IG 1 IG 2 IG 3
+Version
+3.10 Encrypt Sensitive Data in Transit
+v8
+Encrypt sensitive data in transit. Example implementations can include:
+● ●
+Transport Layer Security (TLS) and Open Secure Shell (OpenSSH).
+9.2 Ensure Only Approved Ports, Protocols and
+v7 Services Are Running ● ●
+Ensure that only network ports, protocols, and services listening on a system
+with validated business needs, are running on each system.
+v7
+14.4 Encrypt All Sensitive Information in Transit
+● ●
+Encrypt all sensitive information in transit.
+Page 67
+1.6 Device Services Settings
+The Device Services Settings section contains requirements for verifying the update
+server's identity, enabling redundant NTP services, and using a valid certificate for
+securing VPN remote access.
+Page 68
+
+========================================
+
+=== RECOMMENDATION 1.6.2 (Automated) ===
+Title: Ensure redundant NTP servers are configured appropriately
+1.6.2 Ensure redundant NTP servers are configured appropriately
+(Automated)
+Profile Applicability:
+• Level 1
+Description:
+These settings enable use of primary and secondary NTP servers to provide
+redundancy in case of a failure involving the primary NTP server.
+Rationale:
+NTP enables the device to maintain an accurate time and date when receiving updates
+from a reliable NTP server. Accurate timestamps are critical when correlating events
+with other systems, troubleshooting, or performing investigative work. Logs and certain
+cryptographic functions, such as those utilizing certificates, rely on accurate time and
+date parameters. In addition, rules referencing a Schedule object will not function as
+intended if the device’s time and date are incorrect.
+For additional security, authenticated NTP can be utilized. If Symmetric Key
+authentication is selected, only SHA1 should be used, as MD5 is considered severely
+compromised.
+Most organizations will maintain a pair of internal NTP servers for all internal time
+services. These servers will either be self-contained atomic clocks, or will collect time
+from a known reliable source (often GPS or a well-known internet server pool will be
+used).
+Audit:
+Navigate to Device > Setup > Services > Services.
+Verify Primary NTP Server Address is set appropriately.
+Verify Secondary NTP Server Address is set appropriately.
+Remediation:
+Navigate to Device > Setup > Services > Services.
+Set Primary NTP Server Address appropriately.
+Set Secondary NTP Server Address appropriately.
+Default Value:
+Not configured
+Page 71
+References:
+1. “The NIST Authenticated NTP Service” -
+http://www.nist.gov/pml/div688/grp40/authntp.cfm
+2. https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-web-interface-
+help/device/device-setup-services/global-services-settings
+3. "How to Configure Authenticated NTP" -
+https://live.paloaltonetworks.com/t5/Configuration-Articles/How-to-Configure-
+Authenticated-NTP/ta-p/54495
+CIS Controls:
+Controls
+Control IG 1 IG 2 IG 3
+Version
+8.4 Standardize Time Synchronization
+v8
+Standardize time synchronization. Configure at least two synchronized time
+● ●
+sources across enterprise assets, where supported.
+6.1 Utilize Three Synchronized Time Sources
+v7 Use at least three synchronized time sources from which all servers and ● ●
+network devices retrieve time information on a regular basis so that timestamps
+in logs are consistent.
+Page 72
+
+========================================
