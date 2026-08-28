@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<!--
+  One file, no build chain, no CDN: a dashboard that runs from a checkout with
+  nothing installed but the server it talks to.
+
+  Every number on this page came from the API. Nothing here recomputes a verdict,
+  re-tallies a summary or decides a severity -- the only judgement this file makes
+  is which colour to paint something the engine already decided, and the two that
+  matter are stated once, here:
+
+    * NEEDS_REVIEW is amber, dashed-bordered, and counted in its own column. It is
+      never drawn in the palette PASS uses. The tool escalates what it cannot
+      verify instead of passing it, and the screen has to say so at a glance or
+      the honesty is only in the JSON.
+
+    * Every finding carries a provenance badge taken from the origin already
+      recorded on its evidence. Deterministic parsing and model inference do not
+      look alike here, because a reader deserves to know which one they are
+      trusting.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>netaudit — network compliance dashboard</title>
+<style>
+  :root {
+    --ink: #16181d;
+    --muted: #6b7280;
+    --line: #e3e6ea;
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --accent: #1f3a5f;
+    --pass: #1a7f37;
+    --pass-bg: #eaf6ed;
+    --fail: #b42318;
+    --fail-bg: #fdecea;
+    --review: #a15c00;
+    --review-bg: #fdf4e3;
+    --radius: 8px;
+    /* vendor chart palette — desaturated, distinct from verdict colours */
+    --vendor-1: #4a7fb5;
+    --vendor-2: #7b68ae;
+    --vendor-3: #3d9e8f;
+    --vendor-4: #6a8caf;
+    --vendor-5: #8e6fa0;
+    --vendor-6: #5b9ea6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+  }
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  header h1 { margin: 0; font-size: 17px; letter-spacing: .2px; }
+  header .tag { font-size: 12.5px; opacity: .82; }
+  header .spacer { flex: 1; }
+  header button {
+    background: rgba(255,255,255,.14); color: #fff; border: 1px solid rgba(255,255,255,.3);
+    padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;
+  }
+  header button:hover { background: rgba(255,255,255,.24); }
+  main { max-width: 1180px; margin: 0 auto; padding: 24px; }
+  .panel {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 18px;
+  }
+  h2 { margin: 0 0 4px; font-size: 16px; }
+  h3 { margin: 0 0 8px; font-size: 14.5px; color: var(--ink); }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+  .hidden { display: none !important; }
+
+  /* -- navigation tabs -- */
+  .nav-tabs {
+    display: flex; gap: 0; border-bottom: 2px solid var(--line); margin-bottom: 18px;
+  }
+  .nav-tabs button {
+    background: none; border: none; border-bottom: 2px solid transparent;
+    margin-bottom: -2px; padding: 8px 18px; font: inherit; font-size: 13.5px;
+    color: var(--muted); cursor: pointer; font-weight: 600; letter-spacing: .2px;
+  }
+  .nav-tabs button:hover { color: var(--ink); }
+  .nav-tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav-tabs button:disabled { opacity: .4; cursor: default; }
+
+  /* -- upload -- */
+  #drop {
+    border: 2px dashed #c3c9d2; border-radius: var(--radius);
+    padding: 34px 20px; text-align: center; color: var(--muted);
+    background: #fbfcfd; cursor: pointer; transition: .12s;
+  }
+  #drop.over { border-color: var(--accent); background: #eef3f9; color: var(--accent); }
+  #drop strong { color: var(--ink); display: block; font-size: 15px; margin-bottom: 4px; }
+  #filelist { margin: 12px 0 0; padding: 0; list-style: none; font-size: 13px; }
+  #filelist li { padding: 3px 0; color: var(--muted); font-family: ui-monospace, Menlo, Consolas, monospace; }
+  fieldset { border: 1px solid var(--line); border-radius: 6px; padding: 12px 16px; margin: 18px 0 0; }
+  legend { font-size: 12.5px; color: var(--muted); padding: 0 6px; text-transform: uppercase; letter-spacing: .5px; }
+  .fw { display: inline-flex; align-items: center; gap: 6px; margin-right: 20px; font-size: 14px; }
+  .primary {
+    margin-top: 18px; background: var(--accent); color: #fff; border: 0;
+    padding: 10px 22px; border-radius: 6px; font-size: 14.5px; cursor: pointer;
+  }
+  .primary:disabled { opacity: .5; cursor: default; }
+
+  /* -- tables -- */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 11.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); font-weight: 600; }
+  tbody tr:hover { background: #fafbfc; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .rowlink { color: var(--accent); font-weight: 600; cursor: pointer; text-decoration: none; }
+  .rowlink:hover { text-decoration: underline; }
+  .file { color: var(--muted); font-size: 12px; font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+  /* -- the three verdicts. review never borrows the pass palette. -- */
+  .v { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11.5px; font-weight: 700; letter-spacing: .3px; }
+  .v-pass   { color: var(--pass);   background: var(--pass-bg);   border: 1px solid #b7e0c2; }
+  .v-fail   { color: var(--fail);   background: var(--fail-bg);   border: 1px solid #f3c2bd; }
+  .v-review { color: var(--review); background: var(--review-bg); border: 1px dashed #e0b76a; }
+  .c-pass { color: var(--pass); font-weight: 600; }
+  .c-fail { color: var(--fail); font-weight: 600; }
+  .c-review { color: var(--review); font-weight: 600; }
+  .zero { color: #b9bec6; }
+
+  .st { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11.5px; font-weight: 600; }
+  .st-audited { color: var(--pass); background: var(--pass-bg); }
+  .st-parse_error { color: var(--fail); background: var(--fail-bg); }
+  .st-unknown_vendor { color: var(--review); background: var(--review-bg); border: 1px dashed #e0b76a; }
+
+  /* -- provenance -- */
+  .p { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10.5px;
+       font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+  .p-deterministic { background: #e8edf3; color: #3c5675; }
+  .p-learned       { background: #ece4f7; color: #5b3a91; }
+  .p-llm           { background: #fdeede; color: #9a5b12; }
+  .p-hybrid        { background: #e2f0f4; color: #1c5f70; }
+  .p-human         { background: #e6f2e9; color: #1a6b33; }
+  .p-none          { background: #eef0f2; color: #8b929c; }
+
+  /* -- findings -- */
+  .finding { border: 1px solid var(--line); border-left-width: 4px; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; background: #fff; }
+  .finding.f-pass   { border-left-color: var(--pass); }
+  .finding.f-fail   { border-left-color: var(--fail); }
+  .finding.f-review { border-left-color: var(--review); border-style: dashed solid solid dashed; background: #fffdf8; }
+  .fhead { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 5px; }
+  .ftitle { font-weight: 600; flex: 1; min-width: 220px; }
+  .ref { font-size: 11.5px; color: var(--muted); font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .ref.internal { color: var(--review); }
+  .fmsg { font-size: 13px; color: #40454d; margin: 4px 0 8px; }
+  .ev, .rem { font-size: 12.5px; padding: 7px 10px; border-radius: 4px; margin-top: 6px; }
+  .ev { background: #f4f6f8; font-family: ui-monospace, Menlo, Consolas, monospace; color: #333; overflow-x: auto; }
+  .rem { background: #f8f9fa; border: 1px solid var(--line); }
+  .rem code { display: block; font-family: ui-monospace, Menlo, Consolas, monospace; color: #1f3a5f; }
+  .lbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); display: block; margin-bottom: 3px; }
+  .sev { font-size: 11px; text-transform: uppercase; letter-spacing: .4px; font-weight: 700; }
+  .sev-high { color: var(--fail); } .sev-medium { color: var(--review); } .sev-low { color: #2c5aa0; }
+
+  .cards { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .card { flex: 1; min-width: 118px; border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; background: #fff; }
+  .card .n { font-size: 21px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .card .k { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+  .card.review { border-color: #e0b76a; border-style: dashed; background: var(--review-bg); }
+
+  .meta { display: flex; gap: 26px; flex-wrap: wrap; font-size: 13px; margin-bottom: 16px; }
+  .meta div span { display: block; }
+  .filters { display: flex; gap: 8px; align-items: center; margin: 4px 0 14px; flex-wrap: wrap; font-size: 13px; }
+  .filters select { padding: 5px 8px; border: 1px solid var(--line); border-radius: 5px; font: inherit; }
+  .note { font-size: 12.5px; color: var(--muted); padding: 8px 12px; background: #f4f6f8; border-radius: 6px; margin-top: 12px; }
+  .err { color: var(--fail); background: var(--fail-bg); border: 1px solid #f3c2bd; padding: 10px 14px; border-radius: 6px; margin-top: 14px; font-size: 13.5px; }
+  .dl { background: var(--accent); color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-size: 13.5px; display: inline-block; }
+  .spin { color: var(--muted); font-size: 13.5px; }
+
+  /* -- fleet summary tiles -- */
+  .fleet-tiles {
+    display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px;
+  }
+  .fleet-tile {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 16px; text-align: center;
+  }
+  .fleet-tile .tile-val {
+    font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1;
+  }
+  .fleet-tile .tile-lbl {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-top: 4px;
+  }
+  .fleet-tile.score-pass .tile-val { color: var(--pass); }
+  .fleet-tile.score-review .tile-val { color: var(--review); }
+  .fleet-tile.score-fail .tile-val { color: var(--fail); }
+  @media (max-width: 900px) { .fleet-tiles { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 500px) { .fleet-tiles { grid-template-columns: repeat(2, 1fr); } }
+
+  /* -- analytics sections -- */
+  .analytics-section { margin-bottom: 28px; }
+  .analytics-section h3 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted);
+    border-bottom: 1px solid var(--line); padding-bottom: 6px; margin-bottom: 14px;
+  }
+  .chart-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .chart-row > div { flex: 1; min-width: 280px; }
+  .chart-container svg { width: 100%; height: auto; display: block; max-height: 300px; }
+  .chart-container.chart-wide svg { max-height: 220px; }
+
+  /* -- heatmap -- */
+  .heatmap-wrap { overflow-x: auto; }
+  .heatmap { border-collapse: separate; border-spacing: 2px; font-size: 12px; }
+  .heatmap th { font-size: 10.5px; padding: 4px 6px; white-space: nowrap; }
+  .heatmap th.rotated { writing-mode: vertical-lr; transform: rotate(180deg); text-align: left; height: 80px; }
+  .heatmap td.cell { width: 32px; height: 24px; border-radius: 3px; text-align: center; font-size: 0; }
+  .heatmap td.cell-pass { background: var(--pass-bg); border: 1px solid #b7e0c2; }
+  .heatmap td.cell-fail { background: var(--fail-bg); border: 1px solid #f3c2bd; }
+  .heatmap td.cell-review { background: var(--review-bg); border: 1px dashed #e0b76a; }
+  .heatmap td.cell-na { background: #f0f1f3; border: 1px solid #e3e6ea; }
+  .heatmap td.ctrl-name { white-space: nowrap; font-weight: 600; font-size: 11.5px; padding: 4px 8px; }
+  .heatmap td.rate { font-variant-numeric: tabular-nums; font-size: 11.5px; padding: 4px 8px; text-align: right; }
+
+  /* -- device ranking -- */
+  .rank-bar { height: 6px; border-radius: 3px; display: inline-block; vertical-align: middle; }
+  .sortable { cursor: pointer; user-select: none; }
+  .sortable:hover { color: var(--accent); }
+
+  /* -- history panel -- */
+  .history-panel {
+    position: fixed; top: 0; right: 0; width: 380px; max-width: 90vw; height: 100vh;
+    background: var(--panel); border-left: 1px solid var(--line); z-index: 100;
+    box-shadow: -4px 0 20px rgba(0,0,0,.08); overflow-y: auto; padding: 20px;
+    transform: translateX(100%); transition: transform .2s ease;
+  }
+  .history-panel.open { transform: translateX(0); }
+  .history-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.2);
+    z-index: 99; display: none;
+  }
+  .history-overlay.open { display: block; }
+  .history-item {
+    padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 8px;
+    cursor: pointer; transition: background .1s;
+  }
+  .history-item:hover { background: #fafbfc; }
+  .history-item.selected { border-color: var(--accent); background: #eef3f9; }
+  .history-item .hi-time { font-size: 12px; color: var(--muted); }
+  .history-item .hi-score { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* -- comparison delta -- */
+  .delta-up { color: var(--pass); font-weight: 700; }
+  .delta-down { color: var(--fail); font-weight: 700; }
+  .delta-same { color: var(--muted); }
+
+  /* -- training center styles -- */
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold;
+  }
+  .badge-approved { background: var(--pass-bg); color: var(--pass); border: 1px solid #b7e0c2; }
+  .badge-pending { background: var(--review-bg); color: var(--review); border: 1px dashed #e0b76a; }
+  .badge-rejected { background: var(--fail-bg); color: var(--fail); border: 1px solid #f3c2bd; }
+  .badge-disabled { background: #e8edf3; color: #3c5675; }
+  .badge-deleted { background: #eef0f2; color: #8b929c; }
+
+  .line-item {
+    padding: 10px; border-bottom: 1px solid var(--line); cursor: pointer; transition: background 0.1s;
+  }
+  .line-item:hover { background: #fafbfc; }
+  .line-item.selected { background: #ebf8ff; border-left: 4px solid var(--accent); }
+
+  /* -- print -- */
+  @media print {
+    header, .nav-tabs, #view-upload, .history-panel, .history-overlay,
+    #btn-csv-export, #btn-history, #btn-refresh-analytics, #btn-training, #btn-new, #btn-back { display: none !important; }
+    body { background: #fff; color: #000; }
+    .panel { border: none; box-shadow: none; }
+    .fleet-tile, .chart-container, .heatmap-wrap { break-inside: avoid; }
+    .analytics-section { break-before: auto; page-break-inside: avoid; }
+    .print-header { display: block !important; text-align: center; font-size: 18px; font-weight: 700; margin-bottom: 16px; color: #000; }
+    svg { color: #000 !important; }
+    svg text { fill: #333 !important; }
+    svg .grid-line { stroke: #ccc !important; }
+    svg rect[fill] { stroke: #999; stroke-width: 0.5; }
+    .fleet-tile { border: 1px solid #ccc; }
+  }
+  .print-header { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>netaudit</h1>
+  <span class="tag">unified ingestion &middot; multi-vendor &middot; multi-framework</span>
+  <span class="spacer"></span>
+  <button id="btn-history" class="hidden" title="Upload history &amp; comparison">History</button>
+  <button id="btn-training">Training Center</button>
+  <button id="btn-new" class="hidden">New upload</button>
+  <button id="btn-back" class="hidden">&larr; Inventory</button>
+</header>
+
+<main>
+
+  <!-- ============ 1. UPLOAD ============ -->
+  <section id="view-upload" class="panel">
+    <h2>Upload configurations</h2>
+    <p class="sub">One file or a whole fleet. Any supported vendor, mixed freely &mdash; each file is audited in isolation, so one bad paste never costs the others their results.</p>
+
+    <div id="drop">
+      <strong>Drop configuration files here</strong>
+      or click to choose &mdash; single or bulk
+      <input type="file" id="picker" multiple class="hidden">
+    </div>
+    <ul id="filelist"></ul>
+
+    <fieldset>
+      <legend>Frameworks to evaluate</legend>
+      <div id="fwbox" class="spin">loading&hellip;</div>
+    </fieldset>
+
+    <button class="primary" id="go" disabled>Run audit</button>
+    <div id="upload-err" class="err hidden"></div>
+  </section>
+
+  <!-- ============ TABBED POST-UPLOAD VIEWS ============ -->
+  <section id="view-results" class="hidden">
+    <div class="nav-tabs" id="result-tabs">
+      <button data-tab="inventory" class="active">Inventory</button>
+      <button data-tab="analytics" id="tab-analytics">Analytics</button>
+    </div>
+
+    <!-- ---- INVENTORY TAB ---- -->
+    <div id="tab-content-inventory">
+      <div class="panel">
+        <h2>Device inventory</h2>
+        <p class="sub" id="inv-sub"></p>
+        <div id="fleet-tiles-container" class="hidden"></div>
+        <div class="cards" id="inv-cards"></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Device</th><th>Vendor</th><th>OS version</th><th>Status</th>
+              <th>Framework</th>
+              <th class="num">Pass</th><th class="num">Fail</th><th class="num">Review</th>
+            </tr>
+          </thead>
+          <tbody id="inv-rows"></tbody>
+        </table>
+        <div id="inv-dupes"></div>
+      </div>
+    </div>
+
+    <!-- ---- ANALYTICS TAB ---- -->
+    <div id="tab-content-analytics" class="hidden">
+      <div class="print-header" id="print-title">Fleet Compliance Report</div>
+
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+          <h2>Fleet Compliance Analytics</h2>
+          <div style="display:flex;gap:8px">
+            <button class="primary" id="btn-refresh-analytics" style="margin:0;padding:6px 14px;font-size:13px">Refresh</button>
+            <button class="primary" id="btn-csv-export" style="margin:0;padding:6px 14px;font-size:13px;background:var(--pass)">Export CSV</button>
+          </div>
+        </div>
+
+        <!-- Fleet Summary Tiles -->
+        <div id="analytics-tiles" class="fleet-tiles"></div>
+
+        <!-- Framework Comparison Bar Chart -->
+        <div class="analytics-section">
+          <h3>Compliance Score by Framework</h3>
+          <div class="chart-container chart-wide" id="chart-framework"></div>
+        </div>
+
+        <!-- Vendor Donut + Severity Breakdown side by side -->
+        <div class="analytics-section">
+          <div class="chart-row">
+            <div>
+              <h3>Vendor Distribution</h3>
+              <div class="chart-container" id="chart-vendor"></div>
+            </div>
+            <div>
+              <h3>Severity Breakdown</h3>
+              <div class="chart-container" id="chart-severity"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control Compliance Heatmap -->
+        <div class="analytics-section">
+          <h3>Control Compliance Heatmap</h3>
+          <div class="heatmap-wrap" id="heatmap-container"></div>
+        </div>
+
+        <!-- Device Compliance Ranking -->
+        <div class="analytics-section">
+          <h3>Device Compliance Ranking</h3>
+          <div id="ranking-container"></div>
+        </div>
+
+        <!-- Comparison View -->
+        <div class="analytics-section hidden" id="comparison-section">
+          <h3>Comparison with Previous Upload</h3>
+          <div id="comparison-container"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. DEVICE DETAIL ============ -->
+  <section id="view-device" class="hidden">
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+        <div>
+          <h2 id="dev-name"></h2>
+          <p class="sub" id="dev-file"></p>
+        </div>
+        <a id="dev-pdf" class="dl" href="#">Download PDF</a>
+      </div>
+      <div class="meta" id="dev-meta"></div>
+      <div class="cards" id="dev-cards"></div>
+      <div id="dev-error"></div>
+      <div class="filters" id="dev-filters"></div>
+      <div id="dev-findings"></div>
+    </div>
+  </section>
+
+  <!-- ============ 4. TRAINING CENTER ============ -->
+  <section id="view-training" class="hidden">
+    <div class="panel">
+      <h2>Training Center</h2>
+      <p class="sub">Human-in-the-loop mapping workflow. Teach the parser new configuration patterns to resolve NEEDS_REVIEW status.</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <!-- Left Column: Queue -->
+        <div>
+          <h3>NEEDS_REVIEW Queue</h3>
+          <div id="queue-list" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff;">
+            <p style="padding: 16px; color: var(--muted);">Scanning for items requiring review...</p>
+          </div>
+        </div>
+
+        <!-- Right Column: Observation Viewer & Editor -->
+        <div>
+          <h3>Selected Observation</h3>
+          <div id="obs-viewer" class="note" style="margin-top: 0; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <p style="color: var(--muted);">Select an observation from the queue to teach a mapping.</p>
+          </div>
+
+          <div id="mapping-editor" class="hidden" style="margin-top: 16px; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; background: #fff;">
+            <h4 style="margin: 0 0 12px 0;">Create Mapping</h4>
+            <form id="mapping-form" onsubmit="event.preventDefault();">
+              <input type="hidden" id="map-vendor">
+              <input type="hidden" id="map-device">
+              <input type="hidden" id="map-line-num">
+              <input type="hidden" id="map-source-line">
+
+              <div style="margin-bottom: 12px;">
+                <label class="lbl">Pattern (config prefix or regex match)</label>
+                <input type="text" id="map-pattern" style="width:100%; padding:6px; border:1px solid var(--line); border-radius:4px;" required>
+              </div>
+
+              <div style="margin-bottom: 12px;">
+                <label class="lbl">Target Baseline Field</label>
+                <select id="map-field" style="width:100%; padding:6px; border:1px solid var(--line); border-radius:4px;" required>
+                </select>
+              </div>
+
+              <div style="margin-bottom: 12px;">
+                <label class="lbl">Extraction Strategy</label>
+                <select id="map-strategy" style="width:100%; padding:6px; border:1px solid var(--line); border-radius:4px;" required>
+                  <option value="exact">Exact (Boolean True)</option>
+                  <option value="token">Token (Value after pattern)</option>
+                  <option value="token_list">Token List (Space-separated list)</option>
+                  <option value="regex">Regex (Custom regular expression)</option>
+                </select>
+              </div>
+
+              <div id="map-regex-group" class="hidden" style="margin-bottom: 12px;">
+                <label class="lbl">Regex Pattern (must contain one capture group, e.g. pattern (\d+))</label>
+                <input type="text" id="map-regex" style="width:100%; padding:6px; border:1px solid var(--line); border-radius:4px;">
+              </div>
+
+              <div style="display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;">
+                <button type="button" id="btn-ai-suggest" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px; background: #7c3aed;">AI Suggest</button>
+                <button type="button" id="btn-preview" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px;">Preview Mapping</button>
+                <button type="button" id="btn-approve" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px; background: var(--pass);">Approve &amp; Save</button>
+                <button type="button" id="btn-reject" class="primary" style="margin-top:0; padding:6px 12px; font-size:13px; background: var(--fail);">Reject</button>
+              </div>
+              <div id="ai-suggestion-info" class="hidden" style="margin-top: 12px; padding: 12px; border-radius: 4px; background: #f5f3ff; border: 1px solid #ddd6fe;">
+              </div>
+            </form>
+
+            <div id="preview-result" class="hidden" style="margin-top: 16px; padding: 12px; border-radius: 4px;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom: History -->
+      <div>
+        <h3>Training History</h3>
+        <table style="background: #fff; border: 1px solid var(--line); border-radius: var(--radius);">
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Field</th>
+              <th>Status</th>
+              <th>Creator</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="history-rows">
+            <tr><td colspan="6" style="text-align: center; color: var(--muted);">No mappings in history.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- History slide-out panel -->
+<div class="history-overlay" id="history-overlay"></div>
+<div class="history-panel" id="history-panel">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h2 style="margin:0">Upload History</h2>
+    <button id="btn-close-history" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted)">&times;</button>
+  </div>
+  <div id="compare-controls" class="hidden" style="margin-bottom:12px;padding:10px;background:#f4f6f8;border-radius:6px;font-size:13px">
+    <label style="display:flex;align-items:center;gap:6px">
+      <input type="checkbox" id="compare-toggle"> Compare mode
+    </label>
+    <p class="sub" style="margin:4px 0 0">Select two uploads to compare compliance deltas.</p>
+  </div>
+  <div id="history-list"></div>
+</div>
+
+<script>
+"use strict";
+
+// ---------------------------------------------------------------- state
+var chosen = [];
+var jobId = null;
+var inventory = null;
+var device = null;
+var filterFw = "ALL", filterSt = "ALL";
+var currentTab = "inventory";
+var compareInventory = null;
+var compareJobId = null;
+var rankingSortKey = "score";
+var rankingSortAsc = true;
+
+var $ = function (id) { return document.getElementById(id); };
+var esc = function (s) {
+  return String(s === null || s === undefined ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+};
+
+function displayFile(sourceFile) {
+  var base = String(sourceFile || "").split(/[\\/]/).pop();
+  return base.replace(/^\d{4}_/, "");
+}
+
+function show(view) {
+  ["upload", "results", "device", "training"].forEach(function (v) {
+    $("view-" + v).classList.toggle("hidden", v !== view);
+  });
+  $("btn-new").classList.toggle("hidden", view === "upload" || view === "training");
+  $("btn-back").classList.toggle("hidden", view !== "device");
+  $("btn-history").classList.toggle("hidden", view === "upload" || view === "training");
+  window.scrollTo(0, 0);
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  var btns = document.querySelectorAll("#result-tabs button");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle("active", btns[i].dataset.tab === tab);
+  }
+  $("tab-content-inventory").classList.toggle("hidden", tab !== "inventory");
+  $("tab-content-analytics").classList.toggle("hidden", tab !== "analytics");
+  if (tab === "analytics" && inventory) renderAnalytics();
+}
+
+// Tab click handlers
+document.querySelectorAll("#result-tabs button").forEach(function(btn) {
+  btn.addEventListener("click", function() { switchTab(btn.dataset.tab); });
+});
+
+// ---------------------------------------------------------------- provenance
+var ORIGIN_RANK = { deterministic: 0, human: 1, learned: 2, hybrid: 3, llm: 4 };
+
+function provenanceOf(finding) {
+  var best = null, rank = -1;
+  (finding.evidence || []).forEach(function (e) {
+    var r = ORIGIN_RANK[e.origin];
+    if (r === undefined) r = 0;
+    if (r > rank) { rank = r; best = e.origin; }
+  });
+  return best;
+}
+
+function provenanceBadge(finding) {
+  var origin = provenanceOf(finding);
+  if (!origin) return '<span class="p p-none" title="No evidence was recorded for this control.">no evidence</span>';
+  var label = origin === "llm" ? "LLM" : origin;
+  var titles = {
+    deterministic: "Read by a grammar-based vendor parser.",
+    learned: "Read using a mapping an administrator taught the tool.",
+    llm: "Inferred by a language model, not hard-parsed.",
+    hybrid: "A model filled a gap the deterministic parser left open.",
+    human: "Adjudicated by a person; outranks the parser."
+  };
+  return '<span class="p p-' + esc(origin) + '" title="' + esc(titles[origin] || "") + '">' + esc(label) + "</span>";
+}
+
+// ---------------------------------------------------------------- verdicts
+function verdictClass(status) {
+  return status === "PASS" ? "pass" : status === "FAIL" ? "fail" : "review";
+}
+function verdictBadge(status) {
+  var label = status === "NEEDS_REVIEW" ? "NEEDS REVIEW" : status;
+  return '<span class="v v-' + verdictClass(status) + '">' + esc(label) + "</span>";
+}
+function count(n, kind) {
+  if (!n) return '<span class="zero">0</span>';
+  return '<span class="c-' + kind + '">' + n + "</span>";
+}
+
+// ---------------------------------------------------------------- score tier
+function scoreTier(score) {
+  if (score >= 80) return "pass";
+  if (score >= 50) return "review";
+  return "fail";
+}
+function scoreColor(score) {
+  if (score >= 80) return "var(--pass)";
+  if (score >= 50) return "var(--review)";
+  return "var(--fail)";
+}
+
+// ---------------------------------------------------------------- upload view
+fetch("/api/frameworks").then(function (r) { return r.json(); }).then(function (d) {
+  $("fwbox").classList.remove("spin");
+  $("fwbox").innerHTML = d.frameworks.map(function (f) {
+    var on = f === d.default ? " checked" : "";
+    return '<label class="fw"><input type="checkbox" value="' + esc(f) + '"' + on + "> " + esc(f.replace(/_/g, " ")) + "</label>";
+  }).join("");
+}).catch(function () {
+  $("fwbox").textContent = "Could not load frameworks.";
+});
+
+var drop = $("drop"), picker = $("picker");
+drop.addEventListener("click", function () { picker.click(); });
+["dragenter", "dragover"].forEach(function (ev) {
+  drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); });
+});
+["dragleave", "drop"].forEach(function (ev) {
+  drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); });
+});
+drop.addEventListener("drop", function (e) { stage(e.dataTransfer.files); });
+picker.addEventListener("change", function () { stage(picker.files); });
+
+function stage(fileList) {
+  chosen = Array.prototype.slice.call(fileList);
+  $("filelist").innerHTML = chosen.map(function (f) {
+    return "<li>" + esc(f.name) + " &middot; " + Math.max(1, Math.round(f.size / 1024)) + " KB</li>";
+  }).join("");
+  $("go").disabled = chosen.length === 0;
+}
+
+$("go").addEventListener("click", function () {
+  var picked = [].slice.call(document.querySelectorAll("#fwbox input:checked")).map(function (i) { return i.value; });
+  if (!picked.length) { fail("Select at least one framework."); return; }
+
+  var form = new FormData();
+  chosen.forEach(function (f) { form.append("files", f, f.name); });
+  picked.forEach(function (f) { form.append("frameworks", f); });
+
+  $("go").disabled = true;
+  $("go").textContent = "Auditing " + chosen.length + " file(s)…";
+  $("upload-err").classList.add("hidden");
+
+  fetch("/api/upload", { method: "POST", body: form })
+    .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+    .then(function (res) {
+      if (!res.ok) throw new Error(res.body.detail || "Upload failed.");
+      jobId = res.body.job_id;
+      inventory = res.body.inventory;
+      renderInventory();
+      switchTab("inventory");
+      show("results");
+    })
+    .catch(function (e) { fail(e.message); })
+    .then(resetButton, resetButton);
+});
+
+function resetButton() {
+  $("go").disabled = chosen.length === 0;
+  $("go").textContent = "Run audit";
+}
+
+function fail(msg) {
+  var box = $("upload-err");
+  box.textContent = msg;
+  box.classList.remove("hidden");
+}
+
+$("btn-new").addEventListener("click", function () { show("upload"); });
+$("btn-back").addEventListener("click", function () { show("results"); });
+
+// ---------------------------------------------------------------- inventory view
+function renderInventory() {
+  var c = inventory.counts;
+  $("inv-sub").innerHTML =
+    esc(inventory.frameworks.join(", ").replace(/_/g, " ")) +
+    " &middot; " + c.total + " file(s) ingested &middot; generated " +
+    esc(String(inventory.generated_at).replace("T", " ").slice(0, 19)) + " UTC";
+
+  $("inv-cards").innerHTML =
+    card(c.total, "files") +
+    card(c.audited, "audited") +
+    card(c.parse_error, "parse errors") +
+    card(c.unknown_vendor, "unknown vendor") +
+    card(c.duplicate_groups, "duplicate groups");
+
+  renderFleetTiles();
+
+  var rows = [];
+  inventory.devices.forEach(function (d, i) {
+    var names = Object.keys(d.framework_summaries || {});
+    var span = Math.max(1, names.length);
+    var ident = d.identity || {};
+    var target = d.target || {};
+    var name = (ident.hostname && ident.hostname.value) || displayFile(d.source_file);
+
+    var head =
+      '<td rowspan="' + span + '"><a class="rowlink" data-i="' + i + '">' + esc(name) + "</a>" +
+      '<div class="file">' + esc(displayFile(d.source_file)) + "</div></td>" +
+      '<td rowspan="' + span + '">' + esc(ident.vendor || target.vendor || "—") + "</td>" +
+      '<td rowspan="' + span + '">' + esc(fieldValue(ident, "os_version") || "—") + "</td>" +
+      '<td rowspan="' + span + '"><span class="st st-' + esc(d.status) + '">' +
+        esc(String(d.status).replace(/_/g, " ")) + "</span>" +
+        (d.error ? '<div class="file" title="' + esc(d.error) + '">' + esc(trim(d.error, 46)) + "</div>" : "") +
+      "</td>";
+
+    if (!names.length) {
+      rows.push("<tr>" + head + '<td colspan="4" class="file">not evaluated</td></tr>');
+      return;
+    }
+    names.forEach(function (fw, k) {
+      var s = d.framework_summaries[fw];
+      rows.push(
+        "<tr>" + (k === 0 ? head : "") +
+        "<td>" + esc(fw.replace(/_/g, " ")) + "</td>" +
+        '<td class="num">' + count(s.passed, "pass") + "</td>" +
+        '<td class="num">' + count(s.failed, "fail") + "</td>" +
+        '<td class="num">' + count(s.needs_review, "review") + "</td></tr>"
+      );
+    });
+  });
+  $("inv-rows").innerHTML = rows.join("");
+
+  [].slice.call(document.querySelectorAll("#inv-rows .rowlink")).forEach(function (a) {
+    a.addEventListener("click", function () { openDevice(parseInt(a.dataset.i, 10)); });
+  });
+
+  var dupes = inventory.duplicates || [];
+  $("inv-dupes").innerHTML = dupes.length
+    ? dupes.map(function (g) {
+        return '<div class="note"><b>' + esc(g.kind.replace(/_/g, " ")) + ":</b> " + esc(g.note) + "</div>";
+      }).join("")
+    : "";
+}
+
+function card(n, label, cls) {
+  return '<div class="card' + (cls ? " " + cls : "") + '"><div class="n">' + n + '</div><div class="k">' + esc(label) + "</div></div>";
+}
+function trim(s, n) { s = String(s); return s.length > n ? s.slice(0, n - 1) + "…" : s; }
+
+function fieldValue(identity, name) {
+  var f = identity ? identity[name] : null;
+  return f && f.value ? f.value : null;
+}
+
+// ---------------------------------------------------------------- fleet summary tiles
+function renderFleetTiles() {
+  if (!inventory || !inventory.counts) return;
+  var c = inventory.counts;
+  var rollup = inventory.framework_rollup || {};
+  var fws = Object.keys(rollup);
+
+  var totalPass = 0, totalFail = 0, totalReview = 0;
+  fws.forEach(function(fw) {
+    totalPass += rollup[fw].passed || 0;
+    totalFail += rollup[fw].failed || 0;
+    totalReview += rollup[fw].needs_review || 0;
+  });
+  var totalControls = totalPass + totalFail + totalReview;
+  var fleetScore = totalControls > 0 ? Math.round(totalPass / totalControls * 100) : 0;
+
+  var criticalFindings = 0;
+  var needsReviewCount = 0;
+  (inventory.devices || []).forEach(function(d) {
+    (d.findings || []).forEach(function(f) {
+      if (f.status === "FAIL" && f.severity === "high") criticalFindings++;
+      if (f.status === "NEEDS_REVIEW") needsReviewCount++;
+    });
+  });
+
+  var vendors = {};
+  (inventory.devices || []).forEach(function(d) {
+    var v = (d.identity && d.identity.vendor) || (d.target && d.target.vendor) || "unknown";
+    vendors[v] = true;
+  });
+  var vendorCount = Object.keys(vendors).length;
+
+  var tier = scoreTier(fleetScore);
+  var tilesHtml =
+    '<div class="fleet-tile"><div class="tile-val">' + c.total + '</div><div class="tile-lbl">Total Devices</div></div>' +
+    '<div class="fleet-tile score-' + tier + '"><div class="tile-val">' + fleetScore + '%</div><div class="tile-lbl">Compliance Score</div></div>' +
+    '<div class="fleet-tile' + (criticalFindings > 0 ? " score-fail" : "") + '"><div class="tile-val">' + criticalFindings + '</div><div class="tile-lbl">Critical Findings</div></div>' +
+    '<div class="fleet-tile' + (needsReviewCount > 0 ? " score-review" : "") + '"><div class="tile-val">' + needsReviewCount + '</div><div class="tile-lbl">Needs Review</div></div>' +
+    '<div class="fleet-tile"><div class="tile-val">' + vendorCount + '</div><div class="tile-lbl">Vendors</div></div>' +
+    '<div class="fleet-tile"><div class="tile-val" style="font-size:16px;line-height:1.6">' + esc(inventory.frameworks.join(", ").replace(/_/g, " ")) + '</div><div class="tile-lbl">Frameworks</div></div>';
+
+  $("fleet-tiles-container").innerHTML = '<div class="fleet-tiles">' + tilesHtml + '</div>';
+  $("fleet-tiles-container").classList.remove("hidden");
+}
+
+// ---------------------------------------------------------------- analytics
+function computeAnalytics() {
+  var rollup = inventory.framework_rollup || {};
+  var devices = inventory.devices || [];
+
+  // Framework scores
+  var frameworkScores = [];
+  Object.keys(rollup).forEach(function(fw) {
+    frameworkScores.push({ framework: fw, score: rollup[fw].compliance_score || 0 });
+  });
+
+  // Vendor distribution
+  var vendorCounts = {};
+  devices.forEach(function(d) {
+    var v = (d.identity && d.identity.vendor) || (d.target && d.target.vendor) || "unknown";
+    vendorCounts[v] = (vendorCounts[v] || 0) + 1;
+  });
+
+  // Severity breakdown
+  var severityData = { high: {PASS:0,FAIL:0,NEEDS_REVIEW:0}, medium: {PASS:0,FAIL:0,NEEDS_REVIEW:0}, low: {PASS:0,FAIL:0,NEEDS_REVIEW:0} };
+  devices.forEach(function(d) {
+    (d.findings || []).forEach(function(f) {
+      var sev = f.severity || "low";
+      var st = f.status || "NEEDS_REVIEW";
+      if (severityData[sev] && severityData[sev][st] !== undefined) {
+        severityData[sev][st]++;
+      }
+    });
+  });
+
+  // Control heatmap: controls as rows, devices as columns
+  // Group by title to deduplicate across frameworks — the spec asks for
+  // the 13 normalised controls, not one row per framework-specific rule.
+  var auditedDevices = devices.filter(function(d) { return d.status === "audited"; });
+  var WORST = { "FAIL": 0, "NEEDS_REVIEW": 1, "PASS": 2 };
+  var controlMap = {};
+  auditedDevices.forEach(function(d, di) {
+    (d.findings || []).forEach(function(f) {
+      var cid = f.title || f.internal_control_id || f.rule_id;
+      if (!controlMap[cid]) controlMap[cid] = { title: f.title || cid, results: {} };
+      var prev = controlMap[cid].results[di];
+      var curr = f.status;
+      if (prev === undefined || (WORST[curr] || 0) < (WORST[prev] || 0)) {
+        controlMap[cid].results[di] = curr;
+      }
+    });
+  });
+
+  // Per-control pass rate, sorted worst first
+  var controls = Object.keys(controlMap).map(function(cid) {
+    var ctrl = controlMap[cid];
+    var total = 0, passed = 0;
+    Object.keys(ctrl.results).forEach(function(di) {
+      total++;
+      if (ctrl.results[di] === "PASS") passed++;
+    });
+    var rate = total > 0 ? passed / total : 0;
+    return { id: cid, title: ctrl.title, results: ctrl.results, passRate: rate, total: total, passed: passed };
+  });
+  controls.sort(function(a, b) { return a.passRate - b.passRate; });
+
+  // Device ranking
+  var ranking = auditedDevices.map(function(d, i) {
+    var ident = d.identity || {};
+    var target = d.target || {};
+    var name = (ident.hostname && ident.hostname.value) || displayFile(d.source_file);
+    var vendor = ident.vendor || (target && target.vendor) || "unknown";
+    var s = d.summary || {};
+    var total = (s.passed || 0) + (s.failed || 0) + (s.needs_review || 0);
+    var score = total > 0 ? Math.round((s.passed || 0) / total * 100) : 0;
+    return {
+      index: i, name: name, vendor: vendor, score: score,
+      passed: s.passed || 0, failed: s.failed || 0, review: s.needs_review || 0,
+      originalIndex: inventory.devices.indexOf(d)
+    };
+  });
+
+  return {
+    frameworkScores: frameworkScores,
+    vendorCounts: vendorCounts,
+    severityData: severityData,
+    controls: controls,
+    auditedDevices: auditedDevices,
+    ranking: ranking
+  };
+}
+
+function renderAnalytics() {
+  if (!inventory) return;
+  var data = computeAnalytics();
+
+  // Tiles (same as fleet tiles on inventory)
+  renderAnalyticsTiles();
+  renderFrameworkChart(data.frameworkScores);
+  renderVendorChart(data.vendorCounts);
+  renderSeverityChart(data.severityData);
+  renderHeatmap(data.controls, data.auditedDevices);
+  renderRanking(data.ranking);
+
+  $("print-title").textContent = "Fleet Compliance Report — " + new Date().toLocaleDateString();
+}
+
+function renderAnalyticsTiles() {
+  var c = inventory.counts;
+  var rollup = inventory.framework_rollup || {};
+  var fws = Object.keys(rollup);
+  var totalPass = 0, totalFail = 0, totalReview = 0;
+  fws.forEach(function(fw) {
+    totalPass += rollup[fw].passed || 0;
+    totalFail += rollup[fw].failed || 0;
+    totalReview += rollup[fw].needs_review || 0;
+  });
+  var totalControls = totalPass + totalFail + totalReview;
+  var fleetScore = totalControls > 0 ? Math.round(totalPass / totalControls * 100) : 0;
+
+  var criticalFindings = 0, needsReviewCount = 0;
+  (inventory.devices || []).forEach(function(d) {
+    (d.findings || []).forEach(function(f) {
+      if (f.status === "FAIL" && f.severity === "high") criticalFindings++;
+      if (f.status === "NEEDS_REVIEW") needsReviewCount++;
+    });
+  });
+
+  var vendors = {};
+  (inventory.devices || []).forEach(function(d) {
+    var v = (d.identity && d.identity.vendor) || (d.target && d.target.vendor) || "unknown";
+    vendors[v] = true;
+  });
+
+  var tier = scoreTier(fleetScore);
+  $("analytics-tiles").innerHTML =
+    '<div class="fleet-tile"><div class="tile-val">' + c.total + '</div><div class="tile-lbl">Total Devices</div></div>' +
+    '<div class="fleet-tile score-' + tier + '"><div class="tile-val">' + fleetScore + '%</div><div class="tile-lbl">Compliance Score</div></div>' +
+    '<div class="fleet-tile' + (criticalFindings > 0 ? " score-fail" : "") + '"><div class="tile-val">' + criticalFindings + '</div><div class="tile-lbl">Critical Findings</div></div>' +
+    '<div class="fleet-tile' + (needsReviewCount > 0 ? " score-review" : "") + '"><div class="tile-val">' + needsReviewCount + '</div><div class="tile-lbl">Needs Review</div></div>' +
+    '<div class="fleet-tile"><div class="tile-val">' + Object.keys(vendors).length + '</div><div class="tile-lbl">Vendors</div></div>' +
+    '<div class="fleet-tile"><div class="tile-val" style="font-size:16px;line-height:1.6">' + esc(inventory.frameworks.join(", ").replace(/_/g, " ")) + '</div><div class="tile-lbl">Frameworks</div></div>';
+}
+
+// ---------------------------------------------------------------- framework bar chart (SVG)
+function renderFrameworkChart(scores) {
+  if (!scores.length) { $("chart-framework").innerHTML = '<p class="sub">No frameworks evaluated.</p>'; return; }
+  var barH = 32, gap = 10, labelW = 120, pctW = 50, chartW = 600;
+  var totalH = scores.length * (barH + gap) + gap;
+  var barAreaW = chartW - labelW - pctW - 20;
+
+  var svg = '<svg viewBox="0 0 ' + chartW + ' ' + totalH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Compliance score by framework">';
+
+  // Grid lines
+  [0, 25, 50, 75, 100].forEach(function(pct) {
+    var x = labelW + (pct / 100) * barAreaW;
+    svg += '<line x1="' + x + '" y1="0" x2="' + x + '" y2="' + totalH + '" stroke="var(--line)" stroke-width="1" class="grid-line"/>';
+  });
+
+  scores.forEach(function(item, i) {
+    var y = gap + i * (barH + gap);
+    var w = Math.max(1, (item.score / 100) * barAreaW);
+    var color = scoreColor(item.score);
+    var label = item.framework.replace(/_/g, " ");
+
+    svg += '<text x="' + (labelW - 8) + '" y="' + (y + barH / 2 + 5) + '" text-anchor="end" fill="var(--ink)" font-size="13" font-weight="600">' + esc(label) + '</text>';
+    svg += '<rect x="' + labelW + '" y="' + y + '" width="' + w + '" height="' + barH + '" rx="4" fill="' + color + '" opacity=".85"><title>' + esc(label) + ': ' + item.score.toFixed(1) + '%</title></rect>';
+    svg += '<text x="' + (labelW + barAreaW + 8) + '" y="' + (y + barH / 2 + 5) + '" fill="var(--ink)" font-size="13" font-weight="700" font-variant-numeric="tabular-nums">' + item.score.toFixed(1) + '%</text>';
+  });
+
+  svg += '</svg>';
+  $("chart-framework").innerHTML = svg;
+}
+
+// ---------------------------------------------------------------- vendor donut chart (SVG)
+function renderVendorChart(vendorCounts) {
+  var vendors = Object.keys(vendorCounts);
+  var total = 0;
+  vendors.forEach(function(v) { total += vendorCounts[v]; });
+
+  if (vendors.length <= 1) {
+    var name = vendors.length ? vendors[0].replace(/_/g, " ") : "none";
+    $("chart-vendor").innerHTML = '<p style="font-size:14px;color:var(--ink)"><strong>' + total + '</strong> device' + (total !== 1 ? 's' : '') + ' &mdash; all <strong>' + esc(name) + '</strong></p>';
+    return;
+  }
+
+  var vendorColors = ["var(--vendor-1)","var(--vendor-2)","var(--vendor-3)","var(--vendor-4)","var(--vendor-5)","var(--vendor-6)"];
+  var cx = 100, cy = 100, r = 70, strokeW = 28;
+  var circumference = 2 * Math.PI * r;
+  var svg = '<svg viewBox="0 0 340 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vendor distribution">';
+
+  var offset = 0;
+  vendors.forEach(function(v, i) {
+    var frac = vendorCounts[v] / total;
+    var dash = frac * circumference;
+    var color = vendorColors[i % vendorColors.length];
+    svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="' + strokeW + '" stroke-dasharray="' + dash + ' ' + (circumference - dash) + '" stroke-dashoffset="' + (-offset) + '" transform="rotate(-90 ' + cx + ' ' + cy + ')"><title>' + esc(v.replace(/_/g, " ")) + ': ' + vendorCounts[v] + '</title></circle>';
+    offset += dash;
+  });
+
+  svg += '<text x="' + cx + '" y="' + (cy + 6) + '" text-anchor="middle" fill="var(--ink)" font-size="22" font-weight="800">' + total + '</text>';
+  svg += '<text x="' + cx + '" y="' + (cy + 22) + '" text-anchor="middle" fill="var(--muted)" font-size="11">devices</text>';
+
+  // Legend
+  var legendX = 220, legendY = 20;
+  vendors.forEach(function(v, i) {
+    var y = legendY + i * 26;
+    var color = vendorColors[i % vendorColors.length];
+    var label = v.replace(/_/g, " ");
+    var cnt = vendorCounts[v];
+    svg += '<rect x="' + legendX + '" y="' + y + '" width="14" height="14" rx="3" fill="' + color + '"/>';
+    svg += '<text x="' + (legendX + 20) + '" y="' + (y + 11) + '" fill="var(--ink)" font-size="12.5">' + esc(label) + '</text>';
+    svg += '<text x="' + (legendX + 112) + '" y="' + (y + 11) + '" fill="var(--muted)" font-size="12" font-variant-numeric="tabular-nums">' + cnt + '</text>';
+  });
+
+  svg += '</svg>';
+  $("chart-vendor").innerHTML = svg;
+}
+
+// ---------------------------------------------------------------- severity stacked bar (SVG)
+function renderSeverityChart(severityData) {
+  var levels = ["high", "medium", "low"];
+  var barH = 28, gap = 10, labelW = 70, chartW = 600;
+  var totalH = levels.length * (barH + gap) + gap;
+
+  var maxTotal = 0;
+  levels.forEach(function(sev) {
+    var t = severityData[sev].PASS + severityData[sev].FAIL + severityData[sev].NEEDS_REVIEW;
+    if (t > maxTotal) maxTotal = t;
+  });
+  if (maxTotal === 0) { $("chart-severity").innerHTML = '<p class="sub">No findings.</p>'; return; }
+
+  var barAreaW = chartW - labelW - 60;
+  var svg = '<svg viewBox="0 0 ' + chartW + ' ' + totalH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Finding severity breakdown">';
+
+  levels.forEach(function(sev, i) {
+    var y = gap + i * (barH + gap);
+    var d = severityData[sev];
+    var rowTotal = d.PASS + d.FAIL + d.NEEDS_REVIEW;
+    var segments = [
+      { count: d.PASS, color: "var(--pass)", label: "PASS" },
+      { count: d.FAIL, color: "var(--fail)", label: "FAIL" },
+      { count: d.NEEDS_REVIEW, color: "var(--review)", label: "NEEDS_REVIEW" }
+    ];
+
+    svg += '<text x="' + (labelW - 8) + '" y="' + (y + barH / 2 + 5) + '" text-anchor="end" fill="var(--ink)" font-size="13" font-weight="600" text-transform="uppercase">' + esc(sev) + '</text>';
+
+    var x = labelW;
+    segments.forEach(function(seg) {
+      if (seg.count === 0) return;
+      var w = (seg.count / maxTotal) * barAreaW;
+      svg += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + barH + '" fill="' + seg.color + '" opacity=".8"><title>' + esc(sev) + ' / ' + seg.label + ': ' + seg.count + '</title></rect>';
+      x += w;
+    });
+
+    svg += '<text x="' + (labelW + barAreaW + 8) + '" y="' + (y + barH / 2 + 5) + '" fill="var(--muted)" font-size="12" font-variant-numeric="tabular-nums">' + rowTotal + '</text>';
+  });
+
+  svg += '</svg>';
+  $("chart-severity").innerHTML = svg;
+}
+
+// ---------------------------------------------------------------- control heatmap
+function renderHeatmap(controls, auditedDevices) {
+  if (!controls.length || !auditedDevices.length) {
+    $("heatmap-container").innerHTML = '<p class="sub">No control data to display.</p>';
+    return;
+  }
+  var rotateHeaders = auditedDevices.length > 4;
+  var html = '<table class="heatmap"><thead><tr><th></th>';
+
+  auditedDevices.forEach(function(d) {
+    var ident = d.identity || {};
+    var name = (ident.hostname && ident.hostname.value) || displayFile(d.source_file);
+    html += '<th class="' + (rotateHeaders ? "rotated" : "") + '">' + esc(trim(name, 16)) + '</th>';
+  });
+  html += '<th>Pass Rate</th></tr></thead><tbody>';
+
+  controls.forEach(function(ctrl) {
+    html += '<tr><td class="ctrl-name">' + esc(trim(ctrl.title || ctrl.id, 30)) + '</td>';
+    auditedDevices.forEach(function(d, di) {
+      var status = ctrl.results[di];
+      var cls = "cell-na";
+      if (status === "PASS") cls = "cell-pass";
+      else if (status === "FAIL") cls = "cell-fail";
+      else if (status === "NEEDS_REVIEW") cls = "cell-review";
+      html += '<td class="cell ' + cls + '" title="' + esc((status || "N/A")) + '"></td>';
+    });
+    var rateStr = ctrl.total > 0 ? Math.round(ctrl.passRate * 100) + '%' : '—';
+    var rateColor = ctrl.total > 0 ? scoreColor(ctrl.passRate * 100) : "var(--muted)";
+    html += '<td class="rate" style="color:' + rateColor + '">' + ctrl.passed + '/' + ctrl.total + ' (' + rateStr + ')</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  $("heatmap-container").innerHTML = html;
+}
+
+// ---------------------------------------------------------------- device ranking
+function renderRanking(ranking) {
+  if (!ranking.length) { $("ranking-container").innerHTML = '<p class="sub">No audited devices.</p>'; return; }
+
+  var sorted = ranking.slice();
+  sorted.sort(function(a, b) {
+    var va, vb;
+    if (rankingSortKey === "score") { va = a.score; vb = b.score; }
+    else if (rankingSortKey === "name") { va = a.name.toLowerCase(); vb = b.name.toLowerCase(); }
+    else if (rankingSortKey === "vendor") { va = a.vendor.toLowerCase(); vb = b.vendor.toLowerCase(); }
+    else if (rankingSortKey === "fails") { va = a.failed; vb = b.failed; }
+    else { va = a.score; vb = b.score; }
+
+    if (typeof va === "string") return rankingSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    return rankingSortAsc ? vb - va : va - vb;
+  });
+
+  var arrow = function(key) {
+    if (rankingSortKey !== key) return '';
+    return rankingSortAsc ? ' ▼' : ' ▲';
+  };
+
+  var html = '<table><thead><tr>' +
+    '<th>#</th>' +
+    '<th class="sortable" data-sort="name">Device' + arrow("name") + '</th>' +
+    '<th class="sortable" data-sort="vendor">Vendor' + arrow("vendor") + '</th>' +
+    '<th class="sortable" data-sort="score">Compliance Score' + arrow("score") + '</th>' +
+    '<th class="num sortable" data-sort="fails">Fail' + arrow("fails") + '</th>' +
+    '<th class="num">Pass</th><th class="num">Review</th>' +
+    '</tr></thead><tbody>';
+
+  sorted.forEach(function(d, i) {
+    var tier = scoreTier(d.score);
+    var barWidth = Math.max(2, d.score);
+    html += '<tr>' +
+      '<td>' + (i + 1) + '</td>' +
+      '<td><a class="rowlink" data-i="' + d.originalIndex + '">' + esc(d.name) + '</a></td>' +
+      '<td>' + esc(d.vendor.replace(/_/g, " ")) + '</td>' +
+      '<td><span class="rank-bar" style="width:' + barWidth + 'px;background:' + scoreColor(d.score) + '"></span> ' +
+        '<span style="font-variant-numeric:tabular-nums;font-weight:600;color:' + scoreColor(d.score) + '">' + d.score + '%</span></td>' +
+      '<td class="num">' + count(d.failed, "fail") + '</td>' +
+      '<td class="num">' + count(d.passed, "pass") + '</td>' +
+      '<td class="num">' + count(d.review, "review") + '</td>' +
+      '</tr>';
+  });
+  html += '</tbody></table>';
+  $("ranking-container").innerHTML = html;
+
+  // Sort handlers
+  [].slice.call(document.querySelectorAll("#ranking-container .sortable")).forEach(function(th) {
+    th.addEventListener("click", function() {
+      var key = th.dataset.sort;
+      if (rankingSortKey === key) { rankingSortAsc = !rankingSortAsc; }
+      else { rankingSortKey = key; rankingSortAsc = true; }
+      renderRanking(ranking);
+    });
+  });
+
+  // Row click -> device detail
+  [].slice.call(document.querySelectorAll("#ranking-container .rowlink")).forEach(function(a) {
+    a.addEventListener("click", function() { openDevice(parseInt(a.dataset.i, 10)); });
+  });
+}
+
+// ---------------------------------------------------------------- CSV export
+function exportCSV() {
+  if (!inventory || !inventory.devices) return;
+  var rows = ["﻿" + "hostname,vendor,framework,control_id,control_title,severity,status,evidence_summary,remediation_summary"];
+
+  inventory.devices.forEach(function(d) {
+    var ident = d.identity || {};
+    var target = d.target || {};
+    var hostname = (ident.hostname && ident.hostname.value) || displayFile(d.source_file);
+    var vendor = ident.vendor || (target && target.vendor) || "unknown";
+
+    (d.findings || []).forEach(function(f) {
+      var evSummary = (f.evidence || []).map(function(e) {
+        return (e.field || "") + ": " + (e.source_line || e.note || "");
+      }).join("; ");
+      var remSummary = f.remediation ? (f.remediation.summary || "") : "";
+
+      rows.push([
+        csvField(hostname),
+        csvField(vendor),
+        csvField(f.framework || ""),
+        csvField(f.rule_id || f.internal_control_id || ""),
+        csvField(f.title || ""),
+        csvField(f.severity || ""),
+        csvField(f.status || ""),
+        csvField(evSummary),
+        csvField(remSummary)
+      ].join(","));
+    });
+  });
+
+  var csv = rows.join("\r\n");
+  var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  var prefix = jobId ? jobId.slice(0, 8) : "export";
+  a.download = "netaudit-findings-" + prefix + "-" + new Date().toISOString().slice(0, 10) + ".csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function csvField(val) {
+  var s = String(val === null || val === undefined ? "" : val);
+  if (s.indexOf(",") !== -1 || s.indexOf('"') !== -1 || s.indexOf("\n") !== -1 || s.indexOf("\r") !== -1) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+$("btn-csv-export").addEventListener("click", exportCSV);
+
+// ---------------------------------------------------------------- history / comparison
+$("btn-history").addEventListener("click", function() {
+  openHistoryPanel();
+});
+$("btn-close-history").addEventListener("click", closeHistoryPanel);
+$("history-overlay").addEventListener("click", closeHistoryPanel);
+
+function openHistoryPanel() {
+  $("history-panel").classList.add("open");
+  $("history-overlay").classList.add("open");
+  loadHistory();
+}
+function closeHistoryPanel() {
+  $("history-panel").classList.remove("open");
+  $("history-overlay").classList.remove("open");
+}
+
+function loadHistory() {
+  $("history-list").innerHTML = '<p class="spin">Loading…</p>';
+  fetch("/api/jobs")
+    .then(function(r) { return r.json(); })
+    .then(function(jobs) {
+      if (!jobs.length) {
+        $("history-list").innerHTML = '<p class="sub">No previous uploads.</p>';
+        $("compare-controls").classList.add("hidden");
+        return;
+      }
+      $("compare-controls").classList.remove("hidden");
+
+      $("history-list").innerHTML = jobs.map(function(j) {
+        var scores = j.compliance_scores || {};
+        var scoreStrs = Object.keys(scores).map(function(fw) {
+          return fw.replace(/_/g, " ") + ": " + scores[fw].toFixed(1) + "%";
+        });
+        var isCurrent = j.job_id === jobId;
+        return '<div class="history-item' + (isCurrent ? " selected" : "") + '" data-job="' + esc(j.job_id) + '">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<strong>' + j.device_count + ' device' + (j.device_count !== 1 ? 's' : '') + '</strong>' +
+            (isCurrent ? '<span class="v v-pass">current</span>' : '') +
+          '</div>' +
+          '<div class="hi-time">' + esc(String(j.uploaded_at || "").replace("T", " ").slice(0, 19)) + ' UTC</div>' +
+          '<div style="font-size:12.5px;margin-top:4px">' + esc(scoreStrs.join(" · ") || "no scores") + '</div>' +
+          '</div>';
+      }).join("");
+
+      // Click to load a previous job's inventory
+      [].slice.call(document.querySelectorAll("#history-list .history-item")).forEach(function(el) {
+        el.addEventListener("click", function() {
+          var jid = el.dataset.job;
+          var isCompare = $("compare-toggle").checked;
+          if (isCompare) {
+            loadComparisonJob(jid);
+          } else {
+            loadHistoryJob(jid);
+          }
+        });
+      });
+    })
+    .catch(function() {
+      $("history-list").innerHTML = '<p class="sub" style="color:var(--fail)">Failed to load history.</p>';
+    });
+}
+
+function loadHistoryJob(jid) {
+  fetch("/api/inventory/" + jid)
+    .then(function(r) { if (!r.ok) throw new Error("Not found"); return r.json(); })
+    .then(function(inv) {
+      jobId = jid;
+      inventory = inv;
+      renderInventory();
+      if (currentTab === "analytics") renderAnalytics();
+      closeHistoryPanel();
+      // Highlight in history
+      [].slice.call(document.querySelectorAll("#history-list .history-item")).forEach(function(el) {
+        el.classList.toggle("selected", el.dataset.job === jid);
+      });
+    });
+}
+
+function loadComparisonJob(jid) {
+  if (jid === jobId) return;
+  fetch("/api/inventory/" + jid)
+    .then(function(r) { if (!r.ok) throw new Error("Not found"); return r.json(); })
+    .then(function(inv) {
+      compareInventory = inv;
+      compareJobId = jid;
+      closeHistoryPanel();
+      switchTab("analytics");
+      renderComparison();
+    });
+}
+
+function renderComparison() {
+  if (!compareInventory || !inventory) return;
+  $("comparison-section").classList.remove("hidden");
+
+  var currentRollup = inventory.framework_rollup || {};
+  var prevRollup = compareInventory.framework_rollup || {};
+  var allFws = {};
+  Object.keys(currentRollup).forEach(function(fw) { allFws[fw] = true; });
+  Object.keys(prevRollup).forEach(function(fw) { allFws[fw] = true; });
+
+  var html = '<table><thead><tr><th>Framework</th><th class="num">Previous</th><th class="num">Current</th><th class="num">Change</th></tr></thead><tbody>';
+
+  Object.keys(allFws).forEach(function(fw) {
+    var prev = prevRollup[fw] ? prevRollup[fw].compliance_score : null;
+    var curr = currentRollup[fw] ? currentRollup[fw].compliance_score : null;
+    var prevStr = prev !== null ? prev.toFixed(1) + "%" : "—";
+    var currStr = curr !== null ? curr.toFixed(1) + "%" : "—";
+    var delta = "";
+    if (prev !== null && curr !== null) {
+      var diff = curr - prev;
+      if (diff > 0.05) delta = '<span class="delta-up">↑ +' + diff.toFixed(1) + '</span>';
+      else if (diff < -0.05) delta = '<span class="delta-down">↓ ' + diff.toFixed(1) + '</span>';
+      else delta = '<span class="delta-same">—</span>';
+    }
+    html += '<tr><td>' + esc(fw.replace(/_/g, " ")) + '</td><td class="num">' + prevStr + '</td><td class="num">' + currStr + '</td><td class="num">' + delta + '</td></tr>';
+  });
+
+  html += '</tbody></table>';
+
+  // Per-control comparison
+  var currentDevices = (inventory.devices || []).filter(function(d) { return d.status === "audited"; });
+  var prevDevices = (compareInventory.devices || []).filter(function(d) { return d.status === "audited"; });
+
+  var controlRates = function(devices) {
+    var rates = {};
+    devices.forEach(function(d) {
+      (d.findings || []).forEach(function(f) {
+        var cid = f.rule_id || f.internal_control_id || f.title;
+        if (!rates[cid]) rates[cid] = { passed: 0, total: 0, title: f.title };
+        rates[cid].total++;
+        if (f.status === "PASS") rates[cid].passed++;
+      });
+    });
+    return rates;
+  };
+
+  var currRates = controlRates(currentDevices);
+  var prevRates = controlRates(prevDevices);
+  var allCtrls = {};
+  Object.keys(currRates).forEach(function(c) { allCtrls[c] = true; });
+  Object.keys(prevRates).forEach(function(c) { allCtrls[c] = true; });
+
+  if (Object.keys(allCtrls).length > 0) {
+    html += '<h3 style="margin-top:16px;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:6px">Per-Control Comparison</h3>';
+    html += '<table><thead><tr><th>Control</th><th class="num">Previous</th><th class="num">Current</th><th class="num">Change</th></tr></thead><tbody>';
+
+    Object.keys(allCtrls).sort().forEach(function(cid) {
+      var prev = prevRates[cid];
+      var curr = currRates[cid];
+      var prevPct = prev && prev.total > 0 ? Math.round(prev.passed / prev.total * 100) : null;
+      var currPct = curr && curr.total > 0 ? Math.round(curr.passed / curr.total * 100) : null;
+      var title = (curr && curr.title) || (prev && prev.title) || cid;
+      var prevStr = prevPct !== null ? prevPct + "%" : "—";
+      var currStr = currPct !== null ? currPct + "%" : "—";
+      var delta = "";
+      if (prevPct !== null && currPct !== null) {
+        var diff = currPct - prevPct;
+        if (diff > 0) delta = '<span class="delta-up">↑ +' + diff + '</span>';
+        else if (diff < 0) delta = '<span class="delta-down">↓ ' + diff + '</span>';
+        else delta = '<span class="delta-same">—</span>';
+      }
+      html += '<tr><td>' + esc(trim(title, 40)) + '</td><td class="num">' + prevStr + '</td><td class="num">' + currStr + '</td><td class="num">' + delta + '</td></tr>';
+    });
+    html += '</tbody></table>';
+  }
+
+  $("comparison-container").innerHTML = html;
+}
+
+// ---------------------------------------------------------------- refresh analytics
+$("btn-refresh-analytics").addEventListener("click", function() {
+  if (!jobId) return;
+  fetch("/api/inventory/" + jobId)
+    .then(function(r) { return r.json(); })
+    .then(function(inv) {
+      inventory = inv;
+      renderAnalytics();
+    });
+});
+
+// ---------------------------------------------------------------- device view
+function openDevice(i) {
+  fetch("/api/device/" + jobId + "/" + i)
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      device = d.device;
+      $("dev-pdf").href = d.pdf_url;
+      filterFw = "ALL"; filterSt = "ALL";
+      renderDevice();
+      show("device");
+    });
+}
+
+function renderDevice() {
+  var ident = device.identity || {}, target = device.target || {};
+  $("dev-name").textContent = (ident.hostname && ident.hostname.value) || displayFile(device.source_file);
+  $("dev-file").textContent = displayFile(device.source_file);
+
+  $("dev-meta").innerHTML = [
+    ["Vendor", ident.vendor || target.vendor],
+    ["OS version", fieldValue(ident, "os_version")],
+    ["Model", fieldValue(ident, "model")],
+    ["Serial", fieldValue(ident, "serial_number")],
+    ["Parser", target.parser],
+    ["Config lines", target.config_line_count]
+  ].filter(function (p) { return p[1]; })
+   .map(function (p) { return "<div><span class=\"lbl\">" + esc(p[0]) + "</span>" + esc(p[1]) + "</div>"; })
+   .join("");
+
+  var s = device.summary || {};
+  $("dev-cards").innerHTML =
+    card(s.total || 0, "controls") +
+    card(s.passed || 0, "pass") +
+    card(s.failed || 0, "fail") +
+    card(s.needs_review || 0, "needs review", "review");
+
+  $("dev-error").innerHTML = device.error
+    ? '<div class="err">' + esc(device.error) + "</div>"
+    : "";
+
+  var fws = Object.keys(device.framework_summaries || {});
+  $("dev-filters").innerHTML = fws.length
+    ? "<label>Framework <select id=\"f-fw\"><option value=\"ALL\">all</option>" +
+        fws.map(function (f) { return '<option value="' + esc(f) + '">' + esc(f.replace(/_/g, " ")) + "</option>"; }).join("") +
+      "</select></label>" +
+      "<label>Verdict <select id=\"f-st\"><option value=\"ALL\">all</option>" +
+        "<option value=\"FAIL\">fail</option><option value=\"NEEDS_REVIEW\">needs review</option>" +
+        "<option value=\"PASS\">pass</option></select></label>"
+    : "";
+  if (fws.length) {
+    $("f-fw").value = filterFw; $("f-st").value = filterSt;
+    $("f-fw").onchange = function () { filterFw = this.value; renderFindings(); };
+    $("f-st").onchange = function () { filterSt = this.value; renderFindings(); };
+  }
+  renderFindings();
+}
+
+var VERDICT_ORDER = { FAIL: 0, NEEDS_REVIEW: 1, PASS: 2 };
+
+function renderFindings() {
+  var items = (device.findings || []).filter(function (f) {
+    return (filterFw === "ALL" || f.framework === filterFw) &&
+           (filterSt === "ALL" || f.status === filterSt);
+  });
+
+  var sevRank = { high: 0, medium: 1, low: 2 };
+  items.sort(function (a, b) {
+    return (VERDICT_ORDER[a.status] - VERDICT_ORDER[b.status]) ||
+           (sevRank[a.severity] - sevRank[b.severity]) ||
+           String(a.rule_id).localeCompare(String(b.rule_id));
+  });
+
+  if (!items.length) {
+    $("dev-findings").innerHTML = '<p class="sub">No findings match this filter.</p>';
+    return;
+  }
+
+  $("dev-findings").innerHTML = items.map(function (f) {
+    var ref = f.verified_ref && f.control_ref
+      ? '<span class="ref">' + esc(f.framework.replace(/_/g, " ")) + " " + esc(f.control_ref) + "</span>"
+      : '<span class="ref internal" title="Internal identifier: not a verified clause of the published benchmark.">' +
+        esc(f.framework.replace(/_/g, " ")) + " " + esc(f.internal_control_id || f.rule_id) + " (internal)</span>";
+
+    var ev = (f.evidence || []).map(function (e) {
+      var line = e.source_line
+        ? (e.line_number ? "L" + e.line_number + ": " + e.source_line : e.source_line)
+        : "<no evidence> " + (e.note || "not found in configuration");
+      return esc(e.field) + " &rarr; " + esc(line);
+    }).join("<br>");
+
+    var rem = f.remediation
+      ? '<div class="rem"><span class="lbl">Remediation</span>' + esc(f.remediation.summary) +
+        (f.remediation.cli && f.remediation.cli.length
+          ? "<code>" + f.remediation.cli.map(esc).join("<br>") + "</code>" : "") + "</div>"
+      : "";
+
+    return '<div class="finding f-' + verdictClass(f.status) + '">' +
+      '<div class="fhead">' +
+        verdictBadge(f.status) +
+        '<span class="ftitle">' + esc(f.title) + "</span>" +
+        '<span class="sev sev-' + esc(f.severity) + '">' + esc(f.severity) + "</span>" +
+        provenanceBadge(f) +
+      "</div>" +
+      "<div>" + ref + "</div>" +
+      '<div class="fmsg">' + esc(f.message) + "</div>" +
+      (ev ? '<div class="ev"><span class="lbl">Evidence</span>' + ev + "</div>" : "") +
+      rem +
+    "</div>";
+  }).join("");
+}
+// ---------------------------------------------------------------- training center javascript
+
+var baselineFields = [
+  "hostname",
+  "telnet_enabled",
+  "vty_transport_input",
+  "vty_exec_timeout_seconds",
+  "ssh_enabled",
+  "ssh_version",
+  "http_server_enabled",
+  "https_server_enabled",
+  "management_acl_applied",
+  "login_banner_present",
+  "enable_secret_set",
+  "enable_password_present",
+  "password_encryption",
+  "password_min_length",
+  "aaa_enabled",
+  "snmp_communities",
+  "logging_enabled",
+  "logging_hosts",
+  "logging_buffered",
+  "ntp_servers"
+];
+
+function initTrainingCenter() {
+  var select = $("map-field");
+  select.innerHTML = baselineFields.map(function(f) {
+    return '<option value="' + esc(f) + '">' + esc(f) + '</option>';
+  }).join("");
+
+  $("map-strategy").addEventListener("change", function() {
+    $("map-regex-group").classList.toggle("hidden", this.value !== "regex");
+  });
+
+  $("btn-ai-suggest").addEventListener("click", aiSuggestMapping);
+  $("btn-preview").addEventListener("click", previewMapping);
+  $("btn-approve").addEventListener("click", approveMapping);
+  $("btn-reject").addEventListener("click", rejectMapping);
+
+  $("btn-training").addEventListener("click", function() {
+    show("training");
+    loadTrainingQueue();
+    loadTrainingHistory();
+  });
+}
+
+function loadTrainingQueue() {
+  $("queue-list").innerHTML = '<p style="padding: 16px; color: var(--muted);">Loading queue...</p>';
+  fetch("/training/queue")
+    .then(function(r) { return r.json(); })
+    .then(function(queue) {
+      if (!queue.length) {
+        $("queue-list").innerHTML = '<p style="padding: 16px; color: var(--pass);">No items requiring review in queue!</p>';
+        return;
+      }
+      $("queue-list").innerHTML = queue.map(function(item) {
+        return '<div class="line-item" onclick="selectQueueItem(\'' + esc(item.id) + '\')">' +
+          '<strong>' + esc(item.vendor) + '</strong> &middot; <span class="file">' + esc(item.device_identity) + '</span>' +
+          '<div style="font-family: monospace; font-size: 12px; margin-top: 4px; color: var(--ink);">L' + item.line_number + ': ' + esc(item.source_line) + '</div>' +
+          '</div>';
+      }).join("");
+    })
+    .catch(function() {
+      $("queue-list").innerHTML = '<p style="padding: 16px; color: var(--fail);">Failed to load training queue.</p>';
+    });
+}
+
+function selectQueueItem(id) {
+  var items = [].slice.call(document.querySelectorAll("#queue-list .line-item"));
+  items.forEach(function(item) { item.classList.remove("selected"); });
+  var clicked = items.find(function(item) {
+    return item.getAttribute("onclick").indexOf(id) !== -1;
+  });
+  if (clicked) clicked.classList.add("selected");
+
+  fetch("/training/" + id)
+    .then(function(r) { return r.json(); })
+    .then(function(item) {
+      $("obs-viewer").className = "note";
+      $("obs-viewer").style.display = "block";
+      $("obs-viewer").innerHTML =
+        '<div><strong>Vendor:</strong> ' + esc(item.vendor) + '</div>' +
+        '<div><strong>Device:</strong> ' + esc(item.device_identity) + '</div>' +
+        '<div><strong>Field:</strong> ' + esc(item.field) + '</div>' +
+        '<div><strong>Current status:</strong> <span class="v v-review">' + esc(item.status) + '</span></div>' +
+        '<div style="margin-top: 10px;"><strong>Evidence:</strong></div>' +
+        '<div style="font-family: monospace; background: #fff; padding: 6px; border: 1px solid var(--line); border-radius: 4px;">Line ' + item.line_number + ': ' + esc(item.source_line) + '</div>' +
+        '<div style="margin-top: 10px;"><strong>Context:</strong></div>' +
+        '<pre style="font-family: monospace; background: #fff; padding: 6px; border: 1px solid var(--line); border-radius: 4px; overflow-x: auto; margin: 0; font-size: 12px;">' + esc(item.context) + '</pre>' +
+        '<div style="margin-top: 10px; font-size: 13px; color: var(--muted);"><strong>Why review is required:</strong> ' + esc(item.reason) + '</div>';
+
+      $("map-vendor").value = item.vendor;
+      $("map-device").value = item.device_identity;
+      $("map-line-num").value = item.line_number;
+      $("map-source-line").value = item.source_line;
+
+      var words = item.source_line.trim().split(/\s+/);
+      var suggestion = words[0];
+      if (words.length > 1 && !words[1].startsWith("-") && !words[1].match(/^\d+$/)) {
+        suggestion += " " + words[1];
+      }
+      $("map-pattern").value = suggestion;
+
+      $("mapping-editor").classList.remove("hidden");
+      $("preview-result").classList.add("hidden");
+      $("ai-suggestion-info").classList.add("hidden");
+    });
+}
+
+function aiSuggestMapping() {
+  var line = $("map-source-line").value;
+  var vendor = $("map-vendor").value;
+  if (!line) return;
+
+  var btn = $("btn-ai-suggest");
+  btn.disabled = true;
+  btn.textContent = "Analyzing...";
+
+  var infoBox = $("ai-suggestion-info");
+  infoBox.classList.remove("hidden");
+  infoBox.style.background = "#f5f3ff";
+  infoBox.style.border = "1px solid #ddd6fe";
+  infoBox.innerHTML = '<span style="color: #7c3aed;">Analyzing configuration line...</span>';
+
+  fetch("/training/suggest", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ line: line, vendor: vendor, context: "" })
+  })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      btn.disabled = false;
+      btn.textContent = "AI Suggest";
+      if (!res.ok) {
+        infoBox.style.background = "var(--fail-bg)";
+        infoBox.style.border = "1px solid var(--fail)";
+        infoBox.innerHTML = '<span style="color: var(--fail);">Suggestion failed:</span> ' + esc(res.body.detail || "Unknown error");
+        return;
+      }
+      var s = res.body;
+      if (s.field) {
+        $("map-pattern").value = s.pattern || "";
+        $("map-field").value = s.field;
+        $("map-strategy").value = s.extraction_strategy || "exact";
+        $("map-regex-group").classList.toggle("hidden", s.extraction_strategy !== "regex");
+        if (s.regex_pattern) $("map-regex").value = s.regex_pattern;
+      }
+
+      var sourceLabel = s.source === "ai" ? "AI Model" : s.source === "heuristic" ? "Heuristic" : "Fallback";
+      var confPct = Math.round((s.confidence || 0) * 100);
+      var confColor = confPct >= 70 ? "var(--pass)" : confPct >= 40 ? "var(--review)" : "var(--fail)";
+
+      var html =
+        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+          '<strong style="color: #7c3aed;">Suggestion (' + esc(sourceLabel) + ')</strong>' +
+          '<span style="color:' + confColor + ';font-weight:bold;">' + confPct + '% confidence</span>' +
+        '</div>';
+      if (s.field) {
+        html += '<div style="margin-top:6px;"><strong>Field:</strong> <code>' + esc(s.field) + '</code></div>';
+        html += '<div><strong>Pattern:</strong> <code>' + esc(s.pattern) + '</code></div>';
+        html += '<div><strong>Strategy:</strong> ' + esc(s.extraction_strategy) + '</div>';
+      }
+      if (s.reasoning) {
+        html += '<div style="margin-top:6px;font-size:13px;color:var(--muted);">' + esc(s.reasoning) + '</div>';
+      }
+      if (s.compliance_relevance) {
+        html += '<div style="font-size:13px;color:var(--muted);"><strong>Relevance:</strong> ' + esc(s.compliance_relevance) + '</div>';
+      }
+      if (s.alternatives && s.alternatives.length > 0) {
+        html += '<div style="margin-top:8px;font-size:12px;color:var(--muted);"><strong>Alternatives:</strong>';
+        s.alternatives.forEach(function(alt) {
+          html += ' <code>' + esc(alt.field) + '</code> (' + Math.round((alt.confidence || 0) * 100) + '%)';
+        });
+        html += '</div>';
+      }
+      if (!s.field) {
+        html += '<div style="margin-top:6px;color:var(--review);">No confident match found. Please select the target field manually.</div>';
+      }
+      infoBox.innerHTML = html;
+    })
+    .catch(function(e) {
+      btn.disabled = false;
+      btn.textContent = "AI Suggest";
+      infoBox.style.background = "var(--fail-bg)";
+      infoBox.style.border = "1px solid var(--fail)";
+      infoBox.innerHTML = '<span style="color: var(--fail);">Network error:</span> ' + esc(e.message);
+    });
+}
+
+function previewMapping() {
+  var req = {
+    vendor: $("map-vendor").value,
+    pattern: $("map-pattern").value,
+    field: $("map-field").value,
+    extraction_strategy: $("map-strategy").value,
+    regex_pattern: $("map-strategy").value === "regex" ? $("map-regex").value : null,
+    original_line: $("map-source-line").value
+  };
+
+  fetch("/training/preview", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req)
+  })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      var box = $("preview-result");
+      box.classList.remove("hidden");
+      if (!res.ok) {
+        box.style.background = "var(--fail-bg)";
+        box.style.border = "1px solid var(--fail)";
+        box.innerHTML = '<span style="color: var(--fail); font-weight: bold;">Validation Error:</span><div style="margin-top:4px;">' + esc(res.body.detail || "Preview failed.") + '</div>';
+        return;
+      }
+      var b = res.body;
+      if (b.result === "FOUND") {
+        box.style.background = "var(--pass-bg)";
+        box.style.border = "1px solid var(--pass)";
+        box.innerHTML =
+          '<div><strong style="color: var(--pass);">FOUND</strong></div>' +
+          '<div><strong>Field:</strong> <code>' + esc(req.field) + '</code></div>' +
+          '<div><strong>Extracted Value:</strong> <code>' + esc(JSON.stringify(b.extracted_value)) + '</code></div>' +
+          '<div><strong>Evidence:</strong> ' + esc(b.evidence) + '</div>';
+      } else {
+        box.style.background = "var(--review-bg)";
+        box.style.border = "1px dashed var(--review)";
+        box.innerHTML =
+          '<div><strong style="color: var(--review);">NOT FOUND</strong></div>' +
+          '<div style="font-size: 13px; color: var(--muted);">' + esc(b.evidence) + '</div>';
+      }
+    })
+    .catch(function(e) {
+      var box = $("preview-result");
+      box.classList.remove("hidden");
+      box.style.background = "var(--fail-bg)";
+      box.style.border = "1px solid var(--fail)";
+      box.innerHTML = '<span style="color: var(--fail); font-weight: bold;">Network Error:</span><div>' + esc(e.message) + '</div>';
+    });
+}
+
+function approveMapping() {
+  var mappingId = "LM-" + Math.floor(Math.random() * 1000000);
+  var req = {
+    mapping_id: mappingId,
+    vendor: $("map-vendor").value,
+    pattern: $("map-pattern").value,
+    field: $("map-field").value,
+    extraction_strategy: $("map-strategy").value,
+    regex_pattern: $("map-strategy").value === "regex" ? $("map-regex").value : null,
+    creator: "administrator",
+    status: "pending",
+    approval_state: "pending",
+    evidence_example: $("map-source-line").value
+  };
+
+  fetch("/training", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req)
+  })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      if (!res.ok) throw new Error(res.body.detail || "Failed to create mapping.");
+      return fetch("/training/" + mappingId + "/approve", { method: "POST" });
+    })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      if (!res.ok) throw new Error(res.body.detail || "Failed to approve mapping.");
+      alert("Mapping successfully approved and persisted!");
+      $("mapping-editor").classList.add("hidden");
+      loadTrainingQueue();
+      loadTrainingHistory();
+    })
+    .catch(function(e) {
+      alert("Error: " + e.message);
+    });
+}
+
+function rejectMapping() {
+  var mappingId = "LM-" + Math.floor(Math.random() * 1000000);
+  var req = {
+    mapping_id: mappingId,
+    vendor: $("map-vendor").value,
+    pattern: $("map-pattern").value,
+    field: $("map-field").value,
+    extraction_strategy: $("map-strategy").value,
+    regex_pattern: $("map-strategy").value === "regex" ? $("map-regex").value : null,
+    creator: "administrator",
+    status: "pending",
+    approval_state: "pending",
+    evidence_example: $("map-source-line").value
+  };
+
+  fetch("/training", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req)
+  })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      if (!res.ok) throw new Error(res.body.detail || "Failed to create mapping.");
+      return fetch("/training/" + mappingId + "/reject", { method: "POST" });
+    })
+    .then(function(r) { return r.json().then(function(body) { return { ok: r.ok, body: body }; }); })
+    .then(function(res) {
+      if (!res.ok) throw new Error(res.body.detail || "Failed to reject mapping.");
+      alert("Mapping successfully rejected.");
+      $("mapping-editor").classList.add("hidden");
+      loadTrainingQueue();
+      loadTrainingHistory();
+    })
+    .catch(function(e) {
+      alert("Error: " + e.message);
+    });
+}
+
+function approveMappingFromHistory(id) {
+  fetch("/training/" + id + "/approve", { method: "POST" })
+    .then(function(r) {
+      if (!r.ok) alert("Failed to approve mapping.");
+      loadTrainingHistory();
+      loadTrainingQueue();
+    });
+}
+
+function disableMappingFromHistory(id) {
+  fetch("/training/" + id + "/disable", { method: "POST" })
+    .then(function(r) {
+      if (!r.ok) alert("Failed to disable mapping.");
+      loadTrainingHistory();
+    });
+}
+
+function deleteMappingFromHistory(id) {
+  if (confirm("Are you sure you want to delete this mapping?")) {
+    fetch("/training/" + id + "/delete", { method: "POST" })
+      .then(function(r) {
+        if (!r.ok) alert("Failed to delete mapping.");
+        loadTrainingHistory();
+      });
+  }
+}
+
+function loadTrainingHistory() {
+  fetch("/training/history")
+    .then(function(r) { return r.json(); })
+    .then(function(history) {
+      var tbody = $("history-rows");
+      if (!history.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--muted);">No mappings in history.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = history.map(function(m) {
+        var actions = [];
+        if (m.status !== "approved") {
+          actions.push('<button class="primary" style="margin-top:0; padding:2px 8px; font-size:11px; background:var(--pass);" onclick="approveMappingFromHistory(\'' + esc(m.mapping_id) + '\')">Approve</button>');
+        } else {
+          actions.push('<button class="primary" style="margin-top:0; padding:2px 8px; font-size:11px; background:var(--review);" onclick="disableMappingFromHistory(\'' + esc(m.mapping_id) + '\')">Disable</button>');
+        }
+        actions.push('<button class="primary" style="margin-top:0; padding:2px 8px; font-size:11px; background:var(--fail);" onclick="deleteMappingFromHistory(\'' + esc(m.mapping_id) + '\')">Delete</button>');
+
+        var dateStr = String(m.created_at || "").replace("T", " ").slice(0, 19);
+
+        return '<tr>' +
+          '<td><strong>' + esc(m.pattern) + '</strong><br><small style="color:var(--muted)">' + esc(m.vendor) + '</small></td>' +
+          '<td><code>' + esc(m.field) + '</code><br><small style="color:var(--muted)">' + esc(m.extraction_strategy) + '</small></td>' +
+          '<td><span class="badge badge-' + esc(m.status) + '">' + esc(m.status) + '</span></td>' +
+          '<td>' + esc(m.creator) + '</td>' +
+          '<td>' + esc(dateStr) + '</td>' +
+          '<td><div style="display:flex; gap:4px;">' + actions.join("") + '</div></td>' +
+          '</tr>';
+      }).join("");
+    })
+    .catch(function() {
+      $("history-rows").innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--fail);">Failed to load history.</td></tr>';
+    });
+}
+
+initTrainingCenter();
+if (window.location.pathname === "/training" || window.location.hash === "#training") {
+  show("training");
+  loadTrainingQueue();
+  loadTrainingHistory();
+}
+
+</script>
+</body>
+</html>

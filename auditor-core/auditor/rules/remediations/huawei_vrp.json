@@ -1,0 +1,110 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure AAA authentication schemes and assign local or central authentication.",
+    "cli": [
+      "aaa",
+      " authentication-scheme default",
+      "  authentication-mode local"
+    ],
+    "notes": "AAA authentication provides robust access control. Ensure users are configured with appropriate privilege levels."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable the Telnet server, enable the SSH (Stelnet) server, and restrict VTY lines to SSH inbound only.",
+    "cli": [
+      "undo telnet server enable",
+      "stelnet server enable",
+      "user-interface vty 0 4",
+      " protocol inbound ssh"
+    ],
+    "notes": "Stelnet must be explicitly enabled and Telnet disabled to secure administrative sessions."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set an idle timeout of 10 minutes or less on VTY user interfaces.",
+    "cli": [
+      "user-interface vty 0 4",
+      " idle-timeout 10 0"
+    ],
+    "notes": "The command format is 'idle-timeout <minutes> [<seconds>]'. Setting it to 0 disables the timeout entirely, which is insecure."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Configure a super password using strong cryptographic hashing (irreversible-cipher).",
+    "cli": [
+      "super password irreversible-cipher <strong-password>"
+    ],
+    "notes": "'irreversible-cipher' hashes the password. Do not use 'simple' (plaintext) or weak 'cipher' formats."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP community strings public/private and add unique strings.",
+    "cli": [
+      "undo snmp-agent community public",
+      "undo snmp-agent community private",
+      "snmp-agent community read cipher <unique-string>"
+    ],
+    "notes": "VRP uses 'cipher' to obfuscate communities in the config. Always replace 'public' and 'private' communities."
+  },
+  "http_server_disabled": {
+    "summary": "Disable the plaintext HTTP server; use HTTPS (http secure-server) if web access is required.",
+    "cli": [
+      "undo http server enable"
+    ],
+    "notes": "Enabling plaintext HTTP exposes credentials and session data."
+  },
+  "ssh_version_2": {
+    "summary": "Pin SSH server version to version 2 and disable SSH v1 compatibility.",
+    "cli": [
+      "ssh server version 2",
+      "ssh server compatible-ssh1x disable"
+    ],
+    "notes": "VRP supports compatibility with older SSH versions which must be disabled to ensure secure cryptographic negotiation."
+  },
+  "logging_enabled": {
+    "summary": "Enable the info-center syslog daemon and configure a remote log host destination.",
+    "cli": [
+      "info-center enable",
+      "info-center loghost <syslog-server-ip>"
+    ],
+    "notes": "Enabling info-center ensures events are captured and forwarded to centralized SIEM/log systems."
+  },
+  "management_acl": {
+    "summary": "Configure an ACL restricting management access, and apply it inbound on VTY lines.",
+    "cli": [
+      "acl 2000",
+      " rule permit source <mgmt-subnet> <wildcard>",
+      " rule deny",
+      "user-interface vty 0 4",
+      " acl 2000 inbound"
+    ],
+    "notes": "VTY inbound ACLs are standard security measures to restrict administrative access to authorized subnets."
+  },
+  "login_banner": {
+    "summary": "Configure a warning banner to be presented at logon.",
+    "cli": [
+      "header login information \"authorized users only\""
+    ],
+    "notes": "Warning headers establish legal boundaries and deter unauthorized connections."
+  },
+  "password_min_length": {
+    "summary": "Configure the local-user password policy to enforce a minimum password length.",
+    "cli": [
+      "aaa",
+      " local-user policy security",
+      "  password min-length 12"
+    ],
+    "notes": "Strong password lengths prevent brute force attacks on local administrative accounts."
+  },
+  "ntp_configured": {
+    "summary": "Configure a trusted NTP server.",
+    "cli": [
+      "ntp-service unicast-server <ntp-server-ip>"
+    ],
+    "notes": "Log entries are only useful evidence if timestamps are coordinated via NTP."
+  },
+  "no_write_snmp_community": {
+    "summary": "Remove write community strings from the SNMP agent configuration.",
+    "cli": [
+      "undo snmp-agent community write public",
+      "undo snmp-agent community write private"
+    ],
+    "notes": "Avoid permitting read-write community strings over SNMP v1/v2c. Use SNMPv3 instead."
+  }
+}
