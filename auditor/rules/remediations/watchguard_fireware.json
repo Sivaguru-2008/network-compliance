@@ -1,0 +1,92 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure external RADIUS, LDAP, or Active Directory authentication for centralized administrator access.",
+    "cli": [
+      "auth-server radius <NAME> <IP> <PORT>",
+      "UI_REMEDIATION: Fireware Web UI -> Authentication -> Servers -> Add External Server"
+    ],
+    "notes": "WatchGuard Fireware supports external authentication via RADIUS, LDAP, Active Directory, SecurID, and SAML. Configure centralized external authentication. Ref: Fireware Web UI / CLI Reference (auth-server)."
+  },
+  "secure_vty_transport": {
+    "summary": "Ensure unencrypted management is disabled and access is strictly via HTTPS (Web UI) and SSH.",
+    "cli": [
+      "UI_REMEDIATION: Fireware Web UI -> Firewall -> Firewall Policies -> WatchGuard Web UI (HTTPS 4117/8080) and WatchGuard (SSH 4118)"
+    ],
+    "notes": "WatchGuard Fireware does not support Telnet or cleartext HTTP management. Administration is strictly conducted over TLS/HTTPS (port 4117) and SSH (port 4118). Ref: Fireware Technical Documentation."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrator idle session timeout to 10 minutes (600 seconds) or less.",
+    "cli": [
+      "idle-timeout 10",
+      "UI_REMEDIATION: Fireware Web UI -> System -> Global Settings -> System Parameters -> Set Idle Timeout to 10 minutes"
+    ],
+    "notes": "Configure administrator idle session timeout to terminate unattended sessions automatically within 600 seconds. Ref: Fireware Help Center (System Parameters)."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Enforce strong password policy and ensure credentials are cryptographically protected at rest.",
+    "cli": [
+      "password min-length 16",
+      "UI_REMEDIATION: Fireware Web UI -> System -> Users and Roles -> Password Policy -> Set Minimum Length >= 16"
+    ],
+    "notes": "WatchGuard Fireware stores administrative passphrases cryptographically hashed by default. Set password length and complexity requirements. Ref: Fireware Help Center (Users and Roles)."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove well-known default SNMP community strings ('public' or 'private') and configure SNMPv3 or custom community.",
+    "cli": [
+      "no snmp community public",
+      "snmp version v2c",
+      "snmp community <CUSTOM_NAME> ro",
+      "UI_REMEDIATION: Fireware Web UI -> System -> SNMP -> Remove 'public' and configure custom community or SNMPv3"
+    ],
+    "notes": "Default SNMP communities expose internal device metrics. Remove public/private and configure unique custom communities or SNMPv3. Ref: Fireware CLI Reference (snmp)."
+  },
+  "http_server_disabled": {
+    "summary": "Enforce HTTPS-only administration; unencrypted HTTP administration is unsupported on Fireware.",
+    "cli": [
+      "UI_REMEDIATION: Fireware Web UI enforces HTTPS on port 4117/8080 by default"
+    ],
+    "notes": "WatchGuard Fireware does not provide an unencrypted HTTP administrative server. Management Web UI is HTTPS-only. Ref: Fireware Architecture Guide."
+  },
+  "ssh_version_2": {
+    "summary": "Ensure SSH management service is active (Fireware SSH daemon exclusively enforces SSHv2).",
+    "cli": [
+      "UI_REMEDIATION: Fireware Web UI -> Firewall Policies -> WatchGuard policy enabled on port 4118 (SSHv2)"
+    ],
+    "notes": "WatchGuard Fireware SSH service runs exclusively over SSHv2. Legacy SSHv1 is not supported. Ref: Fireware CLI Reference."
+  },
+  "management_acl_applied": {
+    "summary": "Restrict administrative access (Web UI and SSH) to authorized management networks and trusted aliases.",
+    "cli": [
+      "UI_REMEDIATION: Fireware Web UI -> Firewall Policies -> Edit 'WatchGuard Web UI' and 'WatchGuard' policies -> Set 'From' to 'Any-Trusted' or specific management IP addresses, remove 'Any-External'"
+    ],
+    "notes": "Management policies must never permit unrestricted access from Any-External or public IP addresses. Restrict source to trusted management subnets. Ref: WatchGuard Firebox Security Hardening Guide."
+  },
+  "login_banner_configured": {
+    "summary": "Enable Logon Disclaimer to display authorized access warning banner prior to login.",
+    "cli": [
+      "logon-disclaimer enable",
+      "logon-disclaimer message \"Authorized Access Only. All activities are monitored and logged.\"",
+      "UI_REMEDIATION: Fireware Web UI -> System -> Logon Disclaimer -> Enable Logon Disclaimer and enter warning text"
+    ],
+    "notes": "Logon Disclaimer requires users to acknowledge security policies and warning banner before session access is granted. Ref: Fireware Help (Logon Disclaimer)."
+  },
+  "logging_enabled": {
+    "summary": "Enable system logging and configure remote syslog or WatchGuard Log Server destination.",
+    "cli": [
+      "logging enable",
+      "log-server <SYSLOG-IP> syslog",
+      "UI_REMEDIATION: Fireware Web UI -> System -> Logging -> Syslog Server -> Add syslog server IP"
+    ],
+    "notes": "Centralized logging ensures audit trail retention. Configure remote syslog server. Ref: Fireware CLI Reference (log-server)."
+  },
+  "ntp_configured": {
+    "summary": "Enable NTP client and configure at least two redundant time sources.",
+    "cli": [
+      "ntp enable",
+      "ntp server <PRIMARY-NTP-IP>",
+      "ntp server <SECONDARY-NTP-IP>",
+      "UI_REMEDIATION: Fireware Web UI -> System -> NTP -> Enable NTP and add redundant NTP server addresses"
+    ],
+    "notes": "Accurate time synchronization is critical for security event correlation and forensic analysis. Configure redundant NTP servers. Ref: Fireware CLI Reference (ntp)."
+  }
+}

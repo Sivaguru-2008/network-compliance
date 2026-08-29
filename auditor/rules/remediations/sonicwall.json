@@ -1,0 +1,183 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure external RADIUS/LDAP authentication for centralized admin access control.",
+    "cli": [
+      "configure",
+      "  administration",
+      "    authentication-method radius",
+      "    radius-server <RADIUS-IP> secret <SHARED-SECRET>",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "SonicOS supports RADIUS, LDAP, and local authentication. Configure at least one external authentication server. Ref: SonicWall KB - Admin Best Practices (kA1VN0000000Jyv0AE)."
+  },
+  "secure_vty_transport": {
+    "summary": "SonicOS does not support telnet management. Disable HTTP management and restrict to HTTPS and SSH only.",
+    "cli": [
+      "configure",
+      "  no web-management allow-http",
+      "  interface X0",
+      "    no management http",
+      "    management https",
+      "    management ssh",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "SonicOS does not have telnet; only HTTPS, HTTP, SSH, SNMP, and Ping are management protocols. Disable HTTP to ensure encrypted-only management. Ref: SonicOS/X 7 CLI Reference Guide."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrator idle timeout to 10 minutes or less.",
+    "cli": [
+      "configure",
+      "  administration",
+      "    admin idle-timeout 10",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "Range is 1-9999 minutes. SonicWall hardening guide recommends 10 minutes. Default is 5 minutes. Ref: SonicWall KB - Admin Idle Timeout CLI (kA1VN0000000FOx0AM)."
+  },
+  "enable_secret_encrypted": {
+    "summary": "SonicOS stores admin passwords hashed by default. Ensure password complexity is enabled.",
+    "cli": [
+      "configure",
+      "  administration",
+      "    password-complexity alphanumeric-symbolic",
+      "    password-min-length 16",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "SonicOS does not have a separate enable secret; all admin passwords are stored hashed. Enable password complexity for strong credentials. Ref: SonicWall KB - Password Constraints (kA1VN0000000FvC0AU)."
+  },
+  "no_default_snmp_community": {
+    "summary": "Change the default SNMP community name from 'public' or disable SNMP entirely.",
+    "cli": [
+      "configure",
+      "  snmp",
+      "    no snmp enable",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "If SNMP is required, use SNMPv3 with Mandatory Require SNMPv3 enabled. Default community is 'public'. Ref: SonicWall KB - SNMP Configuration (170505617080053)."
+  },
+  "no_write_snmp_community": {
+    "summary": "SonicWall SNMP community strings are read-only by default. Disable SNMP if not needed.",
+    "cli": [
+      "configure",
+      "  snmp",
+      "    no snmp enable",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "SonicOS SNMP communities are read-only. If SNMP is required, use SNMPv3 with authentication and privacy. Ref: SonicWall KB - SNMP Configuration (170505617080053)."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP management access globally and per interface.",
+    "cli": [
+      "configure",
+      "  no web-management allow-http",
+      "  interface X0",
+      "    no management http",
+      "    commit",
+      "  exit",
+      "  interface X1",
+      "    no management http",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "HTTP transmits management credentials in cleartext. Disable on all interfaces and globally. Ref: SonicWall KB - Web Management CLI (170504284559119)."
+  },
+  "ssh_version_2": {
+    "summary": "SonicOS SSH is always protocol version 2. No action required.",
+    "cli": ["# SonicOS SSH is natively version 2; no action required."],
+    "notes": "SonicOS only supports SSH protocol version 2. Ref: SonicOS/X 7 CLI Reference Guide."
+  },
+  "management_acl": {
+    "summary": "Restrict management services on WAN interface and limit to management VLAN.",
+    "cli": [
+      "configure",
+      "  interface X1",
+      "    no management https",
+      "    no management http",
+      "    no management ssh",
+      "    no management snmp",
+      "    no management ping",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "Disable all management protocols on WAN-facing interfaces. Management should be restricted to trusted LAN/management interfaces only. Ref: SonicWall KB - High Security Setup (kA1VN0000000IRi0AM)."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote syslog servers and enable enhanced audit logging.",
+    "cli": [
+      "configure",
+      "  log",
+      "    syslog-server <SYSLOG-IP> port 514 facility local0",
+      "    syslog-format enhanced",
+      "    commit",
+      "  exit",
+      "  administration",
+      "    enhanced-audit-logging enable",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "Configure at least one remote syslog server. Enable enhanced audit logging for configuration change tracking. Ref: SonicWall KB - Enhanced Audit Logging (170505386294195)."
+  },
+  "ntp_configured": {
+    "summary": "Configure at least one NTP server for time synchronization.",
+    "cli": [
+      "configure",
+      "  ntp",
+      "    ntp-server <NTP-IP-1>",
+      "    ntp-server <NTP-IP-2>",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "At least two NTP servers should be configured for redundancy. Accurate time is essential for log correlation. Ref: SonicWall KB - NTP/SNMP Services (kA1VN0000000J2f0AE)."
+  },
+  "login_banner": {
+    "summary": "Configure a pre-login policy banner with an authorized-use notice.",
+    "cli": [
+      "# Pre-login banner is configured via Web UI:",
+      "# SonicOS 7: Device | Users | Settings > Customization > Pre-Login Policy Banner",
+      "# Enable 'Start With Policy Banner Before Login Window'",
+      "# Enter authorized-use notice text"
+    ],
+    "notes": "SonicOS pre-login banner is primarily configured via the web UI. CLI access to banner text is limited. Ref: SonicWall KB - Login Banner (kA1VN0000000Ogg0AE)."
+  },
+  "password_min_length": {
+    "summary": "Set minimum password length to at least 16 characters for high-security environments.",
+    "cli": [
+      "configure",
+      "  administration",
+      "    password-min-length 16",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "SonicOS default minimum is 8 characters. SonicWall hardening guide recommends 16. Range is 1-99. Ref: SonicWall KB - High Security Setup (kA1VN0000000IRi0AM)."
+  },
+  "lockout_configured": {
+    "summary": "Enable login attempt lockout with appropriate thresholds.",
+    "cli": [
+      "configure",
+      "  administration",
+      "    login-attempts-per-minute 3",
+      "    lockout-period 30",
+      "    max-cli-login-attempts 3",
+      "    commit",
+      "  exit",
+      "end"
+    ],
+    "notes": "SonicWall hardening guide recommends 3 failed attempts per minute with 30-minute lockout. Default is disabled. Ref: SonicWall KB - High Security Setup (kA1VN0000000IRi0AM)."
+  }
+}

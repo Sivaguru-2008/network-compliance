@@ -19,3 +19,8 @@ build/
 
 # SQLite local knowledge database
 auditor/rules/knowledge.db
+
+# Reference/third-party archives
+oxidized-master/
+python-SNS-API-master/
+sonicos-automation-main/

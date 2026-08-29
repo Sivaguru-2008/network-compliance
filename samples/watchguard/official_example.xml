@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WatchGuard Fireware Configuration File
+  Platform: WatchGuard Firebox
+  Source: OFFICIAL_VENDOR_EXAMPLE
+  Verified against: WatchGuard Technical Documentation - Policy Manager / Web UI Export
+-->
+<configuration version="12.9.4">
+  <system-parameters>
+    <device-name>Firebox-T80-Office</device-name>
+    <idle-timeout>15</idle-timeout>
+    <logon-disclaimer>
+      <enable>yes</enable>
+      <title>Corporate Firebox Gateway</title>
+      <message>Authorized users only.</message>
+    </logon-disclaimer>
+    <dns-server-list>
+      <server>1.1.1.1</server>
+      <server>8.8.8.8</server>
+    </dns-server-list>
+  </system-parameters>
+  <authentication>
+    <firebox-db>
+      <password-policy>
+        <min-password-length>12</min-password-length>
+        <password-complexity-enable>yes</password-complexity-enable>
+      </password-policy>
+      <account-lockout>
+        <enable>yes</enable>
+        <failed-attempts>5</failed-attempts>
+        <lockout-duration-minutes>30</lockout-duration-minutes>
+      </account-lockout>
+    </firebox-db>
+  </authentication>
+  <snmp>
+    <enable>yes</enable>
+    <version>v3</version>
+    <v3-user-list>
+      <user>
+        <user-name>wgmonitor</user-name>
+        <auth-protocol>sha256</auth-protocol>
+        <priv-protocol>aes</priv-protocol>
+      </user>
+    </v3-user-list>
+  </snmp>
+  <logging>
+    <enable>yes</enable>
+    <syslog-server>
+      <ip>192.168.1.50</ip>
+      <port>514</port>
+      <log-level>information</log-level>
+      <facility>local0</facility>
+    </syslog-server>
+  </logging>
+  <ntp>
+    <enable>yes</enable>
+    <server-list>
+      <server>0.watchguard.pool.ntp.org</server>
+      <server>1.watchguard.pool.ntp.org</server>
+    </server-list>
+  </ntp>
+  <policy-list>
+    <policy>
+      <name>WatchGuard Web UI</name>
+      <service>WG-Firebox-WebUI</service>
+      <enable>yes</enable>
+      <action>allow</action>
+      <from>
+        <alias>Any-Trusted</alias>
+      </from>
+      <to>
+        <alias>Firebox</alias>
+      </to>
+      <logging>yes</logging>
+    </policy>
+  </policy-list>
+</configuration>

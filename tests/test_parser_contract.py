@@ -44,6 +44,8 @@ from auditor.parsers.arista_eos import AristaEOSParser
 from auditor.parsers.sonic import SonicParser
 from auditor.parsers.checkpoint_gaia import CheckPointGaiaParser
 from auditor.parsers.mikrotik_routeros import MikroTikROSParser
+from auditor.parsers.sonicwall import SonicWallParser
+from auditor.parsers.stormshield import StormshieldParser
 from auditor.parsers.base import VendorParser
 from auditor.report import render_report
 from auditor.rules import load_framework
@@ -61,9 +63,11 @@ VENDORS = [
     pytest.param(PaloAltoParser, "paloalto_panos.xml", "paloalto", id="paloalto"),
     pytest.param(CheckPointGaiaParser, "checkpoint_gaia/insecure.conf", "checkpoint_gaia", id="checkpoint_gaia"),
     pytest.param(MikroTikROSParser, "mikrotik_routeros/insecure.conf", "mikrotik_routeros", id="mikrotik_routeros"),
+    pytest.param(SonicWallParser, "sonicwall/insecure.conf", "sonicwall", id="sonicwall"),
+    pytest.param(StormshieldParser, "stormshield/insecure.conf", "stormshield_sns", id="stormshield_sns"),
 ]
 
-ALL_PARSERS = [CiscoIOSParser, JunosParser, FortiosParser, AristaEOSParser, SonicParser, PaloAltoParser, CheckPointGaiaParser, MikroTikROSParser]
+ALL_PARSERS = [CiscoIOSParser, JunosParser, FortiosParser, AristaEOSParser, SonicParser, PaloAltoParser, CheckPointGaiaParser, MikroTikROSParser, SonicWallParser, StormshieldParser]
 
 
 def read(sample: str) -> str:
@@ -246,7 +250,7 @@ def test_the_samples_are_different_devices():
     vendors = {r.target.vendor for r in reports}
 
     assert len(fingerprints) == len(VENDORS)
-    assert vendors == {"cisco", "juniper", "fortinet", "arista", "sonic", "paloalto", "checkpoint", "mikrotik"}
+    assert vendors == {"cisco", "juniper", "fortinet", "arista", "sonic", "paloalto", "checkpoint", "mikrotik", "sonicwall", "stormshield"}
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WatchGuard Fireware Configuration File - Insecure Fixture
+  Platform: WatchGuard Firebox
+  Source: SYNTHETIC_DERIVED_FROM_OFFICIAL_SOURCE
+-->
+<configuration version="12.10.2">
+  <system-parameters>
+    <device-name>WG-FIREBOX-INSEC02</device-name>
+    <idle-timeout>0</idle-timeout>
+    <logon-disclaimer>
+      <enable>no</enable>
+    </logon-disclaimer>
+  </system-parameters>
+
+  <authentication>
+    <firebox-db>
+      <password-policy>
+        <min-password-length>6</min-password-length>
+        <password-complexity-enable>no</password-complexity-enable>
+      </password-policy>
+      <account-lockout>
+        <enable>no</enable>
+      </account-lockout>
+    </firebox-db>
+  </authentication>
+
+  <snmp>
+    <enable>yes</enable>
+    <version>v1</version>
+    <community-list>
+      <community>
+        <name>public</name>
+        <access>rw</access>
+      </community>
+    </community-list>
+  </snmp>
+
+  <logging>
+    <enable>no</enable>
+  </logging>
+
+  <ntp>
+    <enable>no</enable>
+  </ntp>
+
+  <policy-list>
+    <policy>
+      <name>WatchGuard Web UI</name>
+      <service>WG-Firebox-WebUI</service>
+      <enable>yes</enable>
+      <action>allow</action>
+      <from>
+        <alias>Any-External</alias>
+      </from>
+      <to>
+        <alias>Firebox</alias>
+      </to>
+      <logging>no</logging>
+    </policy>
+  </policy-list>
+</configuration>

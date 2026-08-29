@@ -62,6 +62,8 @@ _HARDWARE_SOURCE = {
     "sonic": "show platform summary",
     "checkpoint_gaia": "cpstat os / fw ver",
     "mikrotik_routeros": "system resource print / system routerboard print",
+    "stormshield_sns": "SYSTEM PROPERTY / SYS INFO / getconf",
+    "watchguard_fireware": "show sysinfo / Fireware Web UI Dashboard",
     UNKNOWN_VENDOR: "the vendor's show-version equivalent",
 }
 
@@ -378,6 +380,88 @@ def _extract_mikrotik_routeros(
     return fields
 
 
+# ---------------------------------------------------------------------------
+# Stormshield Network Security (SNS)
+# ---------------------------------------------------------------------------
+
+_SNS_VERSION_COMMENT = re.compile(r"(?i)^\s*#.*(?:Stormshield Network Security|SNS)\s+v?(\d[\w.-]*)\b")
+_SNS_VERSION_INI = re.compile(r"(?i)^\s*(?:version|firmware)\s*=\s*(\S+)")
+_SNS_MODEL = re.compile(r"(?i)^\s*(?:#\s*)?model\s*[:=]\s*(\S+)")
+_SNS_SERIAL = re.compile(r"(?i)^\s*(?:#\s*)?serial(?:number)?\s*[:=]\s*(\S+)")
+
+
+def _extract_stormshield_sns(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _SNS_VERSION_COMMENT) or _scan(lines, _SNS_VERSION_INI)
+    fields["os_version"] = (
+        _found(version, note="Stormshield SNS version from configuration/header.")
+        if version
+        else Observation[str].unknown(
+            "No Stormshield version header or 'version=' setting in this configuration."
+        )
+    )
+
+    model = _scan(lines, _SNS_MODEL)
+    fields["model"] = (
+        _found(model, note="Hardware model from configuration/header.")
+        if model
+        else _missing("model", "stormshield_sns")
+    )
+
+    serial = _scan(lines, _SNS_SERIAL)
+    fields["serial_number"] = (
+        _found(serial, note="Serial number from configuration/header.")
+        if serial
+        else _missing("serial_number", "stormshield_sns")
+    )
+    return fields
+
+
+# ---------------------------------------------------------------------------
+# WatchGuard Firebox / Fireware
+# ---------------------------------------------------------------------------
+
+_WG_VERSION = re.compile(
+    r"(?i)(?:<configuration\b[^>]*\bversion=[\"']([^\"']+)[\"']|WatchGuard\s+Fireware\s+v?(\S+))"
+)
+_WG_MODEL = re.compile(r"(?i)(?:<model>([^<]+)</model>|Firebox\s+([A-Z0-9]+))")
+_WG_SERIAL = re.compile(r"(?i)<serial(?:-number)?>([^<]+)</serial(?:-number)?>")
+
+
+def _extract_watchguard_fireware(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+    version = _scan(lines, _WG_VERSION, group=1)
+    if not version:
+        version = _scan(lines, _WG_VERSION, group=2)
+    fields["os_version"] = (
+        _found(version, note="Fireware OS version.")
+        if version
+        else Observation[str].unknown("No Fireware version header in this configuration.")
+    )
+
+    model = _scan(lines, _WG_MODEL, group=1)
+    if not model:
+        model = _scan(lines, _WG_MODEL, group=2)
+    fields["model"] = (
+        _found(model, note="Firebox hardware model.")
+        if model
+        else _missing("model", "watchguard_fireware")
+    )
+
+    serial = _scan(lines, _WG_SERIAL)
+    fields["serial_number"] = (
+        _found(serial, note="Serial number from configuration/header.")
+        if serial
+        else _missing("serial_number", "watchguard_fireware")
+    )
+    return fields
+
+
 _EXTRACTORS: Dict[
     str, Callable[[List[str], Optional[SecurityBaselineModel]], Dict[str, Observation]]
 ] = {
@@ -389,6 +473,8 @@ _EXTRACTORS: Dict[
     "huawei_vrp": _extract_huawei,
     "checkpoint_gaia": _extract_checkpoint_gaia,
     "mikrotik_routeros": _extract_mikrotik_routeros,
+    "stormshield_sns": _extract_stormshield_sns,
+    "watchguard_fireware": _extract_watchguard_fireware,
 }
 
 

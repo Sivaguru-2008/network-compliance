@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- WatchGuard Malformed XML Fixture -->
+<configuration version="12.10.2">
+  <system-parameters>
+    <device-name>WG-BROKEN
+  </system-parameters>
+</configuration>

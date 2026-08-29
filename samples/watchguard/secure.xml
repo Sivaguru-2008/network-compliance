@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WatchGuard Fireware Configuration File
+  Platform: WatchGuard Firebox
+  Source: SYNTHETIC_DERIVED_FROM_OFFICIAL_SOURCE
+  Verified against: WatchGuard Help Center - Fireware Configuration File Structure
+-->
+<configuration version="12.10.2">
+  <system-parameters>
+    <device-name>WG-FIREBOX-SEC01</device-name>
+    <system-name>WG-FIREBOX-SEC01</system-name>
+    <idle-timeout>10</idle-timeout>
+    <web-session-timeout>10</web-session-timeout>
+    <logon-disclaimer>
+      <enable>yes</enable>
+      <title>Authorized Access Only</title>
+      <message>This system is restricted to authorized personnel only. All activities are monitored and logged.</message>
+    </logon-disclaimer>
+    <dns-server-list>
+      <server>10.0.0.53</server>
+      <server>10.0.0.54</server>
+    </dns-server-list>
+  </system-parameters>
+
+  <authentication>
+    <firebox-db>
+      <password-policy>
+        <min-password-length>16</min-password-length>
+        <password-complexity-enable>yes</password-complexity-enable>
+        <password-expiration-days>90</password-expiration-days>
+      </password-policy>
+      <account-lockout>
+        <enable>yes</enable>
+        <failed-attempts>3</failed-attempts>
+        <lockout-duration-minutes>15</lockout-duration-minutes>
+        <permanent-lockout-threshold>5</permanent-lockout-threshold>
+      </account-lockout>
+    </firebox-db>
+    <auth-server-list>
+      <server>
+        <name>Corp-RADIUS</name>
+        <type>radius</type>
+        <ip>10.0.0.20</ip>
+        <port>1812</port>
+        <enable>yes</enable>
+      </server>
+    </auth-server-list>
+  </authentication>
+
+  <snmp>
+    <enable>yes</enable>
+    <version>v2c</version>
+    <community-list>
+      <community>
+        <name>SecMonWG2026</name>
+        <access>ro</access>
+        <host>10.0.0.100</host>
+      </community>
+    </community-list>
+    <v3-user-list>
+      <user>
+        <user-name>snmpadmin</user-name>
+        <auth-protocol>sha256</auth-protocol>
+        <priv-protocol>aes</priv-protocol>
+      </user>
+    </v3-user-list>
+  </snmp>
+
+  <logging>
+    <enable>yes</enable>
+    <syslog-server>
+      <ip>10.0.0.50</ip>
+      <port>514</port>
+      <log-level>information</log-level>
+      <facility>local0</facility>
+    </syslog-server>
+    <log-server-list>
+      <log-server>
+        <ip>10.0.0.51</ip>
+        <enable>yes</enable>
+      </log-server>
+    </log-server-list>
+  </logging>
+
+  <ntp>
+    <enable>yes</enable>
+    <server-list>
+      <server>10.0.0.10</server>
+      <server>10.0.0.11</server>
+    </server-list>
+  </ntp>
+
+  <firecluster>
+    <enable>yes</enable>
+    <cluster-id>1</cluster-id>
+    <cluster-name>HQ-FireCluster</cluster-name>
+  </firecluster>
+
+  <policy-list>
+    <policy>
+      <name>WatchGuard Web UI</name>
+      <service>WG-Firebox-WebUI</service>
+      <enable>yes</enable>
+      <action>allow</action>
+      <from>
+        <alias>Any-Trusted</alias>
+      </from>
+      <to>
+        <alias>Firebox</alias>
+      </to>
+      <logging>yes</logging>
+    </policy>
+    <policy>
+      <name>WatchGuard</name>
+      <service>WG-Firebox-Management</service>
+      <enable>yes</enable>
+      <action>allow</action>
+      <from>
+        <alias>Any-Trusted</alias>
+      </from>
+      <to>
+        <alias>Firebox</alias>
+      </to>
+      <logging>yes</logging>
+    </policy>
+  </policy-list>
+</configuration>

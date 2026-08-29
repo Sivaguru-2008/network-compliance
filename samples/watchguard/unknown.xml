@@ -1,0 +1,5 @@
+This is an unknown raw text file with no WatchGuard markers or XML structure.
+It should not be detected as WatchGuard Firebox configuration.
+Some random lines:
+foo=bar
+system=unknown

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WatchGuard Fireware Configuration File - Minimal / Ambiguous Settings
+  Platform: WatchGuard Firebox
+  Source: SYNTHETIC_DERIVED_FROM_OFFICIAL_SOURCE
+-->
+<configuration version="12.10.2">
+  <system-parameters>
+    <device-name>WG-FIREBOX-MIN01</device-name>
+  </system-parameters>
+  <policy-list>
+    <policy>
+      <name>Outgoing</name>
+      <service>Any</service>
+      <enable>yes</enable>
+      <action>allow</action>
+      <from>
+        <alias>Any-Trusted</alias>
+      </from>
+      <to>
+        <alias>Any-External</alias>
+      </to>
+    </policy>
+  </policy-list>
+</configuration>

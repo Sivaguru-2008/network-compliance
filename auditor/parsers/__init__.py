@@ -11,6 +11,9 @@ from .paloalto import PaloAltoParser
 from .huawei_vrp import HuaweiVRPParser
 from .checkpoint_gaia import CheckPointGaiaParser
 from .mikrotik_routeros import MikroTikROSParser
+from .sonicwall import SonicWallParser
+from .stormshield import StormshieldParser
+from .watchguard import WatchGuardParser
 from .llm import LLMClient, LLMParser, LLMResponseError, LLMUnavailableError
 
 __all__ = [
@@ -24,6 +27,9 @@ __all__ = [
     "PaloAltoParser",
     "HuaweiVRPParser",
     "MikroTikROSParser",
+    "SonicWallParser",
+    "StormshieldParser",
+    "WatchGuardParser",
     "LLMClient",
     "LLMParser",
     "LLMResponseError",

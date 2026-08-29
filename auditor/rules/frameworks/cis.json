@@ -10,7 +10,10 @@
     "paloalto": "CIS Palo Alto Firewall 11 Benchmark v1.2.0",
     "huawei_vrp": "CIS Huawei VRP Benchmark (control intent; clause numbers not asserted)",
     "checkpoint_gaia": "CIS Check Point Gaia Benchmark (control intent; clause numbers not asserted)",
-    "mikrotik_routeros": "MikroTik RouterOS Hardening Guidelines (Generic Mapping; No Official CIS Benchmark Exists)"
+    "mikrotik_routeros": "MikroTik RouterOS Hardening Guidelines (Generic Mapping; No Official CIS Benchmark Exists)",
+    "sonicwall": "SonicWall SonicOS Hardening Guidelines (Generic Mapping; No Official CIS Benchmark Exists)",
+    "stormshield_sns": "Stormshield Network Security Hardening Guidelines (Generic Mapping; No Official CIS Benchmark Exists)",
+    "watchguard_fireware": "WatchGuard Firebox / Fireware Hardening Guidelines (Generic Mapping; No Official CIS Benchmark Exists)"
   },
   "source_notes": {
     "cisco_ios": "Conditions and remediation follow the CIS Cisco IOS Benchmark. Clause numbers are given for traceability and should be re-confirmed against your licensed copy of the benchmark for the exact IOS train you audit; rules whose clause could not be pinned exactly carry a section-level control_ref and a note.",
@@ -20,7 +23,10 @@
     "sonic_sonic": "The conditions read the same vendor-neutral baseline fields as every other vendor pack. What is SONiC-specific is the remediation, which is SONiC CLI or Linux-level configuration. Clause numbers are deliberately NOT asserted.",
     "huawei_vrp": "The conditions read the same vendor-neutral baseline fields as every other vendor pack. What is VRP-specific is the remediation, which is Huawei VRP CLI. Clause numbers are deliberately NOT asserted.",
     "checkpoint_gaia": "The conditions read the same vendor-neutral baseline fields as every other vendor pack. What is Gaia-specific is the remediation, which is Check Point Gaia clish CLI. Clause numbers are deliberately NOT asserted.",
-    "mikrotik_routeros": "There is no official CIS benchmark for MikroTik RouterOS. The conditions mapped here are generic security best practices derived from other device benchmarks (e.g. Cisco IOS) to provide baseline security assessment for RouterOS. What is RouterOS-specific is the remediation CLI."
+    "mikrotik_routeros": "There is no official CIS benchmark for MikroTik RouterOS. The conditions mapped here are generic security best practices derived from other device benchmarks (e.g. Cisco IOS) to provide baseline security assessment for RouterOS. What is RouterOS-specific is the remediation CLI.",
+    "sonicwall": "There is no official CIS benchmark for SonicWall SonicOS. The conditions mapped here are generic security best practices derived from SonicWall official hardening guides (KB kA1VN0000000IRi0AM) and Tenable TNS Best Practices SonicWALL v5.9. What is SonicOS-specific is the remediation CLI.",
+    "stormshield_sns": "There is no official CIS benchmark for Stormshield Network Security. The conditions mapped here are generic security best practices derived from Stormshield official hardening guides and ANSSI recommendations. What is Stormshield-specific is the remediation CLI.",
+    "watchguard_fireware": "There is no official CIS benchmark for WatchGuard Firebox / Fireware. The conditions mapped here are generic security best practices derived from WatchGuard official hardening guides and security documentation. What is WatchGuard-specific is the remediation CLI and Web UI procedures."
   },
   "description": "Center for Internet Security Benchmarks",
   "mappings": {
@@ -33,7 +39,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.3.10", "control_ref": "1.3.10", "verified": false },
       "huawei_vrp": { "id": "CIS-HUAWEI-AAA-CENTRALISED", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-AAA-CENTRALISED", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-AAA-CENTRALISED", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-AAA-CENTRALISED", "control_ref": null, "verified": false, "note": "No official CIS benchmark for SonicWall. Generic best-practice mapping from SonicWall hardening guide." },
+      "stormshield_sns": { "id": "SNS-AAA-CENTRALISED", "control_ref": null, "verified": false, "note": "No official CIS benchmark for Stormshield. Generic best-practice mapping from Stormshield hardening guide." },
+      "watchguard_fireware": { "id": "WG-AAA-CENTRALISED", "control_ref": null, "verified": false, "note": "No official CIS benchmark for WatchGuard. Generic best-practice mapping from WatchGuard hardening documentation." }
     },
     "secure_vty_transport": {
       "cisco_ios": { "id": "CIS-IOS-1.2.2", "control_ref": "1.2.2", "verified": true },
@@ -44,7 +53,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.2.3", "control_ref": "1.2.3", "verified": true },
       "huawei_vrp": { "id": "CIS-HUAWEI-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false, "note": "No official CIS benchmark for SonicWall. SonicOS does not support telnet; HTTP is the cleartext concern." },
+      "stormshield_sns": { "id": "SNS-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false, "note": "No official CIS benchmark for Stormshield. SNS does not support telnet; HTTP is the cleartext concern." },
+      "watchguard_fireware": { "id": "WG-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false, "note": "No official CIS benchmark for WatchGuard. Fireware does not support telnet; administration is HTTPS and SSH only." }
     },
     "vty_idle_timeout": {
       "cisco_ios": { "id": "CIS-IOS-1.2.9", "control_ref": "1.2.9", "verified": true },
@@ -55,7 +67,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.4.1", "control_ref": "1.4.1", "verified": true },
       "huawei_vrp": { "id": "CIS-HUAWEI-IDLE-TIMEOUT", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-IDLE-TIMEOUT", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-IDLE-TIMEOUT", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-IDLE-TIMEOUT", "control_ref": null, "verified": false },
+      "stormshield_sns": { "id": "SNS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
+      "watchguard_fireware": { "id": "WG-IDLE-TIMEOUT", "control_ref": null, "verified": false }
     },
     "enable_secret_encrypted": {
       "cisco_ios": { "id": "CIS-IOS-1.4.1-1.4.2", "control_ref": "1.4.1, 1.4.2", "verified": true },
@@ -66,7 +81,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.3.2", "control_ref": "1.3.2", "verified": false },
       "huawei_vrp": { "id": "CIS-HUAWEI-SUPER-PASSWORD-HASHED", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-PASSWORD-HASHED", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-PASSWORD-HASHED", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-PASSWORD-HASHED", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-PASSWORD-HASHED", "control_ref": null, "verified": false, "note": "SonicOS stores admin passwords hashed by default." },
+      "stormshield_sns": { "id": "SNS-PASSWORD-HASHED", "control_ref": null, "verified": false, "note": "Stormshield SNS stores credentials hashed by default." },
+      "watchguard_fireware": { "id": "WG-PASSWORD-HASHED", "control_ref": null, "verified": false, "note": "Fireware stores administrative passphrases hashed by default." }
     },
     "no_default_snmp_community": {
       "cisco_ios": { "id": "CIS-IOS-1.5.2-1.5.3", "control_ref": "1.5.2, 1.5.3", "verified": true },
@@ -77,7 +95,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.5.1", "control_ref": "1.5.1", "verified": true },
       "huawei_vrp": { "id": "CIS-HUAWEI-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
+      "stormshield_sns": { "id": "SNS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
+      "watchguard_fireware": { "id": "WG-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false }
     },
     "http_server_disabled": {
       "cisco_ios": { "id": "CIS-IOS-2.1-HTTP-SERVER", "control_ref": "2.1", "verified": true },
@@ -88,7 +109,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.2.3-HTTP", "control_ref": "1.2.3", "verified": true },
       "huawei_vrp": { "id": "CIS-HUAWEI-NO-HTTP-SERVER", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-NO-HTTP-SERVER", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-NO-HTTP-SERVER", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-NO-HTTP-SERVER", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-NO-HTTP-SERVER", "control_ref": null, "verified": false },
+      "stormshield_sns": { "id": "SNS-NO-HTTP-SERVER", "control_ref": null, "verified": false },
+      "watchguard_fireware": { "id": "WG-NO-HTTP-SERVER", "control_ref": null, "verified": false, "note": "Fireware does not support unencrypted HTTP administration." }
     },
     "ssh_version_2": {
       "cisco_ios": { "id": "CIS-IOS-2.1.1.6", "control_ref": "2.1.1.6", "verified": true },
@@ -99,7 +123,10 @@
       "paloalto": { "id": "CIS-PALOALTO-SSH-V2", "control_ref": null, "verified": false },
       "huawei_vrp": { "id": "CIS-HUAWEI-SSH-V2", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-SSH-V2", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-SSH-V2", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-SSH-V2", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-SSH-V2", "control_ref": null, "verified": false, "note": "SonicOS SSH is always protocol version 2." },
+      "stormshield_sns": { "id": "SNS-SSH-V2", "control_ref": null, "verified": false, "note": "Stormshield SNS SSH is always protocol version 2." },
+      "watchguard_fireware": { "id": "WG-SSH-V2", "control_ref": null, "verified": false, "note": "WatchGuard Fireware SSH is always protocol version 2." }
     },
     "logging_enabled": {
       "cisco_ios": { "id": "CIS-IOS-2.2.2-2.2.4", "control_ref": "2.2.2, 2.2.4", "verified": true },
@@ -110,7 +137,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.1.1.1", "control_ref": "1.1.1.1", "verified": true },
       "huawei_vrp": { "id": "CIS-HUAWEI-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-SYSLOG-DESTINATION", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
+      "stormshield_sns": { "id": "SNS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
+      "watchguard_fireware": { "id": "WG-SYSLOG-DESTINATION", "control_ref": null, "verified": false }
     },
     "management_acl": {
       "cisco_ios": { "id": "CIS-IOS-1.2-VTY-ACCESS-CLASS", "control_ref": "1.2", "verified": true },
@@ -121,7 +151,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.2.1", "control_ref": "1.2.1", "verified": false },
       "huawei_vrp": { "id": "CIS-HUAWEI-MGMT-ACL", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-MGMT-ACL", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-MGMT-ACL", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-MGMT-ACL", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-MGMT-ACL", "control_ref": null, "verified": false },
+      "stormshield_sns": { "id": "SNS-MGMT-ACL", "control_ref": null, "verified": false },
+      "watchguard_fireware": { "id": "WG-MGMT-ACL", "control_ref": null, "verified": false }
     },
     "login_banner": {
       "cisco_ios": { "id": "CIS-IOS-1.6-LOGIN-BANNER", "control_ref": "1.6", "verified": true },
@@ -132,7 +165,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.1.2", "control_ref": "1.1.2", "verified": true },
       "huawei_vrp": { "id": "CIS-HUAWEI-LOGIN-BANNER", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-LOGIN-BANNER", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-LOGIN-BANNER", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-LOGIN-BANNER", "control_ref": null, "verified": false },
+      "stormshield_sns": { "id": "SNS-LOGIN-BANNER", "control_ref": null, "verified": false },
+      "watchguard_fireware": { "id": "WG-LOGIN-BANNER", "control_ref": null, "verified": false }
     },
     "password_min_length": {
       "cisco_ios": { "id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH", "control_ref": "1.1", "verified": true },
@@ -143,7 +179,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.3.2-LEN", "control_ref": "1.3.2", "verified": true },
       "huawei_vrp": { "id": "CIS-HUAWEI-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
+      "stormshield_sns": { "id": "SNS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
+      "watchguard_fireware": { "id": "WG-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false }
     },
     "ntp_configured": {
       "cisco_ios": { "id": "CIS-IOS-2.3-NTP-CONFIGURED", "control_ref": "2.3", "verified": true },
@@ -154,7 +193,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.6.2", "control_ref": "1.6.2", "verified": true },
       "huawei_vrp": { "id": "CIS-HUAWEI-NTP-CONFIGURED", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-NTP-CONFIGURED", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-NTP-CONFIGURED", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-NTP-CONFIGURED", "control_ref": null, "verified": false },
+      "stormshield_sns": { "id": "SNS-NTP-CONFIGURED", "control_ref": null, "verified": false },
+      "watchguard_fireware": { "id": "WG-NTP-CONFIGURED", "control_ref": null, "verified": false }
     },
     "no_write_snmp_community": {
       "cisco_ios": { "id": "CIS-IOS-1.5-SNMP-NO-WRITE", "control_ref": "1.5", "verified": true },
@@ -165,7 +207,10 @@
       "paloalto": { "id": "CIS-PALOALTO-1.5.1-WRITE", "control_ref": "1.5.1", "verified": true },
       "huawei_vrp": { "id": "CIS-HUAWEI-SNMP-NO-WRITE", "control_ref": null, "verified": false },
       "checkpoint_gaia": { "id": "CIS-CPGAIA-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-SNMP-NO-WRITE", "control_ref": null, "verified": false }
+      "mikrotik_routeros": { "id": "MTR-SNMP-NO-WRITE", "control_ref": null, "verified": false },
+      "sonicwall": { "id": "SWL-SNMP-NO-WRITE", "control_ref": null, "verified": false },
+      "stormshield_sns": { "id": "SNS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
+      "watchguard_fireware": { "id": "WG-SNMP-NO-WRITE", "control_ref": null, "verified": false }
     }
   }
 }

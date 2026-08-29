@@ -10,7 +10,7 @@ from auditor.models.result import Status
 from auditor.models.observation import Origin
 from auditor.parsers import HybridParser, registry
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SAMPLES = PROJECT_ROOT / "samples"
 
 def _sample_bytes(name: str) -> bytes:
@@ -44,7 +44,7 @@ def test_queue_and_item_endpoints(test_client):
     assert item["vendor"] == "cisco_ios"
     assert item["device_identity"] == "BRANCH-SW-07"
     assert item["status"] == "NEEDS_REVIEW"
-    assert "Line 45: exec-timeout-custom 15" in item["context"]
+    assert "Line 50: exec-timeout-custom 15" in item["context"]
     
     # Retrieve detail by ID
     detail_res = test_client.get(f"/training/{item['id']}")
@@ -191,7 +191,7 @@ def test_e2e_parser_integration_and_framework_neutrality(test_client):
     evidence = vty_findings_second[0]["evidence"][0]
     assert evidence["origin"] == Origin.LEARNED.value
     assert evidence["mapping_id"] == "LM-VTY-E2E"
-    assert evidence["original_line_number"] == 45
+    assert evidence["original_line_number"] == 50
     assert "exec-timeout-custom 15" in evidence["source_line"]
 
 # 5. Security & Input validations
