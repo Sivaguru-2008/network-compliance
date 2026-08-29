@@ -1,0 +1,443 @@
+{
+  "schema_version": "1.0",
+  "description": "Provenance metadata for all sample and benchmark configurations used by the auditor test suite and demonstration workflows.",
+  "provenance_types": {
+    "SYNTHETIC": "Handcrafted configuration with no real device behind it. Safe to redistribute. Not evidence of real-world deployment.",
+    "OFFICIAL_EXAMPLE": "Derived from vendor documentation, official hardening guides, or published benchmark examples. May contain vendor-specific syntax faithful to real output but not from a live device.",
+    "REAL_DEVICE_SANITIZED": "Exported from a real device and sanitized (credentials, IPs, hostnames replaced). Closest to production but still synthetic in identifying details."
+  },
+  "entries": [
+    {
+      "path": "samples/cisco/hardened_ios.conf",
+      "vendor": "cisco",
+      "platform": "ios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Fully hardened Cisco IOS running-config. Expected: 8 PASS, 0 FAIL against CIS pack.",
+      "purpose": "positive-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/cisco/insecure_ios.conf",
+      "vendor": "cisco",
+      "platform": "ios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Deliberately weak Cisco IOS running-config. Expected: majority FAIL against CIS pack.",
+      "purpose": "negative-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/hardened_ios.conf",
+      "vendor": "cisco",
+      "platform": "ios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Root-level hardened Cisco IOS config (duplicate of samples/cisco/hardened_ios.conf for backward compatibility).",
+      "purpose": "positive-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/insecure_ios.conf",
+      "vendor": "cisco",
+      "platform": "ios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Root-level insecure Cisco IOS config (duplicate of samples/cisco/insecure_ios.conf for backward compatibility).",
+      "purpose": "negative-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/junos/sample.conf",
+      "vendor": "juniper",
+      "platform": "junos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Juniper Junos set-format configuration with mixed security posture.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/junos_srx.conf",
+      "vendor": "juniper",
+      "platform": "junos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Root-level Junos SRX sample.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/fortios/sample.conf",
+      "vendor": "fortinet",
+      "platform": "fortios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Fortinet FortiOS configuration for FortiGate 60F.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/fortios_fgt.conf",
+      "vendor": "fortinet",
+      "platform": "fortios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Root-level FortiOS config.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/arista/secure.conf",
+      "vendor": "arista",
+      "platform": "eos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Hardened Arista EOS configuration.",
+      "purpose": "positive-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/arista/insecure.conf",
+      "vendor": "arista",
+      "platform": "eos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Insecure Arista EOS configuration with known weaknesses.",
+      "purpose": "negative-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/arista/ambiguous.conf",
+      "vendor": "arista",
+      "platform": "eos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Arista EOS config with ambiguous security posture (some controls present, some absent).",
+      "purpose": "edge-case",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/arista/malformed.conf",
+      "vendor": "arista",
+      "platform": "eos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Deliberately malformed Arista EOS config for parser robustness testing.",
+      "purpose": "robustness",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/arista/unknown.conf",
+      "vendor": "arista",
+      "platform": "eos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Arista EOS config with unrecognized directives.",
+      "purpose": "edge-case",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/arista/sample.conf",
+      "vendor": "arista",
+      "platform": "eos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "General-purpose Arista EOS sample.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/sonic/secure.conf",
+      "vendor": "sonic",
+      "platform": "sonic",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Hardened SONiC configuration.",
+      "purpose": "positive-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/sonic/insecure.conf",
+      "vendor": "sonic",
+      "platform": "sonic",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Insecure SONiC configuration.",
+      "purpose": "negative-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/sonic/ambiguous.conf",
+      "vendor": "sonic",
+      "platform": "sonic",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "SONiC config with ambiguous posture.",
+      "purpose": "edge-case",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/sonic/malformed.conf",
+      "vendor": "sonic",
+      "platform": "sonic",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Malformed SONiC config for robustness testing.",
+      "purpose": "robustness",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/sonic/unknown.conf",
+      "vendor": "sonic",
+      "platform": "sonic",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "SONiC config with unrecognized directives.",
+      "purpose": "edge-case",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/sonic/sample.conf",
+      "vendor": "sonic",
+      "platform": "sonic",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "General-purpose SONiC sample.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/paloalto_panos.xml",
+      "vendor": "paloalto",
+      "platform": "panos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Palo Alto Networks PAN-OS XML configuration.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/huawei_vrp/secure.conf",
+      "vendor": "huawei",
+      "platform": "vrp",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Hardened Huawei VRP configuration.",
+      "purpose": "positive-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/huawei_vrp/insecure.conf",
+      "vendor": "huawei",
+      "platform": "vrp",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Insecure Huawei VRP configuration.",
+      "purpose": "negative-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/huawei_vrp/ambiguous.conf",
+      "vendor": "huawei",
+      "platform": "vrp",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Huawei VRP config with ambiguous posture.",
+      "purpose": "edge-case",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/huawei_vrp/malformed.conf",
+      "vendor": "huawei",
+      "platform": "vrp",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Malformed Huawei VRP config for robustness testing.",
+      "purpose": "robustness",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/huawei_vrp/unknown.conf",
+      "vendor": "huawei",
+      "platform": "vrp",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Huawei VRP config with unrecognized directives.",
+      "purpose": "edge-case",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/checkpoint_gaia/secure.conf",
+      "vendor": "checkpoint",
+      "platform": "gaia",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Hardened Check Point Gaia configuration.",
+      "purpose": "positive-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/checkpoint_gaia/insecure.conf",
+      "vendor": "checkpoint",
+      "platform": "gaia",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Insecure Check Point Gaia configuration.",
+      "purpose": "negative-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/mikrotik_routeros/secure.conf",
+      "vendor": "mikrotik",
+      "platform": "routeros",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Hardened MikroTik RouterOS configuration.",
+      "purpose": "positive-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/mikrotik_routeros/insecure.conf",
+      "vendor": "mikrotik",
+      "platform": "routeros",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Insecure MikroTik RouterOS configuration.",
+      "purpose": "negative-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/unknown_vendor.conf",
+      "vendor": "unknown",
+      "platform": "unknown",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Allied Telesis AlliedWare configuration. No deterministic parser exists — used to exercise the unknown-vendor and LLM fallback paths.",
+      "purpose": "unknown-vendor",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/unknown/unseen_vendor.conf",
+      "vendor": "unknown",
+      "platform": "unknown",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Unknown vendor config for testing the unseen-vendor workflow.",
+      "purpose": "unknown-vendor",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/new_router.conf",
+      "vendor": "unknown",
+      "platform": "unknown",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Generic router configuration for testing parser fallback behavior.",
+      "purpose": "unknown-vendor",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/configs/core-rtr-01.conf",
+      "vendor": "cisco",
+      "platform": "ios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Named Cisco IOS config simulating a core router. Hardened posture.",
+      "purpose": "positive-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/configs/core-rtr-01.show_version.txt",
+      "vendor": "cisco",
+      "platform": "ios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Simulated 'show version' output accompanying core-rtr-01.conf.",
+      "purpose": "supplementary",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/configs/branch-sw-07.conf",
+      "vendor": "cisco",
+      "platform": "ios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Deliberately weak Cisco IOS config simulating a branch switch. Expected: majority FAIL.",
+      "purpose": "negative-control",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/configs/branch-sw-07.2024-06-01.conf",
+      "vendor": "cisco",
+      "platform": "ios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Historical snapshot of branch-sw-07 for comparison/regression testing.",
+      "purpose": "regression",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/configs/branch-fw-02.conf",
+      "vendor": "juniper",
+      "platform": "junos",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Juniper Junos set-format config with mixed security posture.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/configs/fgt-60f-01.conf",
+      "vendor": "fortinet",
+      "platform": "fortios",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "FortiGate 60F FortiOS configuration.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/configs/vrp-core-01.conf",
+      "vendor": "huawei",
+      "platform": "vrp",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Huawei VRP configuration, originally used to test the LLM fallback path before the deterministic parser was built.",
+      "purpose": "mixed-posture",
+      "created_at": "2025-01-01"
+    },
+    {
+      "path": "samples/configs/truncated-upload.conf",
+      "vendor": "unknown",
+      "platform": "unknown",
+      "provenance": "SYNTHETIC",
+      "real_device": false,
+      "description": "Truncated/incomplete config for testing robustness against partial uploads.",
+      "purpose": "robustness",
+      "created_at": "2025-01-01"
+    }
+  ],
+  "framework_sources": {
+    "description": "Classification of how each framework's control references were sourced. VERIFIED_FROM_PDF means clause numbers were checked against an authoritative PDF. CONTROL_INTENT means the rule captures the security intent of the benchmark but clause numbers are not asserted. GENERIC_MAPPING means no official benchmark exists for this vendor; rules are derived from generic hardening best practices.",
+    "classifications": {
+      "VERIFIED_FROM_PDF": "Clause numbers verified against a licensed/published copy of the benchmark PDF.",
+      "CONTROL_INTENT": "Security intent follows the benchmark; exact clause numbers not asserted.",
+      "GENERIC_MAPPING": "No official benchmark exists for this vendor; mapped from generic hardening best practices."
+    },
+    "vendors": {
+      "cisco_ios": "VERIFIED_FROM_PDF",
+      "fortinet_fortios": "VERIFIED_FROM_PDF",
+      "paloalto": "CONTROL_INTENT",
+      "juniper_junos": "CONTROL_INTENT",
+      "arista_eos": "CONTROL_INTENT",
+      "sonic_sonic": "CONTROL_INTENT",
+      "huawei_vrp": "CONTROL_INTENT",
+      "checkpoint_gaia": "CONTROL_INTENT",
+      "mikrotik_routeros": "GENERIC_MAPPING",
+      "sonicwall": "GENERIC_MAPPING",
+      "stormshield_sns": "GENERIC_MAPPING",
+      "watchguard_fireware": "GENERIC_MAPPING"
+    }
+  }
+}
