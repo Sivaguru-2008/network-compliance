@@ -13,6 +13,14 @@ from .rule import ComplianceRule, Remediation, Severity
 REPORT_SCHEMA_VERSION = "1.0"
 
 
+class SourceClassification(str, Enum):
+    """How a framework control reference was sourced for this vendor."""
+
+    VERIFIED_FROM_PDF = "VERIFIED_FROM_PDF"
+    CONTROL_INTENT = "CONTROL_INTENT"
+    GENERIC_MAPPING = "GENERIC_MAPPING"
+
+
 class Status(str, Enum):
     """Verdicts this tool is allowed to reach.
 
@@ -107,6 +115,7 @@ class ControlResult(BaseModel):
     vendor: Optional[str] = None
     parser: Optional[str] = None
     knowledge_version: Optional[str] = None
+    source_classification: Optional[SourceClassification] = None
     source_reference: Optional[str] = None
     evaluation_result: Optional[str] = None
     reason: Optional[str] = None
@@ -144,6 +153,13 @@ class ControlResult(BaseModel):
             device=device,
             vendor=vendor,
             parser=parser,
+            source_classification=(
+                SourceClassification.VERIFIED_FROM_PDF
+                if rule.verified_ref and rule.control_ref
+                else SourceClassification.CONTROL_INTENT
+                if rule.control_ref
+                else SourceClassification.GENERIC_MAPPING
+            ),
             knowledge_version=rule.knowledge_version,
             source_reference=rule.control_ref,
             evaluation_result=status.value,
