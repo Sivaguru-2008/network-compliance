@@ -9,6 +9,7 @@ from .result import (
     Evidence,
     FrameworkInfo,
     ReportSummary,
+    SourceClassification,
     Status,
     TargetInfo,
 )
@@ -49,6 +50,7 @@ __all__ = [
     "RuleSet",
     "SecurityBaselineModel",
     "Severity",
+    "SourceClassification",
     "SnmpCommunity",
     "Status",
     "TargetInfo",
