@@ -1,0 +1,255 @@
+{
+  "task": "classification",
+  "split": "test",
+  "total_samples": 2063,
+  "accuracy": 0.9486,
+  "precision_macro": 0.7372,
+  "recall_macro": 0.7314,
+  "macro_f1": 0.6904,
+  "weighted_f1": 0.9535,
+  "precision_weighted": 0.9684,
+  "recall_weighted": 0.9486,
+  "critical_finding_recall": 0.7314,
+  "critical_finding_precision": 0.7372,
+  "false_negative_rate": 0.0,
+  "false_positives": 0,
+  "false_negatives": 0,
+  "per_class": {
+    "FIREWALL": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 16.0
+    },
+    "INTERFACE": {
+      "precision": 0.7294685990338164,
+      "recall": 1.0,
+      "f1-score": 0.8435754189944135,
+      "support": 151.0
+    },
+    "LOGGING": {
+      "precision": 1.0,
+      "recall": 0.1,
+      "f1-score": 0.18181818181818182,
+      "support": 10.0
+    },
+    "MANAGEMENT": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 23.0
+    },
+    "NTP": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "ROUTING": {
+      "precision": 0.4807692307692308,
+      "recall": 1.0,
+      "f1-score": 0.6493506493506493,
+      "support": 25.0
+    },
+    "SNMP": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 11.0
+    },
+    "SYSTEM": {
+      "precision": 0.9946933962264151,
+      "recall": 0.945627802690583,
+      "f1-score": 0.9695402298850575,
+      "support": 1784.0
+    },
+    "USER_MANAGEMENT": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 24.0
+    },
+    "VLAN": {
+      "precision": 0.9047619047619048,
+      "recall": 1.0,
+      "f1-score": 0.95,
+      "support": 19.0
+    },
+    "VPN": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "macro avg": {
+      "precision": 0.7372448300719424,
+      "recall": 0.7314207093355075,
+      "f1-score": 0.6903894981862093,
+      "support": 2063.0
+    },
+    "weighted avg": {
+      "precision": 0.9684403704710314,
+      "recall": 0.9486185167232186,
+      "f1-score": 0.95353446749154,
+      "support": 2063.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      16,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      151,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      9,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      23,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      25,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      11,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      56,
+      0,
+      0,
+      1,
+      27,
+      0,
+      1687,
+      0,
+      2,
+      11
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      24,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      19,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "class_names": [
+    "FIREWALL",
+    "INTERFACE",
+    "LOGGING",
+    "MANAGEMENT",
+    "NTP",
+    "ROUTING",
+    "SNMP",
+    "SYSTEM",
+    "USER_MANAGEMENT",
+    "VLAN",
+    "VPN"
+  ]
+}

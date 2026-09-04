@@ -1,0 +1,33 @@
+{
+  "vendor_key": "juniper_junos",
+  "document_title": "Junos CLI Reference",
+  "source_filename": "juniper_junos_cli_reference.html",
+  "source_format": "html",
+  "total_pages": 1,
+  "total_sections": 3,
+  "total_code_blocks": 0,
+  "version": "Current",
+  "sections": [
+    {
+      "heading": "Junos CLI Reference",
+      "level": 1,
+      "content": "Help us improve your experience.\nLet us know what you think.\nDo you have time for a two-minute survey?",
+      "page_number": 1,
+      "code_blocks": []
+    },
+    {
+      "heading": "Overview",
+      "level": 2,
+      "content": "Use this guide to learn about the components that make up the Junos CLI commands and\n\t\t\t\tconfiguration statements and the contexts in which you\u2019ll use these CLI elements in\n\t\t\t\tyour network configurations and operations. In this reference, you\u2019ll find all\n\t\t\t\t\tJunos CLI commands and statements in one\n\t\t\t\tplace.\nClick the links to access Junos OS and Junos OS Evolved configuration statement and command\n\t\t\t\tsummary topics.\nConfiguration Statements\nConfiguration Statements\nOperational\n\t\t\t\t\t\t\tCommands\nOperational\n\t\t\t\t\t\t\tCommands",
+      "page_number": 1,
+      "code_blocks": []
+    },
+    {
+      "heading": "Documentation Conventions",
+      "level": 1,
+      "content": "For information about the notice icons and text and syntax conventions used in the\n                documentation, see Documentation Conventions.",
+      "page_number": 1,
+      "code_blocks": []
+    }
+  ]
+}

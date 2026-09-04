@@ -1,0 +1,74 @@
+{
+  "Cisco": {
+    "snmp": "Cisco IOS-XE / NX-OS SNMP Configuration Guide (Cisco Systems)",
+    "ssh": "Cisco IOS Security Configuration Guide: Securing the Control Plane (Cisco Systems)",
+    "aaa": "Cisco Authentication, Authorization, and Accounting Configuration Guide (Cisco Systems)",
+    "logging": "Cisco IOS System Message Logging Guide (Cisco Systems)",
+    "ntp": "Cisco Network Time Protocol Configuration Guide (Cisco Systems)",
+    "acl": "Cisco IP Access List Configuration Guide (Cisco Systems)",
+    "vty": "Cisco Terminal Lines and Modem Support Configuration Guide (Cisco Systems)",
+    "banners": "Cisco IOS Basic System Management Command Reference: banner (Cisco Systems)",
+    "passwords": "Cisco IOS Security Configuration Guide: Passwords and Privileges (Cisco Systems)"
+  },
+  "Juniper": {
+    "snmp": "Junos OS Network Management Configuration Guide (Juniper Networks)",
+    "ssh": "Junos OS CLI User Guide: System Access Security (Juniper Networks)",
+    "logging": "Junos OS System Logging and Tracing Administration (Juniper Networks)",
+    "ntp": "Junos OS Network Time Protocol Configuration (Juniper Networks)",
+    "telemetry": "Junos Telemetry Interface (JTI) Guide (Juniper Networks)",
+    "banners": "Junos OS System Basics Configuration Guide: Login Messages (Juniper Networks)",
+    "aaa": "Junos OS User Access and Authentication Guide (Juniper Networks)"
+  },
+  "Arista": {
+    "snmp": "Arista EOS User Manual: SNMP Configuration (Arista Networks)",
+    "ssh": "Arista EOS Management Plane Security Guide (Arista Networks)",
+    "sflow": "Arista EOS Flow Monitoring Configuration (Arista Networks)",
+    "logging": "Arista EOS System Logging Guide (Arista Networks)",
+    "ntp": "Arista EOS Network Time Protocol Configuration (Arista Networks)",
+    "aaa": "Arista EOS AAA and TACACS+ Configuration Guide (Arista Networks)"
+  },
+  "Huawei": {
+    "snmp": "Huawei VRP Network Management and Monitoring Guide (Huawei Technologies)",
+    "ssh": "Huawei VRP Security Configuration Guide: STelnet and SSH (Huawei Technologies)",
+    "netflow": "Huawei VRP NetStream Configuration Guide (Huawei Technologies)",
+    "logging": "Huawei VRP System Management Guide: Information Center (Huawei Technologies)",
+    "ntp": "Huawei VRP Network Reliability Guide: NTP (Huawei Technologies)"
+  },
+  "Mikrotik": {
+    "snmp": "MikroTik RouterOS Manual: SNMP and Community Configuration (MikroTik)",
+    "traffic_flow": "MikroTik RouterOS Manual: Traffic Flow / IP Flow (MikroTik)",
+    "bgp": "MikroTik RouterOS Manual: BGP Routing (MikroTik)",
+    "ssh": "MikroTik RouterOS Manual: IP Services (MikroTik)",
+    "logging": "MikroTik RouterOS Manual: System Logging (MikroTik)",
+    "ntp": "MikroTik RouterOS Manual: SNTP Client (MikroTik)"
+  },
+  "Extreme": {
+    "snmp": "ExtremeXOS / NetIron Network Management Guide (Extreme Networks)",
+    "sflow": "Extreme Networks Flow Sampling & Monitoring Guide (Extreme Networks)",
+    "ssh": "ExtremeXOS User Guide: SSH Server Configuration (Extreme Networks)"
+  },
+  "Ubiquiti": {
+    "snmp": "Ubiquiti EdgeOS User Guide: SNMP Services (Ubiquiti Inc.)",
+    "flow": "Ubiquiti EdgeRouter Flow Accounting Guide (Ubiquiti Inc.)",
+    "ssh": "Ubiquiti EdgeOS CLI Reference: SSH Service (Ubiquiti Inc.)"
+  },
+  "Nokia": {
+    "snmp": "Nokia 7750 SR / 7950 XRS System Management Guide: SNMP & BOF (Nokia)",
+    "cflowd": "Nokia SR OS Cflowd and IPFIX User Guide (Nokia)",
+    "logging": "Nokia 7750 SR System Management Guide: Log Management (Nokia)"
+  },
+  "Palo-Alto": {
+    "netflow": "PAN-OS Administrator's Guide: NetFlow Monitoring (Palo Alto Networks)",
+    "snmp": "PAN-OS Administrator's Guide: SNMP Setup (Palo Alto Networks)",
+    "management": "PAN-OS Administrator's Guide: Device Management (Palo Alto Networks)"
+  },
+  "Silver-Peak": {
+    "flow": "Silver Peak EdgeConnect Orchestrator Flow Export Guide (Aruba/Silver Peak)",
+    "snmp": "Silver Peak EdgeConnect Appliance Configuration Guide (Silver Peak)"
+  },
+  "Vyatta": {
+    "flow": "Vyatta / VyOS Network OS System Administration Guide: Flow Accounting (Vyatta)",
+    "snmp": "Vyatta Network OS Management Guide (Vyatta)",
+    "ssh": "VyOS User Guide: Service SSH (VyOS Maintainers)"
+  }
+}

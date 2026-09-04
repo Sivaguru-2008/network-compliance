@@ -1,0 +1,23 @@
+{
+  "task_name": "classification",
+  "feature_mode": "word_char",
+  "n_samples": 9535,
+  "n_classes": 13,
+  "classes": [
+    "AAA",
+    "FIREWALL",
+    "INTERFACE",
+    "LOGGING",
+    "MANAGEMENT",
+    "NAT",
+    "NTP",
+    "ROUTING",
+    "SNMP",
+    "SYSTEM",
+    "USER_MANAGEMENT",
+    "VLAN",
+    "VPN"
+  ],
+  "training_time_seconds": 4.842,
+  "random_seed": 42
+}

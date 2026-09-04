@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" />
+<meta name="description" content="Use this guide to learn about the components that make up the Junos CLI commands and configuration statements and the contexts in which you’ll use these CLI elements in your network configurations and operations. In this reference, you’ll find all Junos CLI commands and statements in one place." /><meta name="topicid" content="xi992229" /><meta name="branchId" content="1" /><meta name="jdoc-content-type" content="dita-guide" /><meta name="release" content="junos current" /><script type="application/ld+json">{"@context": "http://schema.org","@type": "WebPage","name": "Junos CLI Reference | Junos OS | Juniper Networks","@id": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/index.html#WebPage","url": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/index.html"}</script><title>Junos CLI Reference | Junos OS | Juniper Networks</title><link rel="modulepreload" crossorigin href="/documentation/webstatic/js/vue-core-CpJPVP49.js"><link rel="modulepreload" crossorigin href="/documentation/webstatic/js/state-P4uO3MmX.js"><link rel="modulepreload" crossorigin href="/documentation/webstatic/js/vendor-QbGKFtLE.js"><link rel="modulepreload" crossorigin href="/documentation/webstatic/js/http-DNwu3bhQ.js"><link rel="modulepreload" crossorigin href="/documentation/webstatic/js/utils-BrjAfiP7.js"><link rel="modulepreload" crossorigin href="/documentation/webstatic/js/common-CS1GkDpV.js"><link rel="stylesheet" crossorigin="" href="/documentation/webstatic/css/common-XYqID4_t.css"><link rel="stylesheet" crossorigin="" href="/documentation/webstatic/css/dita-yXMc-UTb.css"><script src="https://www.juniper.net/etc.clientlibs/clientlibs/granite/jquery.min.js"></script><link href="https://www.juniper.net/assets/styles/custom/juniper-survey.css" rel="stylesheet" type="text/css"><!--IXF: JavaScript begin-->
+<script class="trustecm" trackertype="functional">
+    /*
+    --LICENSE--
+    Access to and use of BrightEdge Link Equity Manager is governed by the 
+    Infrastructure Product Terms located at: www.brightedge.com/infrastructure-product-terms. 
+    Customer acknowledges and agrees it has read, understands and agrees to be bound by the 
+    Infrastructure Product Terms.
+    */
+
+    function startBESDK() {
+        var be_sdk_options = {
+            'api.endpoint': 'https://ixf2-api.bc0a.com',
+            'sdk.account': 'f00000000063367',
+            'requestparameters.caseinsensitive': true,
+            'whitelist.parameter.list': 'ixf'
+        };
+        BEJSSDK.construct(be_sdk_options);
+    }
+    (function () {
+        var sdkjs = document.createElement('script');
+        sdkjs.type = 'text/javascript';
+        sdkjs.async = true;
+        sdkjs.src = document.location.protocol + '//cdn.bc0a.com/be_ixf_js_sdk.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(sdkjs, s);
+        if (document.addEventListener) {
+            sdkjs.addEventListener('load', startBESDK);
+        } else {
+            sdkjs.onreadystatechange = startBESDK;
+        }
+    })();
+</script>
+<!--IXF: JavaScript end-->
+<script>
+    function insertcanonical() {
+        var canonicalexists = !!document.querySelector("link[rel='canonical']");
+        if (!canonicalexists) {
+            var tag = document.createElement("link");
+            var pathname = location.pathname;
+            var pattern = /\/$/;
+            if(pattern.test(pathname)){
+                pathname = pathname.replace(pattern,"/index.html");
+            }
+            // check if last character is slash else add / to be consistent
+            var href = "https://www.juniper.net" + pathname;
+            tag.setAttribute("rel", "canonical");
+            tag.setAttribute("href", href);
+            document.head.appendChild(tag);
+        }
+    }
+    insertcanonical();
+</script><link rel="preload" href="/documentation/webstatic/fonts/swmaterialicon.woff" as="font" type="font/woff" crossorigin="anonymous"><link rel="preload" href="/documentation/webstatic/fonts/Lato-Black.woff2" as="font" type="font/woff2" crossorigin="anonymous"><link rel="preload" href="https://www.juniper.net/etc.clientlibs/juniper/clientlibs/clientlib-global-navigation.css" as="style" /><script src="https://assets.adobedtm.com/998b2d6d4944658536fe36266a249b07e626b86d/satelliteLib-6d05b7c7a99e1cbbdcac4fcfe7005e6bee80a0e9.js"></script><script type="text/javascript" src="__toc.js?v+20260814T185536" basepath="" id="tocscript"></script></head>
+<body style="visibility:hidden;"><!--[if lte IE 9]>
+	<div class="message-warning"> You are using unsupported version of Internet Explorer. Please upgrade your browser to latest version.</div>
+<![endif]-->
+<!-- Start survey script MaritzCX -->
+<script type="text/javascript" class="trustecm" trackertype="functional"
+	src="https://siteintercept.allegiancetech.com/dist/jn1si001/MCX_Juniper2.js" async></script>
+<script type="text/javascript" class="trustecm" trackertype="functional"
+	src="https://siteintercept.allegiancetech.com/InterceptScripts/mcxSiteIntercept-1.9.1.js" async></script>
+<div id="mcxInvitationModal">
+	<div id="mcxFloating">
+		<div id="mcxInfo2">
+			<div id="mcxNoButton">
+				<button id="mcxNo" onclick="McxSiteInterceptOnExit.declineSurvey();mcxDisplay();">X</button>
+			</div>
+			<div id="mcxLogos">
+				<img src="https://junipernetworks.allegiancetech.com/surveys/images/MRVCXM/juniper_logo.jpg">
+			</div>
+			<div class="clearfix">
+				<p id="mcxHeading">Help us improve your experience.</p>
+				<p id="mcxText1">Let us know what you think. </p>
+				<p id="mcxText2">Do you have time for a two-minute survey?</p>
+			</div>
+			<div id="mcxYesButton" onClick="McxSiteInterceptOnExit.acceptSurvey();mcxDisplay();" class="clearfix">
+				<button id="mcxYes">Yes</button>
+			</div>
+			<div>
+				<button id="noLater" onclick="McxSiteInterceptOnExit.declineSurvey();mcxDisplay();">Maybe Later</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	window.addEventListener('message', function (e) {
+		var key = e.message ? 'message' : 'data';
+		var data = e[key];
+		if (data === 'MaritzCX Survey Close') {
+			McxSiteInterceptOnExit.closeSurveyModal(); //close iframe
+		}
+	}, false);
+</script>
+<!-- End survey script MaritzCX --><script type="application/ld+json">
+  {
+"@context": "http://schema.org",
+"@type": "Organization",
+"name": "Juniper Networks",
+"url": "https://www.juniper.net/us/en/",
+"logo": "https://www.juniper.net/assets/svg/jnpr-logo.svg",
+"sameAs": ["https://en.wikipedia.org/wiki/Juniper_Networks",
+  "https://www.facebook.com/JuniperNetworks/",
+  "https://twitter.com/JuniperNetworks/",
+  "https://www.linkedin.com/company/juniper-networks",
+  "https://www.youtube.com/junipernetworks",
+  "https://www.instagram.com/junipernetworks/"
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+"@context": "http://schema.org",
+"@id": "https://www.juniper.net/us/en/#website",
+"@type": "WebSite",
+"url": "https://www.juniper.net/us/en/",
+"name": "Juniper Networks",
+"alternateName": "Juniper, Juniper Networks Inc.",
+"publisher": {
+  "@type": "Corporation",
+  "name": "Juniper Networks"
+  }
+}
+</script><div id="app"><sw-app inline-template=""><div><sw-header></sw-header><sw-change-widget></sw-change-widget><div class="main wrapper"><sw-leftnav> </sw-leftnav><sw-rightnav include-icon="junos-brand"></sw-rightnav><div class="l-body"><div class="page-options clearfix"><sw-breadcrumb> </sw-breadcrumb></div><div class="topic-index"><h1 class="title topictitle1 booktitle"><span class="ph mainbooktitle">Junos CLI Reference</span></h1><sw-topic-details date="2026-08-14"></sw-topic-details><sw-guide-intro basepath="topics/concept/"><div class="body conbody">
+    <div class="section" id="xd_8d5a8fc3be25df2c-1bf804c-1860121c584--7f45__d15355e32"><h2 class="title sectiontitle">Overview</h2>
+		<p class="p">Use this guide to learn about the components that make up the Junos CLI commands and
+				configuration statements and the contexts in which you’ll use these CLI elements in
+				your network configurations and operations. In this reference, you’ll find all
+					<span class="keyword">Junos CLI commands</span> and <span class="keyword">statements</span> in one
+				place.</p>
+
+			<p class="p">Click the links to access Junos OS and Junos OS Evolved configuration statement and command
+				summary topics.</p>
+
+			<ul class="ul">
+				<li class="li">
+					<p class="p">
+						<a class="xref" href="../topic-map/configuration-statements.html">Configuration Statements</a>
+					</p>
+
+				</li>
+
+				<li class="li">
+					<p class="p">
+						<a class="xref" href="../topic-map/operational-commands.html">Operational
+							Commands</a>
+					</p>
+
+				</li>
+
+			</ul>
+
+	</div>
+
+  <div class="section" id="xd_8d5a8fc3be25df2c-1bf804c-1860121c584--7f45__section_conref_doc_conventions"><h2 class="title sectiontitle">Documentation Conventions</h2>
+            
+            <p class="p">For information about the notice icons and text and syntax conventions used in the
+                documentation, see <a class="xref" href="https://www.juniper.net/documentation/us/en/software/help/using-documentation/topics/concept/documentation-conventions.html" target="_blank">Documentation Conventions</a>.</p>
+
+        </div>
+</div>
+</sw-guide-intro><sw-pwp-get-start> </sw-pwp-get-start><sw-list-popular-topics> </sw-list-popular-topics><sw-guide-intro basepath="topics/concept/"></sw-guide-intro><sw-comments> </sw-comments></div></div></div><sw-pop-over></sw-pop-over><sw-footer></sw-footer></div></sw-app></div><script type="module" crossorigin="" src="/documentation/webstatic/js/dita-B14dSoXD.js"></script><script type="text/javascript" src="/assets/scripts/custom/cookie-consent.js"></script><script type="text/javascript">_satellite.pageBottom();</script></body></html>

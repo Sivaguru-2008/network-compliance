@@ -10,15 +10,15 @@ Field naming is deliberately vendor-neutral: ``vty_exec_timeout_seconds``, not
 ``line_vty_exec_timeout``; ``management_plaintext_protocols``, not ``telnet``.
 """
 
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .observation import Observation
+from .observation import CapabilityStatus, Observation
 
 
 def _unknown(kind):
-    """Default factory: a field nobody has looked at yet is *unknown*, not secure."""
+    """Default factory: a field nobody has evaluated yet is *unknown*, not secure."""
     return lambda: Observation[kind].unknown("Parser did not evaluate this field.")
 
 
@@ -57,6 +57,9 @@ class SecurityBaselineModel(BaseModel):
     source_sha256: Optional[str] = None
     config_line_count: int = 0
     hostname: Observation[str] = Field(default_factory=_unknown(str))
+    completeness: Optional[Dict[str, Any]] = Field(
+        default=None, description="Configuration completeness assessment."
+    )
 
     # -- management access ------------------------------------------------
     telnet_enabled: Observation[bool] = Field(
@@ -253,8 +256,6 @@ class SecurityBaselineModel(BaseModel):
         description="True if log encryption to FortiAnalyzer/FortiManager is enabled (enc-algorithm high + reliable enable).",
     )
 
-    # -- introspection used by the engine ---------------------------------
-
     @classmethod
     def observable_fields(cls) -> List[str]:
         """Names of every ``Observation``-typed field -- the rule engine's vocabulary."""
@@ -264,3 +265,12 @@ class SecurityBaselineModel(BaseModel):
             if origin and origin.get("origin") is Observation:
                 names.append(name)
         return names
+
+    def capabilities(self) -> Dict[str, str]:
+        """Return explicit capability state for every observable field."""
+        result = {}
+        for field_name in self.observable_fields():
+            obs = getattr(self, field_name)
+            if isinstance(obs, Observation):
+                result[field_name] = obs.capability_status.value
+        return result

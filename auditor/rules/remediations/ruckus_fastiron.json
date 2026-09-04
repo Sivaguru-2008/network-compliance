@@ -1,0 +1,94 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure remote AAA administrative authentication (TACACS+ or RADIUS) on Ruckus FastIron.",
+    "cli": [
+      "aaa authentication login default tacacs+ local"
+    ],
+    "notes": "Define TACACS+ or RADIUS server IPs and keys before assigning to the default login authentication order."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable insecure Telnet console access and enforce SSH management.",
+    "cli": [
+      "ip ssh server",
+      "no telnet server"
+    ],
+    "notes": "FastIron has Telnet server active by default. Explicitly disable it and enable the SSH daemon."
+  },
+  "vty_idle_timeout": {
+    "summary": "Configure administrative session inactivity timeout.",
+    "cli": [
+      "console timeout 10"
+    ],
+    "notes": "Set console/VTY session idle-timeout in minutes (e.g. 10 minutes)."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Configure an encrypted privilege super-user password.",
+    "cli": [
+      "enable super-user-password [...]"
+    ],
+    "notes": "Configures privilege level credentials. Passwords configured are automatically encrypted in the configuration file."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP community strings.",
+    "cli": [
+      "no snmp-server community public",
+      "no snmp-server community private"
+    ],
+    "notes": "Remove the default communities to restrict unauthorized MIB access."
+  },
+  "http_server_disabled": {
+    "summary": "Disable insecure HTTP web management server.",
+    "cli": [
+      "no web-management http"
+    ],
+    "notes": "Ensure that unencrypted HTTP access is disabled."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce SSH protocol version 2.",
+    "cli": [],
+    "notes": "Ruckus FastIron OS enforces SSHv2 by default when SSH is enabled."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote syslog logging destinations.",
+    "cli": [
+      "logging host 192.168.1.100"
+    ],
+    "notes": "Add your central remote syslog server IP destination."
+  },
+  "management_acl": {
+    "summary": "Apply client-acl to restrict management access.",
+    "cli": [
+      "ip ssh client-acl 10",
+      "web-management client-acl 10"
+    ],
+    "notes": "Apply ACLs restricting access to authorized management subnet IP address ranges."
+  },
+  "login_banner": {
+    "summary": "Configure pre-login MOTD warning banner.",
+    "cli": [
+      "banner motd ^Authorized Access Only.^"
+    ],
+    "notes": "Configure a pre-login warning banner using a chosen delimiter character."
+  },
+  "password_min_length": {
+    "summary": "Configure strict password enforcement rules.",
+    "cli": [
+      "enable strict-password-enforcement"
+    ],
+    "notes": "Strict password enforcement sets password minimum length to 8 characters and requires characters combination complexity."
+  },
+  "ntp_configured": {
+    "summary": "Configure system NTP time servers.",
+    "cli": [
+      "ntp server 192.168.1.10"
+    ],
+    "notes": "Specify upstream time servers to synchronize device event logging clocks."
+  },
+  "no_write_snmp_community": {
+    "summary": "Restrict SNMP communities to read-only access.",
+    "cli": [
+      "snmp-server community your_community ro"
+    ],
+    "notes": "Ensure communities are mapped using 'ro' for read-only access."
+  }
+}

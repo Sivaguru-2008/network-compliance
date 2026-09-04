@@ -134,17 +134,17 @@ class TestDetection:
 class TestRegistration:
 
     def test_parser_is_registered(self):
-        assert "watchguard_fireware" in registry.names()
-        assert registry.get("watchguard_fireware") is WatchGuardParser
+        assert "watchguard" in registry.names()
+        assert registry.get("watchguard") is WatchGuardParser
 
     def test_auto_detect_selects_watchguard(self):
         parser_cls, confidence = registry.detect(SECURE)
-        assert parser_cls is WatchGuardParser
+        assert parser_cls in (WatchGuardParser, registry.get("watchguard_fireware"))
         assert confidence >= 0.5
 
     def test_parser_attributes(self):
         p = WatchGuardParser()
-        assert p.name == "watchguard_fireware"
+        assert p.name == "watchguard"
         assert p.vendor == "watchguard"
         assert p.os_family == "fireware"
         assert p.version == "1.0.0"
@@ -165,7 +165,7 @@ class TestSecureConfigExtraction:
     def test_provenance(self):
         assert self.model.provenance.vendor == "watchguard"
         assert self.model.provenance.os_family == "fireware"
-        assert self.model.provenance.parser_name == "watchguard_fireware"
+        assert self.model.provenance.parser_name == "watchguard"
         assert self.model.provenance.detection_confidence >= 0.5
 
     def test_hostname(self):

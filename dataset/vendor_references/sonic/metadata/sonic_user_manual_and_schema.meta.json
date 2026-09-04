@@ -1,0 +1,19 @@
+{
+  "vendor": "sonic",
+  "vendor_name": "SONiC NOS",
+  "os_name": "SONiC",
+  "config_format": "config_db.json",
+  "document_title": "SONiC Configuration and Schema Reference (config_db.json)",
+  "source_url": "https://raw.githubusercontent.com/sonic-net/SONiC/master/doc/user-manual/SONiC-User-Manual.md",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "markdown",
+  "version": "master",
+  "retrieved_at": "2026-08-31T16:29:43.742012+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "4d26a70459da0cf745d9dc8454362c5460dcbee8436c3f9ddb51515394ba80f0",
+  "byte_size": 41315,
+  "local_path": "vendor_references\\sonic\\documents\\sonic_user_manual_and_schema.md",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

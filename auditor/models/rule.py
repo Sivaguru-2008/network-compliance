@@ -104,11 +104,25 @@ def referenced_fields(condition: Any) -> Set[str]:
 class Remediation(BaseModel):
     """What an operator must actually type to fix the finding."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="ignore")
 
     summary: str
     cli: List[str] = Field(default_factory=list, description="Vendor CLI lines, in order, as given by the benchmark.")
+    commands: List[str] = Field(default_factory=list, description="Vendor CLI commands to apply.")
+    preconditions: List[str] = Field(default_factory=list, description="Checks to verify before executing remediation.")
+    risk: str = Field(default="low", description="Risk level associated with applying the remediation.")
+    rollback: List[str] = Field(default_factory=list, description="Deterministic commands to revert the change.")
+    rollback_supported: bool = Field(default=True, description="Whether automated deterministic rollback is possible.")
+    rollback_reason: Optional[str] = Field(default=None, description="Reason if rollback is not supported.")
     provenance: Optional[str] = Field(default="VERIFIED", description="Provenance of this remediation ('VERIFIED' or 'AI_SUGGESTED').")
+
+    @model_validator(mode="after")
+    def _sync_commands_and_cli(self) -> "Remediation":
+        if not self.commands and self.cli:
+            object.__setattr__(self, "commands", list(self.cli))
+        elif not self.cli and self.commands:
+            object.__setattr__(self, "cli", list(self.commands))
+        return self
 
 
 class ComplianceRule(BaseModel):

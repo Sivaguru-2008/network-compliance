@@ -1,0 +1,36 @@
+{
+  "DEVICE_METADATA": {
+    "localhost": {
+      "hostname": "sonic-spine01",
+      "platform": "x86_64-accton_wedge100bf_32x-r0",
+      "mac": "00:1c:73:00:00:01",
+      "type": "SpineRouter"
+    }
+  },
+  "SSH_SERVER": {
+    "POLICIES": {
+      "port": "22",
+      "protocol": "2",
+      "idle_timeout": "600"
+    }
+  },
+  "SNMP": {
+    "POLICIES": {
+      "community": "readOnlyComm",
+      "version": "v2c,v3"
+    }
+  },
+  "SYSLOG": {
+    "REMOTE": {
+      "server": "10.0.0.50",
+      "port": "514"
+    }
+  },
+  "NTP": {
+    "SERVERS": {
+      "10.0.0.1": {
+        "prefer": "true"
+      }
+    }
+  }
+}

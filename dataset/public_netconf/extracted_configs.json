@@ -1,0 +1,12 @@
+[
+  {
+    "module": "netconf-101",
+    "file": "netconf-101/sandbox-nexus9kv-config.txt",
+    "classification": "CONFIGURATION",
+    "description": "Cisco Nexus 9000v CLI configuration snippet for DevNet sandbox.",
+    "contains_actual_config": true,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-101/sandbox-nexus9kv-config.txt"
+  }
+]

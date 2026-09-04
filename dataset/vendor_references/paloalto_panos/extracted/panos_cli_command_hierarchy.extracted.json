@@ -1,0 +1,33 @@
+{
+  "vendor_key": "paloalto_panos",
+  "document_title": "PAN-OS CLI Command Hierarchy",
+  "source_filename": "panos_cli_command_hierarchy.html",
+  "source_format": "html",
+  "total_pages": 1,
+  "total_sections": 3,
+  "total_code_blocks": 0,
+  "version": "PAN-OS 11.x",
+  "sections": [
+    {
+      "heading": "PAN-OS CLI Command Hierarchy",
+      "level": 1,
+      "content": "Home\nNext-Generation Firewall\nCLI Command Hierarchy for PAN-OS 11.1+",
+      "page_number": 1,
+      "code_blocks": []
+    },
+    {
+      "heading": "Next-Generation Firewall Docs",
+      "level": 1,
+      "content": "Getting Started\nAdministration\nNetworking\nQuick Start\nReference\nIncidents & Alerts\nRelease Notes\n\n\n\n\n\n\nSelect a Document\n\n\n\n\nPAN-OS 12.2\nPAN-OS 12.1\nPAN-OS 11.2\nPAN-OS 11.1\nPAN-OS 11.0 (EoL)\nPAN-OS 10.2\nPAN-OS 10.1 (EoL)\nPAN-OS 10.0 (EoL)\nPAN-OS 9.1 (EoL)\nPAN-OS 9.0 (EoL)\nPAN-OS 8.1 (EoL)\nPAN-OS 12.2\nPAN-OS 12.1\nPAN-OS 11.2\nPAN-OS 11.1\nPAN-OS 11.0 (EoL)\nPAN-OS 10.2\nPAN-OS 10.1 (EoL)\nPAN-OS 10.0 (EoL)\nPAN-OS 9.1 (EoL)\nPAN-OS 9.0 (EoL)\nPAN-OS 8.1 (EoL)\nHelp\n\n\n\n\n\n\nSelect a Document\n\n\n\n\nPAN-OS 12.2\nPAN-OS 12.1\nPAN-OS 11.2\nPAN-OS 11.1\nPAN-OS 10.2\nPAN-OS 10.1\nPAN-OS 12.2\nPAN-OS 12.1\nPAN-OS 11.2\nPAN-OS 11.1\nPAN-OS 10.2\nPAN-OS 10.1\nNew Features",
+      "page_number": 1,
+      "code_blocks": []
+    },
+    {
+      "heading": "CLI Command Hierarchy for PAN-OS 11.1+",
+      "level": 1,
+      "content": "Where Can I Use This?What Do I Need?\n\n\nNGFW (Managed by PAN-OS or Panorama)\nNo prerequisites needed\nNo prerequisites needed\nPAN-OS 11.1 CLI Ops Command Hierarchy\nPAN-OS 11.1 Configure CLI Command Hierarchy\nPAN-OS 11.2 CLI Ops Command Hierarchy\nPAN-OS 11.2 Configure CLI Command Hierarchy\n\u00a9 2026 Palo Alto Networks, Inc. All rights reserved.",
+      "page_number": 1,
+      "code_blocks": []
+    }
+  ]
+}

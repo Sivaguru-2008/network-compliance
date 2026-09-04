@@ -7,7 +7,7 @@ vendor-specific fix (remediations) and the framework citation (control reference
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from pydantic import ValidationError
 
@@ -258,7 +258,7 @@ def load_framework(
     mappings = fw_data.get("mappings", {})
 
     for control_id, plat_mappings in mappings.items():
-        mapping = plat_mappings.get(platform_key) or plat_mappings.get("default")
+        mapping = plat_mappings.get(platform_key) or plat_mappings.get("default") or plat_mappings.get("cisco_ios")
         if not mapping:
             continue
 
@@ -316,3 +316,39 @@ def platform_mismatch_note(ruleset: RuleSet, vendor: str, os_family: str) -> Opt
         "The pass/fail conditions are vendor-neutral and still apply; the remediation commands "
         f"are written in {pack_platform} syntax and must be translated before use."
     )
+
+
+def get_remediation_for_control(control_id: str, platform_key: str) -> Optional[Dict[str, Any]]:
+    """Retrieve vendor-specific remediation dictionary for a given control and platform."""
+    rem_path = REMEDIATIONS_DIR / f"{platform_key}.json"
+    if not rem_path.is_file():
+        alias_map = {
+            "paloalto_panos": "paloalto.json",
+            "sonic": "sonic_sonic.json",
+            "stormshield_sns": "stormshield_sns.json",
+            "hpe_aruba": "hpe_aruba_aos_cx.json",
+            "cisco_asa": "cisco_ios.json",
+            "aws_security_group": "cisco_ios.json",
+            "azure_nsg": "cisco_ios.json",
+        }
+        if platform_key in alias_map:
+            rem_path = REMEDIATIONS_DIR / alias_map[platform_key]
+    
+    if not rem_path.is_file():
+        return None
+        
+    try:
+        data = json.loads(rem_path.read_text(encoding="utf-8"))
+        if control_id in data:
+            item = data[control_id]
+            return {
+                "summary": item.get("summary", f"Remediate {control_id}"),
+                "commands": item.get("cli", []),
+                "cli": item.get("cli", []),
+                "risk": "Medium",
+                "rationale": item.get("notes", "Ensure compliance with security baseline.")
+            }
+    except Exception:
+        pass
+    return None
+

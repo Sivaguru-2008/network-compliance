@@ -141,7 +141,9 @@ _FORTIOS_MARKERS: Sequence[Tuple[str, float]] = (
 _NON_FORTIOS_MARKERS: Sequence[Tuple[str, float]] = (
     (r"(?im)^\s*line vty\b", 0.90),              # Cisco IOS
     (r"(?im)^\s*hostname \S+\s*$", 0.90),        # Cisco IOS
+    (r"(?im)^\s*router (?:ospf|bgp|rip|eigrp)\b", 0.90), # Cisco / classical routing
     (r"(?im)^\s*set system host-name\b", 0.90),  # Junos set format
+    (r"(?im)^\s*set protocols\b", 0.90),         # Junos set format
     (r"(?im)^\s*system \{", 0.90),               # Junos braces format
     (r"(?im)^\s*sysname \S+", 0.90),             # Huawei VRP / H3C
     (r"(?im)^\s*ASA Version\b", 0.90),           # Cisco ASA

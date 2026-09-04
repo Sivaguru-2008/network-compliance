@@ -25,16 +25,18 @@ _TERNARY_TO_STATUS = {
     Ternary.TRUE: Status.PASS,
     Ternary.FALSE: Status.FAIL,
     Ternary.UNKNOWN: Status.NEEDS_REVIEW,
+    Ternary.UNSUPPORTED: Status.UNSUPPORTED,
 }
 
 # Report order: worst first, so an operator reads the urgent rows without scrolling.
 _STATUS_ORDER = {
-    Status.FAIL: 0,
-    Status.NEEDS_REVIEW: 1,
-    Status.UNSUPPORTED: 2,
-    Status.MANUAL_REVIEW: 3,
-    Status.PASS: 4,
-    Status.NOT_APPLICABLE: 5,
+    Status.ERROR: 0,
+    Status.FAIL: 1,
+    Status.NEEDS_REVIEW: 2,
+    Status.UNSUPPORTED: 3,
+    Status.MANUAL_REVIEW: 4,
+    Status.PASS: 5,
+    Status.NOT_APPLICABLE: 6,
 }
 
 
@@ -103,6 +105,10 @@ class ComplianceEngine:
 
     @staticmethod
     def _message(status: Status, outcome: ConditionOutcome) -> str:
+        if status is Status.UNSUPPORTED:
+            unsupp = [leaf for leaf in outcome.leaves if leaf.ternary is Ternary.UNSUPPORTED]
+            fields = ", ".join(sorted({leaf.field for leaf in unsupp}))
+            return f"Control cannot be evaluated because required parser capability is unsupported ({fields})."
         if status is Status.NEEDS_REVIEW:
             unknown = [leaf for leaf in outcome.leaves if leaf.ternary is Ternary.UNKNOWN]
             fields = ", ".join(sorted({leaf.field for leaf in unknown}))

@@ -1,0 +1,39 @@
+!RANCID-CONTENT-TYPE: paloalto
+config {
+  devices {
+    localhost.localdomain {
+      deviceconfig {
+        system {
+          hostname "paloalto_vlan_tunnel_units";
+        }
+      }
+      network {
+        interface {
+          tunnel {
+            units {
+              tunnel.3 {
+                comment "tunnel.3 comment";
+                ip {
+                  169.254.0.1/30;
+                }
+                mtu 1427;
+              }
+            }
+          }
+          vlan {
+            comment "vlan comment";
+            units {
+              vlan.1 {
+                comment "vlan.1 comment";
+                ip {
+                  10.0.0.1/24;
+                }
+                mtu 1500;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

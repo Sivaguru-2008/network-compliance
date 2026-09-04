@@ -1,0 +1,19 @@
+{
+  "vendor": "sonicwall",
+  "vendor_name": "SonicWall",
+  "os_name": "SonicOS / SonicOSX",
+  "config_format": "SonicOS CLI / export",
+  "document_title": "SonicOS/X 7 Command Line Interface Reference Guide",
+  "source_url": "https://www.sonicwall.com/techdocs/pdf/sonicosx-7-command-line-interface-reference-guide.pdf",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "pdf",
+  "version": "SonicOS/X 7",
+  "retrieved_at": "2026-08-31T16:32:38.507642+00:00",
+  "status": "UNAVAILABLE",
+  "sha256": null,
+  "byte_size": 0,
+  "local_path": null,
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": "Invalid PDF header received for https://www.sonicwall.com/techdocs/pdf/sonicosx-7-command-line-interface-reference-guide.pdf"
+}

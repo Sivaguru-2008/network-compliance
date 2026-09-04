@@ -53,7 +53,9 @@ _STORMSHIELD_MARKERS: Sequence[Tuple[str, float]] = [
 _NON_STORMSHIELD_MARKERS: Sequence[Tuple[str, float]] = [
     (r"(?im)^\s*line\s+vty\b", 0.40),
     (r"(?im)^\s*ip\s+http\s+server\s*$", 0.30),
-    (r"(?im)^\s*config\s+system\s+global\b", 0.90),
+    (r"(?im)^\s*config\s+system\s+(?:global|interface|admin|settings|dns|ntp)\b", 0.90),
+    (r"(?im)^\s*router\s+(?:ospf|bgp|rip|eigrp)\b", 0.50),
+    (r"(?im)^\s*set\s+protocols\b", 0.80),
     (r"(?im)^\s*set\s+system\s+host-name\b", 0.80),
     (r"(?im)^\s*sysname\s+\S+", 0.50),
     (r"(?im)^\s*<\?xml", 0.90),

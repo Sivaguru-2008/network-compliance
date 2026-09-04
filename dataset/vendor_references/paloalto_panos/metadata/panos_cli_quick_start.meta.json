@@ -1,0 +1,19 @@
+{
+  "vendor": "paloalto_panos",
+  "vendor_name": "Palo Alto Networks",
+  "os_name": "PAN-OS",
+  "config_format": "XML running-config.xml / set commands",
+  "document_title": "PAN-OS CLI Quick Start (Set-Format Usage)",
+  "source_url": "https://docs.paloaltonetworks.com/ngfw/pan-os-cli-quick-start",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "html",
+  "version": "PAN-OS 11.x",
+  "retrieved_at": "2026-08-31T16:29:45.103168+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "ff0e33f7a64cbdbcae6edf9c20ec626594ba487d105cf150de9b77710208579a",
+  "byte_size": 293453,
+  "local_path": "vendor_references\\paloalto_panos\\documents\\panos_cli_quick_start.html",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

@@ -1,0 +1,67 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized authentication (RADIUS or LDAP) in pfSense.",
+    "cli": [],
+    "notes": "Navigate to System > User Manager > Servers and configure a remote RADIUS or LDAP authentication server."
+  },
+  "secure_vty_transport": {
+    "summary": "Restrict WebGUI and SSH access in pfSense.",
+    "cli": [],
+    "notes": "Navigate to System > Advanced > Admin Access and set Protocol to HTTPS, disable password login, or modify SSH options."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrative session timeout in pfSense.",
+    "cli": [],
+    "notes": "Navigate to System > User Manager > Settings and set the Session Timeout field to your desired duration in minutes."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "pfSense local administrative passwords are automatically bcrypt-hashed."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove or change default SNMP communities in pfSense.",
+    "cli": [],
+    "notes": "Navigate to Services > SNMP and change the Read-Only Community string to a complex, non-default value."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP administrative access in pfSense.",
+    "cli": [],
+    "notes": "Navigate to System > Advanced > Admin Access and set the Protocol field to HTTPS."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce secure SSH settings.",
+    "cli": [],
+    "notes": "The native pfSense sshd daemon automatically enforces SSH Protocol 2."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote Syslog server destination targets.",
+    "cli": [],
+    "notes": "Navigate to Status > System Logs > Settings, check 'Send log messages to remote syslog server', and enter the remote syslog server IP:port."
+  },
+  "management_acl": {
+    "summary": "Restrict Web Management Console and SSH access to trusted IP hosts.",
+    "cli": [],
+    "notes": "Create WAN/LAN interface firewall rules under Firewall > Rules targeting TCP WebGUI and SSH ports."
+  },
+  "login_banner": {
+    "summary": "Configure login disclaimer banner in pfSense.",
+    "cli": [],
+    "notes": "Create custom login warning text by setting SSH shell login message templates, or use a system package."
+  },
+  "password_min_length": {
+    "summary": "Enforce administrative password complexity.",
+    "cli": [],
+    "notes": "Local password policies are not natively enforced; offload administrative authentication to LDAP or RADIUS to enforce complexity requirements."
+  },
+  "ntp_configured": {
+    "summary": "Configure NTP synchronization settings in pfSense.",
+    "cli": [],
+    "notes": "Navigate to Services > NTP > Settings and define your upstream NTP server pools."
+  },
+  "no_write_snmp_community": {
+    "summary": "Disable read-write SNMP access.",
+    "cli": [],
+    "notes": "The built-in pfSense SNMP daemon (bsnmpd) does not support read-write communities by default."
+  }
+}

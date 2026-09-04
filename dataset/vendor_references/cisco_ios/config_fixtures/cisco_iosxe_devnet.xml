@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+    <version>17.3</version>
+    <service>
+      <password-encryption/>
+      <timestamps>
+        <log>
+          <datetime>
+            <msec/>
+          </datetime>
+        </log>
+      </timestamps>
+    </service>
+    <hostname>CSR1000V-SANDBOX</hostname>
+    <ip>
+      <ssh>
+        <version>2</version>
+        <time-out>60</time-out>
+        <authentication-retries>3</authentication-retries>
+      </ssh>
+      <http>
+        <server>
+          <enabled>false</enabled>
+        </server>
+        <secure-server>
+          <enabled>true</enabled>
+        </secure-server>
+      </http>
+    </ip>
+    <logging>
+      <buffered>
+        <size>64000</size>
+        <severity>informational</severity>
+      </buffered>
+    </logging>
+  </native>
+</config>

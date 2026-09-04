@@ -1,0 +1,44 @@
+{
+  "vendor_key": "mikrotik_routeros",
+  "vendor_name": "MikroTik",
+  "os_name": "RouterOS v6 & v7",
+  "syntax_type": "routeros_tree",
+  "root_blocks": [
+    {
+      "block_name": "export_rsc",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [
+        "/ip service",
+        "/system logging",
+        "/system ntp client",
+        "/user",
+        "/snmp"
+      ],
+      "common_directives": [
+        "/system identity set name",
+        "/system clock set time-zone-name"
+      ],
+      "security_directives": [
+        "/ip service set telnet disabled=yes",
+        "/ip service set ftp disabled=yes",
+        "/ip service set www disabled=yes",
+        "/ip service set api disabled=yes",
+        "/ip service set ssh port=22",
+        "/system logging action add",
+        "/snmp set enabled=no"
+      ]
+    }
+  ],
+  "negation_prefix": "remove",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "routeros_path_set_add",
+    "export_command": "/export"
+  }
+}

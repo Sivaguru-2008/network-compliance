@@ -1,0 +1,19 @@
+{
+  "vendor": "mikrotik_routeros",
+  "vendor_name": "MikroTik",
+  "os_name": "RouterOS v6 & v7",
+  "config_format": "/export .rsc",
+  "document_title": "MikroTik RouterOS Configuration Management",
+  "source_url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328155/Configuration+Management",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "html",
+  "version": "v6/v7",
+  "retrieved_at": "2026-08-31T16:30:19.980843+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "46aee72d61e53342dc8c496052ef6254304b8469e932863df7d2ce852c0f01e0",
+  "byte_size": 88410,
+  "local_path": "vendor_references\\mikrotik_routeros\\documents\\mikrotik_routeros_config_management.html",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

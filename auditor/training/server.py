@@ -392,8 +392,16 @@ DASHBOARD_HTML = """<!DOCTYPE html>
                                 <input type="text" id="train-pattern" class="w-full border p-2 rounded font-mono text-xs" placeholder="e.g. set system services ssh">
                             </div>
                             <div>
+                                <label class="block font-medium text-gray-700 mb-1">Security Concept</label>
+                                <input type="text" id="train-concept" class="w-full border p-2 rounded text-xs" placeholder="e.g. Session Idle Inactivity Timeout">
+                            </div>
+                            <div>
                                 <label class="block font-medium text-gray-700 mb-1">Target Normalized Field</label>
                                 <select id="train-field" class="w-full border p-2 rounded"></select>
+                            </div>
+                            <div>
+                                <label class="block font-medium text-gray-700 mb-1">Extracted Value / Sample</label>
+                                <input type="text" id="train-value" class="w-full border p-2 rounded font-mono text-xs" placeholder="e.g. 300, true, public">
                             </div>
                             <div>
                                 <label class="block font-medium text-gray-700 mb-1">Value Extraction Strategy</label>
@@ -960,23 +968,32 @@ DASHBOARD_HTML = """<!DOCTYPE html>
                 const suggestion = await res.json();
                 
                 propContent.innerHTML = `
+                    <div><strong>Security Concept:</strong> <span class="font-semibold text-blue-900">${suggestion.concept || suggestion.compliance_relevance || '-'}</span></div>
                     <div><strong>Normalized Field:</strong> <code class="bg-blue-100 p-0.5 rounded">${suggestion.field}</code></div>
-                    <div><strong>Extracted Value:</strong> <code class="bg-blue-100 p-0.5 rounded">${suggestion.value}</code></div>
-                    <div><strong>Category:</strong> ${suggestion.compliance_relevance || '-'}</div>
+                    <div><strong>Extracted Value:</strong> <code class="bg-blue-100 p-0.5 rounded">${suggestion.value || '-'}</code></div>
+                    <div><strong>Confidence:</strong> <span class="font-bold text-blue-700">${Math.round((suggestion.confidence || 0) * 100)}%</span> <span class="text-xs text-gray-500">(${suggestion.source})</span></div>
                     <div class="mt-1"><strong>Reasoning:</strong> ${suggestion.reasoning}</div>
                 `;
 
-                document.getElementById('train-field').value = suggestion.field;
-                document.getElementById('train-relevance').value = suggestion.compliance_relevance || 'General Security';
-                if (suggestion.value.toLowerCase() === 'true' || suggestion.value.toLowerCase() === 'false') {
+                document.getElementById('train-concept').value = suggestion.concept || suggestion.compliance_relevance || '';
+                document.getElementById('train-field').value = suggestion.field || '';
+                document.getElementById('train-value').value = suggestion.value || '';
+                if (suggestion.pattern) document.getElementById('train-pattern').value = suggestion.pattern;
+                document.getElementById('train-relevance').value = suggestion.compliance_relevance || suggestion.concept || 'General Security';
+                if (suggestion.extraction_strategy) {
+                    document.getElementById('train-strategy').value = suggestion.extraction_strategy;
+                } else if (String(suggestion.value).toLowerCase() === 'true' || String(suggestion.value).toLowerCase() === 'false') {
                     document.getElementById('train-strategy').value = 'exact';
                 } else {
                     document.getElementById('train-strategy').value = 'token';
                 }
+                if (suggestion.regex_pattern) {
+                    document.getElementById('train-regex-pattern').value = suggestion.regex_pattern;
+                }
                 toggleRegexGroup();
 
             } catch(e) {
-                propContent.innerText = "Could not reach AI provider. Please fill the mapping parameters manually.";
+                propContent.innerText = "Could not reach suggestion provider. Please fill the mapping parameters manually.";
             }
         }
 
@@ -1540,17 +1557,32 @@ class TrainingHTTPHandler(BaseHTTPRequestHandler):
         elif url.path == "/api/propose":
             try:
                 data = json.loads(body.decode("utf-8"))
-                vendor = data["vendor"]
-                os_family = data["os_family"]
-                line = data["line"]
+                vendor = data.get("vendor", "unknown")
+                os_family = data.get("os_family", "unknown")
+                line = data.get("line", "")
             except Exception:
                 self.send_response(400)
                 self.end_headers()
                 return
 
-            client = self.get_ai_client()
+            client = self.get_ai_client() if self.settings.get("allow_llm") else None
             try:
-                proposal = client.propose_mapping(vendor, os_family, line)
+                from .suggest import suggest_mapping
+                sug = suggest_mapping(line=line, vendor=vendor, client=client)
+                val_str = str(sug.extracted_value) if sug.extracted_value is not None else ""
+                proposal = {
+                    "field": sug.field,
+                    "concept": sug.security_concept or sug.compliance_relevance,
+                    "pattern": sug.pattern,
+                    "extraction_strategy": sug.extraction_strategy,
+                    "regex_pattern": sug.regex_pattern,
+                    "value": val_str,
+                    "confidence": sug.confidence,
+                    "reasoning": sug.reasoning,
+                    "compliance_relevance": sug.compliance_relevance or sug.security_concept,
+                    "source": sug.source,
+                    "alternatives": sug.alternatives,
+                }
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()

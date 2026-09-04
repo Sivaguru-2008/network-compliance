@@ -1,0 +1,30 @@
+{
+  "SecurityGroups": [
+    {
+      "GroupId": "sg-insecure01",
+      "GroupName": "insecure-sg",
+      "Description": "Insecure Public SG",
+      "VpcId": "vpc-01234567",
+      "IpPermissions": [
+        {
+          "IpProtocol": "tcp",
+          "FromPort": 80,
+          "ToPort": 80,
+          "IpRanges": [{"CidrIp": "0.0.0.0/0"}]
+        },
+        {
+          "IpProtocol": "tcp",
+          "FromPort": 23,
+          "ToPort": 23,
+          "IpRanges": [{"CidrIp": "0.0.0.0/0"}]
+        },
+        {
+          "IpProtocol": "tcp",
+          "FromPort": 22,
+          "ToPort": 22,
+          "IpRanges": [{"CidrIp": "0.0.0.0/0"}]
+        }
+      ]
+    }
+  ]
+}

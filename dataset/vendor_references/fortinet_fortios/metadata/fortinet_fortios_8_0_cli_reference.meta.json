@@ -1,0 +1,19 @@
+{
+  "vendor": "fortinet_fortios",
+  "vendor_name": "Fortinet",
+  "os_name": "FortiOS",
+  "config_format": "config...edit...set...end",
+  "document_title": "FortiOS CLI Reference 8.0.0",
+  "source_url": "https://docs.fortinet.com/document/fortigate/8.0.0/cli-reference/84566/fortios-cli-reference",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "html",
+  "version": "8.0.0",
+  "retrieved_at": "2026-08-31T16:29:38.453008+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "d823cf87ea7f5d5e646c92793e0658cb6eab9bf13a3bd4033c5cd087d10c92cf",
+  "byte_size": 1339487,
+  "local_path": "vendor_references\\fortinet_fortios\\documents\\fortinet_fortios_8_0_cli_reference.html",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

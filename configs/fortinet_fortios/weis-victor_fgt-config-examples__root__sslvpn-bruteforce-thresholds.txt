@@ -1,0 +1,20 @@
+The SSL VPN gateway within FortiOS has the ability to block login attempts for Y duration after X failed attempts. This helps mitigate brute force attacks. Yes, MFA is even better for preventing brute-force attacks, and we should always recommend MFA be used, but not everyone configures it, or sometimes they make mistakes in their MFA implementations, or their MFA becomes compromised, so it's still important to block further login attempts after a certain number of failures.
+
+config vpn ssl settings
+    set login-attempt-limit <X> [range: 0-10, default=2]
+    set login-block-time <Y> [range: 0-86400 seconds, default=60]
+end
+
+The default values for these X and Y thresholds currently provide very little mitigation value, as well as a poor user experience. By default, these are set to block for only 60 seconds after just 2 failed attempts. The first problem with these values is that banning after 2 failed attempts is too likely to cause false positives (users often fat-finger their password twice in a row). But the second -- and much more important -- problem is that 60 seconds isn’t nearly long enough to seriously hinder true brute-force attacks.
+
+There are 86,400 seconds in a day. If we’re only banning for 60 seconds at a time, and let’s say it takes the attacker 2 seconds to try their two failed login attempts (they’re using automated tooling), that’s 2 attempts every 62 seconds. So then that means they can try 2,787 passwords per day, or 83,613 passwords per month. Those odds are not great for the defenders, given dictionary attacks and password re-use and the prevalence of public data breaches. And that’s just the attack rates per unique source IP address.
+
+Let’s suppose the attacker has a small botnet of 1,000 bots all with unique public IP addresses. Now the attacker can increase the password-guess rate by 1000x, roughly 83,613,000 attempts per month. Of course, ideally your IAM source should also be locking out the user account itself after a certain number of failed login attempts as well, but I’m just looking at the firewall side of things. And on the firewall side of things, if the attacker suspects the user account has been locked out (perhaps they have a list of user accounts they are working off of, from a public data breach), they’ll often not just be brute-forcing a single user account, but instead password spaying lots of different accounts. So blocking the offending source IPs is still important.
+
+Therefore, I always recommend my customer change these default settings to ban after a much higher threshold of failed login attempts, and for a much longer duration. I usually like to say “after 10 failed login attempts, block for 1 day.” My reasoning for this is: it’s almost impossible that the user fat-fingers their password 10 times in a row, so false positives are not very likely. If on the off-chance it was a false positive, the user can still open a ticket with support to get unbanned. So then if 11 failed logins in a row gives a high confidence that it’s a true brute-force attack, than we should ban that IP for as long a time as possible, and the current maximum that FortiOS allows is 86,400 (1 day), to cause as much hinderance to the attacker as possible. 10 attempts every 1 days means they can only try about 300 attempts per month, which is WAY better than the 83,613 passwords per month if we just leave the default values in place. It’s so much better that most attackers are likely to just cross you off their list of targets and on move on to someone else.
+
+config vpn ssl settings
+    set login-attempt-limit 10
+    set login-block-time 86400
+end
+

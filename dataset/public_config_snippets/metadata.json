@@ -1,0 +1,42 @@
+{
+  "source_name": "Kentik config-snippets",
+  "dataset_classification": "PUBLIC_CONFIGURATION_SNIPPET",
+  "provenance": "PUBLIC_CONFIGURATION_SNIPPET",
+  "real_device": false,
+  "total_inventory_files": 183,
+  "total_extracted_snippets": 319,
+  "mapped_count": 28,
+  "unmapped_count": 247,
+  "ambiguous_count": 44,
+  "vendors_count": 14,
+  "vendors": [
+    "Arista",
+    "Cisco",
+    "Extreme",
+    "Huawei",
+    "Juniper",
+    "Mikrotik",
+    "Nokia",
+    "Palo-Alto",
+    "Silver-Peak",
+    "Ubiquiti",
+    "Vyatta",
+    "host-sflow",
+    "kprobe",
+    "root"
+  ],
+  "splits": {
+    "train": {
+      "count": 202,
+      "files": 52
+    },
+    "validation": {
+      "count": 63,
+      "files": 18
+    },
+    "test": {
+      "count": 54,
+      "files": 12
+    }
+  }
+}

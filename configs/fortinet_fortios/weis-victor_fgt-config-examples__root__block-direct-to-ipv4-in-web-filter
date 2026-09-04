@@ -1,0 +1,22 @@
+config webfilter profile
+    edit "vweis-parents_wf"
+        set options block-invalid-url
+        config web
+            set url-filter-table 1
+            set blocklist enable
+        end
+    next
+end
+
+config webfilter urlfilter
+    edit 1
+        set name "block-direct-to-ipv4_wf"
+        config entries
+            edit 1
+                set url "^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"
+                set type regex
+                set action block
+            next
+        end
+    next
+end

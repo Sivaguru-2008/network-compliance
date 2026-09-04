@@ -1,3 +1,0 @@
-# Optional: enables the LLM fallback parser for unknown vendors (--allow-llm).
--r requirements.txt
-anthropic>=1.0

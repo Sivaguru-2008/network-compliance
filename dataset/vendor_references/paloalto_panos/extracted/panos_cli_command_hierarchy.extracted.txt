@@ -1,0 +1,88 @@
+Home
+Next-Generation Firewall
+CLI Command Hierarchy for PAN-OS 11.1+
+
+## CLI Command Hierarchy for PAN-OS 11.1+
+
+
+## Next-Generation Firewall Docs
+
+Getting Started
+Administration
+Networking
+Quick Start
+Reference
+Incidents & Alerts
+Release Notes
+
+
+
+
+
+
+Select a Document
+
+
+
+
+PAN-OS 12.2
+PAN-OS 12.1
+PAN-OS 11.2
+PAN-OS 11.1
+PAN-OS 11.0 (EoL)
+PAN-OS 10.2
+PAN-OS 10.1 (EoL)
+PAN-OS 10.0 (EoL)
+PAN-OS 9.1 (EoL)
+PAN-OS 9.0 (EoL)
+PAN-OS 8.1 (EoL)
+PAN-OS 12.2
+PAN-OS 12.1
+PAN-OS 11.2
+PAN-OS 11.1
+PAN-OS 11.0 (EoL)
+PAN-OS 10.2
+PAN-OS 10.1 (EoL)
+PAN-OS 10.0 (EoL)
+PAN-OS 9.1 (EoL)
+PAN-OS 9.0 (EoL)
+PAN-OS 8.1 (EoL)
+Help
+
+
+
+
+
+
+Select a Document
+
+
+
+
+PAN-OS 12.2
+PAN-OS 12.1
+PAN-OS 11.2
+PAN-OS 11.1
+PAN-OS 10.2
+PAN-OS 10.1
+PAN-OS 12.2
+PAN-OS 12.1
+PAN-OS 11.2
+PAN-OS 11.1
+PAN-OS 10.2
+PAN-OS 10.1
+New Features
+
+## CLI Command Hierarchy for PAN-OS 11.1+
+
+Where Can I Use This?What Do I Need?
+
+
+NGFW (Managed by PAN-OS or Panorama)
+No prerequisites needed
+No prerequisites needed
+PAN-OS 11.1 CLI Ops Command Hierarchy
+PAN-OS 11.1 Configure CLI Command Hierarchy
+PAN-OS 11.2 CLI Ops Command Hierarchy
+PAN-OS 11.2 Configure CLI Command Hierarchy
+© 2026 Palo Alto Networks, Inc. All rights reserved.

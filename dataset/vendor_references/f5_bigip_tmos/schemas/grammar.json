@@ -1,0 +1,40 @@
+{
+  "vendor_key": "f5_bigip_tmos",
+  "vendor_name": "F5 Networks",
+  "os_name": "BIG-IP TMOS",
+  "syntax_type": "tmos_tmsh_brace",
+  "root_blocks": [
+    {
+      "block_name": "sys",
+      "entry_keyword": "sys",
+      "exit_keyword": "}",
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [
+        "sys sshd",
+        "sys httpd",
+        "sys ntp",
+        "sys syslog",
+        "sys snmp"
+      ],
+      "common_directives": [
+        "sys global-settings { hostname",
+        "sys ntp { servers"
+      ],
+      "security_directives": [
+        "sys sshd { inactivity-timeout",
+        "sys httpd { ssl-ciphersuite",
+        "sys auth password-policy",
+        "sys syslog { remote-servers"
+      ]
+    }
+  ],
+  "negation_prefix": "delete",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "f5_tmos_tmsh_bigip_conf"
+  }
+}

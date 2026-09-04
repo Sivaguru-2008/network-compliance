@@ -1,0 +1,937 @@
+    
+
+<!DOCTYPE html>
+<html lang="en-GB"   data-theme="dark:dark light:light" data-color-mode-auto  >
+<head>
+            
+        
+
+                            <title>Configuration Management - RouterOS - MikroTik Documentation</title>
+    
+        
+
+                        
+    
+                        
+    
+
+                
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=EDGE,chrome=IE7">
+<meta charset="UTF-8">
+<meta id="confluence-context-path" name="confluence-context-path" content="/docs">
+<meta id="confluence-base-url" name="confluence-base-url" content="https://help.mikrotik.com/docs">
+
+    <meta id="atlassian-token" name="atlassian-token" content="c70ccf50107bbde6ea490471376092f4f268726b">
+
+
+<meta id="confluence-space-key" name="confluence-space-key" content="ROS">
+<script type="text/javascript">
+        var contextPath = '/docs';
+</script>
+
+    
+
+    <meta name="confluence-request-time" content="1788193821604">
+        
+    
+        
+            <style>.ia-fixed-sidebar, .ia-splitter-left {width: 285px;}.theme-default .ia-splitter #main {margin-left: 285px;}.ia-fixed-sidebar {visibility: hidden;}</style>
+            <meta name="ajs-use-keyboard-shortcuts" content="true">
+            <meta name="ajs-discovered-plugin-features" content="$discoveredList">
+            <meta name="ajs-keyboardshortcut-hash" content="af0e5bdcd1aa1fb55318d1d5a42c744f9cc34c53aa1accae4636622c28e1534a">
+            <meta id="team-calendars-has-jira-link" content="true">
+            <meta name="ajs-team-calendars-display-time-format" content="displayTimeFormat12">
+            <meta id="team-calendars-display-week-number" content="false">
+            <meta id="team-calendars-user-timezone" content="Europe/Riga">
+            <script type="text/x-template" id="team-calendars-messages" title="team-calendars-messages"><fieldset class="i18n hidden"><input type="hidden" name="calendar3.month.long.july" value="July"><input type="hidden" name="calendar3.day.short.wednesday" value="Wed"><input type="hidden" name="calendar3.day.short.thursday" value="Thu"><input type="hidden" name="calendar3.month.short.march" value="Mar"><input type="hidden" name="calendar3.month.long.april" value="April"><input type="hidden" name="calendar3.month.long.october" value="October"><input type="hidden" name="calendar3.month.long.august" value="August"><input type="hidden" name="calendar3.month.short.july" value="Jul"><input type="hidden" name="calendar3.month.short.may" value="May"><input type="hidden" name="calendar3.month.short.november" value="Nov"><input type="hidden" name="calendar3.day.long.friday" value="Friday"><input type="hidden" name="calendar3.day.long.sunday" value="Sunday"><input type="hidden" name="calendar3.day.long.saturday" value="Saturday"><input type="hidden" name="calendar3.month.short.april" value="Apr"><input type="hidden" name="calendar3.day.long.wednesday" value="Wednesday"><input type="hidden" name="calendar3.month.long.december" value="December"><input type="hidden" name="calendar3.month.short.october" value="Oct"><input type="hidden" name="calendar3.day.long.monday" value="Monday"><input type="hidden" name="calendar3.month.short.june" value="Jun"><input type="hidden" name="calendar3.day.short.monday" value="Mon"><input type="hidden" name="calendar3.day.short.tuesday" value="Tue"><input type="hidden" name="calendar3.day.short.saturday" value="Sat"><input type="hidden" name="calendar3.month.long.march" value="March"><input type="hidden" name="calendar3.month.long.june" value="June"><input type="hidden" name="calendar3.month.short.february" value="Feb"><input type="hidden" name="calendar3.month.short.august" value="Aug"><input type="hidden" name="calendar3.month.short.december" value="Dec"><input type="hidden" name="calendar3.day.short.sunday" value="Sun"><input type="hidden" name="calendar3.month.long.february" value="February"><input type="hidden" name="calendar3.day.long.tuesday" value="Tuesday"><input type="hidden" name="calendar3.month.long.may" value="May"><input type="hidden" name="calendar3.month.long.september" value="September"><input type="hidden" name="calendar3.month.long.november" value="November"><input type="hidden" name="calendar3.month.short.january" value="Jan"><input type="hidden" name="calendar3.month.short.september" value="Sept"><input type="hidden" name="calendar3.day.long.thursday" value="Thursday"><input type="hidden" name="calendar3.month.long.january" value="January"><input type="hidden" name="calendar3.day.short.friday" value="Fri"></fieldset></script>
+            <meta name="ajs-emojis-allow-current-user-upload-emojis" content="true">
+<meta name="ajs-emojis-max-upload-file-size" content="1">
+
+            <meta name="ajs-is-confluence-admin" content="false">
+            <meta name="ajs-connection-timeout" content="10000">
+            
+    
+    
+            <meta name="ajs-page-title" content="Configuration Management">
+            <meta name="ajs-latest-published-page-title" content="Configuration Management">
+            <meta name="ajs-space-name" content="RouterOS">
+            <meta name="ajs-page-id" content="328155">
+            <meta name="ajs-latest-page-id" content="328155">
+            <meta name="ajs-content-type" content="page">
+            <meta name="ajs-parent-page-title" content="Getting started">
+            <meta name="ajs-parent-page-id" content="328119">
+            <meta name="ajs-space-key" content="ROS">
+            <meta name="ajs-quicksearch-request-timeout" content="5000">
+            <meta name="ajs-max-number-editors" content="12">
+            <meta name="ajs-macro-placeholder-timeout" content="5000">
+            <meta name="ajs-jira-metadata-count" content="0">
+            <meta name="ajs-from-page-title" content="">
+            <meta name="ajs-can-remove-page" content="false">
+            <meta name="ajs-can-remove-page-hierarchy" content="false">
+            <meta name="ajs-browse-page-tree-mode" content="view">
+            <meta name="ajs-shared-drafts" content="false">
+            <meta name="ajs-context-path" content="/docs">
+            <meta name="ajs-base-url" content="https://help.mikrotik.com/docs">
+            <meta name="ajs-version-number" content="9.2.23">
+            <meta name="ajs-build-number" content="9116">
+            <meta name="ajs-remote-user" content="">
+            <meta name="ajs-remote-user-key" content="">
+            <meta name="ajs-remote-user-has-licensed-access" content="false">
+            <meta name="ajs-remote-user-has-browse-users-permission" content="false">
+            <meta name="ajs-current-user-fullname" content="">
+            <meta name="ajs-current-user-avatar-uri-reference" content="/docs/images/icons/profilepics/anonymous.svg">
+            <meta name="ajs-static-resource-url-prefix" content="/docs">
+            <meta name="ajs-global-settings-attachment-max-size" content="104857600">
+            <meta name="ajs-global-settings-quick-search-enabled" content="true">
+            <meta name="ajs-user-locale" content="en_GB">
+            <meta name="ajs-user-timezone-offset" content="7200000">
+            <meta name="ajs-enabled-dark-features" content="com.atlassian.profiling.ita.metrics.deny,confluence.in.product.diagnostics.deny,site-wide.synchrony,site-wide.shared-drafts.disable,confluence.view.edit.transition,confluence.attachments.bulk.delete,confluence-inline-comments-resolved,http.session.registrar,theme.switcher,scope.manage.subscriptions,atlassian.cdn.static.assets,confluence.efi.onboarding.rich.space.content,file-annotations,applinks.uniconn,crowd.sync.nested.groups.group.membership.changes.batching.enabled,atlassian.webresource.performance.tracking.disable,confluence.page.readtime,atlassian.authentication.sso.fallback.to.cached.user.when.operation.failed,lucene.caching.filter,confluence.table.resizable,notification.batch,confluence-inline-comments-rich-editor,confluence.copy-heading-link,site-wide.synchrony.opt-in,atlassian.webresource.twophase.js.i18n.disabled,confluence.edit.wordcount,gatekeeper-ui-v2,confluence.search.improvements.ranking,crowd.event.transformer.directory.manager.cache,mobile.supported.version,crowd.sync.delete.user.memberships.batching.enabled,confluence.dark.theme.text.colors,quick-reload-inline-comments-flags,cql.search.screen,clc.quick.create,nps.survey.inline.dialog,confluence.efi.onboarding.new.templates,pdf-preview,com.atlassian.analytics.essential.supported,confluence.retention.rules.trash.fast.removal,previews.sharing,previews.versions,collaborative-audit-log,confluence.reindex.improvements,previews.conversion-service,atlassian.servlet.filter.default.to.licensed.access.enabled,read.only.mode,graphql,benefits.modal,previews.trigger-all-file-types,AsyncReplicationCache,attachment.extracted.text.extractor,confluence.readable.url,previews.sharing.pushstate,tc.tacca.dacca,confluence.reindex.audit,atlassian.rest.default.to.licensed.access.enabled,confluence.retention.rules.version.fast.removal,confluence.denormalisedpermissions,file-annotations.likes,v2.content.name.searcher,confluence.reindex.spaces,confluence.fast-xml-backup-restore,embedded.crowd.directory.azuread.enabled,pulp,confluence-inline-comments,confluence-inline-comments-dangling-comment,confluence.retention.rules">
+            <meta name="ajs-atl-token" content="c70ccf50107bbde6ea490471376092f4f268726b">
+            <meta name="ajs-user-date-pattern" content="dd MMM yyyy">
+            <meta name="ajs-access-mode" content="READ_WRITE">
+            <meta name="ajs-render-mode" content="READ_WRITE">
+            <meta name="ajs-same-site-cookie-default-policy" content="Lax">
+            <meta name="ajs-date.format" content="MMM dd, yyyy">
+    
+    <link rel="shortcut icon" href="/docs/s/g549hc/9116/3an53u/56/_/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/docs/s/g549hc/9116/3an53u/56/_/favicon.ico">
+
+<link rel="search" type="application/opensearchdescription+xml" href="/docs/opensearch/osd.action" title="MikroTik Documentation"/>
+    
+                    
+            <meta name="ajs-create-issue-metadata-show-discovery" content="false">
+            
+
+    <script>
+window.WRM=window.WRM||{};window.WRM._unparsedData=window.WRM._unparsedData||{};window.WRM._unparsedErrors=window.WRM._unparsedErrors||{};
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-common-exported.entity-types"]="{\u0022singular\u0022:{\u0022refapp.charlie\u0022:\u0022Charlie\u0022,\u0022fecru.project\u0022:\u0022Crucible Project\u0022,\u0022fecru.repository\u0022:\u0022FishEye Repository\u0022,\u0022stash.project\u0022:\u0022Stash Project\u0022,\u0022generic.entity\u0022:\u0022Generic Project\u0022,\u0022confluence.space\u0022:\u0022Confluence Space\u0022,\u0022bamboo.project\u0022:\u0022Bamboo Project\u0022,\u0022jira.project\u0022:\u0022Jira Project\u0022},\u0022plural\u0022:{\u0022refapp.charlie\u0022:\u0022Charlies\u0022,\u0022fecru.project\u0022:\u0022Crucible Projects\u0022,\u0022fecru.repository\u0022:\u0022FishEye Repositories\u0022,\u0022stash.project\u0022:\u0022Stash Projects\u0022,\u0022generic.entity\u0022:\u0022Generic Projects\u0022,\u0022confluence.space\u0022:\u0022Confluence Spaces\u0022,\u0022bamboo.project\u0022:\u0022Bamboo Projects\u0022,\u0022jira.project\u0022:\u0022Jira Projects\u0022}}";
+WRM._unparsedData["com.atlassian.confluence.plugins.confluence-license-banner:confluence-license-banner-resources.license-details"]="{\u0022daysBeforeLicenseExpiry\u0022:0,\u0022daysBeforeMaintenanceExpiry\u0022:0,\u0022showLicenseExpiryBanner\u0022:false,\u0022showMaintenanceExpiryBanner\u0022:false,\u0022renewUrl\u0022:null,\u0022salesUrl\u0022:null}";
+WRM._unparsedData["com.atlassian.plugins.atlassian-plugins-webresource-plugin:context-path.context-path"]="\u0022/docs\u0022";
+WRM._unparsedData["com.atlassian.analytics.analytics-client:policy-update-init.policy-update-data-provider"]="false";
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-common-exported.authentication-types"]="{\u0022com.atlassian.plugins.cloud.connect.connectivity.applinks.ContainerTokenAuthenticationProvider\u0022:\u0022auth.uniconn.container\u0022,\u0022com.atlassian.applinks.api.auth.types.BasicAuthenticationProvider\u0022:\u0022Basic Access\u0022,\u0022com.atlassian.applinks.api.auth.types.TrustedAppsAuthenticationProvider\u0022:\u0022Trusted Applications\u0022,\u0022com.atlassian.applinks.api.auth.types.CorsAuthenticationProvider\u0022:\u0022CORS\u0022,\u0022com.atlassian.applinks.api.auth.types.OAuthAuthenticationProvider\u0022:\u0022OAuth\u0022,\u0022com.atlassian.applinks.api.auth.types.TwoLeggedOAuthAuthenticationProvider\u0022:\u0022OAuth\u0022,\u0022com.atlassian.applinks.api.auth.types.TwoLeggedOAuthWithImpersonationAuthenticationProvider\u0022:\u0022OAuth\u0022,\u0022com.atlassian.applinks.api.auth.types.ThreeLeggedOAuth2AuthenticationProvider\u0022:\u0022OAuth 2.0\u0022,\u0022com.atlassian.applinks.api.auth.types.TwoLeggedOAuth2AuthenticationProvider\u0022:\u0022OAuth 2.0\u0022}";
+WRM._unparsedData["com.atlassian.confluence.plugins.confluence-search-ui-plugin:confluence-search-ui-plugin-resources.i18n-data"]="{\u0022search.ui.recent.link.text\u0022:\u0022View more recently visited\u0022,\u0022search.ui.search.results.empty\u0022:\u0022We couldn\u0027\u0027t find anything matching \u005C\u0022{0}\u005C\u0022.\u0022,\u0022search.ui.filter.clear.selected\u0022:\u0022Clear selected items\u0022,\u0022search.ui.content.name.search.items.panel.load.all.top.items.button.text\u0022:\u0022Show more app results...\u0022,\u0022search.ui.filter.contributor.button.text\u0022:\u0022Contributor\u0022,\u0022search.ui.filter.space.current.label\u0022:\u0022CURRENT\u0022,\u0022search.ui.clear.input.button.text\u0022:\u0022Clear text\u0022,\u0022search.ui.search.results.clear.button\u0022:\u0022clear your filters.\u0022,\u0022help.search.ui.link.title\u0022:\u0022Search tips\u0022,\u0022search.ui.container.close.text\u0022:\u0022Close\u0022,\u0022search.ui.filter.date.month.text\u0022:\u0022The past month\u0022,\u0022search.ui.infinite.scroll.button.text\u0022:\u0022More results\u0022,\u0022search.ui.filter.date.button.text\u0022:\u0022Date\u0022,\u0022search.ui.filter.date.week.text\u0022:\u0022The past week\u0022,\u0022search.ui.result.subtitle.calendar\u0022:\u0022Team calendar\u0022,\u0022search.ui.filter.date.heading\u0022:\u0022Last modified within\u0022,\u0022search.ui.filter.space.input.label\u0022:\u0022Find spaces...\u0022,\u0022search.ui.generic.error\u0022:\u0022Something went wrong. Refresh the page, or contact your admin if this keeps happening.\u0022,\u0022search.ui.recent.spaces\u0022:\u0022Recent Spaces\u0022,\u0022search.ui.result.subtitle.space\u0022:\u0022Space\u0022,\u0022search.ui.filter.space.category.input.label\u0022:\u0022Find space categories...\u0022,\u0022search.ui.filter.space.archive.label\u0022:\u0022Search archived spaces\u0022,\u0022search.ui.filter.label\u0022:\u0022filter\u0022,\u0022search.ui.filter.date.all.text\u0022:\u0022Any time\u0022,\u0022search.ui.filter.date.hour.text\u0022:\u0022The past day\u0022,\u0022search.ui.filters.heading\u0022:\u0022Filter by\u0022,\u0022search.ui.filter.label.input.label\u0022:\u0022Find labels...\u0022,\u0022search.ui.recent.items.anonymous\u0022:\u0022Start exploring. Your search results will appear here.\u0022,\u0022search.ui.input.label\u0022:\u0022Search\u0022,\u0022search.ui.input.aria.label\u0022:\u0022Search query\u0022,\u0022search.ui.search.result\u0022:\u0022{0,choice,1#{0} search result|1\u003c{0} search results}\u0022,\u0022search.ui.filter.label.button.text\u0022:\u0022Label\u0022,\u0022search.ui.container.clear.ariaLabel\u0022:\u0022Clear\u0022,\u0022search.ui.input.alert\u0022:\u0022Hit enter to search\u0022,\u0022search.ui.filter.no.result.text\u0022:\u0022We can\u0027\u0027t find anything matching your search\u0022,\u0022search.ui.result.subtitle.user\u0022:\u0022User profile\u0022,\u0022search.ui.filter.contributor.input.label\u0022:\u0022Find people...\u0022,\u0022search.ui.filter.content.type.button.text\u0022:\u0022Type\u0022,\u0022search.ui.filter.date.year.text\u0022:\u0022The past year\u0022,\u0022search.ui.advanced.search.link.text\u0022:\u0022Advanced search\u0022,\u0022search.ui.filter.space.button.text\u0022:\u0022Space\u0022,\u0022search.ui.search.results.clear.line2\u0022:\u0022Try a different search term or\u0022,\u0022search.ui.filter.space.category.button.text\u0022:\u0022Space category\u0022,\u0022search.ui.search.results.clear.line1\u0022:\u0022We couldn\u0027\u0027t find anything matching your search.\u0022,\u0022search.ui.content.name.search.items.panel.load.all.top.items.admin.button.text\u0022:\u0022Show more settings and app results...\u0022,\u0022search.ui.recent.pages\u0022:\u0022Recently visited\u0022,\u0022search.ui.search.result.anonymous\u0022:\u0022{0,choice,1#{0} search result|1\u003c{0} search results}. Have an account? {1}Log in{2} to expand your search.\u0022,\u0022search.ui.recent.items.empty\u0022:\u0022Start exploring. Pages and spaces you\u0027\u0027ve visited recently will appear here.\u0022,\u0022search.ui.filter.space.init.heading\u0022:\u0022recent spaces\u0022}";
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-common-exported.applinks-types"]="{\u0022crowd\u0022:\u0022Crowd\u0022,\u0022confluence\u0022:\u0022Confluence\u0022,\u0022fecru\u0022:\u0022FishEye / Crucible\u0022,\u0022stash\u0022:\u0022Stash\u0022,\u0022uniconn.backbone\u0022:\u0022Atlassian Cloud\u0022,\u0022uniconn.backbone.ccc\u0022:\u0022Atlassian Cloud\u0022,\u0022jiraMobile\u0022:\u0022Jira DC Mobile Application\u0022,\u0022jira\u0022:\u0022Jira\u0022,\u0022uniconn.cloud-product\u0022:\u0022Cloud Product\u0022,\u0022refapp\u0022:\u0022Reference Application\u0022,\u0022bamboo\u0022:\u0022Bamboo\u0022,\u0022confluenceMobile\u0022:\u0022Confluence DC Mobile Application\u0022,\u0022uniconn.cloud-product.ccc\u0022:\u0022Cloud Product\u0022,\u0022generic\u0022:\u0022Generic Application\u0022}";
+WRM._unparsedData["com.atlassian.confluence.plugins.synchrony-interop:synchrony-status-banner-loader.synchrony-status"]="false";
+WRM._unparsedData["com.atlassian.whisper.atlassian-whisper-plugin:atlassian-whisper-bootstrap.WhisperData"]="{\u0022hasMessages\u0022:false,\u0022syncInit\u0022:false,\u0022baseUrl\u0022:\u0022https:\u005C/\u005C/help.mikrotik.com\u005C/docs\u0022}";
+WRM._unparsedData["com.atlassian.applinks.applinks-plugin:applinks-common-exported.applinks-help-paths"]="{\u0022entries\u0022:{\u0022applinks.docs.root\u0022:\u0022https://confluence.atlassian.com/display/APPLINKS-101/\u0022,\u0022applinks.docs.diagnostics.troubleshoot.sslunmatched\u0022:\u0022SSL+and+application+link+troubleshooting+guide\u0022,\u0022applinks.docs.diagnostics.troubleshoot.oauthsignatureinvalid\u0022:\u0022OAuth+troubleshooting+guide\u0022,\u0022applinks.docs.diagnostics.troubleshoot.oauthtimestamprefused\u0022:\u0022OAuth+troubleshooting+guide\u0022,\u0022applinks.docs.delete.entity.link\u0022:\u0022Create+links+between+projects\u0022,\u0022applinks.docs.adding.application.link\u0022:\u0022Link+Atlassian+applications+to+work+together\u0022,\u0022applinks.docs.administration.guide\u0022:\u0022Application+Links+Documentation\u0022,\u0022applinks.docs.oauth.security\u0022:\u0022OAuth+security+for+application+links\u0022,\u0022applinks.docs.troubleshoot.application.links\u0022:\u0022Troubleshoot+application+links\u0022,\u0022applinks.docs.diagnostics.troubleshoot.unknownerror\u0022:\u0022Network+and+connectivity+troubleshooting+guide\u0022,\u0022applinks.docs.configuring.auth.trusted.apps\u0022:\u0022Configuring+Trusted+Applications+authentication+for+an+application+link\u0022,\u0022applinks.docs.diagnostics.troubleshoot.authlevelunsupported\u0022:\u0022OAuth+troubleshooting+guide\u0022,\u0022applinks.docs.diagnostics.troubleshoot.ssluntrusted\u0022:\u0022SSL+and+application+link+troubleshooting+guide\u0022,\u0022applinks.docs.diagnostics.troubleshoot.unknownhost\u0022:\u0022Network+and+connectivity+troubleshooting+guide\u0022,\u0022applinks.docs.delete.application.link\u0022:\u0022Link+Atlassian+applications+to+work+together\u0022,\u0022applinks.docs.adding.project.link\u0022:\u0022Configuring+Project+links+across+Applications\u0022,\u0022applinks.docs.link.applications\u0022:\u0022Link+Atlassian+applications+to+work+together\u0022,\u0022applinks.docs.diagnostics.troubleshoot.oauthproblem\u0022:\u0022OAuth+troubleshooting+guide\u0022,\u0022applinks.docs.diagnostics.troubleshoot.migration\u0022:\u0022Update+application+links+to+use+OAuth\u0022,\u0022applinks.docs.relocate.application.link\u0022:\u0022Link+Atlassian+applications+to+work+together\u0022,\u0022applinks.docs.administering.entity.links\u0022:\u0022Create+links+between+projects\u0022,\u0022applinks.uniconn.configuring.link\u0022:\u0022https://confluence.atlassian.com/enterprise/connect-data-center-to-cloud-in-admin-hub-1671463000.html\u0022,\u0022applinks.docs.upgrade.application.link\u0022:\u0022OAuth+security+for+application+links\u0022,\u0022applinks.docs.diagnostics.troubleshoot.connectionrefused\u0022:\u0022Network+and+connectivity+troubleshooting+guide\u0022,\u0022applinks.docs.configuring.auth.oauth\u0022:\u0022OAuth+security+for+application+links\u0022,\u0022applinks.docs.insufficient.remote.permission\u0022:\u0022OAuth+security+for+application+links\u0022,\u0022applinks.docs.configuring.application.link.auth\u0022:\u0022OAuth+security+for+application+links\u0022,\u0022applinks.docs.diagnostics\u0022:\u0022Application+links+diagnostics\u0022,\u0022applinks.docs.configured.authentication.types\u0022:\u0022OAuth+security+for+application+links\u0022,\u0022applinks.docs.adding.entity.link\u0022:\u0022Create+links+between+projects\u0022,\u0022applinks.docs.diagnostics.troubleshoot.unexpectedresponse\u0022:\u0022Network+and+connectivity+troubleshooting+guide\u0022,\u0022applinks.docs.configuring.auth.basic\u0022:\u0022Configuring+Basic+HTTP+Authentication+for+an+Application+Link\u0022,\u0022applinks.docs.diagnostics.troubleshoot.authlevelmismatch\u0022:\u0022OAuth+troubleshooting+guide\u0022}}";
+WRM._unparsedData["com.atlassian.confluence.plugins.confluence-feature-discovery-plugin:confluence-feature-discovery-plugin-resources.test-mode"]="false";
+if(window.WRM._dataArrived)window.WRM._dataArrived();</script>
+<link rel="stylesheet" href="/docs/s/ba1e4b7710eb1c7dcce7bf596d161c52-CDN/g549hc/9116/3an53u/52db691ce4bb30b75dfb3f1473011742/_/download/contextbatch/css/_super/batch.css" data-wrm-key="_super" data-wrm-batch-type="context" media="all">
+<link rel="stylesheet" href="/docs/s/d55256596f075e73709750ade87c99bc-CDN/g549hc/9116/3an53u/11ffa126aff72dda2d9cbf786724ea20/_/download/contextbatch/css/atl.confluence.plugins.pagetree-desktop,main,viewcontent,atl.general,page,atl.comments,-_super/batch.css?cefp_collab_enabled=false&amp;cefp_ed_perm=false&amp;cefp_is_admin=false&amp;gatekeeper-ui-v2=true&amp;highlightactions=true&amp;table-resizable.breaking-text=false&amp;whisper-enabled=true" data-wrm-key="atl.confluence.plugins.pagetree-desktop,main,viewcontent,atl.general,page,atl.comments,-_super" data-wrm-batch-type="context" media="all">
+<link rel="stylesheet" href="/docs/s/d41d8cd98f00b204e9800998ecf8427e-CDN/g549hc/9116/3an53u/9.12.14/_/download/batch/com.atlassian.auiplugin:split_aui.page.design-tokens-compatibility-themes/com.atlassian.auiplugin:split_aui.page.design-tokens-compatibility-themes.css" data-wrm-key="com.atlassian.auiplugin:split_aui.page.design-tokens-compatibility-themes" data-wrm-batch-type="resource" media="all">
+<link rel="stylesheet" href="/docs/s/g549hc/9116/3an53u/50/_/styles/colors.css?spaceKey=ROS" media="all">
+<link rel="stylesheet" href="/docs/s/g549hc/9116/3an53u/50/_/styles/custom.css?spaceKey=ROS" media="all">
+<script src="/docs/s/0aa24aeaf596f80738d8ffa1d20e4641-CDN/g549hc/9116/3an53u/52db691ce4bb30b75dfb3f1473011742/_/download/contextbatch/js/_super/batch.js?locale=en-GB" data-wrm-key="_super" data-wrm-batch-type="context" data-initially-rendered></script>
+<script src="/docs/s/a50bf05df0ec0c290eef184dd8ab3f0c-CDN/g549hc/9116/3an53u/11ffa126aff72dda2d9cbf786724ea20/_/download/contextbatch/js/atl.confluence.plugins.pagetree-desktop,main,viewcontent,atl.general,page,atl.comments,-_super/batch.js?cefp_collab_enabled=false&amp;cefp_ed_perm=false&amp;cefp_is_admin=false&amp;gatekeeper-ui-v2=true&amp;highlightactions=true&amp;locale=en-GB&amp;table-resizable.breaking-text=false&amp;whisper-enabled=true" data-wrm-key="atl.confluence.plugins.pagetree-desktop,main,viewcontent,atl.general,page,atl.comments,-_super" data-wrm-batch-type="context" data-initially-rendered></script>
+<script src="/docs/s/ac2c54fb289376bfd225233b58633d01-CDN/g549hc/9116/3an53u/9.12.14/_/download/batch/com.atlassian.auiplugin:split_aui.splitchunk.532dee4ffd/com.atlassian.auiplugin:split_aui.splitchunk.532dee4ffd.js?locale=en-GB" data-wrm-key="com.atlassian.auiplugin:split_aui.splitchunk.532dee4ffd" data-wrm-batch-type="resource" data-initially-rendered></script>
+<script src="/docs/s/ac2c54fb289376bfd225233b58633d01-CDN/g549hc/9116/3an53u/9.12.14/_/download/batch/com.atlassian.auiplugin:split_aui.splitchunk.0e8e0008dd/com.atlassian.auiplugin:split_aui.splitchunk.0e8e0008dd.js?locale=en-GB" data-wrm-key="com.atlassian.auiplugin:split_aui.splitchunk.0e8e0008dd" data-wrm-batch-type="resource" data-initially-rendered></script>
+<script src="/docs/s/ac2c54fb289376bfd225233b58633d01-CDN/g549hc/9116/3an53u/9.12.14/_/download/batch/com.atlassian.auiplugin:split_aui.page.design-tokens-base-themes/com.atlassian.auiplugin:split_aui.page.design-tokens-base-themes.js?locale=en-GB" data-wrm-key="com.atlassian.auiplugin:split_aui.page.design-tokens-base-themes" data-wrm-batch-type="resource" data-initially-rendered></script>
+<script src="/docs/s/ac2c54fb289376bfd225233b58633d01-CDN/g549hc/9116/3an53u/9.12.14/_/download/batch/com.atlassian.auiplugin:split_aui.page.design-tokens-compatibility-themes/com.atlassian.auiplugin:split_aui.page.design-tokens-compatibility-themes.js?locale=en-GB" data-wrm-key="com.atlassian.auiplugin:split_aui.page.design-tokens-compatibility-themes" data-wrm-batch-type="resource" data-initially-rendered></script>
+<script src="/docs/s/ac2c54fb289376bfd225233b58633d01-CDN/g549hc/9116/3an53u/9.12.14/_/download/batch/com.atlassian.auiplugin:split_aui.splitchunk.vendors--1d1867466a/com.atlassian.auiplugin:split_aui.splitchunk.vendors--1d1867466a.js?locale=en-GB" data-wrm-key="com.atlassian.auiplugin:split_aui.splitchunk.vendors--1d1867466a" data-wrm-batch-type="resource" data-initially-rendered></script>
+<script src="/docs/s/ac2c54fb289376bfd225233b58633d01-CDN/g549hc/9116/3an53u/9.12.14/_/download/batch/com.atlassian.auiplugin:split_aui.splitchunk.1d1867466a/com.atlassian.auiplugin:split_aui.splitchunk.1d1867466a.js?locale=en-GB" data-wrm-key="com.atlassian.auiplugin:split_aui.splitchunk.1d1867466a" data-wrm-batch-type="resource" data-initially-rendered></script>
+<script src="/docs/s/ac2c54fb289376bfd225233b58633d01-CDN/g549hc/9116/3an53u/9.12.14/_/download/batch/com.atlassian.auiplugin:split_aui.page.design-tokens-api/com.atlassian.auiplugin:split_aui.page.design-tokens-api.js?locale=en-GB" data-wrm-key="com.atlassian.auiplugin:split_aui.page.design-tokens-api" data-wrm-batch-type="resource" data-initially-rendered></script>
+
+    
+
+        
+    
+
+        
+        <meta name="ajs-site-title" content="MikroTik Documentation" />
+            
+    
+
+    
+                <link rel="canonical" href="https://help.mikrotik.com/docs/spaces/ROS/pages/328155/Configuration+Management">
+        <link rel="shortlink" href="https://help.mikrotik.com/docs/x/2wEF">
+    <meta name="wikilink" content="[ROS:Configuration Management]">
+    <meta name="page-version" content="89">
+    <meta name="ajs-page-version" content="89">
+
+</head>
+
+    
+<body      id="com-atlassian-confluence" class="theme-default  aui-layout aui-theme-default">
+
+        
+            <div id='stp-licenseStatus-banner'></div>
+    <div id="page">
+<div id="full-height-container">
+    <div id="header-precursor">
+        <div class="cell">
+            
+                            </div>
+    </div>
+    
+    
+
+
+
+
+
+<style>
+    html[data-color-mode="light"][data-theme~="light:light"],
+    html[data-color-mode="dark"][data-theme~="dark:light"] {
+        --confluence-custom-logo-content: url('/docs/download/attachments/327682/atl.site.logo?version=3&amp;modificationDate=1649942215425&amp;api=v2');
+    }
+</style>
+
+<header id="header" role="banner">
+            <a class="aui-skip-link" href="https://help.mikrotik.com/docs/login.action?os_destination=%2Fspaces%2FROS%2Fpages%2F328155%2FConfiguration%2BManagement" tabindex="1">Log in</a>
+        <nav class="aui-header aui-dropdown2-trigger-group" aria-label="Site"><div class="aui-header-inner"><div class="aui-header-before"><button class=" aui-dropdown2-trigger app-switcher-trigger aui-dropdown2-trigger-arrowless" aria-controls="app-switcher" aria-haspopup="true" role="button" data-aui-trigger href="#app-switcher"><span class="aui-icon aui-icon-small aui-iconfont-appswitcher">Linked Applications</span></button><div id="app-switcher" class="aui-dropdown2 aui-style-default" role="menu" hidden data-is-user-admin="false" data-is-switcher="true"><div class="app-switcher-loading">Loading&hellip;</div></div></div><div class="aui-header-primary"><span id="logo" class="aui-header-logo aui-header-logo-custom"><a href="/docs/" aria-label="Confluence home page"><img src="/docs/download/attachments/327682/atl.site.logo?version=3&amp;modificationDate=1649942215425&amp;api=v2" alt="MikroTik Documentation" /></a></span><ul class="aui-nav">
+                            <li>
+            
+    
+        
+<a  id="space-directory-link" href="/docs/spacedirectory/view.action"  class=" aui-nav-imagelink"   title="Spaces">
+            <span>Spaces</span>
+    </a>
+        </li>
+                                <li class="aui-buttons">
+            </li>
+</ul>
+</div><div class="aui-header-secondary"><ul class="aui-nav">
+                        <li>
+        <div id="search-ui" class="aui-quicksearch dont-default-focus header-quicksearch"><button id="quick-search-query-button" aria-label="Search" aria-haspopup= "dialog" ></button><input id="quick-search-query" title="Search query" aria-label="Search query" placeholder="Search" type="text" aria-haspopup= "dialog" /><div id="quick-search-alert" role="alert">Hit enter to search</div><aui-spinner size="small"></aui-spinner></div>
+    </li>
+        <li>
+            
+        <a id="help-menu-link" role="button" class="aui-nav-link aui-dropdown2-trigger aui-dropdown2-trigger-arrowless" href="#" aria-haspopup="true" aria-owns="help-menu-link-content" title="Help">
+        <span class="aui-icon aui-icon-small aui-iconfont-question-filled">Help</span>
+    </a>
+    <nav id="help-menu-link-content" class="aui-dropdown2 aui-style-default" >
+                    <div class="aui-dropdown2-section">
+                                    <strong role="heading" aria-level="2"></strong>
+                                <ul role="menu"
+                     role="menu"                    aria-label="Help"                    id="help-menu-link-pages"                    class="aui-list-truncate section-pages first">
+                                            <li role="presentation">
+        
+            
+<a role="menuitem"  id="confluence-help-link" href="https://docs.atlassian.com/confluence/docs-92/" class="    "      title="Visit the Confluence documentation home"  target="_blank"
+>
+        Online Help
+</a>
+</li>
+                                            <li role="presentation">
+    
+            
+<a role="menuitem"  id="keyboard-shortcuts-link" href="/docs" class="    "      title="View available keyboard shortcuts" >
+        Keyboard Shortcuts
+</a>
+</li>
+                                            <li role="presentation">
+    
+            
+<a role="menuitem"  id="feed-builder-link" href="/docs/configurerssfeed.action" class="    "      title="Create your custom RSS feed." >
+        Feed Builder
+</a>
+</li>
+                                            <li role="presentation">
+    
+            
+<a role="menuitem"  id="whats-new-menu-link" href="https://confluence.atlassian.com/display/DOC/Confluence+9.2+Release+Notes" class="    "   >
+        What’s new
+</a>
+</li>
+                                            <li role="presentation">
+    
+            
+<a role="menuitem"  id="confluence-about-link" href="/docs/aboutconfluencepage.action" class="    "      title="Get more information about Confluence" >
+        About Confluence
+</a>
+</li>
+                                    </ul>
+            </div>
+            </nav>
+    
+    </li>
+        <li>
+                
+    
+    </li>
+        <li>
+            
+    </li>
+        <li>
+                                            <li>
+        
+            
+<a role="menuitem"  id="login-link" href="/docs/login.action?os_destination=%2Fspaces%2FROS%2Fpages%2F328155%2FConfiguration%2BManagement" class="   user-item login-link "   >
+        Log in
+</a>
+</li>
+                        
+    </li>
+    </ul>
+</div></div><!-- .aui-header-inner--><aui-header-end></aui-header-end></nav><!-- .aui-header -->
+    <br class="clear">
+</header>
+    
+
+    
+    	<div class="ia-splitter">
+    		<div class="ia-splitter-left">
+    			<div class="ia-fixed-sidebar" role="complementary" aria-label=sidebar>
+                                            
+                            <div class="acs-side-bar ia-scrollable-section"><div class="acs-side-bar-space-info tipsy-enabled" data-configure-tooltip="Edit space details"><a class="space-information-link" href="/docs/spaces/ROS/pages/328059/RouterOS" title="RouterOS"><div class="avatar"><div class="space-logo" data-key="ROS" data-name="RouterOS" data-entity-type="confluence.space"><div class="avatar-img-container"><div class="avatar-img-wrapper"><img class="avatar-img" src="/docs/download/attachments/16351655/ROS?version=1&amp;modificationDate=1611314525238&amp;api=v2" alt=""></div></div></div></div><div class="space-information-container"><div class="name" title="RouterOS">RouterOS</div></div></a><button type="button" class="flyout-handle icon aui-icon aui-icon-small aui-iconfont-edit" title="Edit space details" >Edit space details</button></div><div class="acs-side-bar-content"><div class="acs-nav-wrapper"><div class="acs-nav" data-has-create-permission="false" data-quick-links-state="null" data-page-tree-state="null" data-nav-type="page-tree"><div class="acs-nav-sections"><div class="main-links-section "><ul class="acs-nav-list"><li class="acs-nav-item wiki aui-iconfont-page current-item" aria-current="true" data-collector-key="spacebar-pages"><a class="acs-nav-item-link tipsy-enabled" href="/docs/collector/pages.action?key=ROS" data-collapsed-tooltip="Pages"><span class="aui-icon wiki aui-iconfont-page"></span><span class="acs-nav-item-label">Pages</span></a></li><li class="acs-nav-item blog aui-iconfont-quote" data-collector-key="spacebar-blogs"><a class="acs-nav-item-link tipsy-enabled" href="/docs/pages/viewrecentblogposts.action?key=ROS" data-collapsed-tooltip="Blog"><span class="aui-icon blog aui-iconfont-quote"></span><span class="acs-nav-item-label">Blog</span></a></li></ul></div><div class="quick-links-wrapper"></div></div></div></div><div class="ia-secondary-container tipsy-enabled" data-tree-type="page-tree"><div class="ia-secondary-header"><h2 class="ia-secondary-header-title page-tree"><button id="page-tree-button" class="aui-button icon aui-icon aui-iconfont-location sidebar-flyout-button" aria-labelledby="page-tree-label" aria-haspopup="dialog"></button><span id="page-tree-label" class="label">Page tree</span></h2></div><div class="ia-secondary-content"><div class="plugin_pagetree conf-macro output-inline" data-hasbody="false" data-macro-name="pagetree">
+
+        
+        
+    <ul role="list" aria-busy="true" class="plugin_pagetree_children_list plugin_pagetree_children_list_noleftspace">
+        <div class="plugin_pagetree_children">
+        </div>
+    </ul>
+
+    <fieldset class="hidden">
+        <input type="hidden" name="treeId" value=""/>
+        <input type="hidden" name="treeRequestId" value="/docs/plugins/pagetree/naturalchildren.action?decorator=none&amp;excerpt=false&amp;sort=position&amp;reverse=false&amp;disableLinks=false&amp;expandCurrent=true&amp;placement=sidebar"/>
+        <input type="hidden" name="treePageId" value="328155"/>
+
+        <input type="hidden" name="noRoot" value="false"/>
+        <input type="hidden" name="rootPageId" value="328059"/>
+
+        <input type="hidden" name="rootPage" value=""/>
+        <input type="hidden" name="startDepth" value="0"/>
+        <input type="hidden" name="spaceKey" value="ROS"/>
+
+        <input type="hidden" name="i18n-pagetree.loading" value="Loading..."/>
+        <input type="hidden" name="i18n-pagetree.error.permission" value="Unable to load page tree. It seems that you do not have permission to view the root page."/>
+        <input type="hidden" name="i18n-pagetree.eeror.general" value="There was a problem retrieving the page tree. Please check the server log file for more information."/>
+        <input type="hidden" name="loginUrl" value="/docs/login.action?os_destination=%2Fpages%2Fviewpage.action%3FpageId%3D328155%26spaceKey%3DROS%26title%3DConfiguration%252BManagement&amp;permissionViolation=true"/>
+        <input type="hidden" name="mobile" value="false"/>
+        <input type="hidden" name="placement" value="sidebar"/>
+
+                <fieldset class="hidden">
+                                                <input type="hidden" name="ancestorId" value="328119"/>
+                                    <input type="hidden" name="ancestorId" value="328059"/>
+                                    </fieldset>
+    </fieldset>
+</div></div></div></div><div class="hidden"><a href="/docs/collector/pages.action?key=ROS" id="space-pages-link"></a><script type="text/x-template" title="logo-config-content"><h2>Space Details</h2><div class="personal-space-logo-hint">Your profile picture is used as the logo for your personal space. <a href="/docs/users/profile/editmyprofilepicture.action" target="_blank">Change your profile picture</a>.</div></script></div></div><div class="space-tools-section"><div id="space-tools-menu-additional-items" class="hidden"><div data-label="Browse pages" data-class="" data-href="/docs/pages/reorderpages.action?key=ROS">Browse pages</div></div><button id="space-tools-menu-trigger"  class=" aui-dropdown2-trigger aui-button aui-button-subtle tipsy-enabled aui-dropdown2-trigger-arrowless " aria-controls="space-tools-menu" aria-haspopup="true" role="button" data-aui-trigger><span class="aui-icon aui-icon-small aui-iconfont-configure">Configure</span><span class="aui-button-label">Space tools</span><span class="aui-icon "></span></button><div id="space-tools-menu" class="aui-dropdown2 aui-style-default space-tools-dropdown" role="menu" hidden data-aui-alignment="top left"></div><a href="#" role="button" class="expand-collapse-trigger aui-icon aui-icon-small aui-iconfont-chevron-double-left" aria-expanded="true"></a></div>
+                    
+                        			</div>
+    		</div>
+        <!-- \#header -->
+
+            
+    
+        <main role="main" id="main" class=" aui-page-panel clearfix">
+                    
+        <div id="custom-content-header">
+            <h1><a name="ConfigurationManagement-Thisdocumentationsitehasbeenfrozen,nofurthereditswillbemadehere!"></a>This documentation site has been frozen, no further edits will be made here!</h1>
+
+<p>The new RouterOS documentation site is available here: <span class="nobr"><a href="https://manual.mikrotik.com/docs/introduction/" class="external-link" rel="nofollow">https://manual.mikrotik.com/docs/introduction/<sup><img class="rendericon" src="/docs/images/icons/linkext7.gif" height="7" width="7" align="absmiddle" alt="" border="0"/></sup></a></span></p>
+        </div>
+    
+                        <div id="main-header">
+                        
+    <div id="navigation" class="content-navigation view" role="region" aria-label="Page tools">
+                    <ul class="ajs-menu-bar">
+                                            
+        <li class="normal ajs-menu-item">
+        <a id="action-menu-link" class="action aui-dropdown2-trigger-arrowless aui-button aui-button-subtle ajs-menu-title aui-dropdown2-trigger" href="#" aria-haspopup="true" aria-label="More options" aria-owns="action-menu" data-container="#navigation">
+            <span>
+                                    <span class="aui-icon aui-icon-small aui-iconfont-more" aria-label="More options" role="button"></span>
+                                
+            </span>
+        </a>         <div id="action-menu" class="aui-dropdown2 aui-style-default confluence-dropdown2-scrollable"  role="menu" aria-labelledby="action-menu-link" >
+                            <div class="aui-dropdown2-section">
+                    <ul  id="action-menu-primary"                          class="section-primary first"                         role="presentation" >
+                                                    <li
+                    role="presentation"
+            >
+
+    
+        
+    
+                                                                        
+    
+    
+            <a  id="view-attachments-link"                href="/docs/pages/viewpageattachments.action?pageId=328155"
+                rel="nofollow"
+                class="action-view-attachments"
+                 accessKey="t"                 title="View Attachments"                                                 role="menuitem"                >
+
+                        <span>
+                                A<u>t</u>tachments (6)
+            </span>        </a>
+    </li>
+                                                <li
+                    role="presentation"
+            >
+
+    
+        
+    
+                                                                        
+    
+    
+            <a  id="action-view-history-link"                href="/docs/pages/viewpreviousversions.action?pageId=328155"
+                rel="nofollow"
+                class="action-view-history"
+                                                                                 role="menuitem"                >
+
+                        <span>
+                                Page History
+            </span>        </a>
+    </li>
+                                        </ul>
+                </div>
+                            <div class="aui-dropdown2-section">
+                    <ul  id="action-menu-secondary"                          class="section-secondary"                         role="presentation" >
+                                                    <li
+                    role="presentation"
+            >
+
+    
+        
+    
+                                                                        
+    
+    
+            <a  id="view-page-info-link"                href="/docs/pages/viewinfo.action?pageId=328155"
+                rel="nofollow"
+                class="action-view-info"
+                                                                                 role="menuitem"                >
+
+                        <span>
+                                Page Information
+            </span>        </a>
+    </li>
+                                                <li
+                    role="presentation"
+            >
+
+    
+        
+    
+                                                                        
+    
+    
+            <a  id="view-resolved-comments"                href="/docs"
+                rel="nofollow"
+                class=""
+                                                                                 role="menuitem"                >
+
+                        <span>
+                                Resolved comments
+            </span>        </a>
+    </li>
+                                                <li
+                    role="presentation"
+            >
+
+    
+        
+    
+                                                                        
+    
+    
+            <a  id="view-in-hierarchy-link"                href="/docs/pages/reorderpages.action?key=ROS&amp;openId=328155#selectedPageInHierarchy"
+                rel="nofollow"
+                class=""
+                                                                                 role="menuitem"                >
+
+                        <span>
+                                View in Hierarchy
+            </span>        </a>
+    </li>
+                                                <li
+                    role="presentation"
+            >
+
+    
+        
+    
+                                                                        
+    
+    
+            <a  id="action-view-source-link"                href="/docs/plugins/viewsource/viewpagesrc.action?pageId=328155"
+                rel="nofollow"
+                class="action-view-source popup-link"
+                                                                                 role="menuitem"                >
+
+                        <span>
+                                View Source
+            </span>        </a>
+    </li>
+                                                <li
+                    role="presentation"
+            >
+
+    
+        
+    
+                                                                        
+    
+    
+            <a  id="action-export-pdf-link"                href="/docs/spaces/flyingpdf/pdfpageexport.action?pageId=328155&amp;atl_token=c70ccf50107bbde6ea490471376092f4f268726b"
+                rel="nofollow"
+                class=""
+                                                                                 role="menuitem"                >
+
+                        <span>
+                                Export to PDF
+            </span>        </a>
+    </li>
+                                                <li
+                    role="presentation"
+            >
+
+    
+        
+    
+                                                                        
+    
+    
+            <a  id="action-export-word-link"                href="/docs/exportword?pageId=328155"
+                rel="nofollow"
+                class="action-export-word"
+                                                                                 role="menuitem"                >
+
+                        <span>
+                                Export to Word
+            </span>        </a>
+    </li>
+                                        </ul>
+                </div>
+                    </div>
+    </li>
+            </ul>
+    </div>
+
+            
+            <div id="title-heading" class="pagetitle with-breadcrumbs">
+                
+                                    <div id="breadcrumb-section">
+                        
+    
+    
+    <nav aria-label="Breadcrumbs">
+        <ol id="breadcrumbs">
+                                                            
+                                
+            <li class="first" >
+                                
+                                    <span class=""><a href="/docs/collector/pages.action?key=ROS">Pages</a></span>
+                                                                                                                    
+                                
+            <li>
+                                
+                                    <span class=""><a href="/docs/spaces/ROS/pages/328059/RouterOS">RouterOS</a></span>
+                                                                                                                    
+                                
+            <li>
+                                
+                                    <span class=""><a href="/docs/spaces/ROS/pages/328119/Getting+started">Getting started</a></span>
+                                                                                                    </ol>
+    </nav>
+
+
+                    </div>
+                
+                
+                
+            <div id="page-metadata-banner"><ul class="banner"><li id="system-content-items" class="noprint"><a href="" aria-label="Unrestricted" data-tooltip="Unrestricted" id="content-metadata-page-restrictions-hidden"  class="hidden"></a><a href="/docs/pages/viewpageattachments.action?pageId=328155&amp;metadataLink=true" aria-label="6 attachments" data-tooltip="6 attachments" id="content-metadata-attachments"  class="aui-icon aui-icon-small aui-iconfont-attachment"></a></li><li class="page-metadata-item noprinthas-button"  id="content-metadata-jira-wrapper"><a href=""  id="content-metadata-jira"  class="aui-button aui-button-subtle content-metadata-jira tipsy-disabled hidden"><span>Jira links</span></a></li></ul></div>
+        
+
+                                    <div id="title-text" class="with-breadcrumbs">
+                                    <a href="/docs/spaces/ROS/pages/328155/Configuration+Management"><h1>Configuration Management</h1></a>
+                        </div>
+                            </div>
+        </div><!-- \#main-header -->
+        
+        
+
+        
+    
+
+        
+
+
+
+
+            
+    
+
+                                
+    
+
+    
+    
+        
+    
+    
+                    
+    
+
+    
+
+    
+            
+        
+
+    
+    
+
+    
+            
+        
+
+    
+
+
+    
+<div id="content" class="page view">
+    
+
+
+<div id="action-messages">
+                        </div>
+
+
+
+            <script type="text/x-template" title="searchResultsGrid">
+    <table class="aui">
+        <thead>
+            <tr class="header">
+                <th class="search-result-title">Page Title</th>
+                <th class="search-result-space">Space</th>
+                <th class="search-result-date">Updated</th>
+            </tr>
+        </thead>
+    </table>
+</script>
+<script type="text/x-template" title="searchResultsGridCount">
+    <p class="search-result-count">{0}</p>
+</script>
+<script type="text/x-template" title="searchResultsGridRow">
+    <tr class="search-result">
+        <td class="search-result-title"><a href="{1}" class="content-type-{2}"><span>{0}</span></a></td>
+        <td class="search-result-space"><a class="space" href="/docs/display/{4}/" title="{3}">{3}</a></td>
+        <td class="search-result-date"><span class="date" title="{6}">{5}</span></td>
+    </tr>
+</script>
+
+        
+    
+            
+
+        
+                            
+    
+
+                    
+
+        
+        <div class="page-metadata">
+    <ul>
+        <li class="page-metadata-modification-info">
+            
+        
+    
+    
+        
+    
+        
+            
+            Created by <span class='author'>     <a href="    /docs/display/~marisb
+"
+            aria-label="created by Māris B."                       class="url fn"
+                            >Māris B.</a></span>, last updated by <span class='editor'>     <a href="    /docs/display/~rodions
+"
+            aria-label="last.updated.by Rodions M."                       class="url fn"
+                            >Rodions M.</a></span> on <a class='last-modified' aria-label='modified on Apr 17, 2026, select to show changes' title='Show changes' href='/docs/pages/diffpagesbyversion.action?pageId=328155&amp;selectedPageVersions=88&amp;selectedPageVersions=89'>Apr 17, 2026</a>
+    
+            <span class="read-time">
+            10 minute read
+        </span>
+            </li>
+    </ul>
+</div>
+        
+                                            
+        <div id="main-content" class="wiki-content">
+                           
+        <p><div class="toc-macro client-side-toc-macro conf-macro output-block" data-headerelements="H1,H2,H3,H4,H5,H6,H7" data-hasbody="false" data-macro-name="toc"></div></p><h1 id="ConfigurationManagement-Overview">Overview</h1><p>This article describes a set of commands used for configuration management.</p><h1 id="ConfigurationManagement-ConfigurationUndoandRedo">Configuration Undo and Redo</h1><p>Any action done in the GUI or any command executed from the CLI is recorded in <span style="color:var(--ds-text-accent-blue,#0055cc);"><code>/system history</code></span>.  You can undo or redo any action by running <span style="color:var(--ds-icon-success,#22a06b);">undo</span> or <span style="color:var(--ds-icon-success,#22a06b);">redo</span> commands from the CLI or by clicking on Undo, and Redo buttons from the GUI. </p><p>A simple example to demonstrate the addition of the firewall rule and how to undo and redo the action:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@v7_ccr_bgp] /ip/firewall/filter&gt; add chain=forward action=drop 
+
+[admin@v7_ccr_bgp] /ip/firewall/filter&gt; print 
+Flags: X - disabled, I - invalid; D - dynamic 
+0 X chain=input action=drop protocol=icmp src-address=10.155.101.1 log=no 
+log-prefix=&quot;&quot;
+
+1 chain=forward action=drop
+
+[admin@v7_ccr_bgp] /ip/firewall/filter&gt; /system/history/print 
+Flags: U - undoable, R - redoable, F - floating-undo
+Columns: ACTION, BY, POLICy
+ACTION BY POLIC
+F filter rule added admin write
+U --- write
+[admin@v7_ccr_bgp] /ip/firewall/filter&gt;</pre>
+</div></div><p>We have added a firewall rule and in<span style="color:var(--ds-text-accent-blue,#0055cc);"><code> /system history</code></span> we can see all that was done.</p><p>Let's undo everything:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@v7_ccr_bgp] /ip/firewall/filter&gt; /undo 
+[admin@v7_ccr_bgp] /ip/firewall/filter&gt; print 
+Flags: X - disabled, I - invalid; D - dynamic 
+0 X chain=input action=drop protocol=icmp src-address=10.155.101.1 log=no 
+log-prefix=&quot;&quot;
+
+[admin@v7_ccr_bgp] /ip/firewall/filter&gt;</pre>
+</div></div><p>As you can see firewall rule disappeared.<br/>Now redo the last change:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@v7_ccr_bgp] /ip/firewall/filter&gt; /redo 
+[admin@v7_ccr_bgp] /ip/firewall/filter&gt; print 
+Flags: X - disabled, I - invalid; D - dynamic 
+0 X chain=input action=drop protocol=icmp src-address=10.155.101.1 log=no 
+log-prefix=&quot;&quot;
+
+1 chain=forward action=drop 
+
+[admin@v7_ccr_bgp] /ip/firewall/filter&gt;</pre>
+</div></div><p>System history is capable of showing exact CLI commands that will be executed during &quot;Undo&quot; or &quot;Redo&quot; actions even if we perform the action from GUI, for example, detailed history output after adding TCP accept rule from WinBox:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@v7_ccr_bgp] /system/history&gt; print detail 
+Flags: U - undoable, R - redoable, F - floating-undo 
+ F redo=
+      /ip firewall filter add action=accept chain=forward disabled=no log=no \
+          log-prefix=&quot;&quot; protocol=tcp
+    undo=/ip firewall filter remove *4 action=&quot;filter rule added&quot; by=&quot;admin&quot; 
+    policy=write time=oct/10/2019 18:51:05 
+
+ F redo=/ip firewall filter add action=accept chain=forward 
+    undo=/ip firewall filter remove *3 action=&quot;filter rule added&quot; by=&quot;admin&quot; 
+    policy=write time=oct/10/2019 18:49:03 
+
+
+U redo=&quot;&quot; undo=&quot;&quot; action=&quot;---&quot; by=&quot;&quot; policy=write time=sep/27/2019 13:07:35 
+[admin@v7_ccr_bgp] /system/history&gt; </pre>
+</div></div><h1 id="ConfigurationManagement-SafeMode">Safe Mode</h1><p>It is sometimes possible to change router configuration in a way that will make the router inaccessible (except from the local console). Usually, this is done by accident, but there is no way to undo the last change when the connection to the router is already cut. Safe mode can be used to minimize such risk.</p><p>The <strong>&quot;Safe Mode&quot;</strong> button in the Winbox GUI allows you to enter Safe Mode, while in the CLI, you can access it by either using the keyboard shortcut <strong>F4</strong> or pressing <strong>[CTRL]+[X]</strong>. To exit without saving the made changes in CLI, hit<span> </span><strong>[CTRL]+[D].</strong></p><p><span class="confluence-embedded-file-wrapper image-center-wrapper"><img class="confluence-embedded-image image-center" draggable="false" src="/docs/download/attachments/328155/image-2023-3-8_13-44-21.png?version=1&amp;modificationDate=1678275861936&amp;api=v2" data-image-src="/docs/download/attachments/328155/image-2023-3-8_13-44-21.png?version=1&amp;modificationDate=1678275861936&amp;api=v2" data-unresolved-comment-count="0" data-linked-resource-id="177406013" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image-2023-3-8_13-44-21.png" data-base-url="https://help.mikrotik.com/docs" data-linked-resource-content-type="image/png" data-linked-resource-container-id="328155" data-linked-resource-container-version="89" tabindex="0" alt=""></span></p><p><br/></p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@MikroTik] ip route&gt;[CTRL]+[X] 
+[Safe Mode taken] 
+[admin@MikroTik] ip route&lt;SAFE&gt;</pre>
+</div></div><p>Message<span> </span><strong>Safe Mode taken</strong><span> </span>is displayed and prompt changes to reflect that session is now in safe mode. All configuration changes that are made (also from other login sessions), while the router is in safe mode, are automatically undone if the safe mode session terminates abnormally. You can see all such changes that will be automatically undone and tagged with an<span> </span><strong>F</strong><span> </span>flag in the system history:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@MikroTik] /ip/route&gt; 
+[Safe Mode taken] 
+[admin@MikroTik] /ip/route&lt;SAFE&gt; add 
+[admin@MikroTik] /ip/route&lt;SAFE&gt; /system/history/print 
+Flags: U, F - FLOATING-UNDO 
+Columns:
+ ACTION, BY, POLICY ACTION BY POLICY 
+F route 0.0.0.0/0 added admin write </pre>
+</div></div><p>Now, if the telnet connection (or WinBox terminal) is cut, then after a while (TCP timeout is<span> </span><strong>9</strong><span> </span>minutes) all changes that were made while in safe mode will be undone. Exiting session by<span> </span><strong>[Ctrl]+[D]</strong><span> </span>also undoes all safe mode changes, while<span> </span><strong>/quit</strong><span> </span>does not.</p><p>If another user tries to enter safe mode, he's given the following message:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@MikroTik] &gt;
+Hijacking Safe Mode from someone - unroll/release/don't take it [u/r/d]:</pre>
+</div></div><ul><li>[u] - undoes all safe mode changes, and puts the current session in safe mode.</li><li>[r] - keeps all current safe mode changes, and puts the current session in a safe mode. The previous owner of safe mode is notified about this:</li></ul><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@MikroTik] ip firewall rule input
+[Safe mode released by another user]</pre>
+</div></div><ul><li>[d] - leaves everything as-is.</li></ul><p>If too many changes are made while in safe mode, and there's no room in history to hold them all (currently history keeps up to 100 most recent actions), then the session is automatically put out of the safe mode, and no changes are automatically undone. Thus, it is best to change the configuration in small steps, while in safe mode. Pressing <strong>[Ctrl]</strong>+<strong>[X]</strong> twice is an easy way to empty the safe mode action list.</p><h1 id="ConfigurationManagement-SystemBackupandRestore">System Backup and Restore</h1><p><a href="https://help.mikrotik.com/docs/display/ROS/Backup" rel="nofollow">System backup</a> is the way to completely clone router configuration in binary format.</p><p>More information about Backup and Restore is found <a href="https://help.mikrotik.com/docs/display/ROS/Backup" rel="nofollow">here</a>.</p><h1 id="ConfigurationManagement-ConfigurationExportandImport">Configuration Export and Import</h1><p>RouterOS allows exporting and importing parts of the configuration in plain text format. This method can be used to copy bits of configuration between different devices, for example, clone the whole firewall from one router to another.</p><p>An export command can be executed from each menu (resulting in configuration export only from this specific menu and all its sub-menus) or from the root menu for complete config export and is available for CLI only.</p><div role="region" aria-label="Warning" class="confluence-information-macro confluence-information-macro-warning conf-macro output-block" data-hasbody="true" data-macro-name="warning"><span role="presentation" class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The Export command does not export system user passwords, installed certificates, SSH keys, Dude, or a User-manager database.</p><p><a href="https://help.mikrotik.com/docs/display/ROS/Certificates#Certificates-ExportCertificate" rel="nofollow">Installed certificates</a>,&nbsp;<a href="https://wiki.mikrotik.com/Manual:The_Dude_v6/DB_import_export" class="external-link" rel="nofollow">Dude</a>, and<a href="https://help.mikrotik.com/docs/display/ROS/User+Manager#UserManager-Database" rel="nofollow"> User-manager </a>databases must be manually exported and imported into a new device.</p><p>System user passwords and user SSH keys can not be exported.</p></div></div><div role="region" aria-label="Note" class="confluence-information-macro confluence-information-macro-note conf-macro output-block" data-hasbody="true" data-macro-name="note"><span role="presentation" class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>During config import, we suggest using the same RouterOS version used during config export to prevent cases when some of the commands do not exist in one or another RouterOS version.&nbsp;</p></div></div><h2 id="ConfigurationManagement-ConfigurationExport">Configuration Export</h2><p>The following command parameters are accepted:</p><div class="table-wrap"><table class="fixed-width wrapped confluenceTable"><colgroup><col style="width: 23.3134%;"/><col style="width: 76.6866%;"/></colgroup><tbody><tr><th class="confluenceTh">Property</th><th class="confluenceTh">Description</th></tr><tr><td class="confluenceTd"><strong>compact</strong></td><td class="confluenceTd">Outputs only the modified configuration. Starting from v6rc1, &quot;export compact&quot; became the default behavior, so &quot;export&quot; and &quot;export compact&quot; now produce identical output.</td></tr><tr><td class="confluenceTd"><strong>file</strong></td><td class="confluenceTd">Export configuration to a specified file. When the file is not specified export output will be printed to the terminal</td></tr><tr><td class="confluenceTd"><strong>path</strong></td><td class="confluenceTd">Parameter allows to include or exclude specific configuration menu from router entire configuration</td></tr><tr><td class="confluenceTd"><p><strong>show-sensitive</strong></p></td><td class="confluenceTd"><p>Show sensitive information, like passwords, keys, etc. By default, sensitive information is hidden. <a href="/docs/spaces/ROS/pages/380076066/List+of+menus+with+sensitive+parameters">List of menus with sensitive parameters</a></p></td></tr><tr><td class="confluenceTd"><strong>terse</strong></td><td class="confluenceTd">With this parameter, the export command will output the configuration as full commands on separate lines, each including the corresponding menu path.</td></tr><tr><td class="confluenceTd"><strong>verbose</strong></td><td class="confluenceTd"><p>With this parameter, the export command will output whole configuration parameters and items including defaults.</p></td></tr></tbody></table></div><p>For example, export configuration from <span style="color:var(--ds-text-accent-blue,#0055cc);"><code>/ip address</code></span> the menu and save it to a file:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">    [admin@MikroTik] &gt; /ip address print
+    Flags: X - disabled, I - invalid, D - dynamic
+    #   ADDRESS            NETWORK         BROADCAST       INTERFACE
+    0   10.1.0.172/24      10.1.0.0        10.1.0.255      bridge1
+    1   10.5.1.1/24        10.5.1.0        10.5.1.255      ether1
+    [admin@MikroTik] &gt; /ip address export file=address
+    [admin@MikroTik] &gt; /file print
+    # NAME                            TYPE         SIZE       CREATION-TIME
+    0  address.rsc                     script       315        dec/23/2003 13:21:48
+    [admin@MikroTik] &gt;</pre>
+</div></div><p>By default, the export command writes only user-edited configuration, RouterOS defaults are omitted.</p><p>For example, the IPSec default policy will not be exported, and if we change one property then only our change will be exported:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">    [admin@rack1_b4] /ip ipsec policy&gt; print
+    Flags: T - template, X - disabled, D - dynamic, I - inactive, * - default
+    0 T * group=default src-address=::/0 dst-address=::/0 protocol=all
+          proposal=default template=yes
+    [admin@rack1_b4] /ip ipsec policy&gt; export
+    # apr/02/1970 17:59:14 by RouterOS 6.22
+    # software id = DB0D-LK67
+    #
+    [admin@rack1_b4] /ip ipsec policy&gt; set 0 protocol=gre
+    [admin@rack1_b4] /ip ipsec policy&gt; export
+    # apr/02/1970 17:59:30 by RouterOS 6.22
+    # software id = DB0D-LK67
+    #
+    /ip ipsec policy
+    set 0 protocol=gre</pre>
+</div></div><p>Example how to import entire /ip firewall configuration, except /ip firewall nat</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: routeros; gutter: false">/export path=/ip/firewall,!/ip/firewall/nat
+
+/ip firewall address-list
+add address=1.1.1.1 list=dns
+/ip firewall filter
+add action=passthrough chain=unused-hs-chain comment=&quot;place hotspot rules here&quot; disabled=yes
+add action=add-src-to-address-list address-list=12345 address-list-timeout=15s chain=input disabled=yes
+add action=accept chain=output dst-port=80,443 log=yes protocol=tcp
+/ip firewall mangle
+add chain=prerouting
+add action=accept chain=prerouting
+add action=accept chain=prerouting dst-address=192.168.88.0/24 in-interface=ether2</pre>
+</div></div><div role="region" aria-label="Info" class="confluence-information-macro confluence-information-macro-information conf-macro output-block" data-hasbody="true" data-macro-name="info"><p class="title conf-macro-render">Note:</p><span role="presentation" class="aui-icon aui-icon-small aui-iconfont-info-filled confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The <strong>*</strong> flag, indicates that the entry is system default and cannot be removed manually.</p></div></div><p>Here is the list of all menus containing default system entries</p><div class="table-wrap"><table class="fixed-table wrapped confluenceTable"><colgroup><col style="width: 261.0px;"/><col style="width: 612.0px;"/></colgroup><tbody><tr><th class="confluenceTh">Menu</th><th class="confluenceTh">Default Entry</th></tr><tr><td class="confluenceTd"><strong>/interface wireless security-profiles</strong></td><td class="confluenceTd">default</td></tr><tr><td class="confluenceTd"><strong>/ppp profile</strong></td><td class="confluenceTd">&quot;default&quot;, &quot;default-encryption&quot;</td></tr><tr><td class="confluenceTd"><strong>/ip hotspot profile </strong></td><td class="confluenceTd">default</td></tr><tr><td class="confluenceTd"><strong>/ip hotspot user profile </strong></td><td class="confluenceTd">default</td></tr><tr><td class="confluenceTd"><strong>/ip ipsec policy </strong></td><td class="confluenceTd">default</td></tr><tr><td class="confluenceTd"><strong>/ip ipsec policy group </strong></td><td class="confluenceTd">default</td></tr><tr><td class="confluenceTd"><strong>/ip ipsec proposal</strong></td><td class="confluenceTd">default</td></tr><tr><td class="confluenceTd"><strong>/ip ipsec mode-conf</strong></td><td class="confluenceTd">read-only</td></tr><tr><td class="confluenceTd"><strong>/ip smb shares </strong></td><td class="confluenceTd">pub</td></tr><tr><td class="confluenceTd"><strong>/ip smb users </strong></td><td class="confluenceTd">guest</td></tr><tr><td class="confluenceTd"><strong>/ipv6 nd </strong></td><td class="confluenceTd">any</td></tr><tr><td class="confluenceTd"><strong>/mpls interface</strong></td><td class="confluenceTd">all</td></tr><tr><td class="confluenceTd"><strong>/routing bfd interface</strong></td><td class="confluenceTd">all</td></tr><tr><td class="confluenceTd"><strong>/routing bgp instance</strong></td><td class="confluenceTd">default</td></tr><tr><td class="confluenceTd"><strong>/routing ospf instance</strong></td><td class="confluenceTd">default</td></tr><tr><td class="confluenceTd"><strong>/routing ospf area</strong></td><td class="confluenceTd">backbone</td></tr><tr><td class="confluenceTd"><strong>/routing ospf-v3 instance</strong></td><td class="confluenceTd">defailt</td></tr><tr><td class="confluenceTd"><strong>/routing ospf-v3 area</strong></td><td class="confluenceTd">backbone</td></tr><tr><td class="confluenceTd"><strong>/snmp community</strong></td><td class="confluenceTd">public</td></tr><tr><td class="confluenceTd"><strong>/tool mac-server mac-winbox</strong></td><td class="confluenceTd">all</td></tr><tr><td class="confluenceTd"><strong>/tool mac-server</strong></td><td class="confluenceTd">all</td></tr><tr><td class="confluenceTd"><strong>/system logging</strong></td><td class="confluenceTd">&quot;info&quot;, &quot;error&quot;, &quot;warning&quot;, &quot;critical&quot;</td></tr><tr><td class="confluenceTd"><strong>/system logging action</strong></td><td class="confluenceTd">&quot;memory&quot;, &quot;disk&quot;, &quot;echo&quot;, &quot;remote&quot;</td></tr><tr><td class="confluenceTd"><strong>/queue type</strong></td><td class="confluenceTd">&quot;default&quot;, &quot;ethernet-default&quot;, &quot;wireless-default&quot;, &quot;synchronous-default&quot;, &quot;hotspot-default&quot;, &quot;only-hardware-queue&quot;, &quot;multi-queue-ethernet-default&quot;, &quot;default-small&quot;</td></tr></tbody></table></div><div role="region" aria-label="Warning" class="confluence-information-macro confluence-information-macro-warning conf-macro output-block" data-hasbody="true" data-macro-name="warning"><span role="presentation" class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>If some specific menu will not be able to respond to the export command, starting from the RouterOS v7.11, an error message will be printed out in the export command output after a timeout (&quot;#error exporting &quot;/xxx&quot; (timeout)&quot;) and the process will move on to the next menu.</p></div></div><p class="auto-cursor-target">Starting from RouterOS 7.13, you can export parts of a specific menu. For instance, it is possible to export a specific address-list among multiple address-lists on your router.</p><pre>[admin@MikroTik] &gt; ip firewall address-list export where list=mylist
+</pre><h2 id="ConfigurationManagement-ConfigurationImport">Configuration Import</h2><p>Root menu command import allows running configuration script from the specified file. Script file (with extension &quot;.rsc&quot;) can contain any console command including complex scripts.</p><p>For example, load saved configuration file</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@MikroTik] &gt; import address.rsc
+Opening script file address.rsc
+
+Script file loaded and executed successfully
+[admin@MikroTik] &gt;</pre>
+</div></div><p>Import command allows to specify the following parameters:</p><div class="table-wrap"><table class="wrapped fixed-width confluenceTable" style="width: 37.3122%;"><colgroup><col style="width: 13.505%;"/><col style="width: 86.495%;"/></colgroup><tbody><tr><th class="confluenceTh">Property</th><th class="confluenceTh">Description</th></tr><tr><td class="confluenceTd"><strong>from-line</strong></td><td class="confluenceTd">Start executing the script from the specified line number. This option is only available in verbose mode.</td></tr><tr><td class="confluenceTd"><strong>file-name</strong></td><td class="confluenceTd">Name of the script (.rsc) file to be executed.</td></tr><tr><td class="confluenceTd"><strong>verbose</strong></td><td class="confluenceTd">Reads each line from the file and executes individually, allowing to debug syntax or other errors more easily.</td></tr><tr><td class="confluenceTd"><strong>dry-run</strong></td><td class="confluenceTd">Simulates the import without making any configuration changes. This helps in catching syntax errors. This option is only available in verbose mode.</td></tr></tbody></table></div><div role="region" aria-label="Tip" class="confluence-information-macro confluence-information-macro-tip conf-macro output-block" data-hasbody="true" data-macro-name="tip"><span role="presentation" class="aui-icon aui-icon-small aui-iconfont-approve confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>If the device has a default or existing configuration that requires replacement, it is necessary to initiate a configuration reset.</p><p>This involves applying a clean, empty configuration using the command /system/reset-configuration no-defaults=yes, followed by a device reboot.</p></div></div><h2 id="ConfigurationManagement-AutoImport">Auto Import</h2><p>It is also possible to <strong>automatically </strong>execute scripts after uploading to the router with FTP or SFTP. The script file must be named with the extension *.auto.rsc. Once the commands in the file are executed, a new *.auto.log file is created which contains import success or failure information.</p><div role="region" aria-label="Tip" class="confluence-information-macro confluence-information-macro-tip conf-macro output-block" data-hasbody="true" data-macro-name="tip"><span role="presentation" class="aui-icon aui-icon-small aui-iconfont-approve confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>&quot;.auto.rsc&quot; in the filename is mandatory for a file to be automatically executed.</p></div></div><h2 id="ConfigurationManagement-Importtroubleshooting"><span class="mw-headline">Import troubleshooting</span></h2><h3 id="ConfigurationManagement-Configurationpartstowatchoutforinexported.rscfiles"><span class="mw-headline">Configuration parts to watch out for in exported .rsc files</span></h3><p>Things that should be removed from export files that were created with &quot;/export&quot;, before attempting import on a new device.</p><ul><li>Interface renaming conflicts with the default ethernet naming scheme.</li></ul><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">/interface ethernet
+set [ find default-name=ether5 ] auto-negotiation=no name=ether1-gateway
+set [ find default-name=ether6 ] name=ether2
+set [ find default-name=ether7 ] name=ether3
+set [ find default-name=ether8 ] name=ether4
+set [ find default-name=ether1 ] name=ether5
+set [ find default-name=ether2 ] name=ether6
+set [ find default-name=ether3 ] name=ether7
+set [ find default-name=ether4 ] name=ether8</pre>
+</div></div><p><br/></p><ul><li>In older versions &quot;export&quot; default entries might show with &quot;add&quot; instead of the &quot;set&quot; command. That should be edited before import to avoid errors.</li><li>Check if the total number of physical interfaces count matches the new and old devices. If there are some missing that will end up in error during .rsc import.</li></ul><p>In case of problematic import, attempt the following:</p><ul><li>Use the <strong>dry-run</strong> parameter to simulate the import without making any configuration changes. This helps in catching syntax errors. This option is only available in verbose mode.</li><li>Reset the configuration on that device.</li><li>Run the import command again with the &quot;verbose=yes&quot; argument. It will also stop the import process on a problem that you already encountered, but will also show the place where the export failed. This way shows you the place where things need to be edited in the .rsc import file.</li></ul><h3 id="ConfigurationManagement-Startupdelay"><span class="mw-headline">Startup delay</span></h3><p><span class="mw-headline"><span style="color:var(--ds-text,#333333);">If your configuration relies on interfaces that might not yet have started up upon command execution, it is suggested to introduce delays or to monitor until all needed interfaces are available. This example script allows you to set how many interfaces you are expecting, and how long to wait until they become available:</span></span></p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">{
+:local i 0
+#Number of interfaces. It is necessary to reconfigure this number for each device (/interface print count-only)
+:local x 10
+#Max time to wait
+:local t 30
+while ($i &lt; $t &amp;&amp; [:len [/interface find]] &lt; $x) do={
+:put $i
+:set $i ($i + 1)
+:delay 1
+}
+if ($i = $t) do={
+:log warning message=&quot;Could not load all physical interfaces&quot;
+} else={
+#Rest of your script
+}
+}</pre>
+</div></div><p><span class="mw-headline"><span style="color:var(--ds-text,#333333);">The above script will wait until there are 10 interfaces visible, or 30 seconds. If there are no 10 interfaces at this time, it will put a message in the log. Modify the variables according to your needs.</span></span></p><h1 id="ConfigurationManagement-ConfigurationReset">Configuration Reset</h1><p>RouterOS allows resetting configuration with <code><span style="color:var(--ds-text-accent-blue,#0055cc);">/system</span> <span style="color:var(--ds-text-accent-green-bolder,#164b35);">reset-configuration</span></code> command</p><p>This command clears all configuration of the router and sets it to the factory defaults including the login name and password ('admin' with an empty password <span style="color:var(--ds-text,#333333);">or, for some models, check user and wireless passwords on the sticker</span>). For more details on the default configuration <a href="https://help.mikrotik.com/docs/display/ROS/Default+configurations" rel="nofollow">see the list</a>.</p><p>After executing the configuration reset command, the router will reboot and load the default configuration. Starting from version 7.13, following the reset, a license prompt will be displayed with the option to view the end-user license agreement.</p><p><br/></p><div role="region" aria-label="Tip" class="confluence-information-macro confluence-information-macro-tip conf-macro output-block" data-hasbody="true" data-macro-name="tip"><span role="presentation" class="aui-icon aui-icon-small aui-iconfont-approve confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>The backup file of the existing configuration is stored before reset. That way you can easily restore any previous configuration if the reset is done by mistake.</p></div></div><div role="region" aria-label="Warning" class="confluence-information-macro confluence-information-macro-warning conf-macro output-block" data-hasbody="true" data-macro-name="warning"><span role="presentation" class="aui-icon aui-icon-small aui-iconfont-error confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>If the router was installed using <a href="https://help.mikrotik.com/docs/display/ROS/Netinstall" rel="nofollow">Netinstall</a> and had a script specified as the initial configuration, the reset command executes this script after purging the configuration. To stop it from doing so, you will have to reinstall the router.</p></div></div><p>It is possible to override the default reset behavior with the parameters below:</p><div class="table-wrap"><table class="fixed-table wrapped confluenceTable"><colgroup><col style="width: 122.0px;"/><col style="width: 755.0px;"/></colgroup><tbody><tr><th class="confluenceTh">Property</th><th class="confluenceTh">Description</th></tr><tr><td class="confluenceTd"><strong>keep-users</strong></td><td class="confluenceTd">Do not remove existing users from the configuration</td></tr><tr><td class="confluenceTd"><strong>no-defaults</strong></td><td class="confluenceTd">Do not load the default configuration, just clear the configuration</td></tr><tr><td class="confluenceTd"><strong>skip-backup</strong></td><td class="confluenceTd">Skip automatic backup file generation before reset</td></tr><tr><td class="confluenceTd"><strong>run-after-reset</strong></td><td class="confluenceTd"><div class="content-wrapper"><p>Run specified .rsc file after reset. That way you can load your custom configuration.</p><div role="region" aria-label="Note" class="confluence-information-macro confluence-information-macro-note conf-macro output-block" data-hasbody="true" data-macro-name="note"><span role="presentation" class="aui-icon aui-icon-small aui-iconfont-warning confluence-information-macro-icon"></span><div class="confluence-information-macro-body"><p>If a specific .rsc file execution takes more than 2 minutes, a script will fail, and LOG will contain <em>&quot;runtime limit exceeded&quot;&nbsp;</em>or in rare cases <em>&quot;std failure: timeout&quot;</em> error.</p></div></div></div></td></tr><tr><td class="confluenceTd"><strong>caps-mode</strong></td><td class="confluenceTd"><div class="content-wrapper"><p>Run <em>caps-mode</em> script after configuration reset.</p></div></td></tr></tbody></table></div><p><br/></p><p>For example hard reset configuration without loading default config and skipping backup file:</p><div class="code panel pdl conf-macro output-block" style="border-width: 1px;" data-hasbody="true" data-macro-name="code"><div class="codeContent panelContent pdl">
+<pre class="syntaxhighlighter-pre" data-syntaxhighlighter-params="brush: ros; gutter: false">[admin@MikroTik] &gt; /system reset-configuration no-defaults=yes skip-backup=yes
+Dangerous! Reset anyway? [y/N]: y</pre>
+</div></div><p>And the same using Winbox:</p><p class="auto-cursor-target"><span class="confluence-embedded-file-wrapper"><img class="confluence-embedded-image" draggable="false" src="/docs/download/attachments/328155/image-2023-6-7_12-34-8.png?version=1&amp;modificationDate=1686130450093&amp;api=v2" data-image-src="/docs/download/attachments/328155/image-2023-6-7_12-34-8.png?version=1&amp;modificationDate=1686130450093&amp;api=v2" data-unresolved-comment-count="0" data-linked-resource-id="194543693" data-linked-resource-version="1" data-linked-resource-type="attachment" data-linked-resource-default-alias="image-2023-6-7_12-34-8.png" data-base-url="https://help.mikrotik.com/docs" data-linked-resource-content-type="image/png" data-linked-resource-container-id="328155" data-linked-resource-container-version="89" tabindex="0" alt=""></span></p>
+
+                
+        
+    
+        </div>
+
+                        
+    
+
+
+
+<div id="labels-section" class="pageSection group">
+    <div class="labels-section-content content-column" entityid="328155" entitytype="page">
+	<div class="labels-content">
+		
+    <ul class="label-list label-list-right ">
+            <li class="no-labels-message">
+            No labels
+        </li>
+            </ul>
+
+    </div>
+</div>
+</div>
+        
+		
+            
+
+
+
+
+            
+        
+
+
+
+
+
+
+
+
+                        
+    
+<div id="comments-section" class="pageSection group">
+        
+    
+
+
+
+</div>
+        
+
+
+                
+    
+            
+</div>
+
+    
+
+    
+
+
+
+
+    
+    
+
+    
+    
+    
+    
+
+
+    
+<div id="space-tools-web-items" class="hidden">
+                <div data-label="Overview" data-href="/docs/spaces/viewspacesummary.action?key=ROS">Overview</div>
+            <div data-label="Content Tools" data-href="/docs/pages/reorderpages.action?key=ROS">Content Tools</div>
+    </div>
+        
+
+
+
+
+        <div id="sidebar-container">
+                                                                </div><!-- \#sidebar-container -->
+
+            </main><!-- \#main -->
+            
+    
+    
+        
+            
+            
+
+<div id="footer" role="contentinfo">
+    <section class="footer-body">
+
+                                                    
+        
+
+        <ul id="poweredby">
+            <li class="noprint">Powered by <a href="https://www.atlassian.com/software/confluence" class="hover-footer-link" rel="nofollow">Atlassian Confluence</a> <span id='footer-build-information'>9.2.23</span></li>
+            <li class="print-only">Printed by Atlassian Confluence 9.2.23</li>
+            <li class="noprint"><a href="https://support.atlassian.com/confluence-server/" class="hover-footer-link" rel="nofollow">Report a bug</a></li>
+            <li class="noprint"><a href="https://www.atlassian.com/company" class="hover-footer-link" rel="nofollow">Atlassian News</a></li>
+        </ul>
+
+        
+
+        <div id="footer-logo"><a href="https://www.atlassian.com/" rel="nofollow">Atlassian</a></div>
+
+                    <script>
+  AJS.toInit(function(){
+    if (AJS.params.remoteUser == ''){
+      AJS.$("#space-tools-menu-trigger").hide();
+    }
+  });
+</script>
+        
+    </section>
+</div>
+
+    
+</div>
+
+</div><!-- \#full-height-container -->
+</div><!-- \#page -->
+
+    <span style="display:none;" id="confluence-server-performance">{"serverDuration": 85, "requestCorrelationId": "e128a26d19663db8"}</span>
+</body>
+</html>
+    

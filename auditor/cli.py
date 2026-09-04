@@ -195,6 +195,11 @@ def build_parser() -> argparse.ArgumentParser:
         "`python -m auditor.training run` in this directory.",
     )
     parser.add_argument(
+        "--sanitize",
+        action="store_true",
+        help="Redact IP addresses, credentials, hostnames, and SNMP communities from report output.",
+    )
+    parser.add_argument(
         "--strict",
         action="store_true",
         help="Return a non-zero exit code when controls fail or need review.",
@@ -204,6 +209,16 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Run audit in strict offline mode, ensuring no API/LLM/external calls are made.",
     )
+    # Live Device Collection & Remediation
+    live = parser.add_argument_group("Live Device Collection & Remediation")
+    live.add_argument("--connect-device", metavar="HOST", help="Connect directly to a live network device IP/hostname.")
+    live.add_argument("--username", default="admin", help="SSH username for live device authentication (default: admin).")
+    live.add_argument("--password", help="SSH password for live device authentication.")
+    live.add_argument("--device-port", type=int, default=22, help="SSH port for live device (default: 22).")
+    live.add_argument("--device-type", default="generic", help="Vendor hint for live device (e.g. cisco_ios, cisco_asa, juniper_junos, fortinet_fortios, arista_eos).")
+    live.add_argument("--device-inventory", type=Path, help="Path to JSON device inventory for automated fleet scanning.")
+    live.add_argument("--push-remediation", action="store_true", help="Automatically push hardening CLI commands to non-compliant live devices.")
+    live.add_argument("--dry-run", action="store_true", help="Preview remediation commands without executing changes on device.")
     parser.add_argument("--version", action="version", version=f"{TOOL_NAME} {__version__}")
     return parser
 
@@ -415,8 +430,31 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
 
         frameworks_to_run = args.framework or [DEFAULT_FRAMEWORK]
 
-        if not args.config:
-            print("error: at least one configuration path is required.", file=sys.stderr)
+        # Live Device Collection Dispatch
+        if getattr(args, "connect_device", None):
+            from .collector import DeviceConnector, DeviceCredential, RemediationExecutor, RemediationPlan
+            cred = DeviceCredential(
+                username=args.username,
+                password=args.password,
+                port=args.device_port,
+            )
+            connector = DeviceConnector(host=args.connect_device, credential=cred, vendor_hint=args.device_type)
+            live_res = connector.fetch_running_config()
+            if not live_res.success:
+                print(f"error: Failed to fetch configuration from live device {args.connect_device}: {live_res.error_message}", file=sys.stderr)
+                return EXIT_ERROR
+            config_text = live_res.config_text
+            args.config = Path(f"{args.connect_device}.conf")
+        elif getattr(args, "device_inventory", None):
+            from .collector import FleetCollector
+            entries = FleetCollector.load_inventory_file(args.device_inventory)
+            print(f"Loaded {len(entries)} devices from inventory {args.device_inventory}")
+            args.bulk = True
+            # Return bulk processing for inventory
+            if not args.config:
+                args.config = []
+        elif not args.config:
+            print("error: at least one configuration path or --connect-device is required.", file=sys.stderr)
             return EXIT_ERROR
 
         if args.bulk:
@@ -443,10 +481,12 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
                 file=sys.stderr,
             )
             return EXIT_ERROR
-        args.config = args.config[0]
+        if isinstance(args.config, list) and args.config:
+            args.config = args.config[0]
 
         try:
-            config_text = _read_config(args.config)
+            if not getattr(args, "connect_device", None):
+                config_text = _read_config(args.config)
             try:
                 parser_cls, confidence = _select_parser(config_text, args.vendor, args.allow_llm)
                 parser = _instantiate(parser_cls, args)
@@ -480,6 +520,10 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
             print(f"error: {exc}", file=sys.stderr)
             return EXIT_ERROR
 
+        if getattr(args, "sanitize", False):
+            from .sanitize import sanitize_report
+            report = sanitize_report(report)
+
         if not args.quiet:
             print(render_report(report, color=False if args.no_color else None))
 
@@ -507,6 +551,41 @@ def run(argv: Optional[Sequence[str]] = None) -> int:
                 print(f"error: {exc}", file=sys.stderr)
                 return EXIT_ERROR
             print(f"PDF report written to {written}")
+
+        # Live Closed-Loop Remediation
+        if getattr(args, "push_remediation", False) or getattr(args, "dry_run", False):
+            from .collector import DeviceConnector, DeviceCredential, RemediationExecutor, RemediationPlan
+            failed_controls = [r for r in report.results if str(r.status.value).upper() == "FAIL" and r.remediation and r.remediation.cli]
+            if not failed_controls:
+                print("Remediation: All controls compliant. No actions needed.")
+            else:
+                print(f"\n{'='*50}\nCLOSED-LOOP REMEDIATION ({'DRY-RUN' if args.dry_run else 'LIVE PUSH'})\n{'='*50}")
+                target_host = getattr(args, "connect_device", None) or str(args.config)
+                cred = DeviceCredential(
+                    username=getattr(args, "username", "admin"),
+                    password=getattr(args, "password", None),
+                    port=getattr(args, "device_port", 22),
+                )
+                connector = DeviceConnector(host=target_host, credential=cred, vendor_hint=getattr(args, "device_type", "generic"))
+                executor = RemediationExecutor(connector)
+
+                for ctrl in failed_controls:
+                    commands = ctrl.remediation.cli
+                    plan = RemediationPlan(
+                        target_host=target_host,
+                        control_id=ctrl.rule_id,
+                        title=ctrl.title,
+                        commands=commands,
+                        risk_level=ctrl.severity.name if hasattr(ctrl, "severity") else "Medium",
+                    )
+                    res = executor.execute_plan(plan, dry_run=args.dry_run, mock_success=not getattr(args, "connect_device", None))
+                    status_str = "DRY-RUN PREVIEW" if res.dry_run else ("SUCCESS" if res.success else "FAILED")
+                    print(f"[{status_str}] Control {ctrl.rule_id}: {ctrl.title}")
+                    for cmd in res.commands_executed:
+                        print(f"   > {cmd}")
+                    if res.error_message:
+                        print(f"   ! Error: {res.error_message}")
+                print(f"{'='*50}\n")
 
         return _exit_code(report, strict=args.strict)
 
@@ -544,6 +623,10 @@ def _run_bulk(args, frameworks_to_run: List[str]) -> int:
         parser_factory=lambda parser_cls: _instantiate(parser_cls, args),
         offline=getattr(args, "offline", False),
     )
+
+    if getattr(args, "sanitize", False):
+        from .sanitize import sanitize_inventory
+        inventory = sanitize_inventory(inventory)
 
     for warning in inventory.warnings:
         print(f"warning: {warning}", file=sys.stderr)

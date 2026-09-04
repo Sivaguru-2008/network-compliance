@@ -1,0 +1,14 @@
+It is possible to do unidirectional Ethernet (a sort of "poor man's data diode") by only connecting one strand of an LC-LC connector duplex, and leaving the other side disconnected and capped. One side of that strand will be the Tx, and the other side will be the Rx.
+ 
+Because we're doing unidirectional communication, Ethernet auto-negotiation can't work, so we have to hard code both sides to some particular speed. 
+ 
+Next, keep in mind that we won't have any DHCP on a unidirectional link, so we have to hard-code IPs. Same goes for DNS: if the upper-level applications on the Tx system are going to need DNS, we'll have to hardcode entries in a host file or local zone.
+ 
+Furthermore, keep in mind that ARP can't work either, so you have to make a static ARP entry on the Tx system for target Rx system, mapping its IP address to its MAC address.
+ 
+Finally, since this is a unidirectional link, TCP will be pointless, so we're going to be using only UDP for our transport layer. This means the Tx system has no way to know whether or not the Rx system received the message or not. However, UDP still has a checksum, so the Rx side can have some level of certainty about the integrity of the data it receives, at least from mechanical/technical errors, and it can know which packets to discard. If you are dealing with a link that has frequent errors, and you need to reduce the impact of those errors in an application sensitive to packet loss, you could also hardcode Forward Error Correction (FEC) on both side, which would help a ton.
+ 
+If you want to add integrity guarantees against malicious tampering (as well as confidentiality), you need encryption, but it has to be symmetric encryption, since asymmetric encryption protocols like TLS require bi-directional communication, which is not possible in this system. So you're going to have to install a PSK on both sides.  
+ 
+At a very basic level, this is how a you can functionally make a data diode using standard TCP/IP technology. 
+

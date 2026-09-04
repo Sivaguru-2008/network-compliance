@@ -1,0 +1,20 @@
+{
+  "source_name": "Cisco DevNet netconf-examples",
+  "dataset_classification": "PUBLIC_NETCONF_EXAMPLE",
+  "provenance": "PUBLIC_NETCONF_EXAMPLE",
+  "real_device": false,
+  "total_files": 23,
+  "modules": [
+    "netconf-101",
+    "netconf-102",
+    "netconf-103"
+  ],
+  "classifications": {
+    "CONFIGURATION": 1,
+    "NETCONF_API_EXAMPLE": 10,
+    "AUTOMATION_CODE": 4,
+    "DOCUMENTATION": 6,
+    "OTHER": 2
+  },
+  "actual_configuration_files": 1
+}

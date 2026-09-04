@@ -1,0 +1,40 @@
+{
+  "vendor_key": "versa_versos",
+  "vendor_name": "Versa Networks",
+  "os_name": "VersaOS",
+  "syntax_type": "junos_brace_and_set",
+  "root_blocks": [
+    {
+      "block_name": "system",
+      "entry_keyword": "system {",
+      "exit_keyword": "}",
+      "child_delimiter": " ",
+      "statement_terminator": ";",
+      "allowed_subblocks": [
+        "services",
+        "security",
+        "logging",
+        "users"
+      ],
+      "common_directives": [
+        "host-name",
+        "time-zone",
+        "ntp"
+      ],
+      "security_directives": [
+        "services { ssh { enable; } }",
+        "security { authentication",
+        "logging { remote"
+      ]
+    }
+  ],
+  "negation_prefix": "delete",
+  "comment_prefixes": [
+    "/*",
+    "#"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "versos_cli_hierarchy"
+  }
+}

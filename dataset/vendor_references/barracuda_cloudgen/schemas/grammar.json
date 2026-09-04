@@ -1,0 +1,36 @@
+{
+  "vendor_key": "barracuda_cloudgen",
+  "vendor_name": "Barracuda Networks",
+  "os_name": "CloudGen Firewall",
+  "syntax_type": "generic_conf",
+  "root_blocks": [
+    {
+      "block_name": "box_config",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "box.name",
+        "system.timezone",
+        "ntp.server"
+      ],
+      "security_directives": [
+        "admin.ssh.enabled",
+        "admin.http.enabled=no",
+        "admin.https.enabled",
+        "passwords.min_length",
+        "logging.syslog"
+      ]
+    }
+  ],
+  "negation_prefix": "no",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": true,
+  "schema_definition": {
+    "format": "barracuda_conf_and_cli"
+  }
+}

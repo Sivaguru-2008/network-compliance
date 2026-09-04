@@ -1,0 +1,30 @@
+{
+  "SecurityGroups": [
+    {
+      "GroupId": "sg-0123456789abcdef0",
+      "GroupName": "web-tier-hardened",
+      "Description": "Production Web Tier Security Group",
+      "VpcId": "vpc-01234567",
+      "IpPermissions": [
+        {
+          "IpProtocol": "tcp",
+          "FromPort": 443,
+          "ToPort": 443,
+          "IpRanges": [{"CidrIp": "0.0.0.0/0", "Description": "Allow HTTPS"}]
+        },
+        {
+          "IpProtocol": "tcp",
+          "FromPort": 22,
+          "ToPort": 22,
+          "IpRanges": [{"CidrIp": "10.0.0.0/16", "Description": "Allow SSH from Bastion"}]
+        }
+      ],
+      "IpPermissionsEgress": [
+        {
+          "IpProtocol": "-1",
+          "IpRanges": [{"CidrIp": "0.0.0.0/0"}]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "vendor": "stormshield",
+  "vendor_name": "Stormshield",
+  "os_name": "Stormshield SNS",
+  "config_format": "CONFIG statements / Serverd",
+  "document_title": "Stormshield SNS CLI / Serverd Commands Reference Guide v5",
+  "source_url": "https://documentation.stormshield.eu/SNS/v5/en/Content/PDF/SNS-UserGuides/sns-en-cli_serverd_commands_reference_guide-v5.pdf",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "pdf",
+  "version": "SNS v5",
+  "retrieved_at": "2026-08-31T16:30:27.267812+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "77dee6652cd89ef90f556e744c44406794a8ae7f4844daa2c3d0f8423fca2b3b",
+  "byte_size": 6849254,
+  "local_path": "vendor_references\\stormshield\\documents\\stormshield_sns_v5_cli_serverd_reference.pdf",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

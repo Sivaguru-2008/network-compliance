@@ -1,0 +1,38 @@
+config application list
+    edit "oh-eo-2023-03d_ac"
+        set comment "Application Control for Ohio Executive Order 2023-03D
+https://governor.ohio.gov/media/executive-orders/Executive-Order-2023-03D-01092023"
+        set other-application-log enable
+        set enforce-default-app-port enable
+        set unknown-application-log enable
+        config entries
+            edit 1
+                set application 47964
+            next
+            edit 2
+                set vendor 5
+            next
+            edit 3
+                set application 46953 35196
+            next
+            edit 4
+                set application 44419
+            next
+            edit 5
+                set application 48800
+            next
+            edit 6
+                set vendor 10
+            next
+            edit 7
+                set application 36117 47437
+            next
+            edit 8
+                set application 16531 35285
+            next
+            edit 9
+                set application 46933
+            next
+        end
+    next
+end

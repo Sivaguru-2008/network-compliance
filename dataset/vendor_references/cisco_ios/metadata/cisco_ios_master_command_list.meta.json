@@ -1,0 +1,19 @@
+{
+  "vendor": "cisco_ios",
+  "vendor_name": "Cisco",
+  "os_name": "Cisco IOS / IOS-XE",
+  "config_format": "CLI running-config",
+  "document_title": "Cisco IOS Master Command List (All Releases)",
+  "source_url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mcl/allreleasemcl/all-book.html",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "html",
+  "version": "All Releases",
+  "retrieved_at": "2026-08-31T16:32:05.822184+00:00",
+  "status": "ACCESS_REQUIRES_ACCOUNT",
+  "sha256": null,
+  "byte_size": 0,
+  "local_path": null,
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": "HTTP 403 Access Denied / Login Required"
+}

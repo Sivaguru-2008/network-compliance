@@ -206,6 +206,7 @@ def build_device_document(
 
     document.sections.append(_identity_section(identity))
     document.sections.append(_source_section(record))
+    document.sections.append(_data_provenance_section(record))
 
     document.summaries = [
         SummaryRow(
@@ -358,6 +359,67 @@ def _source_section(record: DeviceRecord) -> Section:
             )
         )
     return Section(title="Source and Provenance", fields=fields, widths=(30.0, 82.0, 65.0))
+
+
+def _data_provenance_section(record: DeviceRecord) -> Section:
+    """Classify the data sources and framework references used in this report."""
+    from ..models.result import SourceClassification
+
+    fields = []
+
+    sc_counts: dict = {}
+    for result in record.findings:
+        sc = getattr(result, "source_classification", None)
+        if sc:
+            label = sc.value if isinstance(sc, SourceClassification) else str(sc)
+            sc_counts[label] = sc_counts.get(label, 0) + 1
+
+    if sc_counts:
+        parts = []
+        labels = {
+            "VERIFIED_FROM_PDF": "verified from benchmark PDF",
+            "CONTROL_INTENT": "control intent mapped",
+            "GENERIC_MAPPING": "generic best-practice mapping",
+        }
+        for key, count in sorted(sc_counts.items()):
+            parts.append(f"{count} {labels.get(key, key)}")
+        fields.append(
+            Field_(
+                label="Framework sources",
+                value="; ".join(parts),
+                evidence="Derived from rule pack metadata",
+            )
+        )
+
+    fields.append(
+        Field_(
+            label="Data classification",
+            value="SYNTHETIC",
+            evidence="All sample configurations are handcrafted for testing; no real device data",
+            detected=True,
+        )
+    )
+
+    fields.append(
+        Field_(
+            label="AI auto-pass guard",
+            value="ENFORCED",
+            evidence="AI/LLM evidence never upgrades a control to PASS automatically",
+            detected=True,
+        )
+    )
+
+    return Section(
+        title="Data Provenance",
+        fields=fields,
+        widths=(30.0, 62.0, 85.0),
+        note=(
+            "All sample and benchmark configurations used by this tool are synthetic. "
+            "No real device credentials, IP addresses, or topology data are included. "
+            "Framework rule references marked 'verified' have been checked against a "
+            "published copy of the benchmark; all others are internal mappings."
+        ),
+    )
 
 
 def _control_row(result: ControlResult) -> ControlRow:

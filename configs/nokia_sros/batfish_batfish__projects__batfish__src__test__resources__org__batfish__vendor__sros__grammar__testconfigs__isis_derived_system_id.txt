@@ -1,0 +1,34 @@
+# TiMOS-B-26.3.R1 both/x86_64 Nokia 7750 SR-1
+# Configuration format version 26.3 revision 0
+configure {
+    router "Base" {
+        interface "system" {
+            ipv4 {
+                primary {
+                    address 10.10.10.10
+                    prefix-length 32
+                }
+            }
+        }
+        interface "to-pe1" {
+            port 1/1/c1/1
+            ipv4 {
+                primary {
+                    address 172.16.10.0
+                    prefix-length 31
+                }
+            }
+        }
+        isis 0 {
+            admin-state enable
+            level-capability 2
+            area-address [49.0000]
+            interface "system" {
+                passive true
+            }
+            interface "to-pe1" {
+                interface-type point-to-point
+            }
+        }
+    }
+}

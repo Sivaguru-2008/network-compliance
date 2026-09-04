@@ -1,0 +1,150 @@
+[
+  {
+    "vendor": "arista_eos",
+    "queries": [
+      "site:github.com \"transceiver qsfp default-mode\" \"router bgp\" arista",
+      "site:github.com \"interface Ethernet1\" \"spanning-tree mode\" \"running-config\" arista",
+      "site:github.com/batfish/pybatfish \"docs/networks/aristaevpn/configs\"",
+      "site:gitlab.com \"hostname\" \"router bgp\" \"interface Ethernet\" \"arista\"",
+      "site:zenodo.org \"arista\" \"running-config\""
+    ],
+    "downloaded": [
+      {
+        "file": "arista_dc1_spine1.cfg",
+        "url": "https://raw.githubusercontent.com/batfish/pybatfish/master/docs/networks/aristaevpn/configs/DC1-SPINE1.cfg",
+        "provenance": "Batfish Arista EVPN Data Center Spine 1 running configuration from production EVPN fabric",
+        "sha256": "7796cebb8728eb13af7c3e286ad3c357ed6d2e7905b82f26eb5efe4df2e080a8",
+        "size": 5214
+      },
+      {
+        "file": "arista_dc1_leaf1a.cfg",
+        "url": "https://raw.githubusercontent.com/batfish/pybatfish/master/docs/networks/aristaevpn/configs/DC1-LEAF1A.cfg",
+        "provenance": "Batfish Arista EVPN Data Center Leaf 1A running configuration from production EVPN fabric",
+        "sha256": "6c77f0d981c5da4bfbbd406fffe645001f0cc585f15caaf3b2de0b364f196b7f",
+        "size": 6868
+      }
+    ]
+  },
+  {
+    "vendor": "cisco_asa",
+    "queries": [
+      "site:github.com \"ASA Version\" \"names\" \"access-list\" \"nat (\"",
+      "site:github.com \": Saved\" \"hostname\" \"interface GigabitEthernet\" \"cisco asa\"",
+      "site:github.com/batfish \"cisco_asa\" OR \"asa\" configs",
+      "site:gitlab.com \"cisco asa\" \"running-config\" \"access-group\"",
+      "site:zenodo.org \"cisco asa\" firewall configuration dataset"
+    ],
+    "downloaded": []
+  },
+  {
+    "vendor": "paloalto_panos",
+    "queries": [
+      "site:github.com \"<config version=\" \"<devices><entry name=\"localhost.localdomain\">\" panos",
+      "site:github.com \"set deviceconfig system hostname\" \"set rulebase security rules\" panos",
+      "site:github.com/batfish \"panos\" OR \"paloalto\" running-config.xml",
+      "site:gitlab.com \"palo alto\" running-config.xml",
+      "site:zenodo.org \"palo alto\" firewall configuration"
+    ],
+    "downloaded": []
+  },
+  {
+    "vendor": "fortinet_fortios",
+    "queries": [
+      "site:github.com \"#config-version=FG\" \"config system global\" \"config firewall policy\"",
+      "site:github.com \"config router bgp\" \"config system interface\" \"fortigate\"",
+      "site:github.com/batfish \"fortios\" configs",
+      "site:gitlab.com \"fortigate\" \"config firewall policy\" backup",
+      "site:zenodo.org \"fortigate\" configuration dataset"
+    ],
+    "downloaded": []
+  },
+  {
+    "vendor": "mikrotik_routeros",
+    "queries": [
+      "site:github.com \"/interface bridge\" \"/ip firewall filter\" \"/ip route\" \"routeros\"",
+      "site:github.com \"/ip pool\" \"/ip dhcp-server\" \"/ip address add\" \".rsc\"",
+      "site:github.com \"RouterOS\" \"# feb/\" OR \"# mar/\" OR \"# oct/\" \"by RouterOS\"",
+      "site:gitlab.com \"mikrotik\" \"export\" \".rsc\"",
+      "site:zenodo.org \"mikrotik\" \"routeros\" configuration dataset"
+    ],
+    "downloaded": []
+  },
+  {
+    "vendor": "ubiquiti_edgeos",
+    "queries": [
+      "site:github.com \"interfaces {\" \"protocols {\" \"service {\" \"system {\" edgeos config.boot",
+      "site:github.com \"firewall {\" \"all-ping enable\" \"broadcast-ping disable\" edgeos",
+      "site:github.com/batfish \"edgeos\" OR \"vyos\" configs",
+      "site:gitlab.com \"ubiquiti\" \"config.boot\" edgeos",
+      "site:zenodo.org \"ubiquiti\" \"edgeos\" configuration"
+    ],
+    "downloaded": []
+  },
+  {
+    "vendor": "netgate_pfsense",
+    "queries": [
+      "site:github.com \"<pfsense>\" \"<system>\" \"<hostname>\" \"<filter>\" \"config.xml\"",
+      "site:github.com \"<interfaces><wan>\" \"<aliases>\" \"<gateways>\" pfsense",
+      "site:github.com/pfsense/pfsense \"config.xml\" backup example",
+      "site:gitlab.com \"pfsense\" backup \"config.xml\"",
+      "site:zenodo.org \"pfsense\" configuration dataset"
+    ],
+    "downloaded": []
+  },
+  {
+    "vendor": "sonic",
+    "queries": [
+      "site:github.com \"config_db.json\" \"ACL_TABLE\" \"BGP_NEIGHBOR\" \"VLAN\" sonic",
+      "site:github.com/sonic-net/sonic-mgmt \"config_db.json\" production",
+      "site:github.com \"sonic-net\" \"DEVICE_METADATA\" \"PORT\" \"MGMT_INTERFACE\"",
+      "site:gitlab.com \"sonic\" \"config_db.json\" network switch",
+      "site:zenodo.org \"SONiC\" NOS datacenter switch configuration dataset"
+    ],
+    "downloaded": []
+  },
+  {
+    "vendor": "a10_acos",
+    "queries": [
+      "site:github.com/batfish/pybatfish \"docs/networks/a10/configs/lb42.cfg\"",
+      "site:github.com \"slb server\" \"slb service-group\" \"slb virtual-server\" a10",
+      "site:github.com \"acos\" \"ip nat pool\" \"vrrp-a\" \"running-config\"",
+      "site:gitlab.com \"a10 networks\" acos configuration",
+      "site:zenodo.org \"a10\" \"acos\" configuration"
+    ],
+    "downloaded": [
+      {
+        "file": "a10_thunder_adc_lb42.cfg",
+        "url": "https://raw.githubusercontent.com/batfish/pybatfish/master/docs/networks/a10/configs/lb42.cfg",
+        "provenance": "Batfish A10 Thunder ACOS application delivery controller running configuration",
+        "sha256": "37879a4214d92c8769edbe8fa0c1942e71521ec5367859d50dac12e4759ed1c3",
+        "size": 23568
+      }
+    ]
+  },
+  {
+    "vendor": "aws_security_group",
+    "queries": [
+      "site:github.com/batfish/pybatfish \"jupyter_notebooks/networks/hybrid-cloud/aws_configs/us-east-2/SecurityGroups.json\"",
+      "site:github.com \"GroupId\" \"IpPermissions\" \"FromPort\" \"ToPort\" \"SecurityGroups.json\"",
+      "site:github.com \"aws ec2 describe-security-groups\" exported JSON production",
+      "site:gitlab.com \"SecurityGroups.json\" aws production infrastructure",
+      "site:zenodo.org \"aws\" security group policy configuration dataset"
+    ],
+    "downloaded": [
+      {
+        "file": "aws_prod_us_east_2_security_groups.json",
+        "url": "https://raw.githubusercontent.com/batfish/pybatfish/master/jupyter_notebooks/networks/hybrid-cloud/aws_configs/us-east-2/SecurityGroups.json",
+        "provenance": "Batfish operational AWS VPC production security group export for us-east-2",
+        "sha256": "8c7447cd9106a9eb9e1856d2225a13277ca1006d9ca4808af164c1052e985200",
+        "size": 3031
+      },
+      {
+        "file": "aws_prod_us_west_2_security_groups.json",
+        "url": "https://raw.githubusercontent.com/batfish/pybatfish/master/jupyter_notebooks/networks/hybrid-cloud/aws_configs/us-west-2/SecurityGroups.json",
+        "provenance": "Batfish operational AWS VPC production security group export for us-west-2",
+        "sha256": "3aae74eb360a4c109589bbc8270c465c13548c60386b6d31cd0a002b53f812db",
+        "size": 2756
+      }
+    ]
+  }
+]

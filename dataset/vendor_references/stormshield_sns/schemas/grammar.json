@@ -1,0 +1,36 @@
+{
+  "vendor_key": "stormshield_sns",
+  "vendor_name": "Stormshield",
+  "os_name": "Stormshield SNS",
+  "syntax_type": "stormshield_serverd",
+  "root_blocks": [
+    {
+      "block_name": "serverd_config",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "CONFIG SYSTEM TIMEZONE",
+        "CONFIG SYSTEM HOSTNAME"
+      ],
+      "security_directives": [
+        "CONFIG SYSTEM SERVER HTTP state=0",
+        "CONFIG SYSTEM SERVER SSH state=1",
+        "CONFIG AUTH",
+        "CONFIG ALARM",
+        "CONFIG SYSLOG"
+      ]
+    }
+  ],
+  "negation_prefix": "UNSET",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "serverd_config_statements",
+    "prefix": "CONFIG"
+  }
+}

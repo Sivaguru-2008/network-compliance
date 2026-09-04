@@ -1,0 +1,20 @@
+{
+  "vendor": "Juniper Networks",
+  "platform": "Junos OS",
+  "platform_key": "juniper_junos",
+  "native_format": "Hierarchical Junos Configuration",
+  "source_url": "https://github.com/nsg-ethz/config2spec/tree/master/scenarios/internet2/configs",
+  "source_category": "Internet2 Nationwide Production Backbone (USENIX NSDI '20 Config2Spec)",
+  "retrieved_at": "2026-09-03T09:28:21.030142+00:00",
+  "original_filename": "atla.conf",
+  "provenance": "REAL_PRODUCTION",
+  "verification_method": "Static Syntax Verification & Grammar Ingestion",
+  "original_sha256": "7214c94be89d73a45571a86e116daaafbac981fba72b83a1c16faad93ff4c528",
+  "sanitized_sha256": "ca85687a17ee340dec861a183c4f2822cf3d9a7ab250c60b89b7202b22e54f52",
+  "redaction_count": 1,
+  "redaction_types": [
+    "PASSWORD_OR_KEY"
+  ],
+  "line_count": 8051,
+  "byte_count": 244154
+}

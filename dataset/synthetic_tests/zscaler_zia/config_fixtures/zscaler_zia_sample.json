@@ -1,0 +1,22 @@
+{
+  "companyName": "Enterprise Corp",
+  "cloudName": "zscaler.net",
+  "timezone": "UTC",
+  "adminSecurity": {
+    "samlAuth": true,
+    "sessionTimeoutMinutes": 15
+  },
+  "urlFilteringRules": [
+    {
+      "name": "Block-Malicious-Sites",
+      "action": "BLOCK",
+      "categories": ["MALWARE", "PHISHING", "BOTNET"]
+    }
+  ],
+  "sslInspectionRules": [
+    {
+      "name": "Inspect-All-Inbound",
+      "action": "INSPECT"
+    }
+  ]
+}

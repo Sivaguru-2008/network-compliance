@@ -1,0 +1,67 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure Single Sign-On (SSO) and Multi-Factor Authentication (MFA) in the Cato portal.",
+    "cli": [],
+    "notes": "Configure Multi-Factor Authentication (MFA) or SSO in the Cato Management Application (CMA) under Access > User Authentication."
+  },
+  "secure_vty_transport": {
+    "summary": "Administrative transport restriction is strictly HTTPS-only.",
+    "cli": [],
+    "notes": "Cato SASE Cloud only supports encrypted HTTPS web administration and API channels. Legacy cleartext protocols are not supported."
+  },
+  "vty_idle_timeout": {
+    "summary": "Configure CMA administrator idle timeout.",
+    "cli": [],
+    "notes": "Set the administrative inactivity timeout in the Cato Management Application (CMA) under Administration > Account Settings."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure passwords/secrets are stored as hashes.",
+    "cli": [],
+    "notes": "Passwords and secrets are encrypted and hashed by default in the Cato SASE Cloud platform database."
+  },
+  "no_default_snmp_community": {
+    "summary": "SNMP read/write communities are not supported on Cato Networks cloud endpoints.",
+    "cli": [],
+    "notes": "SNMP query services are managed via the CMA or API. Traditional SNMP communities are not applicable."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP administrative access.",
+    "cli": [],
+    "notes": "Cato Networks strictly enforces HTTPS-only administrative access across all cloud consoles."
+  },
+  "ssh_version_2": {
+    "summary": "Secure SSH settings.",
+    "cli": [],
+    "notes": "SSH command-line management access is not supported on Cato SASE Cloud endpoints."
+  },
+  "logging_enabled": {
+    "summary": "Configure Event Integration to forward events to a remote syslog/SIEM target.",
+    "cli": [],
+    "notes": "Configure Event Integration in the Cato Management Application (CMA) under Administration > Event Integration."
+  },
+  "management_acl": {
+    "summary": "Restrict API/CMA access to specific administration IP ranges.",
+    "cli": [],
+    "notes": "Go to Cato Management Application > Administration > API Keys or Account Settings to restrict allowed IP ranges."
+  },
+  "login_banner": {
+    "summary": "Enable the login disclaimer banner.",
+    "cli": [],
+    "notes": "Enable the disclaimer screen in the Cato Management Application under Access > User Authentication."
+  },
+  "password_min_length": {
+    "summary": "Enforce strong user password policies.",
+    "cli": [],
+    "notes": "Define password complexity and length requirements in the CMA under Access > User Authentication."
+  },
+  "ntp_configured": {
+    "summary": "NTP services are managed automatically by Cato SASE Cloud.",
+    "cli": [],
+    "notes": "Cato SASE Cloud endpoints synchronize automatically via internal Cloud NTP pools."
+  },
+  "no_write_snmp_community": {
+    "summary": "Read-write SNMP is not supported.",
+    "cli": [],
+    "notes": "SNMP communities are not applicable to Cato cloud services."
+  }
+}

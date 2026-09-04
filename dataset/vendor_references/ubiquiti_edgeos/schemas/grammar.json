@@ -1,0 +1,41 @@
+{
+  "vendor_key": "ubiquiti_edgeos",
+  "vendor_name": "Ubiquiti Networks",
+  "os_name": "EdgeOS",
+  "syntax_type": "junos_brace_and_set",
+  "root_blocks": [
+    {
+      "block_name": "system",
+      "entry_keyword": "system {",
+      "exit_keyword": "}",
+      "child_delimiter": " ",
+      "statement_terminator": "",
+      "allowed_subblocks": [
+        "services",
+        "login",
+        "ntp",
+        "syslog"
+      ],
+      "common_directives": [
+        "host-name",
+        "time-zone",
+        "name-server"
+      ],
+      "security_directives": [
+        "service { ssh { protocol-version v2; } }",
+        "service { gui { https-port; } }",
+        "login { user",
+        "syslog { host"
+      ]
+    }
+  ],
+  "negation_prefix": "delete",
+  "comment_prefixes": [
+    "/*",
+    "#"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "edgeos_brace_and_set_cli"
+  }
+}

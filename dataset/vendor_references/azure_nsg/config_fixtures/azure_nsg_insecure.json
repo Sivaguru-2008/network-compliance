@@ -1,0 +1,26 @@
+{
+  "securityRules": [
+    {
+      "name": "Allow-HTTP-Inbound",
+      "properties": {
+        "priority": 100,
+        "protocol": "Tcp",
+        "access": "Allow",
+        "direction": "Inbound",
+        "sourceAddressPrefix": "*",
+        "destinationPortRange": "80"
+      }
+    },
+    {
+      "name": "Allow-Telnet-Inbound",
+      "properties": {
+        "priority": 110,
+        "protocol": "Tcp",
+        "access": "Allow",
+        "direction": "Inbound",
+        "sourceAddressPrefix": "*",
+        "destinationPortRange": "23"
+      }
+    }
+  ]
+}

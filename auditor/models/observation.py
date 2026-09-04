@@ -24,39 +24,48 @@ class Origin(str, Enum):
 
     DETERMINISTIC = "deterministic"
     LLM = "llm"
-    #: Produced by a model working with deterministic results already in hand -
-    #: the hybrid parser filling a gap the grammar-based pass left open.
     HYBRID = "hybrid"
-    #: Ruled on by a person. Outranks every parser, including a deterministic
-    #: one: if a reviewer says the parser was wrong, the parser was wrong.
     HUMAN = "human"
     LEARNED = "learned"
 
 
-class Observation(BaseModel, Generic[T]):
-    """A single normalized setting plus the evidence behind it.
+class EvidenceState(str, Enum):
+    """Canonical evidence state for compliance reporting.
 
-    Attributes:
-        value: The normalized, vendor-neutral value. ``None`` when undetected.
-        detected: ``True`` only when the parser could *conclusively* determine
-            the value from the configuration -- either because an explicit line
-            was found, or because the absence of a line is unambiguous for this
-            setting on this platform (see ``AbsencePolicy`` in the parser).
-            ``False`` means "unknown", which the engine turns into
-            ``NEEDS_REVIEW``.  It never means "secure".
-        source_line: The raw configuration line the value was derived from,
-            verbatim.  ``None`` for conclusive-absence observations.
-        line_number: 1-based line number of ``source_line`` in the source config.
-        origin: Which class of parser produced this observation.
-        confidence: 0.0-1.0.  Deterministic parses are 1.0; an LLM parser is
-            expected to emit lower, calibrated values.
-        note: Human-readable explanation, especially for absence / unknown.
+    Every observation maps into exactly one of these five states.
+    ``PRESENT`` and ``ABSENT`` are both valid evidence -- they differ only
+    in whether a config line exists to point at.  ``UNKNOWN`` means the
+    parser could not determine the state from the available text.
+    ``NOT_DETERMINABLE`` means the information is structurally unavailable
+    (e.g., a partial config excerpt).
     """
+
+    PRESENT = "PRESENT"
+    ABSENT = "ABSENT"
+    UNKNOWN = "UNKNOWN"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+    NOT_DETERMINABLE = "NOT_DETERMINABLE"
+
+
+class CapabilityStatus(str, Enum):
+    """Parser support and detection capability state for a baseline field."""
+
+    SUPPORTED_AND_FOUND = "SUPPORTED_AND_FOUND"
+    SUPPORTED_AND_NOT_FOUND = "SUPPORTED_AND_NOT_FOUND"
+    SUPPORTED_BUT_UNKNOWN = "SUPPORTED_BUT_UNKNOWN"
+    NOT_DETERMINABLE = "NOT_DETERMINABLE"
+    UNSUPPORTED = "UNSUPPORTED"
+    NOT_APPLICABLE = "NOT_APPLICABLE"
+
+
+class Observation(BaseModel, Generic[T]):
+    """A single normalized setting plus the evidence behind it."""
 
     model_config = ConfigDict(frozen=True)
 
     value: Optional[T] = None
     detected: bool = False
+    is_unsupported: bool = False
     source_line: Optional[str] = None
     line_number: Optional[int] = None
     origin: Origin = Origin.DETERMINISTIC
@@ -66,7 +75,7 @@ class Observation(BaseModel, Generic[T]):
     original_line_number: Optional[int] = None
     original_line: Optional[str] = None
 
-    # -- constructors: the three ways a setting can be known ---------------
+    # -- constructors: the four ways a setting can be known ---------------
 
     @classmethod
     def found(
@@ -82,6 +91,7 @@ class Observation(BaseModel, Generic[T]):
         return cls(
             value=value,
             detected=True,
+            is_unsupported=False,
             source_line=source_line.strip() if source_line else source_line,
             line_number=line_number,
             origin=origin,
@@ -91,15 +101,11 @@ class Observation(BaseModel, Generic[T]):
 
     @classmethod
     def absent(cls, value: Any, note: str, origin: Origin = Origin.DETERMINISTIC) -> "Observation[T]":
-        """No line was found, and that absence is itself conclusive evidence.
-
-        Used only for settings that always appear in a running-config when
-        enabled (e.g. ``aaa new-model``), so "not present" provably means
-        "not configured".  The caller must justify this in ``note``.
-        """
+        """No line was found, and that absence is itself conclusive evidence."""
         return cls(
             value=value,
             detected=True,
+            is_unsupported=False,
             source_line=None,
             line_number=None,
             origin=origin,
@@ -110,7 +116,62 @@ class Observation(BaseModel, Generic[T]):
     @classmethod
     def unknown(cls, note: str = "No evidence found in configuration.") -> "Observation[T]":
         """No conclusive evidence either way -> the engine must escalate."""
-        return cls(value=None, detected=False, source_line=None, line_number=None, confidence=0.0, note=note)
+        return cls(
+            value=None,
+            detected=False,
+            is_unsupported=False,
+            source_line=None,
+            line_number=None,
+            confidence=0.0,
+            note=note,
+        )
+
+    @classmethod
+    def unsupported(cls, note: str = "Parser does not evaluate this field.") -> "Observation[T]":
+        """Parser does not evaluate or support this property."""
+        return cls(
+            value=None,
+            detected=False,
+            is_unsupported=True,
+            source_line=None,
+            line_number=None,
+            confidence=0.0,
+            note=note,
+        )
+
+    @classmethod
+    def not_determinable(cls, note: str = "Insufficient configuration data to determine state.") -> "Observation[T]":
+        """Configuration evidence is structurally unavailable (e.g. partial excerpt)."""
+        return cls(
+            value=None,
+            detected=False,
+            is_unsupported=False,
+            source_line=None,
+            line_number=None,
+            confidence=0.0,
+            note=note,
+        )
+
+    @property
+    def evidence_state(self) -> EvidenceState:
+        """Canonical five-state evidence classification for compliance reporting."""
+        if self.is_unsupported:
+            return EvidenceState.NOT_APPLICABLE
+        if self.detected and self.source_line is not None:
+            return EvidenceState.PRESENT
+        if self.detected and self.source_line is None:
+            return EvidenceState.ABSENT
+        return EvidenceState.UNKNOWN
+
+    @property
+    def capability_status(self) -> CapabilityStatus:
+        if self.is_unsupported:
+            return CapabilityStatus.UNSUPPORTED
+        if self.detected and self.source_line is not None:
+            return CapabilityStatus.SUPPORTED_AND_FOUND
+        if self.detected and self.source_line is None:
+            return CapabilityStatus.SUPPORTED_AND_NOT_FOUND
+        return CapabilityStatus.SUPPORTED_BUT_UNKNOWN
 
     # -- presentation ------------------------------------------------------
 
@@ -122,4 +183,6 @@ class Observation(BaseModel, Generic[T]):
             return f"{prefix}{self.source_line}"
         if self.detected:
             return f"<absent> {self.note or 'setting not present in configuration'}"
+        if self.is_unsupported:
+            return f"<unsupported> {self.note or 'parser does not evaluate this field'}"
         return f"<no evidence> {self.note or 'not found in configuration'}"

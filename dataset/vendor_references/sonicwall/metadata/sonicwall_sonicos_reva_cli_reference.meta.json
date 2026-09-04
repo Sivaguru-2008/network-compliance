@@ -1,0 +1,19 @@
+{
+  "vendor": "sonicwall",
+  "vendor_name": "SonicWall",
+  "os_name": "SonicOS / SonicOSX",
+  "config_format": "SonicOS CLI / export",
+  "document_title": "SonicOS CLI Reference Guide Rev A",
+  "source_url": "https://www.sonicwall.com/techdocs/pdf/232-006169-00_RevA_SonicOS_CommandLineInterface_ReferenceGuide.pdf",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "pdf",
+  "version": "SonicOS RevA",
+  "retrieved_at": "2026-08-31T16:32:40.022163+00:00",
+  "status": "UNAVAILABLE",
+  "sha256": null,
+  "byte_size": 0,
+  "local_path": null,
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": "Invalid PDF header received for https://www.sonicwall.com/techdocs/pdf/232-006169-00_RevA_SonicOS_CommandLineInterface_ReferenceGuide.pdf"
+}

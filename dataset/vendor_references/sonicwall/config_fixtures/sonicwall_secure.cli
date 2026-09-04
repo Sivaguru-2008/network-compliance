@@ -1,0 +1,79 @@
+# SYNTHETIC FIXTURE — constructed from verified SonicWall E-CLI documentation.
+# NOT a genuine device export. SonicOS version: 7.x (syntax verified against
+# SonicOS/X 7 CLI Reference Guide and SonicWall KB articles).
+#
+# This configuration represents a hardened SonicWall firewall following
+# official SonicWall best practices (KB kA1VN0000000IRi0AM).
+
+firmware-version SonicOS 7.1.1-7058
+
+hostname SWFW-SECURE-01
+
+administration
+  web-management https-port 8443
+  no web-management allow-http
+  admin idle-timeout 10
+  login-attempts-per-minute 3
+  lockout-period 30
+  max-cli-login-attempts 3
+  password-min-length 16
+  password-complexity alphanumeric-symbolic
+  one-time-password totp
+  enhanced-audit-logging enable
+  pre-login-banner "Authorized access only. All activity is monitored and logged."
+  exit
+
+interface X0
+  management https
+  management ssh
+  no management http
+  no management snmp
+  management ping
+  ip 192.168.1.1 255.255.255.0
+  exit
+
+interface X1
+  no management https
+  no management http
+  no management ssh
+  no management snmp
+  no management ping
+  ip 10.0.0.1 255.255.255.0
+  exit
+
+interface X2
+  management https
+  management ssh
+  no management http
+  no management snmp
+  no management ping
+  ip 172.16.0.1 255.255.255.0
+  exit
+
+snmp
+  no snmp enable
+  exit
+
+log
+  syslog-server 10.10.10.50 port 514 facility local0
+  syslog-server 10.10.10.51 port 514 facility local0
+  syslog-format enhanced
+  exit
+
+ntp
+  ntp-server 10.10.10.100
+  ntp-server 10.10.10.101
+  exit
+
+security-services
+  gateway-anti-virus enable
+  intrusion-prevention enable
+  anti-spyware enable
+  content-filter enable
+  exit
+
+user-management
+  user admin group Administrators
+  exit
+
+end

@@ -1,0 +1,67 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized authentication (RADIUS, TACACS+, or LDAP/AD) in Firewall Admin.",
+    "cli": [],
+    "notes": "Configure authentication schemes in Barracuda Firewall Admin under Box > Administrative Settings > Access Control."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable HTTP access and restrict SSH access.",
+    "cli": [],
+    "notes": "Configure Box Administration WebAdmin and console SSH parameters in Firewall Admin under Box > Administrative Settings."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrative console session timeout.",
+    "cli": [],
+    "notes": "Modify session timeout under Box > Administrative Settings > Operational VTY in Firewall Admin."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "Barracuda local system passwords are automatically hashed in the internal system database."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP communities.",
+    "cli": [],
+    "notes": "Modify SNMP community settings under Box > Infrastructure Services > SNMP Service in Firewall Admin."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP administrative access in Firewall Admin.",
+    "cli": [],
+    "notes": "Go to Box > Administrative Settings and disable WebAdmin HTTP or redirect HTTP to HTTPS."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce secure SSH settings.",
+    "cli": [],
+    "notes": "SSH configuration is managed under Box > Administrative Settings > Console access in Firewall Admin."
+  },
+  "logging_enabled": {
+    "summary": "Configure Syslog server destination targets.",
+    "cli": [],
+    "notes": "Go to Box > Infrastructure Services > Syslog Streaming to configure remote syslog destinations."
+  },
+  "management_acl": {
+    "summary": "Restrict WebAdmin access to trusted IP hosts.",
+    "cli": [],
+    "notes": "Go to Box > Administrative Settings > Access Control to define Authorized Management IPs."
+  },
+  "login_banner": {
+    "summary": "Configure login warning banner.",
+    "cli": [],
+    "notes": "Go to Box > Administrative Settings > custom login message in Firewall Admin."
+  },
+  "password_min_length": {
+    "summary": "Configure administrative password length requirements.",
+    "cli": [],
+    "notes": "Configure password complexity rules under Box > Administrative Settings > Password Policy."
+  },
+  "ntp_configured": {
+    "summary": "Configure NTP synchronization settings.",
+    "cli": [],
+    "notes": "Go to Box > Time Settings to specify time synchronization NTP servers."
+  },
+  "no_write_snmp_community": {
+    "summary": "Disable read-write SNMP access.",
+    "cli": [],
+    "notes": "Ensure SNMP communities are restricted to read-only under Box > Infrastructure Services > SNMP Service."
+  }
+}

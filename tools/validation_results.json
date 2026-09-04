@@ -1,0 +1,3212 @@
+{
+  "parser_registry": {
+    "total_entry_points": 41,
+    "unique_classes_count": 41,
+    "entry_points": {
+      "a10_acos": "A10ACOSParser",
+      "alcatel_aos": "AlcatelAOSParser",
+      "arista_eos": "AristaEOSParser",
+      "aws_security_group": "AWSSecurityGroupParser",
+      "azure_nsg": "AzureNSGParser",
+      "barracuda_cloudgen": "BarracudaCloudGenParser",
+      "cato_networks": "CatoNetworksParser",
+      "checkpoint_gaia": "CheckPointGaiaParser",
+      "cisco_asa": "CiscoASAParser",
+      "cisco_ios": "CiscoIOSParser",
+      "extreme_exos": "ExtremeEXOSParser",
+      "f5_bigip_tmos": "F5BigIPTMOSParser",
+      "forcepoint_ngfw": "ForcepointNGFWParser",
+      "fortinet_fortios": "FortiosParser",
+      "hillstone_stoneos": "HillstoneStoneOSParser",
+      "hpe_aruba": "HPEArubaParser",
+      "hpe_aruba_aos_cx": "HPEArubaAosCxParser",
+      "huawei_vrp": "HuaweiVRPParser",
+      "llm": "LLMParser",
+      "hybrid": "HybridParser",
+      "juniper_junos": "JunosParser",
+      "mikrotik_routeros": "MikroTikROSParser",
+      "netgate_pfsense": "NetgatePfSenseParser",
+      "nokia_sros": "NokiaSROSParser",
+      "paloalto_panos": "PaloAltoParser",
+      "pfsense": "PfSenseParser",
+      "ruckus_fastiron": "RuckusFastIronParser",
+      "sangfor_ngaf": "SangforNGAFParser",
+      "sonic": "SonicParser",
+      "sonicwall": "SonicWallParser",
+      "sonicwall_sonicos": "SonicWallSonicOSParser",
+      "sophos_sfos": "SophosSFOSParser",
+      "stormshield": "StormshieldParser",
+      "stormshield_sns": "StormshieldSNSParser",
+      "ubiquiti": "UbiquitiParser",
+      "ubiquiti_edgeos": "UbiquitiEdgeOSParser",
+      "versa_versos": "VersaVersaOSParser",
+      "watchguard": "WatchGuardParser",
+      "watchguard_fireware": "WatchGuardFirewareParser",
+      "zscaler_zia": "ZscalerZIAParser",
+      "zscaler_zpa": "ZscalerZPAParser"
+    },
+    "classes": {
+      "ExtremeEXOSParser": {
+        "class": "ExtremeEXOSParser",
+        "module": "auditor.parsers.extreme_exos",
+        "aliases": [
+          "extreme_exos"
+        ],
+        "vendor": "extreme",
+        "config_format": "text"
+      },
+      "NokiaSROSParser": {
+        "class": "NokiaSROSParser",
+        "module": "auditor.parsers.nokia_sros",
+        "aliases": [
+          "nokia_sros"
+        ],
+        "vendor": "nokia",
+        "config_format": "text"
+      },
+      "RuckusFastIronParser": {
+        "class": "RuckusFastIronParser",
+        "module": "auditor.parsers.ruckus_fastiron",
+        "aliases": [
+          "ruckus_fastiron"
+        ],
+        "vendor": "ruckus",
+        "config_format": "text"
+      },
+      "AzureNSGParser": {
+        "class": "AzureNSGParser",
+        "module": "auditor.parsers.azure_nsg",
+        "aliases": [
+          "azure_nsg"
+        ],
+        "vendor": "azure",
+        "config_format": "text"
+      },
+      "CiscoIOSParser": {
+        "class": "CiscoIOSParser",
+        "module": "auditor.parsers.cisco_ios",
+        "aliases": [
+          "cisco_ios"
+        ],
+        "vendor": "cisco",
+        "config_format": "text"
+      },
+      "UbiquitiEdgeOSParser": {
+        "class": "UbiquitiEdgeOSParser",
+        "module": "auditor.parsers.ubiquiti_edgeos",
+        "aliases": [
+          "ubiquiti_edgeos"
+        ],
+        "vendor": "ubiquiti",
+        "config_format": "text"
+      },
+      "HuaweiVRPParser": {
+        "class": "HuaweiVRPParser",
+        "module": "auditor.parsers.huawei_vrp",
+        "aliases": [
+          "huawei_vrp"
+        ],
+        "vendor": "huawei",
+        "config_format": "text"
+      },
+      "CheckPointGaiaParser": {
+        "class": "CheckPointGaiaParser",
+        "module": "auditor.parsers.checkpoint_gaia",
+        "aliases": [
+          "checkpoint_gaia"
+        ],
+        "vendor": "checkpoint",
+        "config_format": "text"
+      },
+      "SonicWallSonicOSParser": {
+        "class": "SonicWallSonicOSParser",
+        "module": "auditor.parsers.sonicwall_sonicos",
+        "aliases": [
+          "sonicwall_sonicos"
+        ],
+        "vendor": "sonicwall",
+        "config_format": "text"
+      },
+      "UbiquitiParser": {
+        "class": "UbiquitiParser",
+        "module": "auditor.parsers.ubiquiti",
+        "aliases": [
+          "ubiquiti"
+        ],
+        "vendor": "ubiquiti",
+        "config_format": "text"
+      },
+      "CatoNetworksParser": {
+        "class": "CatoNetworksParser",
+        "module": "auditor.parsers.cato_networks",
+        "aliases": [
+          "cato_networks"
+        ],
+        "vendor": "cato",
+        "config_format": "text"
+      },
+      "SangforNGAFParser": {
+        "class": "SangforNGAFParser",
+        "module": "auditor.parsers.sangfor_ngaf",
+        "aliases": [
+          "sangfor_ngaf"
+        ],
+        "vendor": "sangfor",
+        "config_format": "text"
+      },
+      "FortiosParser": {
+        "class": "FortiosParser",
+        "module": "auditor.parsers.fortios",
+        "aliases": [
+          "fortinet_fortios"
+        ],
+        "vendor": "fortinet",
+        "config_format": "text"
+      },
+      "ZscalerZIAParser": {
+        "class": "ZscalerZIAParser",
+        "module": "auditor.parsers.zscaler_zia",
+        "aliases": [
+          "zscaler_zia"
+        ],
+        "vendor": "zscaler",
+        "config_format": "text"
+      },
+      "AristaEOSParser": {
+        "class": "AristaEOSParser",
+        "module": "auditor.parsers.arista_eos",
+        "aliases": [
+          "arista_eos"
+        ],
+        "vendor": "arista",
+        "config_format": "text"
+      },
+      "WatchGuardFirewareParser": {
+        "class": "WatchGuardFirewareParser",
+        "module": "auditor.parsers.watchguard_fireware",
+        "aliases": [
+          "watchguard_fireware"
+        ],
+        "vendor": "watchguard",
+        "config_format": "text"
+      },
+      "WatchGuardParser": {
+        "class": "WatchGuardParser",
+        "module": "auditor.parsers.watchguard",
+        "aliases": [
+          "watchguard"
+        ],
+        "vendor": "watchguard",
+        "config_format": "text"
+      },
+      "SophosSFOSParser": {
+        "class": "SophosSFOSParser",
+        "module": "auditor.parsers.sophos_sfos",
+        "aliases": [
+          "sophos_sfos"
+        ],
+        "vendor": "sophos",
+        "config_format": "text"
+      },
+      "HPEArubaAosCxParser": {
+        "class": "HPEArubaAosCxParser",
+        "module": "auditor.parsers.hpe_aruba_aos_cx",
+        "aliases": [
+          "hpe_aruba_aos_cx"
+        ],
+        "vendor": "hpe_aruba",
+        "config_format": "text"
+      },
+      "SonicParser": {
+        "class": "SonicParser",
+        "module": "auditor.parsers.sonic",
+        "aliases": [
+          "sonic"
+        ],
+        "vendor": "sonic",
+        "config_format": "text"
+      },
+      "NetgatePfSenseParser": {
+        "class": "NetgatePfSenseParser",
+        "module": "auditor.parsers.netgate_pfsense",
+        "aliases": [
+          "netgate_pfsense"
+        ],
+        "vendor": "netgate",
+        "config_format": "text"
+      },
+      "AlcatelAOSParser": {
+        "class": "AlcatelAOSParser",
+        "module": "auditor.parsers.alcatel_aos",
+        "aliases": [
+          "alcatel_aos"
+        ],
+        "vendor": "alcatel_lucent_enterprise",
+        "config_format": "text"
+      },
+      "AWSSecurityGroupParser": {
+        "class": "AWSSecurityGroupParser",
+        "module": "auditor.parsers.aws_security_group",
+        "aliases": [
+          "aws_security_group"
+        ],
+        "vendor": "aws",
+        "config_format": "text"
+      },
+      "MikroTikROSParser": {
+        "class": "MikroTikROSParser",
+        "module": "auditor.parsers.mikrotik_routeros",
+        "aliases": [
+          "mikrotik_routeros"
+        ],
+        "vendor": "mikrotik",
+        "config_format": "text"
+      },
+      "F5BigIPTMOSParser": {
+        "class": "F5BigIPTMOSParser",
+        "module": "auditor.parsers.f5_bigip_tmos",
+        "aliases": [
+          "f5_bigip_tmos"
+        ],
+        "vendor": "f5",
+        "config_format": "text"
+      },
+      "HillstoneStoneOSParser": {
+        "class": "HillstoneStoneOSParser",
+        "module": "auditor.parsers.hillstone_stoneos",
+        "aliases": [
+          "hillstone_stoneos"
+        ],
+        "vendor": "hillstone",
+        "config_format": "text"
+      },
+      "PaloAltoParser": {
+        "class": "PaloAltoParser",
+        "module": "auditor.parsers.paloalto",
+        "aliases": [
+          "paloalto_panos"
+        ],
+        "vendor": "paloalto",
+        "config_format": "text"
+      },
+      "ForcepointNGFWParser": {
+        "class": "ForcepointNGFWParser",
+        "module": "auditor.parsers.forcepoint_ngfw",
+        "aliases": [
+          "forcepoint_ngfw"
+        ],
+        "vendor": "forcepoint",
+        "config_format": "text"
+      },
+      "A10ACOSParser": {
+        "class": "A10ACOSParser",
+        "module": "auditor.parsers.a10_acos",
+        "aliases": [
+          "a10_acos"
+        ],
+        "vendor": "a10",
+        "config_format": "text"
+      },
+      "StormshieldParser": {
+        "class": "StormshieldParser",
+        "module": "auditor.parsers.stormshield",
+        "aliases": [
+          "stormshield"
+        ],
+        "vendor": "stormshield",
+        "config_format": "text"
+      },
+      "CiscoASAParser": {
+        "class": "CiscoASAParser",
+        "module": "auditor.parsers.cisco_asa",
+        "aliases": [
+          "cisco_asa"
+        ],
+        "vendor": "cisco",
+        "config_format": "text"
+      },
+      "PfSenseParser": {
+        "class": "PfSenseParser",
+        "module": "auditor.parsers.pfsense",
+        "aliases": [
+          "pfsense"
+        ],
+        "vendor": "netgate",
+        "config_format": "text"
+      },
+      "HPEArubaParser": {
+        "class": "HPEArubaParser",
+        "module": "auditor.parsers.hpe_aruba",
+        "aliases": [
+          "hpe_aruba"
+        ],
+        "vendor": "hpe_aruba",
+        "config_format": "text"
+      },
+      "BarracudaCloudGenParser": {
+        "class": "BarracudaCloudGenParser",
+        "module": "auditor.parsers.barracuda_cloudgen",
+        "aliases": [
+          "barracuda_cloudgen"
+        ],
+        "vendor": "barracuda",
+        "config_format": "text"
+      },
+      "JunosParser": {
+        "class": "JunosParser",
+        "module": "auditor.parsers.junos",
+        "aliases": [
+          "juniper_junos"
+        ],
+        "vendor": "juniper",
+        "config_format": "text"
+      },
+      "ZscalerZPAParser": {
+        "class": "ZscalerZPAParser",
+        "module": "auditor.parsers.zscaler_zpa",
+        "aliases": [
+          "zscaler_zpa"
+        ],
+        "vendor": "zscaler",
+        "config_format": "text"
+      },
+      "SonicWallParser": {
+        "class": "SonicWallParser",
+        "module": "auditor.parsers.sonicwall",
+        "aliases": [
+          "sonicwall"
+        ],
+        "vendor": "sonicwall",
+        "config_format": "text"
+      },
+      "StormshieldSNSParser": {
+        "class": "StormshieldSNSParser",
+        "module": "auditor.parsers.stormshield_sns",
+        "aliases": [
+          "stormshield_sns"
+        ],
+        "vendor": "stormshield",
+        "config_format": "text"
+      },
+      "HybridParser": {
+        "class": "HybridParser",
+        "module": "auditor.parsers.hybrid",
+        "aliases": [
+          "hybrid"
+        ],
+        "vendor": "multi",
+        "config_format": "text"
+      },
+      "LLMParser": {
+        "class": "LLMParser",
+        "module": "auditor.parsers.llm.parser",
+        "aliases": [
+          "llm"
+        ],
+        "vendor": "unknown",
+        "config_format": "text"
+      },
+      "VersaVersaOSParser": {
+        "class": "VersaVersaOSParser",
+        "module": "auditor.parsers.versa_versos",
+        "aliases": [
+          "versa_versos"
+        ],
+        "vendor": "versa_networks",
+        "config_format": "text"
+      }
+    }
+  },
+  "vendor_audit": [
+    {
+      "vendor_key": "cisco_ios",
+      "platform_name": "Cisco IOS / IOS-XE",
+      "parser_class": "CiscoIOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_cisco_ios.py"
+      ]
+    },
+    {
+      "vendor_key": "juniper_junos",
+      "platform_name": "Juniper Junos",
+      "parser_class": "JunosParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_junos.py"
+      ]
+    },
+    {
+      "vendor_key": "fortinet_fortios",
+      "platform_name": "Fortinet FortiOS",
+      "parser_class": "FortiosParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_fortios.py"
+      ]
+    },
+    {
+      "vendor_key": "arista_eos",
+      "platform_name": "Arista EOS",
+      "parser_class": "AristaEOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_arista_eos.py"
+      ]
+    },
+    {
+      "vendor_key": "sonic",
+      "platform_name": "SONiC NOS",
+      "parser_class": "SonicParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": false,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_sonicwall_sonicos.py",
+        "test_parser_sonic.py",
+        "test_parser_sonicwall.py"
+      ]
+    },
+    {
+      "vendor_key": "paloalto_panos",
+      "platform_name": "Palo Alto PAN-OS",
+      "parser_class": "PaloAltoParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": false,
+      "tests_exist": true,
+      "test_files": [
+        "test_cis_paloalto.py"
+      ]
+    },
+    {
+      "vendor_key": "huawei_vrp",
+      "platform_name": "Huawei VRP",
+      "parser_class": "HuaweiVRPParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_huawei_vrp.py"
+      ]
+    },
+    {
+      "vendor_key": "checkpoint_gaia",
+      "platform_name": "Check Point Gaia",
+      "parser_class": "CheckPointGaiaParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_checkpoint_gaia.py"
+      ]
+    },
+    {
+      "vendor_key": "mikrotik_routeros",
+      "platform_name": "MikroTik RouterOS",
+      "parser_class": "MikroTikROSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_mikrotik_routeros.py"
+      ]
+    },
+    {
+      "vendor_key": "sonicwall_sonicos",
+      "platform_name": "SonicWall SonicOS",
+      "parser_class": "SonicWallSonicOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_sonicwall_sonicos.py"
+      ]
+    },
+    {
+      "vendor_key": "stormshield_sns",
+      "platform_name": "Stormshield SNS",
+      "parser_class": "StormshieldSNSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_stormshield_sns.py"
+      ]
+    },
+    {
+      "vendor_key": "watchguard_fireware",
+      "platform_name": "WatchGuard Fireware",
+      "parser_class": "WatchGuardFirewareParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_watchguard_fireware.py"
+      ]
+    },
+    {
+      "vendor_key": "a10_acos",
+      "platform_name": "A10 Networks ACOS",
+      "parser_class": "A10ACOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_a10_acos.py"
+      ]
+    },
+    {
+      "vendor_key": "alcatel_aos",
+      "platform_name": "Alcatel AOS",
+      "parser_class": "AlcatelAOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_alcatel_aos.py"
+      ]
+    },
+    {
+      "vendor_key": "barracuda_cloudgen",
+      "platform_name": "Barracuda CloudGen",
+      "parser_class": "BarracudaCloudGenParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_barracuda_cloudgen.py"
+      ]
+    },
+    {
+      "vendor_key": "cato_networks",
+      "platform_name": "Cato Networks SASE",
+      "parser_class": "CatoNetworksParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_cato_networks.py"
+      ]
+    },
+    {
+      "vendor_key": "extreme_exos",
+      "platform_name": "Extreme EXOS",
+      "parser_class": "ExtremeEXOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_extreme_exos.py"
+      ]
+    },
+    {
+      "vendor_key": "f5_bigip_tmos",
+      "platform_name": "F5 BIG-IP TMOS",
+      "parser_class": "F5BigIPTMOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_f5_bigip_tmos.py"
+      ]
+    },
+    {
+      "vendor_key": "forcepoint_ngfw",
+      "platform_name": "Forcepoint NGFW",
+      "parser_class": "ForcepointNGFWParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_forcepoint_ngfw.py"
+      ]
+    },
+    {
+      "vendor_key": "hillstone_stoneos",
+      "platform_name": "Hillstone StoneOS",
+      "parser_class": "HillstoneStoneOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_hillstone_stoneos.py"
+      ]
+    },
+    {
+      "vendor_key": "hpe_aruba_aos_cx",
+      "platform_name": "HPE Aruba AOS-CX",
+      "parser_class": "HPEArubaAosCxParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_hpe_aruba_aos_cx.py"
+      ]
+    },
+    {
+      "vendor_key": "netgate_pfsense",
+      "platform_name": "Netgate pfSense",
+      "parser_class": "NetgatePfSenseParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_netgate_pfsense.py"
+      ]
+    },
+    {
+      "vendor_key": "nokia_sros",
+      "platform_name": "Nokia SR OS",
+      "parser_class": "NokiaSROSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_nokia_sros.py"
+      ]
+    },
+    {
+      "vendor_key": "ruckus_fastiron",
+      "platform_name": "Ruckus FastIron",
+      "parser_class": "RuckusFastIronParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_ruckus_fastiron.py"
+      ]
+    },
+    {
+      "vendor_key": "sangfor_ngaf",
+      "platform_name": "Sangfor NGAF",
+      "parser_class": "SangforNGAFParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_sangfor_ngaf.py"
+      ]
+    },
+    {
+      "vendor_key": "sophos_sfos",
+      "platform_name": "Sophos SFOS",
+      "parser_class": "SophosSFOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_cis_sophos_sfos.py"
+      ]
+    },
+    {
+      "vendor_key": "ubiquiti_edgeos",
+      "platform_name": "Ubiquiti EdgeOS",
+      "parser_class": "UbiquitiEdgeOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_ubiquiti_edgeos.py"
+      ]
+    },
+    {
+      "vendor_key": "versa_versos",
+      "platform_name": "Versa VersaOS",
+      "parser_class": "VersaVersaOSParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_versa_versos.py"
+      ]
+    },
+    {
+      "vendor_key": "zscaler_zia",
+      "platform_name": "Zscaler ZIA",
+      "parser_class": "ZscalerZIAParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_zscaler_zia.py"
+      ]
+    },
+    {
+      "vendor_key": "zscaler_zpa",
+      "platform_name": "Zscaler ZPA",
+      "parser_class": "ZscalerZPAParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": true,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_zscaler_zpa.py"
+      ]
+    },
+    {
+      "vendor_key": "aws_security_group",
+      "platform_name": "AWS Security Group",
+      "parser_class": "AWSSecurityGroupParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": false,
+      "tests_exist": true,
+      "test_files": [
+        "test_security_input.py"
+      ]
+    },
+    {
+      "vendor_key": "azure_nsg",
+      "platform_name": "Azure NSG",
+      "parser_class": "AzureNSGParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": false,
+      "tests_exist": false,
+      "test_files": []
+    },
+    {
+      "vendor_key": "cisco_asa",
+      "platform_name": "Cisco ASA",
+      "parser_class": "CiscoASAParser",
+      "parser_file_exists": true,
+      "imports": true,
+      "registered": true,
+      "instantiates": true,
+      "cis_supported": false,
+      "cis_controls_count": 0,
+      "remediation_pack_exists": false,
+      "tests_exist": true,
+      "test_files": [
+        "test_parser_cisco_ios.py"
+      ]
+    }
+  ],
+  "fixtures": {
+    "total_fixtures": 87,
+    "by_category": {
+      "REAL_DEVICE_EXPORT": 39,
+      "OFFICIAL_VENDOR_EXAMPLE": 7,
+      "PUBLIC_CONFIGURATION_EXAMPLE": 27,
+      "SYNTHETIC": 8,
+      "UNVERIFIED": 6
+    },
+    "details": [
+      {
+        "path": "dataset/manifest.json",
+        "size": 31482,
+        "category": "UNVERIFIED"
+      },
+      {
+        "path": "dataset/MASTER_PROVENANCE_MANIFEST.json",
+        "size": 19395,
+        "category": "UNVERIFIED"
+      },
+      {
+        "path": "dataset/provenance_audit.json",
+        "size": 4736,
+        "category": "UNVERIFIED"
+      },
+      {
+        "path": "dataset/research_dataset.json",
+        "size": 50133,
+        "category": "UNVERIFIED"
+      },
+      {
+        "path": "dataset/lab_configuration/cumulus_linux/cumulus_frr_leaf01.conf",
+        "size": 321,
+        "category": "SYNTHETIC"
+      },
+      {
+        "path": "dataset/lab_configuration/huawei/huawei_vrp_s6720_lab.cfg",
+        "size": 565,
+        "category": "SYNTHETIC"
+      },
+      {
+        "path": "dataset/lab_configuration/mikrotik/mikrotik_routeros_hardened.rsc",
+        "size": 913,
+        "category": "SYNTHETIC"
+      },
+      {
+        "path": "dataset/lab_configuration/netgate_pfsense/netgate_pfsense_backup.xml",
+        "size": 529,
+        "category": "SYNTHETIC"
+      },
+      {
+        "path": "dataset/official/documentation_references.json",
+        "size": 4299,
+        "category": "OFFICIAL_VENDOR_EXAMPLE"
+      },
+      {
+        "path": "dataset/official/verified_ground_truth.json",
+        "size": 6696,
+        "category": "OFFICIAL_VENDOR_EXAMPLE"
+      },
+      {
+        "path": "dataset/official_vendor_examples/check_point/checkpoint_gaia_clish.conf",
+        "size": 350,
+        "category": "OFFICIAL_VENDOR_EXAMPLE"
+      },
+      {
+        "path": "dataset/official_vendor_examples/cisco/cisco_devnet_iosxe_netconf.xml",
+        "size": 957,
+        "category": "OFFICIAL_VENDOR_EXAMPLE"
+      },
+      {
+        "path": "dataset/official_vendor_examples/fortinet/fortigate_hq_official_ref.conf",
+        "size": 1026,
+        "category": "OFFICIAL_VENDOR_EXAMPLE"
+      },
+      {
+        "path": "dataset/official_vendor_examples/hpe_aruba/aruba_aoscx_campus_sw01.conf",
+        "size": 498,
+        "category": "OFFICIAL_VENDOR_EXAMPLE"
+      },
+      {
+        "path": "dataset/official_vendor_examples/stormshield/stormshield_sns_cli.conf",
+        "size": 422,
+        "category": "OFFICIAL_VENDOR_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config/benchmark_results.json",
+        "size": 1374,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config/cross_vendor_mapping.json",
+        "size": 6696,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config/extracted_security_snippets.json",
+        "size": 254105,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config/inventory.json",
+        "size": 70342,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config/metadata.json",
+        "size": 809,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config/test/snippets.json",
+        "size": 26990,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config/train/snippets.json",
+        "size": 100634,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config/validation/snippets.json",
+        "size": 31914,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_configuration/arista/arista_eos_spine01_sanitized.cfg",
+        "size": 949,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_configuration/cisco/cisco_napalm_border02.cfg",
+        "size": 750,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_configuration/cisco/cisco_stanford_core01.cfg",
+        "size": 1680,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_configuration/juniper/juniper_mx480_sanitized.conf",
+        "size": 1489,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_configuration/nokia/nokia_sros_7750.conf",
+        "size": 416,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_configuration/sonic/sonic_config_db_spine.json",
+        "size": 644,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_configuration/ubiquiti/ubiquiti_edgeos_router.conf",
+        "size": 793,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config_snippets/benchmark_results.json",
+        "size": 1374,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config_snippets/cross_vendor_mapping.json",
+        "size": 6696,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config_snippets/extracted_security_snippets.json",
+        "size": 254105,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config_snippets/inventory.json",
+        "size": 70342,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config_snippets/metadata.json",
+        "size": 809,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config_snippets/test/snippets.json",
+        "size": 26990,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config_snippets/train/snippets.json",
+        "size": 100634,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_config_snippets/validation/snippets.json",
+        "size": 31914,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_netconf/classified_items.json",
+        "size": 8950,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_netconf/extracted_configs.json",
+        "size": 422,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_netconf/inventory.json",
+        "size": 8950,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/public_netconf/metadata.json",
+        "size": 471,
+        "category": "PUBLIC_CONFIGURATION_EXAMPLE"
+      },
+      {
+        "path": "dataset/real_device/manifest.json",
+        "size": 2,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/evaluation_report.json",
+        "size": 56296,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/manifest.json",
+        "size": 12237,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/structured_examples.json",
+        "size": 32347,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/atla.conf",
+        "size": 252205,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/chic.conf",
+        "size": 439641,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/clev.conf",
+        "size": 167210,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/hous.conf",
+        "size": 229202,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/kans.conf",
+        "size": 277438,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/losa.conf",
+        "size": 443031,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/newy32aoa.conf",
+        "size": 277410,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/salt.conf",
+        "size": 156124,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/seat.conf",
+        "size": 259849,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/raw/wash.conf",
+        "size": 395420,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/atla.conf",
+        "size": 252205,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/chic.conf",
+        "size": 439641,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/clev.conf",
+        "size": 167210,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/hous.conf",
+        "size": 229202,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/kans.conf",
+        "size": 277438,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/losa.conf",
+        "size": 443031,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/newy32aoa.conf",
+        "size": 277410,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/salt.conf",
+        "size": 156124,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/seat.conf",
+        "size": 259849,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/real_device_evaluation/sanitized/wash.conf",
+        "size": 395420,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/manifest.json",
+        "size": 2,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/arista/arista_eos_spine01_sanitized.cfg",
+        "size": 949,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/cisco/cisco_napalm_border02.cfg",
+        "size": 750,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/cisco/cisco_stanford_core01.cfg",
+        "size": 1680,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/atla.conf",
+        "size": 252205,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/chic.conf",
+        "size": 439641,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/clev.conf",
+        "size": 167210,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/hous.conf",
+        "size": 229202,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/juniper_mx480_sanitized.conf",
+        "size": 1489,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/kans.conf",
+        "size": 277438,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/losa.conf",
+        "size": 443031,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/newy32aoa.conf",
+        "size": 277410,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/salt.conf",
+        "size": 156124,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/seat.conf",
+        "size": 259849,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/sanitized_real_device/juniper/wash.conf",
+        "size": 395420,
+        "category": "REAL_DEVICE_EXPORT"
+      },
+      {
+        "path": "dataset/unknown/ambiguous_snippets.json",
+        "size": 20958,
+        "category": "UNVERIFIED"
+      },
+      {
+        "path": "dataset/unknown/unmapped_snippets.json",
+        "size": 123222,
+        "category": "UNVERIFIED"
+      },
+      {
+        "path": "tests/fixtures/stormshield/external_validation/external_ini_format.conf",
+        "size": 901,
+        "category": "SYNTHETIC"
+      },
+      {
+        "path": "tests/fixtures/stormshield/official_examples/official_example.conf",
+        "size": 1216,
+        "category": "SYNTHETIC"
+      },
+      {
+        "path": "tests/fixtures/stormshield/synthetic/insecure.conf",
+        "size": 777,
+        "category": "SYNTHETIC"
+      },
+      {
+        "path": "tests/fixtures/stormshield/synthetic/secure.conf",
+        "size": 1280,
+        "category": "SYNTHETIC"
+      }
+    ]
+  },
+  "documents": {
+    "physical_files_count": 126,
+    "by_status": {
+      "SUCCESSFULLY_ACQUIRED": 120,
+      "ACCESS_RESTRICTED": 5,
+      "NOT_PUBLIC": 0,
+      "FAILED": 1,
+      "DUPLICATE": 0
+    },
+    "manifest_entries_count": 5,
+    "details": [
+      {
+        "path": "dataset/vendor_references/arista_eos/config_fixtures/arista_eos_insecure.conf",
+        "filename": "arista_eos_insecure.conf",
+        "vendor_key": "arista_eos",
+        "size_bytes": 461,
+        "sha256": "cca118b5abfe5a81d970b4e295df40079f49a2042a48239495dd7a6127c8ee09",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/arista_eos/config_fixtures/arista_eos_secure.conf",
+        "filename": "arista_eos_secure.conf",
+        "vendor_key": "arista_eos",
+        "size_bytes": 931,
+        "sha256": "20b51bcca443b0264299fd27baf630743c2429c81142e68bb2e2313df8abb051",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/arista_eos/documents/arista_eos_current_user_manual.html",
+        "filename": "arista_eos_current_user_manual.html",
+        "vendor_key": "arista_eos",
+        "size_bytes": 3038,
+        "sha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/arista_eos/extracted/arista_eos_current_user_manual.extracted.json",
+        "filename": "arista_eos_current_user_manual.extracted.json",
+        "vendor_key": "arista_eos",
+        "size_bytes": 511,
+        "sha256": "4d8b267e6bde94425cda23a2578f283eb2106f3f9fd4ea9e9a8a83e12a8d4c02",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/arista_eos/extracted/arista_eos_current_user_manual.extracted.txt",
+        "filename": "arista_eos_current_user_manual.extracted.txt",
+        "vendor_key": "arista_eos",
+        "size_bytes": 36,
+        "sha256": "491f0e0f390f879a5d2814c1dbea98c641b5a03acc2d90661bdfc85fdf829ce4",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/arista_eos/metadata/arista_eos_4_17_1f_manual.meta.json",
+        "filename": "arista_eos_4_17_1f_manual.meta.json",
+        "vendor_key": "arista_eos",
+        "size_bytes": 821,
+        "sha256": "0f7f88fc4e2561d4627584df16409f7e7b4ace5cf4f0fb427e3d9a7a6bddcc09",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/arista_eos/metadata/arista_eos_current_user_manual.meta.json",
+        "filename": "arista_eos_current_user_manual.meta.json",
+        "vendor_key": "arista_eos",
+        "size_bytes": 816,
+        "sha256": "3b0197dcbb4f7e6052f283fdcba523851bb242670675b4beb5c586533ef11ee5",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/arista_eos/raw/arista_eos_current_user_manual.html",
+        "filename": "arista_eos_current_user_manual.html",
+        "vendor_key": "arista_eos",
+        "size_bytes": 3038,
+        "sha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/arista_eos/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "arista_eos",
+        "size_bytes": 969,
+        "sha256": "72df480e4bb86b66408abadc3d03cba6090b9d3f1a1137db1e6e44ba897d68d9",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/commands/commands.json",
+        "filename": "commands.json",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 115667,
+        "sha256": "28d2bea7070690ac7525252724db096a3f724bb8b96ccf8d554ea959f43e0998",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/commands/commands.jsonl",
+        "filename": "commands.jsonl",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 101584,
+        "sha256": "2a35532f8cc7fc320130e1ab36d7da9471efba29e26bfbb79e5562ae618ac91b",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/config_fixtures/checkpoint_gaia_clish.conf",
+        "filename": "checkpoint_gaia_clish.conf",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 353,
+        "sha256": "1391252f5e2e5d2e99529dcfe841d5f7f41f13828c407eefbb71172fd1c49f4b",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/documents/checkpoint_gaia_clish_summary.html",
+        "filename": "checkpoint_gaia_clish_summary.html",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 57327,
+        "sha256": "d510ed748c36ad95c9cd8251bb91068fc34cccd87bae4320e7054cd5f02899b4",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/documents/checkpoint_gaia_r81_20_adminguide.pdf",
+        "filename": "checkpoint_gaia_r81_20_adminguide.pdf",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 3932886,
+        "sha256": "511b4b8eb554e4eeb9677c0dbb4ff616a16dcbfeb27d8acc7327de59061787dc",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/extracted/checkpoint_gaia_clish_summary.extracted.json",
+        "filename": "checkpoint_gaia_clish_summary.extracted.json",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 3529,
+        "sha256": "ea3c131e2fd628e654401f075e81def332223f34886d4b6c5775e54944b8699a",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/extracted/checkpoint_gaia_clish_summary.extracted.txt",
+        "filename": "checkpoint_gaia_clish_summary.extracted.txt",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 2943,
+        "sha256": "1d06f1d9dd9925a20ab6c42d50a7c360ff91d7bacc8fdaf86c53d9c3248478c7",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/extracted/checkpoint_gaia_r81_20_adminguide.extracted.json",
+        "filename": "checkpoint_gaia_r81_20_adminguide.extracted.json",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 1178496,
+        "sha256": "e682694314a26236eb89f7600de24f81e6945f150a7cb55cdf04e795b7c1d887",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/extracted/checkpoint_gaia_r81_20_adminguide.extracted.txt",
+        "filename": "checkpoint_gaia_r81_20_adminguide.extracted.txt",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 741959,
+        "sha256": "987191ac5f6c8aab78638f8411946442ac643776951a19afb163d86d807a965a",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/metadata/checkpoint_gaia_clish_summary.meta.json",
+        "filename": "checkpoint_gaia_clish_summary.meta.json",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 901,
+        "sha256": "1e619243fb2445bddbf71ef4b33fa201b3cac88e1053ced39e849a6f3ebff922",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/metadata/checkpoint_gaia_r81_20_adminguide.meta.json",
+        "filename": "checkpoint_gaia_r81_20_adminguide.meta.json",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 916,
+        "sha256": "d6ad90d6aad4d1951f0789b5cb59e64aa074f5e975d9aa41f34f2b9538366573",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/raw/checkpoint_gaia_clish_summary.html",
+        "filename": "checkpoint_gaia_clish_summary.html",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 57327,
+        "sha256": "d510ed748c36ad95c9cd8251bb91068fc34cccd87bae4320e7054cd5f02899b4",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/raw/checkpoint_gaia_r81_20_adminguide.pdf",
+        "filename": "checkpoint_gaia_r81_20_adminguide.pdf",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 3932886,
+        "sha256": "511b4b8eb554e4eeb9677c0dbb4ff616a16dcbfeb27d8acc7327de59061787dc",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/checkpoint_gaia/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "checkpoint_gaia",
+        "size_bytes": 977,
+        "sha256": "71971f313967cbb9570d501534832724ef17acdd634753e153234960febd982e",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/cisco_ios/config_fixtures/cisco_iosxe_devnet.xml",
+        "filename": "cisco_iosxe_devnet.xml",
+        "vendor_key": "cisco_ios",
+        "size_bytes": 957,
+        "sha256": "de2b0e0a3b5250d438c84d559f578879dca0aaad2f86740d72b736d05b5fd79f",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/cisco_ios/config_fixtures/cisco_ios_hardened.conf",
+        "filename": "cisco_ios_hardened.conf",
+        "vendor_key": "cisco_ios",
+        "size_bytes": 2085,
+        "sha256": "aa73b1a3f297d7f97cdd8588208c285feed8b630f5b8015eb7bc862f15eddb27",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/cisco_ios/config_fixtures/cisco_ios_insecure.conf",
+        "filename": "cisco_ios_insecure.conf",
+        "vendor_key": "cisco_ios",
+        "size_bytes": 970,
+        "sha256": "7c23a8c78325b204874e7ca10afc64eae6a536b3235f52db250fabb60d67c0f5",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/cisco_ios/metadata/cisco_iosxe_cli_basics.meta.json",
+        "filename": "cisco_iosxe_cli_basics.meta.json",
+        "vendor_key": "cisco_ios",
+        "size_bytes": 835,
+        "sha256": "414d44c62a575980b0d08deb873b49310ac8c586546f5e5abf48eb2292e33406",
+        "status": "ACCESS_RESTRICTED"
+      },
+      {
+        "path": "dataset/vendor_references/cisco_ios/metadata/cisco_iosxe_fundamentals_cr.meta.json",
+        "filename": "cisco_iosxe_fundamentals_cr.meta.json",
+        "vendor_key": "cisco_ios",
+        "size_bytes": 825,
+        "sha256": "81415e61064d3699ebbfe7ea611a9caec7380294e9c81907454f48bf37fc8252",
+        "status": "ACCESS_RESTRICTED"
+      },
+      {
+        "path": "dataset/vendor_references/cisco_ios/metadata/cisco_ios_master_command_list.meta.json",
+        "filename": "cisco_ios_master_command_list.meta.json",
+        "vendor_key": "cisco_ios",
+        "size_bytes": 785,
+        "sha256": "2659c40a4cb01b0deabd3e6e7fe15f8eb66285783cdd65f57230a6c7e9760759",
+        "status": "ACCESS_RESTRICTED"
+      },
+      {
+        "path": "dataset/vendor_references/cisco_ios/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "cisco_ios",
+        "size_bytes": 1696,
+        "sha256": "a5a133bd90b70a8e99bdadbfd50924766e65a4c5eb4c6eaec3a9bf37116343b1",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/commands/commands.json",
+        "filename": "commands.json",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 430382,
+        "sha256": "1f7dab97b0ca777c32ba1042b77cbb1415c422b094946ec8254e28cd4890e91e",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/commands/commands.jsonl",
+        "filename": "commands.jsonl",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 373883,
+        "sha256": "0fb42b410413098003ab89a85cb6edd3f9a66da902b72f27b91b6b4bb5b19f06",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/config_fixtures/fortigate_hq_official.conf",
+        "filename": "fortigate_hq_official.conf",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 1026,
+        "sha256": "6c1f8628d53b4464b95a029f85b7f846b611ecea1781dc6ec34174edf89b5ff9",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/config_fixtures/fortios_fgt_baseline.conf",
+        "filename": "fortios_fgt_baseline.conf",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 2047,
+        "sha256": "751cc05c4e54cda7142cdb3e00d8d66abfeb81ea98410269b3b6e7f1413e6852",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/config_fixtures/fortios_sample.conf",
+        "filename": "fortios_sample.conf",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 2047,
+        "sha256": "751cc05c4e54cda7142cdb3e00d8d66abfeb81ea98410269b3b6e7f1413e6852",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/documents/fortinet_fortios_7_6_cli_reference.html",
+        "filename": "fortinet_fortios_7_6_cli_reference.html",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 1323272,
+        "sha256": "405eb02ce00df5ace2e50f69ea0e8e8370c395855b5a1cb059b0f86cd4a2d2ab",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/documents/fortinet_fortios_8_0_cli_reference.html",
+        "filename": "fortinet_fortios_8_0_cli_reference.html",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 1339487,
+        "sha256": "d823cf87ea7f5d5e646c92793e0658cb6eab9bf13a3bd4033c5cd087d10c92cf",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/extracted/fortinet_fortios_7_6_cli_reference.extracted.json",
+        "filename": "fortinet_fortios_7_6_cli_reference.extracted.json",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 190242,
+        "sha256": "783d3b2f7e0a48e7e4ba7c5e52344dd00d249aa56dcc6864d41145bd545470f3",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/extracted/fortinet_fortios_7_6_cli_reference.extracted.txt",
+        "filename": "fortinet_fortios_7_6_cli_reference.extracted.txt",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 189013,
+        "sha256": "1718326456aa912572a4bb6e6c32e717712d754de64d79d7dbc1ecd4f296803f",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/extracted/fortinet_fortios_8_0_cli_reference.extracted.json",
+        "filename": "fortinet_fortios_8_0_cli_reference.extracted.json",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 193825,
+        "sha256": "942f7b03650c276bc943a2eca7db0bb5e2d8afe5eea5e0aa976aed8549a74979",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/extracted/fortinet_fortios_8_0_cli_reference.extracted.txt",
+        "filename": "fortinet_fortios_8_0_cli_reference.extracted.txt",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 192596,
+        "sha256": "77c15574f4395c80e515d763ea07a5fa1e49e1bf24cf00d3a435f229a6d83ff9",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/metadata/fortinet_fortios_7_6_cli_reference.meta.json",
+        "filename": "fortinet_fortios_7_6_cli_reference.meta.json",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 881,
+        "sha256": "80108fa3831ee0e72e98b688528b0b1005f88e051b3d2f329861babf547095b9",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/metadata/fortinet_fortios_8_0_cli_reference.meta.json",
+        "filename": "fortinet_fortios_8_0_cli_reference.meta.json",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 881,
+        "sha256": "15bdb8ebdd9b72b97dbbb0f8b79a725e0e2b096c2d4ddd24175fa243f2ede8ff",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/raw/fortinet_fortios_7_6_cli_reference.html",
+        "filename": "fortinet_fortios_7_6_cli_reference.html",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 1323272,
+        "sha256": "405eb02ce00df5ace2e50f69ea0e8e8370c395855b5a1cb059b0f86cd4a2d2ab",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/raw/fortinet_fortios_8_0_cli_reference.html",
+        "filename": "fortinet_fortios_8_0_cli_reference.html",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 1339487,
+        "sha256": "d823cf87ea7f5d5e646c92793e0658cb6eab9bf13a3bd4033c5cd087d10c92cf",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/fortinet_fortios/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "fortinet_fortios",
+        "size_bytes": 1568,
+        "sha256": "c4f8ee2b69441a0b052453539393374003406dfce4079d51a74b3b9827a0334d",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/huawei_vrp/config_fixtures/huawei_vrp_s6720_lab.cfg",
+        "filename": "huawei_vrp_s6720_lab.cfg",
+        "vendor_key": "huawei_vrp",
+        "size_bytes": 565,
+        "sha256": "6bbdd3c82a8f19979fed9de2480cffbd60b3e1f32bd5d01430fd7eedd69bc354",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/huawei_vrp/metadata/huawei_vrp_ar_command_reference.meta.json",
+        "filename": "huawei_vrp_ar_command_reference.meta.json",
+        "vendor_key": "huawei_vrp",
+        "size_bytes": 768,
+        "sha256": "e93d021ab7802f891accb5cd155b47ec5db55f6ecf09f15bec1bd7817427455c",
+        "status": "ACCESS_RESTRICTED"
+      },
+      {
+        "path": "dataset/vendor_references/huawei_vrp/metadata/huawei_vrp_ce_command_reference.meta.json",
+        "filename": "huawei_vrp_ce_command_reference.meta.json",
+        "vendor_key": "huawei_vrp",
+        "size_bytes": 775,
+        "sha256": "0cbc2127c323c0455a5f78d05f83af8e3cc8e70e5aac90c5852eb9bac76f0642",
+        "status": "ACCESS_RESTRICTED"
+      },
+      {
+        "path": "dataset/vendor_references/huawei_vrp/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "huawei_vrp",
+        "size_bytes": 1070,
+        "sha256": "15f321c62f62782f650225c70d25898ebab15bc872d6273ce7ae7f2443fa7102",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/commands/commands.json",
+        "filename": "commands.json",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 58372,
+        "sha256": "b8fef8e418da4e0a2933f56f3b7053b76b434f17fd99cc37f15f90471e847cc5",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/commands/commands.jsonl",
+        "filename": "commands.jsonl",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 51065,
+        "sha256": "d55b33620a9baf92bab6f12cebe3ac23817cf93f53089f247536eba8951b5ccb",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/config_fixtures/junos_sample.conf",
+        "filename": "junos_sample.conf",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 1773,
+        "sha256": "5d9f16e796c64e96697485e845d09fe491b0a703fff6d7091882ea8cd98295e9",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/config_fixtures/junos_srx_baseline.conf",
+        "filename": "junos_srx_baseline.conf",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 1773,
+        "sha256": "5d9f16e796c64e96697485e845d09fe491b0a703fff6d7091882ea8cd98295e9",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/documents/juniper_junos_cli_reference.html",
+        "filename": "juniper_junos_cli_reference.html",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 10244,
+        "sha256": "1d082424e4c3e53e3fa88bf2595bde72c302678f35480f874989b52472043e89",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/documents/juniper_junos_cli_user_guide.pdf",
+        "filename": "juniper_junos_cli_user_guide.pdf",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 1301865,
+        "sha256": "5073bbc6b485f3ee7389b682053e3de4ab3146888d9c5ab5d8375fd940c445b4",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/extracted/juniper_junos_cli_reference.extracted.json",
+        "filename": "juniper_junos_cli_reference.extracted.json",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 1558,
+        "sha256": "4679f08accef80692297e01f05e85a184674224cbd2d11f19e3c3a233f5c853a",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/extracted/juniper_junos_cli_reference.extracted.txt",
+        "filename": "juniper_junos_cli_reference.extracted.txt",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 878,
+        "sha256": "8f68c84dc3f32f9ad06b6f363e49bf0d7d4053c23a88f4bbc22f4690c45eee10",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/extracted/juniper_junos_cli_user_guide.extracted.json",
+        "filename": "juniper_junos_cli_user_guide.extracted.json",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 526432,
+        "sha256": "6adedf31cd4188866ec4e808cee0016cf26bbf89834150a4ba674c2106170a9d",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/extracted/juniper_junos_cli_user_guide.extracted.txt",
+        "filename": "juniper_junos_cli_user_guide.extracted.txt",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 466818,
+        "sha256": "2f86e7431231d43b1a50df6208e3b65781d05ba7c4588ac180a3f8f783940f77",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/metadata/juniper_junos_cli_reference.meta.json",
+        "filename": "juniper_junos_cli_reference.meta.json",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 856,
+        "sha256": "077587027aea3fdf0b946403db00e2a32e2a108668809a9cf3a3ffa13cd112a3",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/metadata/juniper_junos_cli_user_guide.meta.json",
+        "filename": "juniper_junos_cli_user_guide.meta.json",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 853,
+        "sha256": "94feab47e926939c3e5aaa8305219750208768a57cb07f73a57b5e91455142e2",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/raw/juniper_junos_cli_reference.html",
+        "filename": "juniper_junos_cli_reference.html",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 10244,
+        "sha256": "1d082424e4c3e53e3fa88bf2595bde72c302678f35480f874989b52472043e89",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/raw/juniper_junos_cli_user_guide.pdf",
+        "filename": "juniper_junos_cli_user_guide.pdf",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 1301865,
+        "sha256": "5073bbc6b485f3ee7389b682053e3de4ab3146888d9c5ab5d8375fd940c445b4",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/juniper_junos/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "juniper_junos",
+        "size_bytes": 1105,
+        "sha256": "80e885704362bac26683ac7c9909575004015ad573440ec19746bc02df9058ee",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/commands/commands.json",
+        "filename": "commands.json",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 4075,
+        "sha256": "e5f1b02cb67182ffcd2935d4c664aec1eb44d1a41d2f0f8b1ed6aeb8d1daa36c",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/commands/commands.jsonl",
+        "filename": "commands.jsonl",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 3544,
+        "sha256": "71cdc493e8444cc15f8421c5b1508a5aef2a1d9390237146093a20a6094ecda3",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/config_fixtures/mikrotik_routeros_hardened.rsc",
+        "filename": "mikrotik_routeros_hardened.rsc",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 917,
+        "sha256": "75d75a564411493a165655c42f49ff2c2803dcf6a5b95426ff51da8d882ee43a",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/documents/mikrotik_routeros_config_management.html",
+        "filename": "mikrotik_routeros_config_management.html",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 88410,
+        "sha256": "46aee72d61e53342dc8c496052ef6254304b8469e932863df7d2ce852c0f01e0",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/extracted/mikrotik_routeros_config_management.extracted.json",
+        "filename": "mikrotik_routeros_config_management.extracted.json",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 26422,
+        "sha256": "5a648206f43da6a8670c1a6f5ae04ac2bfe4e10706b24366272c54a18dda0895",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/extracted/mikrotik_routeros_config_management.extracted.txt",
+        "filename": "mikrotik_routeros_config_management.extracted.txt",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 18844,
+        "sha256": "5bf2afc6867c3051064e52ce7cc64f7b08035ed77b3bf65b95b8a4b9ae48d117",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/metadata/mikrotik_routeros_config_management.meta.json",
+        "filename": "mikrotik_routeros_config_management.meta.json",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 880,
+        "sha256": "aabe13ca3e02ac001bb2360f0ae8a918f830f594b9c7ef2108223cda33a90d5a",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/metadata/mikrotik_routeros_docs_home.meta.json",
+        "filename": "mikrotik_routeros_docs_home.meta.json",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 743,
+        "sha256": "2ed33318f5c31a45af445612c945caf63e68fd56484d9735f71f4991bcd3f625",
+        "status": "FAILED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/raw/mikrotik_routeros_config_management.html",
+        "filename": "mikrotik_routeros_config_management.html",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 88410,
+        "sha256": "46aee72d61e53342dc8c496052ef6254304b8469e932863df7d2ce852c0f01e0",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/mikrotik_routeros/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "mikrotik_routeros",
+        "size_bytes": 1167,
+        "sha256": "db1970bbadeed918ecf464faeb48ea3f5e3965887603e8fa7ff7c51a052513fe",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/config_fixtures/panos_baseline.set",
+        "filename": "panos_baseline.set",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 809,
+        "sha256": "fc8087da5f2ebd12796104edb4c7e119a7bd45557961f7c236ec59e7c0446405",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/documents/panos_cli_command_hierarchy.html",
+        "filename": "panos_cli_command_hierarchy.html",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 284836,
+        "sha256": "69e28ad9f94fa39139e6a6577792b29002e3f6254f4a72a57bc7e86c59c68481",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/documents/panos_cli_quick_start.html",
+        "filename": "panos_cli_quick_start.html",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 293453,
+        "sha256": "ff0e33f7a64cbdbcae6edf9c20ec626594ba487d105cf150de9b77710208579a",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/extracted/panos_cli_command_hierarchy.extracted.json",
+        "filename": "panos_cli_command_hierarchy.extracted.json",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 1912,
+        "sha256": "8ed9b9b2098d870c7871998ed3419bf3dd80e0b056fe39e3698fe4a95492375a",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/extracted/panos_cli_command_hierarchy.extracted.txt",
+        "filename": "panos_cli_command_hierarchy.extracted.txt",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 1265,
+        "sha256": "82aa815038bde8cb55b7cbf185f57ded113e7d71eeb03eb8a51e70cdc6a9ee07",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/extracted/panos_cli_quick_start.extracted.json",
+        "filename": "panos_cli_quick_start.extracted.json",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 4745,
+        "sha256": "bc722f082cae6026f464bd070e94a1354902ca05b2f5dd7a73c7e5882f8fdf11",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/extracted/panos_cli_quick_start.extracted.txt",
+        "filename": "panos_cli_quick_start.extracted.txt",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 4020,
+        "sha256": "3e088c5dcc2d44abded0113174daeb88fb0b7b3c3a744d237e874d059747df09",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/metadata/panos_cli_command_hierarchy.meta.json",
+        "filename": "panos_cli_command_hierarchy.meta.json",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 888,
+        "sha256": "03ddb88535175368000a3d90462e230589b003b1f271993a1e1815b6228b9fb9",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/metadata/panos_cli_quick_start.meta.json",
+        "filename": "panos_cli_quick_start.meta.json",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 873,
+        "sha256": "7d7ffa8aece5e4feb54128ff5b7b4220b2e41d3bdf70dab13ddf785da02180ac",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/raw/panos_cli_command_hierarchy.html",
+        "filename": "panos_cli_command_hierarchy.html",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 284836,
+        "sha256": "69e28ad9f94fa39139e6a6577792b29002e3f6254f4a72a57bc7e86c59c68481",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/raw/panos_cli_quick_start.html",
+        "filename": "panos_cli_quick_start.html",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 293453,
+        "sha256": "ff0e33f7a64cbdbcae6edf9c20ec626594ba487d105cf150de9b77710208579a",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/paloalto_panos/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "paloalto_panos",
+        "size_bytes": 1096,
+        "sha256": "baad9e56b6ca2d19f658c6eead4c3c513bf0837083bc744bece3a45772a58df4",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/commands/commands.json",
+        "filename": "commands.json",
+        "vendor_key": "sonic",
+        "size_bytes": 1995,
+        "sha256": "7c8d23cf68937b514e1a3aa0b385f637a12e51037b896b254a9109809f0a20b1",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/commands/commands.jsonl",
+        "filename": "commands.jsonl",
+        "vendor_key": "sonic",
+        "size_bytes": 1728,
+        "sha256": "f7f3ddc1c0c6b295db44a21d18b4dda9d9d22e845266e47e789f3d89a1d6f1da",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/documents/sonic_user_manual_and_schema.md",
+        "filename": "sonic_user_manual_and_schema.md",
+        "vendor_key": "sonic",
+        "size_bytes": 41315,
+        "sha256": "4d26a70459da0cf745d9dc8454362c5460dcbee8436c3f9ddb51515394ba80f0",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/documents/sonic_utilities_command_reference.md",
+        "filename": "sonic_utilities_command_reference.md",
+        "vendor_key": "sonic",
+        "size_bytes": 665765,
+        "sha256": "8604e5ffc02097b2c14b22b7554e9462b4188594bbc040ae7b06b0bf13c78a77",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/extracted/sonic_user_manual_and_schema.extracted.json",
+        "filename": "sonic_user_manual_and_schema.extracted.json",
+        "vendor_key": "sonic",
+        "size_bytes": 45898,
+        "sha256": "7f4edf5df8ea4828da09c215fced4fd2bdbabf41e78809254bb6d48d191d6018",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/extracted/sonic_user_manual_and_schema.extracted.txt",
+        "filename": "sonic_user_manual_and_schema.extracted.txt",
+        "vendor_key": "sonic",
+        "size_bytes": 41315,
+        "sha256": "4d26a70459da0cf745d9dc8454362c5460dcbee8436c3f9ddb51515394ba80f0",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/extracted/sonic_utilities_command_reference.extracted.json",
+        "filename": "sonic_utilities_command_reference.extracted.json",
+        "vendor_key": "sonic",
+        "size_bytes": 688222,
+        "sha256": "2c51a6a7701a717831040014b346c775eac4818f4cea8bf5edb91c7c6da236d3",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/extracted/sonic_utilities_command_reference.extracted.txt",
+        "filename": "sonic_utilities_command_reference.extracted.txt",
+        "vendor_key": "sonic",
+        "size_bytes": 683773,
+        "sha256": "5d86e78e921cc8261a09fb5ef25a2c263256bfb56eb02d11de4ede78c6762869",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/metadata/sonic_user_manual_and_schema.meta.json",
+        "filename": "sonic_user_manual_and_schema.meta.json",
+        "vendor_key": "sonic",
+        "size_bytes": 873,
+        "sha256": "b977749b3edb4e701a466ff4a0a6b3111a93cf176e3b3a4e7f7d554bd48b5ce4",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/metadata/sonic_utilities_command_reference.meta.json",
+        "filename": "sonic_utilities_command_reference.meta.json",
+        "vendor_key": "sonic",
+        "size_bytes": 853,
+        "sha256": "df325e1c4ea08c548ccc1affddcf2bb908334c5ad666b6394490372f4ff5eb6c",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/raw/sonic_user_manual_and_schema.md",
+        "filename": "sonic_user_manual_and_schema.md",
+        "vendor_key": "sonic",
+        "size_bytes": 41315,
+        "sha256": "4d26a70459da0cf745d9dc8454362c5460dcbee8436c3f9ddb51515394ba80f0",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/raw/sonic_utilities_command_reference.md",
+        "filename": "sonic_utilities_command_reference.md",
+        "vendor_key": "sonic",
+        "size_bytes": 665765,
+        "sha256": "8604e5ffc02097b2c14b22b7554e9462b4188594bbc040ae7b06b0bf13c78a77",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonic/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "sonic",
+        "size_bytes": 1135,
+        "sha256": "d43fe11b7a38a0094a0491a308f648cdfe34af8f3665264d25eaa97854ac3801",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonicwall/config_fixtures/sonicwall_sonicos_tz570.cli",
+        "filename": "sonicwall_sonicos_tz570.cli",
+        "vendor_key": "sonicwall",
+        "size_bytes": 341,
+        "sha256": "69f5269d6d0fd4298b009cb1a5ad1738d520b5e0cd8452638917abf52be6aa6e",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonicwall/metadata/sonicwall_sonicos_7_cli_reference.meta.json",
+        "filename": "sonicwall_sonicos_7_cli_reference.meta.json",
+        "vendor_key": "sonicwall",
+        "size_bytes": 879,
+        "sha256": "90ae90f9ba7a9e16867dac259eff86234216ef8fe00d5d55c89a32202c1425bc",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonicwall/metadata/sonicwall_sonicos_reva_cli_reference.meta.json",
+        "filename": "sonicwall_sonicos_reva_cli_reference.meta.json",
+        "vendor_key": "sonicwall",
+        "size_bytes": 889,
+        "sha256": "55c777fc7259e9e8668294efb6c71fd3cc8aea3152aaeccaa63c35712f08854e",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/sonicwall/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "sonicwall",
+        "size_bytes": 902,
+        "sha256": "4de70b4585341b2962188c9db76a9f3d8d4624a11d219e51ffc415698886d16f",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/commands/commands.json",
+        "filename": "commands.json",
+        "vendor_key": "stormshield",
+        "size_bytes": 624031,
+        "sha256": "cf2346fb6241043634b2c52096611f1ce93389e4438d22d7bb756f1d6c7f96eb",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/commands/commands.jsonl",
+        "filename": "commands.jsonl",
+        "vendor_key": "stormshield",
+        "size_bytes": 548612,
+        "sha256": "3c18a8c5565e463b358f45fe444882745a053bbd4ccc3ef34dc892e76d030021",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/config_fixtures/stormshield_sns_cli.conf",
+        "filename": "stormshield_sns_cli.conf",
+        "vendor_key": "stormshield",
+        "size_bytes": 422,
+        "sha256": "58a34caa01c94651366640af578d1d3ad21ac595804cad7fcea225407234dd63",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/documents/stormshield_sns_v4_cli_intro.html",
+        "filename": "stormshield_sns_v4_cli_intro.html",
+        "vendor_key": "stormshield",
+        "size_bytes": 25966,
+        "sha256": "225ed9aea710cbb48e8e850d181417da6d7f715d2202ee581b5f4eb8cf7b4cca",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/documents/stormshield_sns_v5_cli_serverd_reference.pdf",
+        "filename": "stormshield_sns_v5_cli_serverd_reference.pdf",
+        "vendor_key": "stormshield",
+        "size_bytes": 6849254,
+        "sha256": "77dee6652cd89ef90f556e744c44406794a8ae7f4844daa2c3d0f8423fca2b3b",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/extracted/stormshield_sns_v4_cli_intro.extracted.json",
+        "filename": "stormshield_sns_v4_cli_intro.extracted.json",
+        "vendor_key": "stormshield",
+        "size_bytes": 1282,
+        "sha256": "4f854b2fd5150670c7f21ddbeb372652119ffdf5fbdf52f6fc3fe513f0caa917",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/extracted/stormshield_sns_v4_cli_intro.extracted.txt",
+        "filename": "stormshield_sns_v4_cli_intro.extracted.txt",
+        "vendor_key": "stormshield",
+        "size_bytes": 659,
+        "sha256": "b727f52c76f21a86e9f764f46b27673bac25eb7cbe566da972e6928ab1be6208",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/extracted/stormshield_sns_v5_cli_serverd_reference.extracted.json",
+        "filename": "stormshield_sns_v5_cli_serverd_reference.extracted.json",
+        "vendor_key": "stormshield",
+        "size_bytes": 2555196,
+        "sha256": "e7e7ecc949f24aef8cb903bc236584fd1bf21684054e0f1dbe709096908614b5",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/extracted/stormshield_sns_v5_cli_serverd_reference.extracted.txt",
+        "filename": "stormshield_sns_v5_cli_serverd_reference.extracted.txt",
+        "vendor_key": "stormshield",
+        "size_bytes": 1216956,
+        "sha256": "0689b8aa6dae5897e744957609aabafccab6b48f9f5b5d343ed04cf704416ae6",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/metadata/stormshield_sns_v4_cli_intro.meta.json",
+        "filename": "stormshield_sns_v4_cli_intro.meta.json",
+        "vendor_key": "stormshield",
+        "size_bytes": 901,
+        "sha256": "839caa2d4efd2babde7cd5ffa9c70cff71f5131ff06bf58015ff3de449ad3f66",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/metadata/stormshield_sns_v5_cli_serverd_reference.meta.json",
+        "filename": "stormshield_sns_v5_cli_serverd_reference.meta.json",
+        "vendor_key": "stormshield",
+        "size_bytes": 951,
+        "sha256": "58e926265e1045a881efac2f428d4cca191ff03afa0d43a88fb87d27c33a3b69",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/raw/stormshield_sns_v4_cli_intro.html",
+        "filename": "stormshield_sns_v4_cli_intro.html",
+        "vendor_key": "stormshield",
+        "size_bytes": 25966,
+        "sha256": "225ed9aea710cbb48e8e850d181417da6d7f715d2202ee581b5f4eb8cf7b4cca",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/raw/stormshield_sns_v5_cli_serverd_reference.pdf",
+        "filename": "stormshield_sns_v5_cli_serverd_reference.pdf",
+        "vendor_key": "stormshield",
+        "size_bytes": 6849254,
+        "sha256": "77dee6652cd89ef90f556e744c44406794a8ae7f4844daa2c3d0f8423fca2b3b",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/stormshield/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "stormshield",
+        "size_bytes": 899,
+        "sha256": "90a5b2775a275d63e7f7f65a58f3d9b3743d9957a9c846285d2eae4328c03499",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/watchguard_fireware/commands/commands.json",
+        "filename": "commands.json",
+        "vendor_key": "watchguard_fireware",
+        "size_bytes": 191324,
+        "sha256": "d01dd08a693b4406164081a7ac59119a3949234974f6ef09a833083709a63079",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/watchguard_fireware/commands/commands.jsonl",
+        "filename": "commands.jsonl",
+        "vendor_key": "watchguard_fireware",
+        "size_bytes": 166329,
+        "sha256": "57659594e3748601d1146eb7b136ec8f6417b8b1d8b0327a839b347008b136c3",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/watchguard_fireware/documents/watchguard_fireware_v12_12_cli_reference.pdf",
+        "filename": "watchguard_fireware_v12_12_cli_reference.pdf",
+        "vendor_key": "watchguard_fireware",
+        "size_bytes": 2225941,
+        "sha256": "45de44072226705627a3f386034b1533b56c9934d667d1e6803171acfcf63f9d",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/watchguard_fireware/extracted/watchguard_fireware_v12_12_cli_reference.extracted.json",
+        "filename": "watchguard_fireware_v12_12_cli_reference.extracted.json",
+        "vendor_key": "watchguard_fireware",
+        "size_bytes": 674963,
+        "sha256": "eaf31596e81e5b0470465097508dba78f433e9c5070de39f0521ad36f00b1fcb",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/watchguard_fireware/extracted/watchguard_fireware_v12_12_cli_reference.extracted.txt",
+        "filename": "watchguard_fireware_v12_12_cli_reference.extracted.txt",
+        "vendor_key": "watchguard_fireware",
+        "size_bytes": 522689,
+        "sha256": "ea09490e1eff7673fa62eea0a0b116642f8a5d8a952827dd9a7198e1dac8d171",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/watchguard_fireware/metadata/watchguard_fireware_v12_12_cli_reference.meta.json",
+        "filename": "watchguard_fireware_v12_12_cli_reference.meta.json",
+        "vendor_key": "watchguard_fireware",
+        "size_bytes": 903,
+        "sha256": "122b22699e33aa5052bdcef9b1404e9483fae811f4f12aaeac98adbfe5105656",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/watchguard_fireware/raw/watchguard_fireware_v12_12_cli_reference.pdf",
+        "filename": "watchguard_fireware_v12_12_cli_reference.pdf",
+        "vendor_key": "watchguard_fireware",
+        "size_bytes": 2225941,
+        "sha256": "45de44072226705627a3f386034b1533b56c9934d667d1e6803171acfcf63f9d",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      },
+      {
+        "path": "dataset/vendor_references/watchguard_fireware/schemas/grammar.json",
+        "filename": "grammar.json",
+        "vendor_key": "watchguard_fireware",
+        "size_bytes": 833,
+        "sha256": "83aaded7e735d4c673aff2a5580cbf1013d366c77c2515d8e3257a13aed9fb41",
+        "status": "SUCCESSFULLY_ACQUIRED"
+      }
+    ]
+  },
+  "nlp": {
+    "commands_total": 2035,
+    "source_verified_commands": 2035,
+    "model_inferred_commands": 0,
+    "unverified_commands": 0,
+    "config_blocks_total": 1727,
+    "documents_total": 17314,
+    "sample_commands_audited_count": 120,
+    "sample_blocks_audited_count": 120
+  },
+  "frameworks": {
+    "cis": {
+      "controls_count": 0,
+      "total_vendor_mappings": 0,
+      "vendors_mapped": []
+    },
+    "iso_27001": {
+      "controls_count": 0,
+      "total_vendor_mappings": 0,
+      "vendors_mapped": []
+    },
+    "nist_800_53": {
+      "controls_count": 0,
+      "total_vendor_mappings": 0,
+      "vendors_mapped": []
+    },
+    "stig": {
+      "controls_count": 0,
+      "total_vendor_mappings": 0,
+      "vendors_mapped": []
+    }
+  },
+  "remediation_packs": {
+    "total_packs": 33,
+    "details": [
+      {
+        "vendor_key": "a10_acos",
+        "file": "a10_acos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "alcatel_aos",
+        "file": "alcatel_aos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "arista_eos",
+        "file": "arista_eos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "barracuda_cloudgen",
+        "file": "barracuda_cloudgen.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "cato_networks",
+        "file": "cato_networks.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "checkpoint_gaia",
+        "file": "checkpoint_gaia.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "cisco_ios",
+        "file": "cisco_ios.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "extreme_exos",
+        "file": "extreme_exos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "f5_bigip_tmos",
+        "file": "f5_bigip_tmos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "forcepoint_ngfw",
+        "file": "forcepoint_ngfw.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "fortinet_fortios",
+        "file": "fortinet_fortios.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "hillstone_stoneos",
+        "file": "hillstone_stoneos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "hpe_aruba_aos_cx",
+        "file": "hpe_aruba_aos_cx.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "huawei_vrp",
+        "file": "huawei_vrp.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "juniper_junos",
+        "file": "juniper_junos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "mikrotik_routeros",
+        "file": "mikrotik_routeros.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "netgate_pfsense",
+        "file": "netgate_pfsense.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "nokia_sros",
+        "file": "nokia_sros.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "paloalto",
+        "file": "paloalto.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "ruckus_fastiron",
+        "file": "ruckus_fastiron.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "sangfor_ngaf",
+        "file": "sangfor_ngaf.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "sonicwall",
+        "file": "sonicwall.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "sonicwall_sonicos",
+        "file": "sonicwall_sonicos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "sonic_linux",
+        "file": "sonic_linux.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "sonic_sonic",
+        "file": "sonic_sonic.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "sophos_sfos",
+        "file": "sophos_sfos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "stormshield",
+        "file": "stormshield.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "stormshield_sns",
+        "file": "stormshield_sns.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "ubiquiti_edgeos",
+        "file": "ubiquiti_edgeos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "versa_versos",
+        "file": "versa_versos.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "watchguard_fireware",
+        "file": "watchguard_fireware.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "zscaler_zia",
+        "file": "zscaler_zia.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      },
+      {
+        "vendor_key": "zscaler_zpa",
+        "file": "zscaler_zpa.json",
+        "controls_count": 0,
+        "has_verification": false,
+        "has_rollback": false
+      }
+    ]
+  },
+  "security_audit": {
+    "findings_count": 33,
+    "findings": [
+      {
+        "file": "stormshield_validation_report.md",
+        "match": "password=\"Password123!\""
+      },
+      {
+        "file": "auditor-core/tests/test_new_features.py",
+        "match": "-----BEGIN RSA PRIVATE KEY-----"
+      },
+      {
+        "file": "dataset/vendor_references/checkpoint_gaia/extracted/checkpoint_gaia_r81_20_adminguide.extracted.json",
+        "match": "password:\",\n      \""
+      },
+      {
+        "file": "dataset/vendor_references/checkpoint_gaia/extracted/checkpoint_gaia_r81_20_adminguide.extracted.json",
+        "match": "password:\",\n      \""
+      },
+      {
+        "file": "dataset/vendor_references/juniper_junos/extracted/juniper_junos_cli_user_guide.extracted.json",
+        "match": "password:\",\n      \""
+      },
+      {
+        "file": "dataset/vendor_references/sonic/extracted/sonic_user_manual_and_schema.extracted.json",
+        "match": "password:\",\n        \""
+      },
+      {
+        "file": "dataset/vendor_references/sonic/extracted/sonic_utilities_command_reference.extracted.json",
+        "match": "password:\"\n      ]\n    },\n    {\n      \""
+      },
+      {
+        "file": "dataset/vendor_references/stormshield/commands/commands.json",
+        "match": "password=\",\n    \""
+      },
+      {
+        "file": "dataset/vendor_references/stormshield/commands/commands.json",
+        "match": "password=\",\n    \""
+      },
+      {
+        "file": "dataset/vendor_references/stormshield/extracted/stormshield_sns_v5_cli_serverd_reference.extracted.json",
+        "match": "password=\"\n      ]\n    },\n    {\n      \""
+      },
+      {
+        "file": "network-compliance-main/auditor-core/tests/test_new_features.py",
+        "match": "-----BEGIN RSA PRIVATE KEY-----"
+      },
+      {
+        "file": "network-compliance-main/tests/test_new_features.py",
+        "match": "-----BEGIN RSA PRIVATE KEY-----"
+      },
+      {
+        "file": "oxidized-master/oxidized-master/docs/Hooks.md",
+        "match": "password: \"password\""
+      },
+      {
+        "file": "oxidized-master/oxidized-master/docs/Sources.md",
+        "match": "password: 'password'"
+      },
+      {
+        "file": "oxidized-master/oxidized-master/spec/model/data/tplink#generic#prompt.yaml",
+        "match": "Password:\"\n  - \""
+      },
+      {
+        "file": "oxidized-master/oxidized-master/spec/model/data/vsololt#generic#prompt.yaml",
+        "match": "Password:\"\n  - \""
+      },
+      {
+        "file": "python-SNS-API-master/README.md",
+        "match": "password='password'"
+      },
+      {
+        "file": "python-SNS-API-master/examples/addvlan.py",
+        "match": "Password: \")\nvlanname = input(\""
+      },
+      {
+        "file": "python-SNS-API-master/examples/addvlan.py",
+        "match": "password = \"mypassword\""
+      },
+      {
+        "file": "python-SNS-API-master/examples/getproperty.py",
+        "match": "Password: \")\n\n# connect to the appliance..."
+      },
+      {
+        "file": "sonicos-automation-main/common/ssh.py",
+        "match": "Password:' in authentication_output[-20:..."
+      },
+      {
+        "file": "sonicos-automation-main/common/ssh.py",
+        "match": "Password:' in rbuffer[-20:] and '"
+      },
+      {
+        "file": "sonicos-automation-main/sonicos/api2.py",
+        "match": "password: \")\n\n    login_object = Login(\n..."
+      },
+      {
+        "file": "tests/test_live_collector.py",
+        "match": "password=\"password123\""
+      },
+      {
+        "file": "tests/test_live_collector.py",
+        "match": "password=\"password123\""
+      },
+      {
+        "file": "tests/test_live_collector.py",
+        "match": "password=\"password123\""
+      },
+      {
+        "file": "tests/test_new_features.py",
+        "match": "-----BEGIN RSA PRIVATE KEY-----"
+      },
+      {
+        "file": "tests/test_real_device_dataset.py",
+        "match": "-----BEGIN RSA PRIVATE KEY-----"
+      },
+      {
+        "file": "tests/test_security_input.py",
+        "match": "-----BEGIN RSA PRIVATE KEY-----"
+      },
+      {
+        "file": "tests/test_vendor_reference_pipeline.py",
+        "match": "-----BEGIN RSA PRIVATE KEY-----"
+      },
+      {
+        "file": "tools/forensic_validator.py",
+        "match": "-----BEGIN RSA PRIVATE KEY-----"
+      },
+      {
+        "file": "tools/forensic_validator.py",
+        "match": "-----BEGIN OPENSSH PRIVATE KEY-----"
+      },
+      {
+        "file": "tools/forensic_validator.py",
+        "match": "-----BEGIN PRIVATE KEY-----"
+      }
+    ]
+  },
+  "e2e_matrix": [
+    {
+      "vendor_key": "cisco_ios",
+      "platform_name": "Cisco IOS / IOS-XE",
+      "parser_class": "CiscoIOSParser",
+      "fixture": "dataset/official_vendor_examples/cisco/cisco_devnet_iosxe_netconf.xml",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "juniper_junos",
+      "platform_name": "Juniper Junos",
+      "parser_class": "JunosParser",
+      "fixture": "dataset/public_configuration/juniper/juniper_mx480_sanitized.conf",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "fortinet_fortios",
+      "platform_name": "Fortinet FortiOS",
+      "parser_class": "FortiosParser",
+      "fixture": "dataset/official_vendor_examples/fortinet/fortigate_hq_official_ref.conf",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "arista_eos",
+      "platform_name": "Arista EOS",
+      "parser_class": "AristaEOSParser",
+      "fixture": "dataset/public_configuration/arista/arista_eos_spine01_sanitized.cfg",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "sonic",
+      "platform_name": "SONiC NOS",
+      "parser_class": "SonicParser",
+      "fixture": "dataset/public_configuration/sonic/sonic_config_db_spine.json",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "paloalto_panos",
+      "platform_name": "Palo Alto PAN-OS",
+      "parser_class": "PaloAltoParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "huawei_vrp",
+      "platform_name": "Huawei VRP",
+      "parser_class": "HuaweiVRPParser",
+      "fixture": "dataset/lab_configuration/huawei/huawei_vrp_s6720_lab.cfg",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "checkpoint_gaia",
+      "platform_name": "Check Point Gaia",
+      "parser_class": "CheckPointGaiaParser",
+      "fixture": "dataset/official_vendor_examples/check_point/checkpoint_gaia_clish.conf",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "mikrotik_routeros",
+      "platform_name": "MikroTik RouterOS",
+      "parser_class": "MikroTikROSParser",
+      "fixture": "dataset/lab_configuration/mikrotik/mikrotik_routeros_hardened.rsc",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "sonicwall_sonicos",
+      "platform_name": "SonicWall SonicOS",
+      "parser_class": "SonicWallSonicOSParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "stormshield_sns",
+      "platform_name": "Stormshield SNS",
+      "parser_class": "StormshieldSNSParser",
+      "fixture": "dataset/official_vendor_examples/stormshield/stormshield_sns_cli.conf",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "watchguard_fireware",
+      "platform_name": "WatchGuard Fireware",
+      "parser_class": "WatchGuardFirewareParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "a10_acos",
+      "platform_name": "A10 Networks ACOS",
+      "parser_class": "A10ACOSParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "alcatel_aos",
+      "platform_name": "Alcatel AOS",
+      "parser_class": "AlcatelAOSParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "barracuda_cloudgen",
+      "platform_name": "Barracuda CloudGen",
+      "parser_class": "BarracudaCloudGenParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "cato_networks",
+      "platform_name": "Cato Networks SASE",
+      "parser_class": "CatoNetworksParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "extreme_exos",
+      "platform_name": "Extreme EXOS",
+      "parser_class": "ExtremeEXOSParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "f5_bigip_tmos",
+      "platform_name": "F5 BIG-IP TMOS",
+      "parser_class": "F5BigIPTMOSParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "forcepoint_ngfw",
+      "platform_name": "Forcepoint NGFW",
+      "parser_class": "ForcepointNGFWParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "hillstone_stoneos",
+      "platform_name": "Hillstone StoneOS",
+      "parser_class": "HillstoneStoneOSParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "hpe_aruba_aos_cx",
+      "platform_name": "HPE Aruba AOS-CX",
+      "parser_class": "HPEArubaAosCxParser",
+      "fixture": "dataset/official_vendor_examples/hpe_aruba/aruba_aoscx_campus_sw01.conf",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "netgate_pfsense",
+      "platform_name": "Netgate pfSense",
+      "parser_class": "NetgatePfSenseParser",
+      "fixture": "dataset/lab_configuration/netgate_pfsense/netgate_pfsense_backup.xml",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    },
+    {
+      "vendor_key": "nokia_sros",
+      "platform_name": "Nokia SR OS",
+      "parser_class": "NokiaSROSParser",
+      "fixture": "dataset/public_configuration/nokia/nokia_sros_7750.conf",
+      "parser_success": false,
+      "exception": "Not a Nokia SR OS configuration.",
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "EXCEPTION: Not a Nokia SR OS configuration."
+    },
+    {
+      "vendor_key": "ruckus_fastiron",
+      "platform_name": "Ruckus FastIron",
+      "parser_class": "RuckusFastIronParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "sangfor_ngaf",
+      "platform_name": "Sangfor NGAF",
+      "parser_class": "SangforNGAFParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "sophos_sfos",
+      "platform_name": "Sophos SFOS",
+      "parser_class": "SophosSFOSParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "ubiquiti_edgeos",
+      "platform_name": "Ubiquiti EdgeOS",
+      "parser_class": "UbiquitiEdgeOSParser",
+      "fixture": "dataset/public_configuration/ubiquiti/ubiquiti_edgeos_router.conf",
+      "parser_success": false,
+      "exception": "Not a Ubiquiti Networks EdgeOS configuration.",
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "EXCEPTION: Not a Ubiquiti Networks EdgeOS configuration."
+    },
+    {
+      "vendor_key": "versa_versos",
+      "platform_name": "Versa VersaOS",
+      "parser_class": "VersaVersaOSParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "zscaler_zia",
+      "platform_name": "Zscaler ZIA",
+      "parser_class": "ZscalerZIAParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "zscaler_zpa",
+      "platform_name": "Zscaler ZPA",
+      "parser_class": "ZscalerZPAParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "aws_security_group",
+      "platform_name": "AWS Security Group",
+      "parser_class": "AWSSecurityGroupParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "azure_nsg",
+      "platform_name": "Azure NSG",
+      "parser_class": "AzureNSGParser",
+      "fixture": null,
+      "parser_success": false,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {},
+      "compliance_result": "NO_FIXTURE"
+    },
+    {
+      "vendor_key": "cisco_asa",
+      "platform_name": "Cisco ASA",
+      "parser_class": "CiscoASAParser",
+      "fixture": "dataset/official_vendor_examples/cisco/cisco_devnet_iosxe_netconf.xml",
+      "parser_success": true,
+      "exception": null,
+      "observations_count": 0,
+      "identity": {
+        "error": "'str' object has no attribute 'provenance'"
+      },
+      "compliance_result": "RULESET_UNAVAILABLE"
+    }
+  ]
+}

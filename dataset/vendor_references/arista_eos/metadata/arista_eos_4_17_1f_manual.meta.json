@@ -1,0 +1,19 @@
+{
+  "vendor": "arista_eos",
+  "vendor_name": "Arista",
+  "os_name": "Arista EOS",
+  "config_format": "CLI running-config",
+  "document_title": "Arista EOS User Manual 4.17.1F (Historical Open PDF)",
+  "source_url": "https://www.arista.com/assets/data/docs/Manuals/EOS-4.17.1F-Manual.pdf",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "pdf",
+  "version": "4.17.1F",
+  "retrieved_at": "2026-08-31T16:32:13.089160+00:00",
+  "status": "UNAVAILABLE",
+  "sha256": null,
+  "byte_size": 0,
+  "local_path": null,
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": "Invalid PDF header received for https://www.arista.com/assets/data/docs/Manuals/EOS-4.17.1F-Manual.pdf"
+}

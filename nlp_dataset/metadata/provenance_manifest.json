@@ -1,0 +1,23 @@
+{
+  "dataset_version": "v2.0.0",
+  "generator": "NLPDatasetBuilderV2",
+  "timestamp": "2026-09-02 21:08:05",
+  "random_seed": 42,
+  "total_source_configs": 2518,
+  "vendor_count": 21,
+  "tasks": {
+    "analysis": 2518,
+    "security_detection": 2733,
+    "compliance": 20136,
+    "qa": 1158,
+    "remediation": 5247,
+    "classification": 13294,
+    "ner": 1446
+  },
+  "leakage_protection": {
+    "direct_label_in_input": false,
+    "synthetic_evidence_in_input": false,
+    "config_isolation": true,
+    "cross_split_duplicate_overlap": 0
+  }
+}

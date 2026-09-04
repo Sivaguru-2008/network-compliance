@@ -1,0 +1,254 @@
+{
+  "timestamp": "2026-09-02 14:27:16",
+  "summary": {
+    "total_files": 2524,
+    "total_bytes": 6057195,
+    "total_mb": 5.78,
+    "duration_seconds": 47.71
+  },
+  "per_slug": {
+    "a10_acos": {
+      "coverage": "scarce",
+      "files_count": 61,
+      "bytes": 31861,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "alcatel_aos": {
+      "coverage": "scarce",
+      "files_count": 26,
+      "bytes": 26868,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "arista_eos": {
+      "coverage": "some",
+      "files_count": 227,
+      "bytes": 361926,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "aws_security_group": {
+      "coverage": "some",
+      "files_count": 2,
+      "bytes": 16403,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "azure_nsg": {
+      "coverage": "some",
+      "files_count": 1,
+      "bytes": 8131,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "barracuda_cloudgen": {
+      "coverage": "none",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "cato_networks": {
+      "coverage": "none",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "checkpoint_gaia": {
+      "coverage": "some",
+      "files_count": 40,
+      "bytes": 21676,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "cisco_asa": {
+      "coverage": "some",
+      "files_count": 161,
+      "bytes": 275785,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "cisco_ios": {
+      "coverage": "rich",
+      "files_count": 811,
+      "bytes": 2731823,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "extreme_exos": {
+      "coverage": "scarce",
+      "files_count": 9,
+      "bytes": 19603,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "f5_bigip_tmos": {
+      "coverage": "some",
+      "files_count": 75,
+      "bytes": 142271,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "forcepoint_ngfw": {
+      "coverage": "none",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "fortinet_fortios": {
+      "coverage": "some",
+      "files_count": 115,
+      "bytes": 189658,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "hillstone_stoneos": {
+      "coverage": "none",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "hpe_aruba": {
+      "coverage": "scarce",
+      "files_count": 41,
+      "bytes": 58756,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "hpe_aruba_aos_cx": {
+      "coverage": "scarce",
+      "files_count": 34,
+      "bytes": 109536,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "huawei_vrp": {
+      "coverage": "some",
+      "files_count": 76,
+      "bytes": 228201,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "juniper_junos": {
+      "coverage": "rich",
+      "files_count": 386,
+      "bytes": 374934,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "mikrotik_routeros": {
+      "coverage": "some",
+      "files_count": 84,
+      "bytes": 69112,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "netgate_pfsense": {
+      "coverage": "some",
+      "files_count": 2,
+      "bytes": 40516,
+      "errors_count": 1,
+      "errors_sample": [
+        {
+          "file": "http/config.xml",
+          "status": "not_found"
+        }
+      ]
+    },
+    "nokia_sros": {
+      "coverage": "some",
+      "files_count": 83,
+      "bytes": 351472,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "paloalto_panos": {
+      "coverage": "rich",
+      "files_count": 198,
+      "bytes": 613168,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "ruckus_fastiron": {
+      "coverage": "scarce",
+      "files_count": 11,
+      "bytes": 119976,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "sangfor_ngaf": {
+      "coverage": "none",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "sonic": {
+      "coverage": "some",
+      "files_count": 57,
+      "bytes": 138154,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "sonicwall": {
+      "coverage": "scarce",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "sophos_sfos": {
+      "coverage": "scarce",
+      "files_count": 3,
+      "bytes": 16200,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "stormshield": {
+      "coverage": "none",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "ubiquiti_edgeos": {
+      "coverage": "some",
+      "files_count": 20,
+      "bytes": 110843,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "versa_versos": {
+      "coverage": "none",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "watchguard_fireware": {
+      "coverage": "scarce",
+      "files_count": 1,
+      "bytes": 322,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "zscaler_zia": {
+      "coverage": "none",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    },
+    "zscaler_zpa": {
+      "coverage": "none",
+      "files_count": 0,
+      "bytes": 0,
+      "errors_count": 0,
+      "errors_sample": []
+    }
+  }
+}

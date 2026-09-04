@@ -1,0 +1,19 @@
+{
+  "vendor": "mikrotik_routeros",
+  "vendor_name": "MikroTik",
+  "os_name": "RouterOS v6 & v7",
+  "config_format": "/export .rsc",
+  "document_title": "MikroTik RouterOS Documentation Space",
+  "source_url": "https://help.mikrotik.com/docs/spaces/ROS/",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "html",
+  "version": "v7",
+  "retrieved_at": "2026-08-31T16:32:36.792938+00:00",
+  "status": "UNAVAILABLE",
+  "sha256": null,
+  "byte_size": 0,
+  "local_path": null,
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": "HTTP 404 Not Found: https://help.mikrotik.com/docs/spaces/ROS/"
+}

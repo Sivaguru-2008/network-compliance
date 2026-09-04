@@ -1,0 +1,38 @@
+{
+  "vendor_key": "zscaler_zia",
+  "vendor_name": "Zscaler",
+  "os_name": "Zscaler Internet Access (ZIA)",
+  "syntax_type": "cloud_json_policy",
+  "root_blocks": [
+    {
+      "block_name": "zia_policy",
+      "entry_keyword": "{",
+      "exit_keyword": "}",
+      "child_delimiter": ":",
+      "statement_terminator": ",",
+      "allowed_subblocks": [
+        "urlFilteringRules",
+        "firewallRules",
+        "sslInspectionRules",
+        "dlpRules"
+      ],
+      "common_directives": [
+        "companyName",
+        "cloudName",
+        "timezone"
+      ],
+      "security_directives": [
+        "urlFilteringRules.action",
+        "firewallRules.action",
+        "sslInspectionRules.action",
+        "adminSecurity.samlAuth"
+      ]
+    }
+  ],
+  "negation_prefix": "",
+  "comment_prefixes": [],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "zscaler_zia_policy_json"
+  }
+}

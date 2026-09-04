@@ -1,0 +1,37 @@
+{
+  "vendor_key": "extreme_exos",
+  "vendor_name": "Extreme Networks",
+  "os_name": "EXOS",
+  "syntax_type": "exos_cli",
+  "root_blocks": [
+    {
+      "block_name": "exos_config",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "configure snmp sysName",
+        "configure timezone",
+        "configure ntp server add"
+      ],
+      "security_directives": [
+        "enable ssh2",
+        "disable telnet",
+        "disable web",
+        "enable web https",
+        "configure radius",
+        "configure syslog add"
+      ]
+    }
+  ],
+  "negation_prefix": "disable",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "extremexos_cli_statements"
+  }
+}

@@ -245,3 +245,39 @@ def import_db(source_path: Path) -> None:
         raise FileNotFoundError(f"Database file not found to import: {source_path}")
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(source_path, DB_PATH)
+
+
+def get_vendor_command_reference(vendor: str, keyword: str, dataset_base: Path = Path("dataset")) -> List[Dict[str, Any]]:
+    """Retrieve authoritative vendor command references matching keyword."""
+    cmd_file = dataset_base / "vendor_references" / vendor / "commands" / "commands.json"
+    if not cmd_file.exists():
+        return []
+    try:
+        with open(cmd_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        matches = []
+        kw_lower = keyword.lower()
+        for item in data:
+            if kw_lower in item.get("command", "").lower() or kw_lower in (item.get("security_relevance") or "").lower():
+                matches.append(item)
+        return matches
+    except Exception:
+        return []
+
+
+def get_authoritative_citation(vendor: str, command: str, dataset_base: Path = Path("dataset")) -> Optional[Dict[str, Any]]:
+    """Return authoritative source citation for a specific vendor command."""
+    results = get_vendor_command_reference(vendor, command, dataset_base)
+    if results:
+        top = results[0]
+        return {
+            "vendor": top.get("vendor"),
+            "command": top.get("command"),
+            "negated": top.get("negated_command"),
+            "source_document": top.get("source_document"),
+            "source_url": top.get("source_url"),
+            "page_or_section": top.get("page_or_section"),
+            "version": top.get("version"),
+            "provenance_status": top.get("provenance_status", "SOURCE VERIFIED"),
+        }
+    return None

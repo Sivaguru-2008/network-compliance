@@ -19,25 +19,19 @@ class SourceClassification(str, Enum):
     VERIFIED_FROM_PDF = "VERIFIED_FROM_PDF"
     CONTROL_INTENT = "CONTROL_INTENT"
     GENERIC_MAPPING = "GENERIC_MAPPING"
+    UNVERIFIED = "UNVERIFIED"
 
 
 class Status(str, Enum):
     """Verdicts this tool is allowed to reach.
 
-    ``NEEDS_REVIEW`` is a designed outcome, not a failure mode: it means the
-    configuration carried no conclusive evidence either way, so the tool
-    escalates to a human instead of guessing.  Missing evidence is never
-    silently upgraded to PASS.
-
-    ``NOT_APPLICABLE`` means the control does not apply to this device type
-    or deployment scenario.
-
-    ``UNSUPPORTED`` means the tool cannot evaluate this control from config
-    text alone — it requires operational commands, GUI checks, or external
-    data.  UNSUPPORTED is never silently converted to PASS or NOT_APPLICABLE.
-
-    ``MANUAL_REVIEW`` means the control requires human judgment even with
-    full config access.
+    ``PASS``: Evidence proves the requirement is satisfied.
+    ``FAIL``: Evidence proves the requirement is violated.
+    ``NEEDS_REVIEW``: Configuration carried no conclusive evidence either way.
+    ``NOT_APPLICABLE``: Control does not apply to this device/scenario.
+    ``UNSUPPORTED``: Parser/framework does not evaluate this property.
+    ``ERROR``: Auditing pipeline itself failed.
+    ``MANUAL_REVIEW``: Control requires human judgment.
     """
 
     PASS = "PASS"
@@ -45,6 +39,7 @@ class Status(str, Enum):
     NEEDS_REVIEW = "NEEDS_REVIEW"
     NOT_APPLICABLE = "NOT_APPLICABLE"
     UNSUPPORTED = "UNSUPPORTED"
+    ERROR = "ERROR"
     MANUAL_REVIEW = "MANUAL_REVIEW"
 
 
@@ -64,6 +59,7 @@ class Evidence(BaseModel):
     mapping_id: Optional[str] = None
     original_line_number: Optional[int] = None
     original_line: Optional[str] = None
+    normalized_value: Any = None
 
     @classmethod
     def from_observation(cls, field: str, obs: Observation) -> "Evidence":
@@ -79,6 +75,7 @@ class Evidence(BaseModel):
             mapping_id=getattr(obs, "mapping_id", None),
             original_line_number=getattr(obs, "original_line_number", None),
             original_line=getattr(obs, "original_line", None),
+            normalized_value=getattr(obs, "value", None),
         )
 
     @property
@@ -145,9 +142,6 @@ class ControlResult(BaseModel):
             status=status,
             message=message,
             evidence=evidence,
-            # Remediation is carried on non-PASS results only: a passing control
-            # has nothing to remediate, and shipping it anyway invites operators
-            # to paste commands they do not need.
             remediation=None if status is Status.PASS else rule.remediation,
             references=rule.references,
             device=device,
@@ -168,15 +162,6 @@ class ControlResult(BaseModel):
 
     @property
     def primary_evidence(self) -> Optional[Evidence]:
-        """The evidence line that best explains this verdict.
-
-        Which one that is depends on the verdict. A control that passed is
-        explained by a field that was actually established -- citing an
-        undetected field next to PASS reads as "passed on no evidence", which
-        is precisely the impression this tool must never give. A FAIL or
-        NEEDS_REVIEW is explained by the field that fell short, so there the
-        undetected field is the interesting one.
-        """
         if not self.evidence:
             return None
         wanted = self.status is Status.PASS
@@ -190,16 +175,26 @@ class ReportSummary(BaseModel):
     needs_review: int = 0
     not_applicable: int = 0
     unsupported: int = 0
+    error: int = 0
     manual_review: int = 0
+    applicable_controls: int = 0
+    decidable_controls: int = 0
+    undecidable_controls: int = 0
+    unsupported_controls: int = 0
+    error_controls: int = 0
+    decision_coverage: float = Field(
+        default=0.0,
+        description="decidable_controls / applicable_controls. Percentage of applicable controls with a decided result.",
+    )
     failed_by_severity: Dict[str, int] = Field(default_factory=dict)
     needs_review_by_severity: Dict[str, int] = Field(default_factory=dict)
     compliance_score: float = Field(
         default=0.0,
-        description="passed / (total - not_applicable - unsupported - manual_review). Only counts controls the tool could actually evaluate.",
+        description="passed / applicable_controls. Raw compliance score over all applicable controls.",
     )
     adjudicated_score: float = Field(
         default=0.0,
-        description="passed / (passed + failed). Excludes NEEDS_REVIEW, NOT_APPLICABLE, UNSUPPORTED, MANUAL_REVIEW.",
+        description="passed / decidable_controls. Score calculated strictly from decided (PASS + FAIL) controls.",
     )
 
     @classmethod
@@ -209,10 +204,11 @@ class ReportSummary(BaseModel):
         review = [r for r in results if r.status is Status.NEEDS_REVIEW]
         na = [r for r in results if r.status is Status.NOT_APPLICABLE]
         unsupported = [r for r in results if r.status is Status.UNSUPPORTED]
+        error = [r for r in results if r.status is Status.ERROR]
         manual = [r for r in results if r.status is Status.MANUAL_REVIEW]
         total = len(results)
-        evaluable = total - len(na) - len(unsupported) - len(manual)
-        adjudicated = len(passed) + len(failed)
+        applicable = total - len(na)
+        decidable = len(passed) + len(failed)
         return cls(
             total=total,
             passed=len(passed),
@@ -220,11 +216,18 @@ class ReportSummary(BaseModel):
             needs_review=len(review),
             not_applicable=len(na),
             unsupported=len(unsupported),
+            error=len(error),
             manual_review=len(manual),
+            applicable_controls=applicable,
+            decidable_controls=decidable,
+            undecidable_controls=len(review) + len(manual),
+            unsupported_controls=len(unsupported),
+            error_controls=len(error),
+            decision_coverage=round(100.0 * decidable / applicable, 1) if applicable else 0.0,
             failed_by_severity=_count_by_severity(failed),
             needs_review_by_severity=_count_by_severity(review),
-            compliance_score=round(100.0 * len(passed) / evaluable, 1) if evaluable else 0.0,
-            adjudicated_score=round(100.0 * len(passed) / adjudicated, 1) if adjudicated else 0.0,
+            compliance_score=round(100.0 * len(passed) / applicable, 1) if applicable else 0.0,
+            adjudicated_score=round(100.0 * len(passed) / decidable, 1) if decidable else 0.0,
         )
 
 
@@ -248,6 +251,8 @@ class TargetInfo(BaseModel):
     detection_confidence: float = 1.0
     config_line_count: int = 0
     parser_warnings: List[str] = Field(default_factory=list)
+    completeness: Optional[Dict[str, Any]] = None
+    capabilities: Optional[Dict[str, str]] = None
 
 
 class FrameworkInfo(BaseModel):
@@ -280,3 +285,39 @@ class AuditReport(BaseModel):
 
     def results_by_status(self, status: Status) -> List[ControlResult]:
         return [r for r in self.results if r.status is status]
+
+    def validate_consistency(self) -> None:
+        """Enforces that counts, scores, and integrity match perfectly."""
+        if self.summary.total != len(self.results):
+            raise ValueError(
+                f"Summary total ({self.summary.total}) != results count ({len(self.results)})"
+            )
+        status_sum = (
+            self.summary.passed
+            + self.summary.failed
+            + self.summary.needs_review
+            + self.summary.not_applicable
+            + self.summary.unsupported
+            + self.summary.error
+            + self.summary.manual_review
+        )
+        if status_sum != self.summary.total:
+            raise ValueError(
+                f"Sum of status counts ({status_sum}) != summary.total ({self.summary.total})"
+            )
+        expected_applicable = self.summary.total - self.summary.not_applicable
+        if self.summary.applicable_controls != expected_applicable:
+            raise ValueError(
+                f"Applicable controls ({self.summary.applicable_controls}) != expected ({expected_applicable})"
+            )
+        expected_decidable = self.summary.passed + self.summary.failed
+        if self.summary.decidable_controls != expected_decidable:
+            raise ValueError(
+                f"Decidable controls ({self.summary.decidable_controls}) != expected ({expected_decidable})"
+            )
+        for name, fw_summary in self.framework_summaries.items():
+            fw_res = [r for r in self.results if r.framework == name]
+            if fw_summary.total != len(fw_res):
+                raise ValueError(
+                    f"Framework {name} summary total ({fw_summary.total}) != matching results ({len(fw_res)})"
+                )

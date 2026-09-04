@@ -1,0 +1,19 @@
+{
+  "vendor": "checkpoint_gaia",
+  "vendor_name": "Check Point",
+  "os_name": "Check Point Gaia",
+  "config_format": "Gaia clish",
+  "document_title": "Check Point Gaia R81.20 Administration Guide",
+  "source_url": "https://sc1.checkpoint.com/documents/R81.20/WebAdminGuides/EN/CP_R81.20_Gaia_AdminGuide/CP_R81.20_Gaia_AdminGuide.pdf",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "pdf",
+  "version": "R81.20",
+  "retrieved_at": "2026-08-31T16:29:53.916964+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "511b4b8eb554e4eeb9677c0dbb4ff616a16dcbfeb27d8acc7327de59061787dc",
+  "byte_size": 3932886,
+  "local_path": "vendor_references\\checkpoint_gaia\\documents\\checkpoint_gaia_r81_20_adminguide.pdf",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

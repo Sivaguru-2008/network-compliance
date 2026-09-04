@@ -31,186 +31,2119 @@
   "description": "Center for Internet Security Benchmarks",
   "mappings": {
     "aaa_enabled": {
-      "cisco_ios": { "id": "CIS-IOS-1.1.1", "control_ref": "1.1.1", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-AAA-CENTRALISED", "control_ref": null, "verified": false, "note": "No direct CIS FortiGate clause maps to centralized AAA; closest is admin profile assignment (2.4.3)" },
-      "arista_eos": { "id": "CIS-EOS-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.3.10", "control_ref": "1.3.10", "verified": false },
-      "huawei_vrp": { "id": "CIS-HUAWEI-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-AAA-CENTRALISED", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-AAA-CENTRALISED", "control_ref": null, "verified": false, "note": "No official CIS benchmark for SonicWall. Generic best-practice mapping from SonicWall hardening guide." },
-      "stormshield_sns": { "id": "SNS-AAA-CENTRALISED", "control_ref": null, "verified": false, "note": "No official CIS benchmark for Stormshield. Generic best-practice mapping from Stormshield hardening guide." },
-      "watchguard_fireware": { "id": "WG-AAA-CENTRALISED", "control_ref": null, "verified": false, "note": "No official CIS benchmark for WatchGuard. Generic best-practice mapping from WatchGuard hardening documentation." }
+      "cisco_ios": {
+        "id": "CIS-IOS-1.1.1",
+        "control_ref": "1.1.1",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false,
+        "note": "No direct CIS FortiGate clause maps to centralized AAA; closest is admin profile assignment (2.4.3)"
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.3.10",
+        "control_ref": "1.3.10",
+        "verified": false
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false,
+        "note": "No official CIS benchmark for SonicWall. Generic best-practice mapping from SonicWall hardening guide."
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-AAA-CENTRALISED",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "secure_vty_transport": {
-      "cisco_ios": { "id": "CIS-IOS-1.2.2", "control_ref": "1.2.2", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.5", "control_ref": "2.4.5", "verified": true },
-      "arista_eos": { "id": "CIS-EOS-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.2.3", "control_ref": "1.2.3", "verified": true },
-      "huawei_vrp": { "id": "CIS-HUAWEI-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false, "note": "No official CIS benchmark for SonicWall. SonicOS does not support telnet; HTTP is the cleartext concern." },
-      "stormshield_sns": { "id": "SNS-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false, "note": "No official CIS benchmark for Stormshield. SNS does not support telnet; HTTP is the cleartext concern." },
-      "watchguard_fireware": { "id": "WG-NO-CLEARTEXT-SERVICES", "control_ref": null, "verified": false, "note": "No official CIS benchmark for WatchGuard. Fireware does not support telnet; administration is HTTPS and SSH only." }
+      "cisco_ios": {
+        "id": "CIS-IOS-1.2.2",
+        "control_ref": "1.2.2",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.4.5",
+        "control_ref": "2.4.5",
+        "verified": true
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.2.3",
+        "control_ref": "1.2.3",
+        "verified": true
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false,
+        "note": "No official CIS benchmark for SonicWall. SonicOS does not support telnet; HTTP is the cleartext concern."
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-NO-CLEARTEXT-SERVICES",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-SECURE-VTY-TRANSPORT",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "vty_idle_timeout": {
-      "cisco_ios": { "id": "CIS-IOS-1.2.9", "control_ref": "1.2.9", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.4", "control_ref": "2.4.4", "verified": true },
-      "arista_eos": { "id": "CIS-EOS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.4.1", "control_ref": "1.4.1", "verified": true },
-      "huawei_vrp": { "id": "CIS-HUAWEI-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "stormshield_sns": { "id": "SNS-IDLE-TIMEOUT", "control_ref": null, "verified": false },
-      "watchguard_fireware": { "id": "WG-IDLE-TIMEOUT", "control_ref": null, "verified": false }
+      "cisco_ios": {
+        "id": "CIS-IOS-1.2.9",
+        "control_ref": "1.2.9",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.4.4",
+        "control_ref": "2.4.4",
+        "verified": true
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.4.1",
+        "control_ref": "1.4.1",
+        "verified": true
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-IDLE-TIMEOUT",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "enable_secret_encrypted": {
-      "cisco_ios": { "id": "CIS-IOS-1.4.1-1.4.2", "control_ref": "1.4.1, 1.4.2", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-ROOT-AUTH-HASHED", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.1", "control_ref": "2.4.1", "verified": true, "note": "FortiOS hashes admin passwords by default; CIS 2.4.1 checks the default admin password is changed" },
-      "arista_eos": { "id": "CIS-EOS-ENABLE-SECRET-HASHED", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-ADMIN-PASSWORD-HASHED", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.3.2", "control_ref": "1.3.2", "verified": false },
-      "huawei_vrp": { "id": "CIS-HUAWEI-SUPER-PASSWORD-HASHED", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-PASSWORD-HASHED", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-PASSWORD-HASHED", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-PASSWORD-HASHED", "control_ref": null, "verified": false, "note": "SonicOS stores admin passwords hashed by default." },
-      "stormshield_sns": { "id": "SNS-PASSWORD-HASHED", "control_ref": null, "verified": false, "note": "Stormshield SNS stores credentials hashed by default." },
-      "watchguard_fireware": { "id": "WG-PASSWORD-HASHED", "control_ref": null, "verified": false, "note": "Fireware stores administrative passphrases hashed by default." }
+      "cisco_ios": {
+        "id": "CIS-IOS-1.4.1-1.4.2",
+        "control_ref": "1.4.1, 1.4.2",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.4.1",
+        "control_ref": "2.4.1",
+        "verified": true,
+        "note": "FortiOS hashes admin passwords by default; CIS 2.4.1 checks the default admin password is changed"
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-ENABLE-SECRET-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-ADMIN-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.3.2",
+        "control_ref": "1.3.2",
+        "verified": false
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-SUPER-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false,
+        "note": "SonicOS stores admin passwords hashed by default."
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-PASSWORD-HASHED",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-ENABLE-SECRET-ENCRYPTED",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "no_default_snmp_community": {
-      "cisco_ios": { "id": "CIS-IOS-1.5.2-1.5.3", "control_ref": "1.5.2, 1.5.3", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.3.1", "control_ref": "2.3.1", "verified": true },
-      "arista_eos": { "id": "CIS-EOS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.5.1", "control_ref": "1.5.1", "verified": true },
-      "huawei_vrp": { "id": "CIS-HUAWEI-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "stormshield_sns": { "id": "SNS-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false },
-      "watchguard_fireware": { "id": "WG-SNMP-NO-DEFAULT-COMMUNITY", "control_ref": null, "verified": false }
+      "cisco_ios": {
+        "id": "CIS-IOS-1.5.2-1.5.3",
+        "control_ref": "1.5.2, 1.5.3",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.3.1",
+        "control_ref": "2.3.1",
+        "verified": true
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.5.1",
+        "control_ref": "1.5.1",
+        "verified": true
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-SNMP-NO-DEFAULT-COMMUNITY",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "http_server_disabled": {
-      "cisco_ios": { "id": "CIS-IOS-2.1-HTTP-SERVER", "control_ref": "2.1", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-NO-JWEB-HTTP", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.5-HTTP", "control_ref": "2.4.5", "verified": true, "note": "CIS 2.4.5 covers disabling HTTP admin access as part of encrypted-only channels" },
-      "arista_eos": { "id": "CIS-EOS-NO-HTTP-API", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-NO-REST-API", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.2.3-HTTP", "control_ref": "1.2.3", "verified": true },
-      "huawei_vrp": { "id": "CIS-HUAWEI-NO-HTTP-SERVER", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-NO-HTTP-SERVER", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-NO-HTTP-SERVER", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-NO-HTTP-SERVER", "control_ref": null, "verified": false },
-      "stormshield_sns": { "id": "SNS-NO-HTTP-SERVER", "control_ref": null, "verified": false },
-      "watchguard_fireware": { "id": "WG-NO-HTTP-SERVER", "control_ref": null, "verified": false, "note": "Fireware does not support unencrypted HTTP administration." }
+      "cisco_ios": {
+        "id": "CIS-IOS-2.1-HTTP-SERVER",
+        "control_ref": "2.1",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-NO-JWEB-HTTP",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.4.5-HTTP",
+        "control_ref": "2.4.5",
+        "verified": true,
+        "note": "CIS 2.4.5 covers disabling HTTP admin access as part of encrypted-only channels"
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-NO-HTTP-API",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-NO-REST-API",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.2.3-HTTP",
+        "control_ref": "1.2.3",
+        "verified": true
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-NO-HTTP-SERVER",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "ssh_version_2": {
-      "cisco_ios": { "id": "CIS-IOS-2.1.1.6", "control_ref": "2.1.1.6", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-SSH-V2", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-SSH-V2", "control_ref": null, "verified": false, "note": "CIS FortiGate benchmark does not have a specific SSH v2 recommendation; FortiOS 7.x defaults to SSHv2" },
-      "arista_eos": { "id": "CIS-EOS-SSH-V2", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-SSH-V2", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-SSH-V2", "control_ref": null, "verified": false },
-      "huawei_vrp": { "id": "CIS-HUAWEI-SSH-V2", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-SSH-V2", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-SSH-V2", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-SSH-V2", "control_ref": null, "verified": false, "note": "SonicOS SSH is always protocol version 2." },
-      "stormshield_sns": { "id": "SNS-SSH-V2", "control_ref": null, "verified": false, "note": "Stormshield SNS SSH is always protocol version 2." },
-      "watchguard_fireware": { "id": "WG-SSH-V2", "control_ref": null, "verified": false, "note": "WatchGuard Fireware SSH is always protocol version 2." }
+      "cisco_ios": {
+        "id": "CIS-IOS-2.1.1.6",
+        "control_ref": "2.1.1.6",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-SSH-V2",
+        "control_ref": null,
+        "verified": false,
+        "note": "CIS FortiGate benchmark does not have a specific SSH v2 recommendation; FortiOS 7.x defaults to SSHv2"
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-SSH-V2",
+        "control_ref": null,
+        "verified": false,
+        "note": "SonicOS SSH is always protocol version 2."
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-SSH-V2",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-SSH-VERSION-2",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "logging_enabled": {
-      "cisco_ios": { "id": "CIS-IOS-2.2.2-2.2.4", "control_ref": "2.2.2, 2.2.4", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-7.1.1", "control_ref": "7.1.1", "verified": true },
-      "arista_eos": { "id": "CIS-EOS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.1.1.1", "control_ref": "1.1.1.1", "verified": true },
-      "huawei_vrp": { "id": "CIS-HUAWEI-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "stormshield_sns": { "id": "SNS-SYSLOG-DESTINATION", "control_ref": null, "verified": false },
-      "watchguard_fireware": { "id": "WG-SYSLOG-DESTINATION", "control_ref": null, "verified": false }
+      "cisco_ios": {
+        "id": "CIS-IOS-2.2.2-2.2.4",
+        "control_ref": "2.2.2, 2.2.4",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-7.1.1",
+        "control_ref": "7.1.1",
+        "verified": true
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.1.1.1",
+        "control_ref": "1.1.1.1",
+        "verified": true
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-SYSLOG-DESTINATION",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-LOGGING-ENABLED",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "management_acl": {
-      "cisco_ios": { "id": "CIS-IOS-1.2-VTY-ACCESS-CLASS", "control_ref": "1.2", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-MGMT-FILTER", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.4.2", "control_ref": "2.4.2", "verified": true },
-      "arista_eos": { "id": "CIS-EOS-MGMT-ACL", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-CTRLPLANE-ACL", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.2.1", "control_ref": "1.2.1", "verified": false },
-      "huawei_vrp": { "id": "CIS-HUAWEI-MGMT-ACL", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-MGMT-ACL", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-MGMT-ACL", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-MGMT-ACL", "control_ref": null, "verified": false },
-      "stormshield_sns": { "id": "SNS-MGMT-ACL", "control_ref": null, "verified": false },
-      "watchguard_fireware": { "id": "WG-MGMT-ACL", "control_ref": null, "verified": false }
+      "cisco_ios": {
+        "id": "CIS-IOS-1.2-VTY-ACCESS-CLASS",
+        "control_ref": "1.2",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-MGMT-FILTER",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.4.2",
+        "control_ref": "2.4.2",
+        "verified": true
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-CTRLPLANE-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.2.1",
+        "control_ref": "1.2.1",
+        "verified": false
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-MGMT-ACL",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "login_banner": {
-      "cisco_ios": { "id": "CIS-IOS-1.6-LOGIN-BANNER", "control_ref": "1.6", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.1.1", "control_ref": "2.1.1, 2.1.2", "verified": true },
-      "arista_eos": { "id": "CIS-EOS-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.1.2", "control_ref": "1.1.2", "verified": true },
-      "huawei_vrp": { "id": "CIS-HUAWEI-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "stormshield_sns": { "id": "SNS-LOGIN-BANNER", "control_ref": null, "verified": false },
-      "watchguard_fireware": { "id": "WG-LOGIN-BANNER", "control_ref": null, "verified": false }
+      "cisco_ios": {
+        "id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "control_ref": "1.6",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.1.1",
+        "control_ref": "2.1.1, 2.1.2",
+        "verified": true
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.1.2",
+        "control_ref": "1.1.2",
+        "verified": true
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-LOGIN-BANNER",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "password_min_length": {
-      "cisco_ios": { "id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH", "control_ref": "1.1", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.2.1", "control_ref": "2.2.1", "verified": true },
-      "arista_eos": { "id": "CIS-EOS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.3.2-LEN", "control_ref": "1.3.2", "verified": true },
-      "huawei_vrp": { "id": "CIS-HUAWEI-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "stormshield_sns": { "id": "SNS-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false },
-      "watchguard_fireware": { "id": "WG-PASSWORD-MIN-LENGTH", "control_ref": null, "verified": false }
+      "cisco_ios": {
+        "id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "control_ref": "1.1",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.2.1",
+        "control_ref": "2.2.1",
+        "verified": true
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.3.2-LEN",
+        "control_ref": "1.3.2",
+        "verified": true
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-PASSWORD-MIN-LENGTH",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "ntp_configured": {
-      "cisco_ios": { "id": "CIS-IOS-2.3-NTP-CONFIGURED", "control_ref": "2.3", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.1.4", "control_ref": "2.1.4", "verified": true },
-      "arista_eos": { "id": "CIS-EOS-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.6.2", "control_ref": "1.6.2", "verified": true },
-      "huawei_vrp": { "id": "CIS-HUAWEI-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "stormshield_sns": { "id": "SNS-NTP-CONFIGURED", "control_ref": null, "verified": false },
-      "watchguard_fireware": { "id": "WG-NTP-CONFIGURED", "control_ref": null, "verified": false }
+      "cisco_ios": {
+        "id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "control_ref": "2.3",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.1.4",
+        "control_ref": "2.1.4",
+        "verified": true
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.6.2",
+        "control_ref": "1.6.2",
+        "verified": true
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-NTP-CONFIGURED",
+        "control_ref": null,
+        "verified": false
+      }
     },
     "no_write_snmp_community": {
-      "cisco_ios": { "id": "CIS-IOS-1.5-SNMP-NO-WRITE", "control_ref": "1.5", "verified": true },
-      "juniper_junos": { "id": "CIS-JUNOS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "fortinet_fortios": { "id": "CIS-FORTIOS-2.3.1-WRITE", "control_ref": "2.3.1", "verified": true, "note": "CIS 2.3.1 covers SNMPv3-only which implicitly prevents v1/v2c write communities" },
-      "arista_eos": { "id": "CIS-EOS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "sonic_sonic": { "id": "CIS-SONIC-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "paloalto": { "id": "CIS-PALOALTO-1.5.1-WRITE", "control_ref": "1.5.1", "verified": true },
-      "huawei_vrp": { "id": "CIS-HUAWEI-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "checkpoint_gaia": { "id": "CIS-CPGAIA-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "mikrotik_routeros": { "id": "MTR-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "sonicwall": { "id": "SWL-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "stormshield_sns": { "id": "SNS-SNMP-NO-WRITE", "control_ref": null, "verified": false },
-      "watchguard_fireware": { "id": "WG-SNMP-NO-WRITE", "control_ref": null, "verified": false }
+      "cisco_ios": {
+        "id": "CIS-IOS-1.5-SNMP-NO-WRITE",
+        "control_ref": "1.5",
+        "verified": true
+      },
+      "juniper_junos": {
+        "id": "CIS-JUNOS-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "fortinet_fortios": {
+        "id": "CIS-FORTIOS-2.3.1-WRITE",
+        "control_ref": "2.3.1",
+        "verified": true,
+        "note": "CIS 2.3.1 covers SNMPv3-only which implicitly prevents v1/v2c write communities"
+      },
+      "arista_eos": {
+        "id": "CIS-EOS-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonic_sonic": {
+        "id": "CIS-SONIC-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "paloalto": {
+        "id": "CIS-PALOALTO-1.5.1-WRITE",
+        "control_ref": "1.5.1",
+        "verified": true
+      },
+      "huawei_vrp": {
+        "id": "CIS-HUAWEI-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "checkpoint_gaia": {
+        "id": "CIS-CPGAIA-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "mikrotik_routeros": {
+        "id": "MTR-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall": {
+        "id": "SWL-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield_sns": {
+        "id": "CIS-STORMSHIELD-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "watchguard_fireware": {
+        "id": "CIS-WATCHGUARD-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "hpe_aruba_aos_cx": {
+        "id": "CIS-AOSCX-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "extreme_exos": {
+        "id": "CIS-EXOS-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "sophos_sfos": {
+        "id": "CIS-SFOS-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "sonicwall_sonicos": {
+        "id": "CIS-SONICWALL-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "cato_networks": {
+        "id": "CIS-CATO-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zia": {
+        "id": "CIS-ZIA-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "zscaler_zpa": {
+        "id": "CIS-ZPA-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "barracuda_cloudgen": {
+        "id": "CIS-BARRACUDA-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "forcepoint_ngfw": {
+        "id": "CIS-FORCEPOINT-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "sangfor_ngaf": {
+        "id": "CIS-SANGFOR-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "hillstone_stoneos": {
+        "id": "CIS-HILLSTONE-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "a10_acos": {
+        "id": "CIS-A10-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "netgate_pfsense": {
+        "id": "CIS-PFSENSE-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "nokia_sros": {
+        "id": "CIS-NOKIA-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "alcatel_aos": {
+        "id": "CIS-ALCATEL-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "f5_bigip_tmos": {
+        "id": "CIS-F5-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "versa_versos": {
+        "id": "CIS-VERSA-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "ruckus_fastiron": {
+        "id": "CIS-RUCKUS-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "ubiquiti_edgeos": {
+        "id": "CIS-UBIQUITI-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      },
+      "stormshield": {
+        "id": "SNS-SNMP-NO-WRITE",
+        "control_ref": null,
+        "verified": false
+      }
     }
   }
 }

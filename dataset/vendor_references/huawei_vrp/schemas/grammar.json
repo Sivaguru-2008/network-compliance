@@ -1,0 +1,44 @@
+{
+  "vendor_key": "huawei_vrp",
+  "vendor_name": "Huawei",
+  "os_name": "Huawei VRP",
+  "syntax_type": "huawei_vrp",
+  "root_blocks": [
+    {
+      "block_name": "system_view",
+      "entry_keyword": "system-view",
+      "exit_keyword": "return",
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [
+        "aaa",
+        "user-interface vty",
+        "interface",
+        "acl"
+      ],
+      "common_directives": [
+        "sysname",
+        "header login",
+        "info-center enable"
+      ],
+      "security_directives": [
+        "stelnet server enable",
+        "undo http server enable",
+        "undo telnet server enable",
+        "snmp-agent sys-info version v3",
+        "info-center loghost"
+      ]
+    }
+  ],
+  "negation_prefix": "undo",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": true,
+  "schema_definition": {
+    "format": "vrp_system_view",
+    "enter_command": "system-view",
+    "exit_command": "return",
+    "negation_command": "undo"
+  }
+}

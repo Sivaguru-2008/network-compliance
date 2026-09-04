@@ -1,0 +1,190 @@
+! Command: show running-config
+! device: switch3 (DCS-7150S-52-CL, EOS-4.22.4M-2GB)
+!
+! boot system flash:/EOS-2GB-4.22.4M.swi
+!
+daemon TerminAttr
+   exec /usr/bin/TerminAttr -ingestgrpcurl=10.83.29.224:9910 -taillogs -ingestauth=key,IngestKey -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+   no shutdown
+!
+load-interval default 5
+!
+transceiver qsfp default-mode 4x10G
+!
+queue-monitor length
+!
+logging host 10.83.28.52
+!
+hostname switch3
+ip name-server vrf default 10.83.28.52
+ip name-server vrf default 10.83.29.222
+dns domain lab.local
+!
+ntp server 10.83.28.52
+!
+snmp-server community private rw
+snmp-server community public ro
+!
+spanning-tree mode mstp
+no spanning-tree vlan 4094
+!
+aaa authorization exec default local
+!
+no aaa root
+aaa authentication policy local allow-nopassword-remote-login
+!
+username admin privilege 15 role network-admin nopassword
+username arista privilege 15 secret sha512 $6$CiVg3WEUlk8Fwt38$rX62PyPoqBdIVke7TKXk3CiCGKTSUZyTbuWkwXBeflRY0ePMa9fVRwJbdvJEuUhc88RfCIcI2DFTnOve9IuJK/
+username cvp-infra privilege 15 secret sha512 $6$.I7/ZR/zlLIUv8fr$vR/JvLTbq5amMt6Y1SE4CKlPDv/AzJYlFYHkUZ17BDovm0Oi4aLdBULe1EmZ0Y9xKjVLMKpxCSKmlrAioDxbQ0
+username switch-infra privilege 15 nopassword
+username telemetry secret 5 $1$7ksxaeUt$.JJMVbNtjZVxakZqvo0dy1
+!
+vlan 4094
+   trunk group mlagPeer
+!
+interface Port-Channel10
+   switchport mode trunk
+   mlag 10
+!
+interface Port-Channel1000
+   switchport mode trunk
+   switchport trunk group mlagPeer
+!
+interface Ethernet1
+   description "switch1 **** Ethernet2"
+   no switchport
+   ip address 10.10.10.3/31
+!
+interface Ethernet2
+!
+interface Ethernet3
+   channel-group 10 mode active
+!
+interface Ethernet4
+!
+interface Ethernet5
+!
+interface Ethernet6
+!
+interface Ethernet7
+!
+interface Ethernet8
+!
+interface Ethernet9
+!
+interface Ethernet10
+!
+interface Ethernet11
+!
+interface Ethernet12
+!
+interface Ethernet13
+!
+interface Ethernet14
+!
+interface Ethernet15
+!
+interface Ethernet16
+!
+interface Ethernet17
+!
+interface Ethernet18
+!
+interface Ethernet19
+!
+interface Ethernet20
+!
+interface Ethernet21
+!
+interface Ethernet22
+!
+interface Ethernet23
+!
+interface Ethernet24
+   description "switch2 **** Ethernet24"
+   no switchport
+   ip address 10.10.10.5/31
+!
+interface Ethernet25
+!
+interface Ethernet26
+!
+interface Ethernet27
+!
+interface Ethernet28
+!
+interface Ethernet29
+!
+interface Ethernet30
+!
+interface Ethernet31
+!
+interface Ethernet32
+!
+interface Ethernet33
+!
+interface Ethernet34
+!
+interface Ethernet35
+!
+interface Ethernet36
+!
+interface Ethernet37
+!
+interface Ethernet38
+!
+interface Ethernet39
+!
+interface Ethernet40
+!
+interface Ethernet41
+!
+interface Ethernet42
+!
+interface Ethernet43
+!
+interface Ethernet44
+!
+interface Ethernet45
+!
+interface Ethernet46
+!
+interface Ethernet47
+!
+interface Ethernet48
+!
+interface Ethernet49
+!
+interface Ethernet50
+!
+interface Ethernet51
+!
+interface Ethernet52
+!
+interface Loopback0
+   ip address 172.16.0.3/32
+!
+interface Management1
+   ip address 10.83.28.217/22
+!
+interface Vlan4094
+   no autostate
+   ip address 192.168.10.1/30
+!
+ip route 0.0.0.0/0 10.83.28.1
+!
+ip routing
+!
+router bgp 65003
+   neighbor 10.10.10.2 remote-as 65001
+   neighbor 10.10.10.2 maximum-routes 12000
+   neighbor 10.10.10.4 remote-as 65002
+   neighbor 10.10.10.4 maximum-routes 12000
+   redistribute connected
+!
+management api http-commands
+   protocol http
+   protocol unix-socket
+   no shutdown
+!
+end

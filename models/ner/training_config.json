@@ -1,0 +1,11 @@
+{
+  "task_name": "ner",
+  "n_samples": 1323,
+  "n_classes": 2,
+  "classes": [
+    "ACL",
+    "INTERFACE"
+  ],
+  "training_time_seconds": 0.127,
+  "random_seed": 42
+}

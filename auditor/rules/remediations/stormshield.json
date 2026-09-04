@@ -1,0 +1,118 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure external RADIUS/LDAP authentication for centralized administrator access.",
+    "cli": [
+      "CONFIG AUTH RADIUS ADD host=<RADIUS-SERVER-IP> secret=<SHARED-SECRET>",
+      "CONFIG AUTH DEFAULT method=radius",
+      "CONFIG AUTH ACTIVATE"
+    ],
+    "notes": "Stormshield SNS supports external authentication via RADIUS, LDAP, Kerberos, SAML, and internal directory. Configure centralized external authentication. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG AUTH)."
+  },
+  "secure_vty_transport": {
+    "summary": "Ensure SSH console access is enabled and unencrypted HTTP is disabled.",
+    "cli": [
+      "CONFIG CONSOLE SSH state=1 port=22",
+      "CONFIG WEBADMIN allowhttp=0",
+      "CONFIG CONSOLE ACTIVATE",
+      "CONFIG WEBADMIN ACTIVATE"
+    ],
+    "notes": "Stormshield SNS does not support telnet daemon. Remote administrative access is strictly provided via SSH and HTTPS. Ref: Stormshield Technical Note - Hardening SNS Firewalls."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrator console and WebAdmin idle session timeout to 10 minutes (600 seconds) or less.",
+    "cli": [
+      "CONFIG CONSOLE TIMEOUT timeout=600",
+      "CONFIG WEBADMIN TIMEOUT timeout=600",
+      "CONFIG CONSOLE ACTIVATE",
+      "CONFIG WEBADMIN ACTIVATE"
+    ],
+    "notes": "Configure administrator idle session timeout to terminate unattended sessions automatically within 600 seconds. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG CONSOLE / CONFIG WEBADMIN)."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Enforce strong password policy and ensure credentials are cryptographically protected at rest.",
+    "cli": [
+      "CONFIG PASSWDPOLICY SET minLength=12 minComplexity=1 maxAge=90",
+      "CONFIG PASSWDPOLICY ACTIVATE"
+    ],
+    "notes": "Stormshield SNS stores administrative credentials cryptographically hashed by default. Enable strict password policy to enforce complexity and length. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG PASSWDPOLICY)."
+  },
+  "no_default_snmp_community": {
+    "summary": "Change or remove well-known default SNMP community strings ('public' or 'private').",
+    "cli": [
+      "CONFIG SNMP COMMUNITY REMOVE name=public",
+      "CONFIG SNMP COMMUNITY REMOVE name=private",
+      "CONFIG SNMP COMMUNITY ADD name=<CUSTOM_COMMUNITY_STRING> access=ro",
+      "CONFIG SNMP ACTIVATE"
+    ],
+    "notes": "Default SNMP communities expose internal device metrics. Remove public/private and configure unique custom communities or SNMPv3. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG SNMP)."
+  },
+  "http_server_disabled": {
+    "summary": "Disable cleartext HTTP web administration to enforce HTTPS-only access.",
+    "cli": [
+      "CONFIG WEBADMIN allowhttp=0",
+      "CONFIG WEBADMIN ACTIVATE"
+    ],
+    "notes": "Stormshield WebAdmin must enforce TLS encryption. Disabling HTTP prevents interception of credentials and session tokens. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG WEBADMIN)."
+  },
+  "ssh_version_2": {
+    "summary": "Ensure SSH console service is active (Stormshield SNS enforces SSHv2).",
+    "cli": [
+      "CONFIG CONSOLE SSH state=1 port=22",
+      "CONFIG CONSOLE ACTIVATE"
+    ],
+    "notes": "Stormshield SNS SSH daemon exclusively supports SSH protocol version 2; SSHv1 is permanently disabled in the underlying FreeBSD OpenSSH implementation. Ref: Stormshield Technical Note - Hardening SNS Firewalls."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote syslog logging server and enable local logging buffer.",
+    "cli": [
+      "CONFIG LOG SERVER ADD host=<SYSLOG-SERVER-IP> port=514 type=syslog state=1",
+      "CONFIG LOG BUFFER state=1",
+      "CONFIG LOG ACTIVATE"
+    ],
+    "notes": "Enable remote syslog forwarding and local log buffering to ensure comprehensive audit logs for security analysis. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG LOG)."
+  },
+  "management_acl": {
+    "summary": "Restrict WebAdmin and SSH console access to designated management subnets.",
+    "cli": [
+      "CONFIG WEBADMIN ACCESS ADD ip=<AUTHORIZED_MANAGEMENT_SUBNET>",
+      "CONFIG CONSOLE ACCESS ADD ip=<AUTHORIZED_MANAGEMENT_SUBNET>",
+      "CONFIG WEBADMIN ACTIVATE",
+      "CONFIG CONSOLE ACTIVATE"
+    ],
+    "notes": "Limit administrative access by source IP/subnet to prevent unauthorized management attempts from untrusted segments. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG WEBADMIN ACCESS / CONFIG CONSOLE ACCESS)."
+  },
+  "login_banner": {
+    "summary": "Configure pre-login and post-login warning banners.",
+    "cli": [
+      "CONFIG BANNER state=1 prelogin=\"Authorized access only. All activities are monitored and logged.\"",
+      "CONFIG BANNER ACTIVATE"
+    ],
+    "notes": "Display a formal legal notification warning unauthorized users before login. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG BANNER)."
+  },
+  "password_min_length": {
+    "summary": "Configure minimum password length requirement of at least 8 characters (recommended: 12+).",
+    "cli": [
+      "CONFIG PASSWDPOLICY SET minLength=12",
+      "CONFIG PASSWDPOLICY ACTIVATE"
+    ],
+    "notes": "Configure password policy to reject passwords shorter than the specified length. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG PASSWDPOLICY)."
+  },
+  "ntp_configured": {
+    "summary": "Configure redundant NTP time servers for accurate log timestamping.",
+    "cli": [
+      "CONFIG NTP state=1",
+      "CONFIG NTP SERVER ADD name=<NTP-PRIMARY-SERVER-IP>",
+      "CONFIG NTP SERVER ADD name=<NTP-SECONDARY-SERVER-IP>",
+      "CONFIG NTP ACTIVATE"
+    ],
+    "notes": "Synchronize system time with trusted network time servers to ensure log timestamps are valid evidence. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG NTP)."
+  },
+  "no_write_snmp_community": {
+    "summary": "Ensure all configured SNMP communities are restricted to read-only access.",
+    "cli": [
+      "CONFIG SNMP COMMUNITY SET name=<COMMUNITY-NAME> access=ro",
+      "CONFIG SNMP ACTIVATE"
+    ],
+    "notes": "Read-write SNMP communities allow remote reconfiguration of device parameters. Ensure access=ro is enforced. Ref: Stormshield SNS CLI / Serverd Commands Reference Guide (CONFIG SNMP COMMUNITY)."
+  }
+}

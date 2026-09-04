@@ -1,0 +1,67 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure Identity Provider (SAML/SSO) in the ZIA Admin Portal.",
+    "cli": [],
+    "notes": "Go to ZIA Admin Portal > Administration > Identity Provider (IdP) to configure SAML SSO."
+  },
+  "secure_vty_transport": {
+    "summary": "ZIA portal strictly enforces secure HTTPS administration connections.",
+    "cli": [],
+    "notes": "HTTP and legacy cleartext console connections are not supported in ZIA."
+  },
+  "vty_idle_timeout": {
+    "summary": "Configure session timeout in Advanced Settings.",
+    "cli": [],
+    "notes": "Go to ZIA Admin Portal > Administration > Advanced Settings > Session Timeout to configure administrative timeouts."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "Local user databases in ZIA automatically hash password credentials."
+  },
+  "no_default_snmp_community": {
+    "summary": "SNMP management is not supported.",
+    "cli": [],
+    "notes": "Zscaler cloud endpoints do not expose traditional SNMP agent access."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP administrative access.",
+    "cli": [],
+    "notes": "HTTP administrative connections are not supported by ZIA Admin Portal."
+  },
+  "ssh_version_2": {
+    "summary": "Secure SSH settings.",
+    "cli": [],
+    "notes": "SSH management access is not supported on ZIA cloud consoles."
+  },
+  "logging_enabled": {
+    "summary": "Configure Nanolog Streaming Service (NSS) log forwarding.",
+    "cli": [],
+    "notes": "Go to ZIA Admin Portal > Administration > Nanolog Streaming Service (NSS) to define NSS feeds for log forwarding."
+  },
+  "management_acl": {
+    "summary": "Configure source IP restrictions for administrators.",
+    "cli": [],
+    "notes": "Go to ZIA Admin Portal > Administration > Administrator Management > Edit Administrator to configure Allowed Source IP ranges."
+  },
+  "login_banner": {
+    "summary": "Configure ZIA Login disclaimer banner.",
+    "cli": [],
+    "notes": "Go to ZIA Admin Portal > Administration > SAML Authentication to set SAML warning screens."
+  },
+  "password_min_length": {
+    "summary": "Configure password complexity rules.",
+    "cli": [],
+    "notes": "Go to ZIA Admin Portal > Administration > Administrator Management > Password Policy."
+  },
+  "ntp_configured": {
+    "summary": "Time synchronization is managed automatically by Zscaler Cloud.",
+    "cli": [],
+    "notes": "Zscaler cloud nodes synchronize time automatically with internal NTP servers."
+  },
+  "no_write_snmp_community": {
+    "summary": "SNMP is not supported.",
+    "cli": [],
+    "notes": "Legacy SNMP read-write is not applicable to ZIA cloud instances."
+  }
+}

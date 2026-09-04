@@ -1,0 +1,35 @@
+{
+  "vendor_key": "paloalto_panos",
+  "document_title": "PAN-OS CLI Quick Start (Set-Format Usage)",
+  "source_filename": "panos_cli_quick_start.html",
+  "source_format": "html",
+  "total_pages": 1,
+  "total_sections": 3,
+  "total_code_blocks": 1,
+  "version": "PAN-OS 11.x",
+  "sections": [
+    {
+      "heading": "PAN-OS CLI Quick Start (Set-Format Usage)",
+      "level": 1,
+      "content": "Home\nNext-Generation Firewall\nGet Started with the CLI",
+      "page_number": 1,
+      "code_blocks": []
+    },
+    {
+      "heading": "Next-Generation Firewall Docs",
+      "level": 1,
+      "content": "Getting Started\nAdministration\nNetworking\nQuick Start\nReference\nIncidents & Alerts\nRelease Notes\n\n\n\n\n\n\nSelect a Document\n\n\n\n\nPAN-OS 12.2\nPAN-OS 12.1\nPAN-OS 11.2\nPAN-OS 11.1\nPAN-OS 11.0 (EoL)\nPAN-OS 10.2\nPAN-OS 10.1 (EoL)\nPAN-OS 10.0 (EoL)\nPAN-OS 9.1 (EoL)\nPAN-OS 9.0 (EoL)\nPAN-OS 8.1 (EoL)\nPAN-OS 12.2\nPAN-OS 12.1\nPAN-OS 11.2\nPAN-OS 11.1\nPAN-OS 11.0 (EoL)\nPAN-OS 10.2\nPAN-OS 10.1 (EoL)\nPAN-OS 10.0 (EoL)\nPAN-OS 9.1 (EoL)\nPAN-OS 9.0 (EoL)\nPAN-OS 8.1 (EoL)\nHelp\n\n\n\n\n\n\nSelect a Document\n\n\n\n\nPAN-OS 12.2\nPAN-OS 12.1\nPAN-OS 11.2\nPAN-OS 11.1\nPAN-OS 10.2\nPAN-OS 10.1\nPAN-OS 12.2\nPAN-OS 12.1\nPAN-OS 11.2\nPAN-OS 11.1\nPAN-OS 10.2\nPAN-OS 10.1\nNew Features",
+      "page_number": 1,
+      "code_blocks": []
+    },
+    {
+      "heading": "Get Started with the CLI",
+      "level": 1,
+      "content": "Where Can I Use This?What Do I Need?\n\n\nNGFW (Managed by PAN-OS or Panorama)\nNo prerequisites needed\nNo prerequisites needed\nSSH Connection\u2014To ensure you are logging in to your firewall and not a\n                        malicious device, you can verify the SSH connection to the\n                            firewall when you perform initial configuration. After you\n                        have completed initial configuration, you can\n                        establish a CLI connection over the network using a secure shell (SSH)\n                        connection.\nSerial Connection\u2014If you have not yet completed initial configuration\n                        or if you chose not to enable SSH on the Palo Alto Networks device, you can\n                        establish a direct serial connection from a serial interface on your\n                        management computer to the Console port on the device.\nLaunch the terminal emulation software and select the type of connection\n                    (Serial or SSH).\nTo establish an SSH connection, enter the hostname or IP address of\n                                the device you want to connect to and set the port to\n                                    22.To establish a Serial connection, connect a serial interface on\n                                management computer to the Console port on the device. Configure the\n                                Serial connection settings in the terminal emulation software as\n                                follows:Data rate: 9600Data bits: 8Parity: noneStop bits: 1Flow control: none\nTo establish an SSH connection, enter the hostname or IP address of\n                                the device you want to connect to and set the port to\n                                    22.\nTo establish a Serial connection, connect a serial interface on\n                                management computer to the Console port on the device. Configure the\n                                Serial connection settings in the terminal emulation software as\n                                follows:Data rate: 9600Data bits: 8Parity: noneStop bits: 1Flow control: none\nData rate: 9600\nData bits: 8\nParity: none\nStop bits: 1\nFlow control: none\nWhen prompted to log in, enter your administrative username.\nThe default superuser username is admin. To set up CLI\n                        access for other administrative users, see Give\n                            Administrators Access to the CLI.\nIf prompted to acknowledge the login banner, enter\n                        Yes.\nEnter the administrative password.\nThe default superuser password is admin. However, for\n                        security reasons you should immediately change the admin\n                            password.\nAfter you log in, the message of the day displays,\n                        followed by the CLI prompt in Operational mode:\nusername@hostname>\nYou can tell you are in operational mode because the command prompt ends with\n                        a >.\n```\nusername@hostname>\n```\n\u00a9 2026 Palo Alto Networks, Inc. All rights reserved.",
+      "page_number": 1,
+      "code_blocks": [
+        "username@hostname>"
+      ]
+    }
+  ]
+}

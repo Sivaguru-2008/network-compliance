@@ -1,0 +1,48 @@
+{
+  "test_split_size": 54,
+  "deterministic": {
+    "name": "Deterministic Matcher",
+    "total_evaluated": 54,
+    "entity_extraction_accuracy": 1.0,
+    "normalized_field_accuracy": 1.0,
+    "value_extraction_accuracy": 1.0,
+    "top1_accuracy": 1.0,
+    "top3_accuracy": 1.0,
+    "unknown_detected": 48,
+    "ambiguous_detected": 11,
+    "false_mapping_rate": 0.0,
+    "false_mappings": 0,
+    "human_review_rate": 0.0,
+    "average_confidence": 0.9037
+  },
+  "nlp": {
+    "name": "NLP Semantic Layer",
+    "total_evaluated": 54,
+    "entity_extraction_accuracy": 0.9444,
+    "normalized_field_accuracy": 0.9444,
+    "value_extraction_accuracy": 0.9444,
+    "top1_accuracy": 0.9444,
+    "top3_accuracy": 0.9444,
+    "unknown_detected": 48,
+    "ambiguous_detected": 11,
+    "false_mapping_rate": 0.0,
+    "false_mappings": 0,
+    "human_review_rate": 0.037,
+    "average_confidence": 0.948
+  },
+  "hybrid": {
+    "name": "Hybrid Semantic Matcher",
+    "total_evaluated": 54,
+    "entity_extraction_accuracy": 1.0,
+    "normalized_field_accuracy": 1.0,
+    "value_extraction_accuracy": 1.0,
+    "top1_accuracy": 1.0,
+    "top3_accuracy": 1.0,
+    "unknown_detected": 48,
+    "ambiguous_detected": 11,
+    "false_mapping_rate": 0.0,
+    "false_mappings": 0,
+    "human_review_rate": 0.037,
+    "average_confidence": 0.95
+  }
+}

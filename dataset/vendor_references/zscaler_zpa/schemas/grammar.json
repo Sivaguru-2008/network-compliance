@@ -1,0 +1,35 @@
+{
+  "vendor_key": "zscaler_zpa",
+  "vendor_name": "Zscaler",
+  "os_name": "Zscaler Private Access (ZPA)",
+  "syntax_type": "cloud_json_policy",
+  "root_blocks": [
+    {
+      "block_name": "zpa_policy",
+      "entry_keyword": "{",
+      "exit_keyword": "}",
+      "child_delimiter": ":",
+      "statement_terminator": ",",
+      "allowed_subblocks": [
+        "applicationSegments",
+        "accessPolicyRules",
+        "postureProfiles"
+      ],
+      "common_directives": [
+        "customerName",
+        "cloudName"
+      ],
+      "security_directives": [
+        "accessPolicyRules.action",
+        "postureProfiles.postureTypes",
+        "serverGroups.config"
+      ]
+    }
+  ],
+  "negation_prefix": "",
+  "comment_prefixes": [],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "zscaler_zpa_policy_json"
+  }
+}

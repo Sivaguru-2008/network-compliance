@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<pfsense>
+  <version>21.7</version>
+  <system>
+    <hostname>pfSense-Edge</hostname>
+    <domain>localdomain</domain>
+    <ssh>
+      <enable>enabled</enable>
+      <port>22</port>
+    </ssh>
+    <webgui>
+      <protocol>https</protocol>
+      <port>443</port>
+      <max_procs>2</max_procs>
+    </webgui>
+    <timeservers>0.pfsense.pool.ntp.org</timeservers>
+    <syslog>
+      <remoteserver>192.168.1.50</remoteserver>
+      <logall>yes</logall>
+    </syslog>
+  </system>
+</pfsense>

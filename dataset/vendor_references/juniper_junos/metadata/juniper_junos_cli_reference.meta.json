@@ -1,0 +1,19 @@
+{
+  "vendor": "juniper_junos",
+  "vendor_name": "Juniper Networks",
+  "os_name": "Junos OS",
+  "config_format": "braces & set commands",
+  "document_title": "Junos CLI Reference",
+  "source_url": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/index.html",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "html",
+  "version": "Current",
+  "retrieved_at": "2026-08-31T16:29:31.011591+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "1d082424e4c3e53e3fa88bf2595bde72c302678f35480f874989b52472043e89",
+  "byte_size": 10244,
+  "local_path": "vendor_references\\juniper_junos\\documents\\juniper_junos_cli_reference.html",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

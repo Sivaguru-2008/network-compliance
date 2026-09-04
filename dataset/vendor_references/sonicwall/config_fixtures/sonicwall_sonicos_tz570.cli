@@ -1,0 +1,16 @@
+administration
+   name "SonicWall-TZ570"
+   inactivity-timeout 10
+   admin-https-port 8443
+   admin-ssh-port 22
+   no web-management-http
+   enable-management-ssh
+   password-enforcement min-length 12
+   exit
+snmp
+   enable
+   community "MonitorReadOnly"
+   exit
+syslog
+   server "10.0.0.10" port 514 facility local0
+   exit

@@ -1,0 +1,12 @@
+set deviceconfig system hostname PA-EDGE-FW01
+set deviceconfig system ip-address 10.1.1.1 netmask 255.255.255.0 default-gateway 10.1.1.254
+set deviceconfig system dns-setting servers primary 1.1.1.1 secondary 8.8.8.8
+set deviceconfig system ntp-servers primary-ntp-server ntp-server-address 10.1.1.100
+set deviceconfig system timezone UTC
+set deviceconfig system login-banner "Authorized Access Only. All activities are monitored and logged."
+set deviceconfig setting management idle-timeout 10
+set mgt-config users secadmin permissions role-based superuser yes
+set mgt-config users secadmin phash <SANITIZED_SECRET>
+set zone trust network layer3 ethernet1/2
+set zone untrust network layer3 ethernet1/1
+set rulebase security rules "Block-Insecure" action deny application [ telnet ms-ds-smb rsh ]

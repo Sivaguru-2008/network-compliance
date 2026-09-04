@@ -1,0 +1,67 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized authentication (RADIUS, TACACS+, or LDAP/AD) in Sangfor Web Console.",
+    "cli": [],
+    "notes": "Configure remote LDAP or RADIUS servers under System > Admin Accounts > Auth Server in Sangfor NGAF Web Console."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable HTTP management and restrict SSH access.",
+    "cli": [],
+    "notes": "Configure administration protocols under System > Admin Accounts > Login Security in Sangfor NGAF Web Console."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrative console session timeout.",
+    "cli": [],
+    "notes": "Modify session timeout under System > Admin Accounts > Login Security > Session Timeout in Sangfor NGAF Web Console."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "Sangfor local administrative passwords are automatically hashed in the internal system database."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP communities.",
+    "cli": [],
+    "notes": "Modify SNMP community settings under System > SNMP Settings in Sangfor NGAF Web Console."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP administrative access.",
+    "cli": [],
+    "notes": "Go to Network > Interfaces, edit management interface and uncheck HTTP Management."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce secure SSH settings.",
+    "cli": [],
+    "notes": "SSH settings are configured under System > Admin Accounts > Login Security > SSH Console Access in Sangfor NGAF Web Console."
+  },
+  "logging_enabled": {
+    "summary": "Configure Syslog server destination targets.",
+    "cli": [],
+    "notes": "Go to System > Logging Options > Log Server Settings to specify remote syslog server destinations."
+  },
+  "management_acl": {
+    "summary": "Restrict Web Management Console and SSH access to trusted IP hosts.",
+    "cli": [],
+    "notes": "Go to System > Admin Accounts > Login Security > IP Access Controls in Sangfor NGAF Web Console."
+  },
+  "login_banner": {
+    "summary": "Configure custom login disclaimer banner.",
+    "cli": [],
+    "notes": "Go to System > Admin Accounts > Login Security > Login Message to set custom warning disclaimer banner."
+  },
+  "password_min_length": {
+    "summary": "Configure administrative password length requirements.",
+    "cli": [],
+    "notes": "Configure password complexity rules under System > Admin Accounts > Login Security > Password Policy."
+  },
+  "ntp_configured": {
+    "summary": "Configure NTP synchronization settings.",
+    "cli": [],
+    "notes": "Go to System > General Settings > Time Settings to enable and specify NTP servers."
+  },
+  "no_write_snmp_community": {
+    "summary": "Disable read-write SNMP access.",
+    "cli": [],
+    "notes": "Ensure SNMP communities are restricted to read-only under System > SNMP Settings."
+  }
+}

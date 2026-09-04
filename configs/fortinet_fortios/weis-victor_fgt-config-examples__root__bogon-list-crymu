@@ -1,0 +1,31 @@
+config system external-resource
+    edit "g-full-bogon_ip-list"
+        set type address
+        set comments "https://team-cymru.com/"
+        set resource "https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt"
+        set refresh-rate 1440
+    next
+end
+
+config firewall policy
+    edit 0
+        set name "lan>wan_bogon-deny"
+        set srcintf "in_zone"
+        set dstintf "virtual-wan-link"
+        set srcaddr "rfc1918_subnets"
+        set dstaddr "g-full-bogon_ip-list"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+    next
+    edit 0
+        set name "wan>lan_bogon-deny"
+        set srcintf "virtual-wan-link"
+        set dstintf "in_zone"
+        set srcaddr "g-full-bogon_ip-list"
+        set dstaddr "rfc1918_subnets"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+    next
+end

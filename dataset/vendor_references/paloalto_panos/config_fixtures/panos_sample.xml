@@ -1,0 +1,32 @@
+<configuration>
+  <deviceconfig>
+    <system>
+      <hostname>PA-VM</hostname>
+      <login-banner></login-banner>
+      <log-high-dp-load>no</log-high-dp-load>
+      <login-timeout>15</login-timeout>
+      <verify-update-server-identity>no</verify-update-server-identity>
+      <service>
+        <http>yes</http>
+        <telnet>yes</telnet>
+      </service>
+      <ntp-servers>
+        <primary-ntp>
+          <ntp-server-address>1.1.1.1</ntp-server-address>
+        </primary-ntp>
+      </ntp-servers>
+      <snmp-setting>
+        <v2c>
+          <community>public</community>
+        </v2c>
+      </snmp-setting>
+    </system>
+  </deviceconfig>
+  <mgt-config>
+    <password-complexity>
+      <minimum-length>8</minimum-length>
+      <block-prevent>0</block-prevent>
+      <block-time>0</block-time>
+    </password-complexity>
+  </mgt-config>
+</configuration>

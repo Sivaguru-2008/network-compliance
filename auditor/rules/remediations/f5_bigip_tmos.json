@@ -1,0 +1,89 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure remote administrative authentication (TACACS+, RADIUS, or LDAP) on F5 BIG-IP.",
+    "cli": [
+      "tmsh modify /auth source type tacacs",
+      "tmsh modify /auth source fallback true"
+    ],
+    "notes": "Define your remote authentication servers first and ensure fallback to local is enabled to prevent lockout."
+  },
+  "secure_vty_transport": {
+    "summary": "Enforce SSH administration and disable Telnet (default on BIG-IP).",
+    "cli": [
+      "tmsh modify /sys sshd login enabled"
+    ],
+    "notes": "F5 BIG-IP does not run an onboard Telnet daemon. Ensure SSH is enabled."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrative session inactivity timeout.",
+    "cli": [
+      "tmsh modify /sys sshd inactivity-timeout 900",
+      "tmsh modify /sys httpd auth-pam-idle-timeout 1200"
+    ],
+    "notes": "Set SSH and HTTPS Configuration Utility idle timeouts in seconds (e.g. 900 and 1200 seconds)."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "BIG-IP TMOS automatically hashes/encrypts all user administrative passwords at rest."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP community strings.",
+    "cli": [
+      "tmsh modify /sys snmp communities delete { public }"
+    ],
+    "notes": "Remove the standard public community string to prevent unauthorized information disclosure."
+  },
+  "http_server_disabled": {
+    "summary": "Insecure HTTP management is disabled by default on BIG-IP.",
+    "cli": [],
+    "notes": "The Apache httpd daemon defaults to HTTPS-only access on port 443 or 8443."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce SSH protocol version 2.",
+    "cli": [],
+    "notes": "The TMOS SSH server natively enforces SSHv2 by default."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote syslog logging destinations.",
+    "cli": [
+      "tmsh modify /sys syslog remote-servers add { log-server-1 { host 192.168.1.100 remote-port 514 } }"
+    ],
+    "notes": "Add your central remote syslog server IP and port."
+  },
+  "management_acl": {
+    "summary": "Restrict management plane access to allowed IP networks.",
+    "cli": [
+      "tmsh modify /sys sshd allow replace-all-with { 192.168.0.0/16 }",
+      "tmsh modify /sys httpd allow replace-all-with { 192.168.0.0/16 }"
+    ],
+    "notes": "Replace the allow-all default with your dedicated administrator subnet ranges."
+  },
+  "login_banner": {
+    "summary": "Configure pre-login administrative warning banners.",
+    "cli": [
+      "tmsh modify /sys sshd banner enabled banner-text \"Authorized Access Only.\"",
+      "tmsh modify /sys global-settings gui-security-banner-text \"Authorized Access Only.\""
+    ],
+    "notes": "Enforce pre-login warning messages for both SSH console and HTTPS Configuration Utility."
+  },
+  "password_min_length": {
+    "summary": "Configure local administrative password policy restrictions.",
+    "cli": [
+      "tmsh modify /auth password-policy policy-enforcement enabled minimum-length 12"
+    ],
+    "notes": "Enable policy-enforcement and set minimum length to 12 characters or longer."
+  },
+  "ntp_configured": {
+    "summary": "Configure system NTP time servers.",
+    "cli": [
+      "tmsh modify /sys ntp servers add { 192.168.1.10 }"
+    ],
+    "notes": "Define upstream time servers to synchronize system logs and events."
+  },
+  "no_write_snmp_community": {
+    "summary": "Ensure SNMP communities are restricted to read-only access (default on TMOS).",
+    "cli": [],
+    "notes": "Standard BIG-IP SNMP community configurations grant read-only access only."
+  }
+}

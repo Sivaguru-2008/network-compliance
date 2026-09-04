@@ -1,0 +1,39 @@
+{
+  "vendor_key": "checkpoint_gaia",
+  "vendor_name": "Check Point",
+  "os_name": "Check Point Gaia",
+  "syntax_type": "clish",
+  "root_blocks": [
+    {
+      "block_name": "clish_configuration",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "set hostname",
+        "set timezone",
+        "set date"
+      ],
+      "security_directives": [
+        "set sshd port 22",
+        "set password-controls min-password-length",
+        "set password-controls password-history",
+        "set syslog server",
+        "set snmp v3"
+      ]
+    }
+  ],
+  "negation_prefix": "delete",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "clish_flat_commands",
+    "set_command": "set",
+    "show_command": "show",
+    "delete_command": "delete"
+  }
+}

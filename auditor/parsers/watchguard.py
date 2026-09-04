@@ -163,7 +163,7 @@ def _is_falsy(val: Optional[str]) -> bool:
 class WatchGuardParser(VendorParser):
     """Deterministic parser for WatchGuard Firebox / Fireware configurations."""
 
-    name = "watchguard_fireware"
+    name = "watchguard"
     vendor = "watchguard"
     os_family = "fireware"
     version = "1.0.0"

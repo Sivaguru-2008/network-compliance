@@ -1,0 +1,19 @@
+{
+  "vendor": "huawei_vrp",
+  "vendor_name": "Huawei",
+  "os_name": "Huawei VRP",
+  "config_format": "VRP CLI",
+  "document_title": "Huawei CloudEngine 8800/7800/6800/5800 V200R005C10 Command Reference",
+  "source_url": "https://support.huawei.com/enterprise/en/doc/EDOC1100074755",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "fragmented",
+  "doc_format": "html",
+  "version": "V200R005C10",
+  "retrieved_at": "2026-08-31T16:32:15.041518+00:00",
+  "status": "ACCESS_REQUIRES_ACCOUNT",
+  "sha256": null,
+  "byte_size": 0,
+  "local_path": null,
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": "HTTP 403 Access Denied / Login Required"
+}

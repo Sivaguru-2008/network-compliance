@@ -1,0 +1,35 @@
+{
+  "vendor_key": "azure_nsg",
+  "vendor_name": "Microsoft Azure",
+  "os_name": "Azure Virtual Network",
+  "syntax_type": "cloud_json_policy",
+  "root_blocks": [
+    {
+      "block_name": "securityRules",
+      "entry_keyword": "{",
+      "exit_keyword": "}",
+      "child_delimiter": ":",
+      "statement_terminator": ",",
+      "allowed_subblocks": [
+        "properties"
+      ],
+      "common_directives": [
+        "name",
+        "properties.priority",
+        "properties.protocol"
+      ],
+      "security_directives": [
+        "properties.access",
+        "properties.direction",
+        "properties.sourceAddressPrefix",
+        "properties.destinationPortRange"
+      ]
+    }
+  ],
+  "negation_prefix": "",
+  "comment_prefixes": [],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "azure_network_security_group_json"
+  }
+}

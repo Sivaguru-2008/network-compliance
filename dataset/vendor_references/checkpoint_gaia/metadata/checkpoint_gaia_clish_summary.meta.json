@@ -1,0 +1,19 @@
+{
+  "vendor": "checkpoint_gaia",
+  "vendor_name": "Check Point",
+  "os_name": "Check Point Gaia",
+  "config_format": "Gaia clish",
+  "document_title": "Summary of Gaia Clish Commands (HTML)",
+  "source_url": "https://sc1.checkpoint.com/documents/R81/WebAdminGuides/EN/CP_R81_Gaia_AdminGuide/Topics-GAG/Gaia-Clish-Commands.htm",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "html",
+  "version": "R81",
+  "retrieved_at": "2026-08-31T16:30:17.496056+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "d510ed748c36ad95c9cd8251bb91068fc34cccd87bae4320e7054cd5f02899b4",
+  "byte_size": 57327,
+  "local_path": "vendor_references\\checkpoint_gaia\\documents\\checkpoint_gaia_clish_summary.html",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

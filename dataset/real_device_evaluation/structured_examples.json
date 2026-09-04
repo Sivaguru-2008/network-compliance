@@ -1,0 +1,650 @@
+[
+  {
+    "raw_configuration": "        ssh {\n    prefix-list OBSERVATORY-SSH {\n    prefix-list OBSERVATORY-SSH-BLOCK {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "atla.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "atla.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "atla.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */\n        /* ntp-w.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "atla.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "                    input v6filter;\n    lo0 {\n        interface lo0.0;\n        interface lo0.1;",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "atla.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "atla.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "atla.conf",
+    "line_reference": "system services telnet"
+  },
+  {
+    "raw_configuration": "        ssh {\n    prefix-list OBSERVATORY-SSH {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "chic.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "chic.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "chic.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */\n        /* ntp-w.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "chic.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "                            teardown 90 idle-timeout 1;",
+    "vendor": "Juniper",
+    "security_concept": "VTY_SESSION_TIMEOUT",
+    "normalized_field": "vty_exec_timeout_seconds",
+    "expected_semantic_meaning": "Administrative CLI sessions automatically disconnect after configured idle inactivity period.",
+    "source_file": "chic.conf",
+    "line_reference": "system login class idle-timeout"
+  },
+  {
+    "raw_configuration": "                    input v6filter;\n                    input v6filter;\n                    input v6filter;\n    lo0 {\n        interface lo0.0;\n        interface lo0.1;",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "chic.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "chic.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "chic.conf",
+    "line_reference": "system services telnet"
+  },
+  {
+    "raw_configuration": "        ssh {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "clev.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "clev.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "clev.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */\n        /* ntp-w.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "clev.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "    lo0 {\n        interface lo0.0;\n        interface lo0.1;",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "clev.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "clev.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "clev.conf",
+    "line_reference": "system services telnet"
+  },
+  {
+    "raw_configuration": "        ssh {\n    prefix-list OBSERVATORY-SSH {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "hous.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "hous.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "hous.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */\n        /* ntp-w.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "hous.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "    lo0 {\n        interface lo0.0 {\n        interface lo0.0;\n        interface lo0.1;",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "hous.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "hous.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "hous.conf",
+    "line_reference": "system services telnet"
+  },
+  {
+    "raw_configuration": "        ssh {\n    prefix-list OBSERVATORY-SSH {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "kans.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "kans.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "kans.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */\n        /* ntp-w.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "kans.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "    lo0 {\n        interface lo0.0;\n        interface lo0.1;",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "kans.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "kans.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "kans.conf",
+    "line_reference": "system services telnet"
+  },
+  {
+    "raw_configuration": "        ssh {\n    prefix-list OBSERVATORY-SSH {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "losa.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "losa.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "losa.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */\n        /* ntp-w.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "losa.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "                                teardown 75 idle-timeout forever;\n                                    teardown 75 idle-timeout forever;\n                                    teardown 75 idle-timeout forever;\n                                    teardown 75 idle-timeout forever;",
+    "vendor": "Juniper",
+    "security_concept": "VTY_SESSION_TIMEOUT",
+    "normalized_field": "vty_exec_timeout_seconds",
+    "expected_semantic_meaning": "Administrative CLI sessions automatically disconnect after configured idle inactivity period.",
+    "source_file": "losa.conf",
+    "line_reference": "system login class idle-timeout"
+  },
+  {
+    "raw_configuration": "    lo0 {\n        interface lo0.0 {\n        interface lo0.0;\n        interface lo0.1;\n        interface lo0.8;\n                interface lo0.8 {",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "losa.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "losa.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "losa.conf",
+    "line_reference": "system services telnet"
+  },
+  {
+    "raw_configuration": "        ssh {\n    prefix-list OBSERVATORY-SSH {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "newy32aoa.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "newy32aoa.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "newy32aoa.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */\n        /* ntp-w.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "newy32aoa.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "                    input v6filter;\n                    input v6filter;\n                    input v6filter;\n                    input v6filter;\n                    input v6filter;\n                    input v6filter;",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "newy32aoa.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "newy32aoa.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "newy32aoa.conf",
+    "line_reference": "system services telnet"
+  },
+  {
+    "raw_configuration": "        ssh {\n    prefix-list OBSERVATORY-SSH {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "salt.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "salt.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "salt.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */\n        /* ntp-w.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "salt.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "    lo0 {\n        interface lo0.0 {\n        interface lo0.0;\n        interface lo0.1;",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "salt.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "salt.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "salt.conf",
+    "line_reference": "system services telnet"
+  },
+  {
+    "raw_configuration": "        ssh {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "seat.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "seat.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "seat.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */\n        /* ntp-w.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "seat.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "    lo0 {\n        interface lo0.0 {\n        interface lo0.0;\n        interface lo0.1;",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "seat.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "seat.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "seat.conf",
+    "line_reference": "system services telnet"
+  },
+  {
+    "raw_configuration": "        ssh {\n    prefix-list OBSERVATORY-SSH {",
+    "vendor": "Juniper",
+    "security_concept": "SSH_REMOTE_ACCESS",
+    "normalized_field": "ssh_enabled",
+    "expected_semantic_meaning": "SSH service is enabled for secure encrypted management access on port 22.",
+    "source_file": "wash.conf",
+    "line_reference": "system services ssh"
+  },
+  {
+    "raw_configuration": "    authentication-order [ radius password ];\n    radius-server {",
+    "vendor": "Juniper",
+    "security_concept": "CENTRALIZED_AAA_AUTHENTICATION",
+    "normalized_field": "aaa_enabled",
+    "expected_semantic_meaning": "Centralized AAA authentication order configured with RADIUS backend fallback to local password.",
+    "source_file": "wash.conf",
+    "line_reference": "system authentication-order"
+  },
+  {
+    "raw_configuration": "    syslog {\n        /* syslog.grnoc.iu.edu */",
+    "vendor": "Juniper",
+    "security_concept": "REMOTE_SYSLOG_LOGGING",
+    "normalized_field": "logging_hosts",
+    "expected_semantic_meaning": "System logs and security events are forwarded to remote centralized syslog collectors.",
+    "source_file": "wash.conf",
+    "line_reference": "system syslog host"
+  },
+  {
+    "raw_configuration": "    ntp {\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp.grnoc.iu.edu */\n        /* ntp.indiana.edu */\n        /* ntp-1.gw.uiuc.edu */\n        /* ntp-e.abilene.ucaid.edu */",
+    "vendor": "Juniper",
+    "security_concept": "NTP_SYNCHRONIZATION",
+    "normalized_field": "ntp_servers",
+    "expected_semantic_meaning": "Network Time Protocol servers configured for clock synchronization across routers.",
+    "source_file": "wash.conf",
+    "line_reference": "system ntp server"
+  },
+  {
+    "raw_configuration": "    lo0 {\n        interface lo0.0;\n        interface lo0.1;",
+    "vendor": "Juniper",
+    "security_concept": "MANAGEMENT_CONTROL_PLANE_FILTER",
+    "normalized_field": "management_acl_applied",
+    "expected_semantic_meaning": "Control plane / Loopback 0 interface protected by input firewall filter restricting management traffic.",
+    "source_file": "wash.conf",
+    "line_reference": "interfaces lo0 unit 0 family inet filter input"
+  },
+  {
+    "raw_configuration": "    root-authentication {",
+    "vendor": "Juniper",
+    "security_concept": "ENCRYPTED_ROOT_CREDENTIAL",
+    "normalized_field": "enable_secret_set",
+    "expected_semantic_meaning": "Root privileged access secured with strong irreversible cryptographic password hash.",
+    "source_file": "wash.conf",
+    "line_reference": "system root-authentication encrypted-password"
+  },
+  {
+    "raw_configuration": "# JunOS default or inactive telnet service",
+    "vendor": "Juniper",
+    "security_concept": "INSECURE_PLAINTEXT_TELNET_ABSENCE",
+    "normalized_field": "telnet_enabled",
+    "expected_semantic_meaning": "Unencrypted Telnet daemon is disabled / not active on management interfaces.",
+    "source_file": "wash.conf",
+    "line_reference": "system services telnet"
+  }
+]

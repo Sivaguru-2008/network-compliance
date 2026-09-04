@@ -1,0 +1,5 @@
+#
+set system host-name maximum-prefixes
+#
+set routing-options maximum-prefixes 10000
+set routing-options maximum-prefixes threshold 75

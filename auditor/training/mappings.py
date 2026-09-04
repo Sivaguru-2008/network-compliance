@@ -261,6 +261,8 @@ def resolve_learned_mappings(
             return "arista"
         if "sonic" in val:
             return "sonic"
+        if "unknown" in val:
+            return "unknown"
         return val
 
     approved = store.get_active_approved_mappings()
@@ -309,16 +311,18 @@ def resolve_learned_mappings(
                     except Exception:
                         pass
                 else:
-                    if line_stripped.startswith(mapping.pattern) or mapping.pattern in line_stripped:
+                    if mapping.pattern in line_stripped:
                         matched = True
                         if mapping.extraction_strategy == "exact":
                             val = True
                         elif mapping.extraction_strategy == "token":
-                            remainder = line_stripped[len(mapping.pattern):].strip()
+                            pos = line_stripped.find(mapping.pattern)
+                            remainder = line_stripped[pos + len(mapping.pattern):].strip()
                             tokens = remainder.split()
                             val = tokens[0] if tokens else None
                         elif mapping.extraction_strategy == "token_list":
-                            remainder = line_stripped[len(mapping.pattern):].strip()
+                            pos = line_stripped.find(mapping.pattern)
+                            remainder = line_stripped[pos + len(mapping.pattern):].strip()
                             val = remainder.split()
 
                 if matched and val is not None:

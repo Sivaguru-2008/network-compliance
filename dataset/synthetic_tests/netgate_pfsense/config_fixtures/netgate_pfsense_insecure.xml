@@ -1,0 +1,11 @@
+<pfsense>
+  <system>
+    <hostname>Insecure-pfSense</hostname>
+    <webgui>
+      <protocol>http</protocol>
+    </webgui>
+    <ssh>
+      <enable>disabled</enable>
+    </ssh>
+  </system>
+</pfsense>

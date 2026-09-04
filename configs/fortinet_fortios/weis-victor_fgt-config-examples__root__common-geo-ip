@@ -1,0 +1,152 @@
+# Some GeoIP objects that I use very commonly
+
+config firewall address
+    edit "usa_geo"
+        set type geography
+        set color 12
+        set country "US"
+    next
+    edit "iran_geo"
+        set type geography
+        set color 6
+        set country "IR"
+    next
+    edit "china_geo"
+        set type geography
+        set color 6
+        set country "CN"
+    next
+    edit "nkorea_geo"
+        set type geography
+        set color 6
+        set country "KP"
+    next
+    edit "israel_geo"
+        set type geography
+        set color 6
+        set country "IL"
+    next
+    edit "saudiarabia_geo"
+        set type geography
+        set color 6
+        set country "SA"
+    next
+    edit "vatican_geo"
+        set type geography
+        set color 6
+        set country "VA"
+    next
+    edit "canada_geo"
+        set type geography
+        set color 12
+        set country "CA"
+    next
+    edit "mexico_geo"
+        set type geography
+        set color 12
+        set country "MX"
+    next
+    edit "nigeria_geo"
+        set type geography
+        set color 6
+        set country "NG"
+    next
+    edit "nepal_geo"
+        set type geography
+        set color 6
+        set country "NP"
+    next
+    edit "taiwan_geo"
+        set type geography
+        set color 6
+        set country "TW"
+    next
+    edit "vietnam_geo"
+        set type geography
+        set color 6
+        set country "VN"
+    next
+    edit "india_geo"
+        set type geography
+        set color 6
+        set country "IN"
+    next
+    edit "indonesia_geo"
+        set type geography
+        set color 6
+        set country "ID"
+    next
+    edit "malaysia_geo"
+        set type geography
+        set color 6
+        set country "MY"
+    next
+    edit "hongkong_geo"
+        set type geography
+        set color 6
+        set country "HK"
+    next
+    edit "turkey_geo"
+        set type geography
+        set color 6
+        set country "TR"
+    next
+    edit "singapore_geo"
+        set type geography
+        set color 6
+        set country "SG"
+    next
+    edit "thailand_geo"
+        set type geography
+        set color 6
+        set country "TH"
+    next
+    edit "australia_geo"
+        set type geography
+        set color 6
+        set country "AU"
+    next
+    edit "austria_geo"
+        set type geography
+        set color 6
+        set country "AT"
+    next
+    edit "ukraine_geo"
+        set type geography
+        set color 6
+        set country "UA"
+    next
+    edit "cuba_geo"
+        set type geography
+        set color 6
+        set country "CU"
+    next
+    edit "romania_geo"
+        set type geography
+        set color 6
+        set country "RO"
+    next
+    edit "sudan_geo"
+        set type geography
+        set color 6
+        set country "SD"
+    next
+    edit "south-sudan_geo"
+        set type geography
+        set color 6
+        set country "SS"
+    next
+end
+
+config firewall addrgrp
+    edit "sslvpn-allow_geos"
+        set uuid 143092be-9e53-51ea-7be8-f2718a219916
+        set member "canada_geo" "usa_geo" "mexico_geo"
+        set color 12
+    next
+    edit "ban_geos"
+        set member "china_geo" "iran_geo" "israel_geo" "nkorea_geo" "saudiarabia_geo" "vatican_geo" "hongkong_geo" "india_geo" "indonesia_geo" "malaysia_geo" "nepal_ge
+o" "nigeria_geo" "taiwan_geo" "turkey_geo" "vietnam_geo" "thailand_geo" "austria_geo" "ukraine_geo" "cuba_geo" "romania_geo" "sudan_geo" "south-sudan_geo"
+        set color 6
+    next
+end

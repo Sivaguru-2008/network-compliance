@@ -165,6 +165,24 @@ def bootstrap_database_if_empty() -> bool:
             print(f"Error bootstrapping framework {fw_file.name}: {exc}")
             import traceback
             traceback.print_exc()
+
+    # 5. Populate CIS benchmark files if present
+    cis_benchmarks_dir = Path(__file__).parents[2] / "cis" / "benchmarks"
+    fgt_benchmark = cis_benchmarks_dir / "CIS_Fortigate_7.0.x_rules.json"
+    if fgt_benchmark.is_file():
+        try:
+            from ..cis.populate_kb import populate_fortigate_kb
+            populate_fortigate_kb(fgt_benchmark)
+        except Exception as exc:
+            print(f"Warning: Failed to populate FortiGate CIS benchmark: {exc}")
+
+    pa_benchmark = cis_benchmarks_dir / "CIS_Palo_Alto_Firewall_11_rules.json"
+    if pa_benchmark.is_file():
+        try:
+            from ..cis.populate_kb import populate_paloalto_kb
+            populate_paloalto_kb(pa_benchmark)
+        except Exception as exc:
+            print(f"Warning: Failed to populate Palo Alto CIS benchmark: {exc}")
             
     print("Database bootstrapper finished.")
     return True

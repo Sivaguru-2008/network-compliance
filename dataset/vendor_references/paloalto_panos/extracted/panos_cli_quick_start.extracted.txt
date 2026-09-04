@@ -1,0 +1,132 @@
+Home
+Next-Generation Firewall
+Get Started with the CLI
+
+## Get Started with the CLI
+
+
+## Next-Generation Firewall Docs
+
+Getting Started
+Administration
+Networking
+Quick Start
+Reference
+Incidents & Alerts
+Release Notes
+
+
+
+
+
+
+Select a Document
+
+
+
+
+PAN-OS 12.2
+PAN-OS 12.1
+PAN-OS 11.2
+PAN-OS 11.1
+PAN-OS 11.0 (EoL)
+PAN-OS 10.2
+PAN-OS 10.1 (EoL)
+PAN-OS 10.0 (EoL)
+PAN-OS 9.1 (EoL)
+PAN-OS 9.0 (EoL)
+PAN-OS 8.1 (EoL)
+PAN-OS 12.2
+PAN-OS 12.1
+PAN-OS 11.2
+PAN-OS 11.1
+PAN-OS 11.0 (EoL)
+PAN-OS 10.2
+PAN-OS 10.1 (EoL)
+PAN-OS 10.0 (EoL)
+PAN-OS 9.1 (EoL)
+PAN-OS 9.0 (EoL)
+PAN-OS 8.1 (EoL)
+Help
+
+
+
+
+
+
+Select a Document
+
+
+
+
+PAN-OS 12.2
+PAN-OS 12.1
+PAN-OS 11.2
+PAN-OS 11.1
+PAN-OS 10.2
+PAN-OS 10.1
+PAN-OS 12.2
+PAN-OS 12.1
+PAN-OS 11.2
+PAN-OS 11.1
+PAN-OS 10.2
+PAN-OS 10.1
+New Features
+
+## Get Started with the CLI
+
+Where Can I Use This?What Do I Need?
+
+
+NGFW (Managed by PAN-OS or Panorama)
+No prerequisites needed
+No prerequisites needed
+SSH Connection—To ensure you are logging in to your firewall and not a
+                        malicious device, you can verify the SSH connection to the
+                            firewall when you perform initial configuration. After you
+                        have completed initial configuration, you can
+                        establish a CLI connection over the network using a secure shell (SSH)
+                        connection.
+Serial Connection—If you have not yet completed initial configuration
+                        or if you chose not to enable SSH on the Palo Alto Networks device, you can
+                        establish a direct serial connection from a serial interface on your
+                        management computer to the Console port on the device.
+Launch the terminal emulation software and select the type of connection
+                    (Serial or SSH).
+To establish an SSH connection, enter the hostname or IP address of
+                                the device you want to connect to and set the port to
+                                    22.To establish a Serial connection, connect a serial interface on
+                                management computer to the Console port on the device. Configure the
+                                Serial connection settings in the terminal emulation software as
+                                follows:Data rate: 9600Data bits: 8Parity: noneStop bits: 1Flow control: none
+To establish an SSH connection, enter the hostname or IP address of
+                                the device you want to connect to and set the port to
+                                    22.
+To establish a Serial connection, connect a serial interface on
+                                management computer to the Console port on the device. Configure the
+                                Serial connection settings in the terminal emulation software as
+                                follows:Data rate: 9600Data bits: 8Parity: noneStop bits: 1Flow control: none
+Data rate: 9600
+Data bits: 8
+Parity: none
+Stop bits: 1
+Flow control: none
+When prompted to log in, enter your administrative username.
+The default superuser username is admin. To set up CLI
+                        access for other administrative users, see Give
+                            Administrators Access to the CLI.
+If prompted to acknowledge the login banner, enter
+                        Yes.
+Enter the administrative password.
+The default superuser password is admin. However, for
+                        security reasons you should immediately change the admin
+                            password.
+After you log in, the message of the day displays,
+                        followed by the CLI prompt in Operational mode:
+username@hostname>
+You can tell you are in operational mode because the command prompt ends with
+                        a >.
+```
+username@hostname>
+```
+© 2026 Palo Alto Networks, Inc. All rights reserved.

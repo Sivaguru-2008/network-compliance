@@ -1,0 +1,893 @@
+"""Structured configuration grammar and hierarchy definitions for all 12 core network vendors."""
+
+import json
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+
+@dataclass
+class GrammarBlock:
+    block_name: str
+    entry_keyword: str
+    exit_keyword: Optional[str]
+    child_delimiter: Optional[str]
+    statement_terminator: Optional[str]
+    allowed_subblocks: List[str] = field(default_factory=list)
+    common_directives: List[str] = field(default_factory=list)
+    security_directives: List[str] = field(default_factory=list)
+
+
+@dataclass
+class VendorGrammar:
+    vendor_key: str
+    vendor_name: str
+    os_name: str
+    syntax_type: str  # "cisco_hierarchical", "junos_brace_and_set", "fortios_block", "sonic_json", "panos_xml_and_set", "huawei_vrp", "clish", "routeros_tree", "sonicos_cli", "stormshield_serverd", "watchguard_xml_cli"
+    root_blocks: List[GrammarBlock] = field(default_factory=list)
+    negation_prefix: str = "no"
+    comment_prefixes: List[str] = field(default_factory=lambda: ["!"])
+    indentation_sensitive: bool = True
+    schema_definition: Dict[str, Any] = field(default_factory=dict)
+
+
+VENDOR_GRAMMARS: Dict[str, VendorGrammar] = {
+    "cisco_ios": VendorGrammar(
+        vendor_key="cisco_ios",
+        vendor_name="Cisco",
+        os_name="Cisco IOS / IOS-XE",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=["!", "#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="global_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["line_vty", "line_con", "interface", "router", "aaa_group"],
+                common_directives=["hostname", "service password-encryption", "service timestamps", "boot-start-marker"],
+                security_directives=["ip ssh version 2", "ip ssh time-out", "no ip http server", "no ip http secure-server", "logging host", "snmp-server community", "enable secret", "banner motd"],
+            ),
+            GrammarBlock(
+                block_name="line_vty",
+                entry_keyword="line vty",
+                exit_keyword="!",
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["transport input", "exec-timeout", "access-class", "logging synchronous", "login authentication"],
+                security_directives=["transport input ssh", "exec-timeout 10 0", "access-class 99 in"],
+            ),
+        ],
+        schema_definition={
+            "format": "indented_cli_sections",
+            "global_mode": "configure terminal",
+            "exit_marker": "end",
+        },
+    ),
+    "juniper_junos": VendorGrammar(
+        vendor_key="juniper_junos",
+        vendor_name="Juniper Networks",
+        os_name="Junos OS",
+        syntax_type="junos_brace_and_set",
+        negation_prefix="delete",
+        comment_prefixes=["/*", "#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="system",
+                entry_keyword="system {",
+                exit_keyword="}",
+                child_delimiter=" ",
+                statement_terminator=";",
+                allowed_subblocks=["services", "syslog", "login", "ntp", "name-server"],
+                common_directives=["host-name", "time-zone", "domain-name"],
+                security_directives=["services { ssh { protocol-version v2; } }", "services { web-management { https; } }", "syslog { file messages { any notice; } }", "login { message", "root-authentication"],
+            ),
+        ],
+        schema_definition={
+            "format": "curly_brace_hierarchy_or_set_flat",
+            "set_prefix": "set",
+            "delete_prefix": "delete",
+        },
+    ),
+    "fortinet_fortios": VendorGrammar(
+        vendor_key="fortinet_fortios",
+        vendor_name="Fortinet",
+        os_name="FortiOS",
+        syntax_type="fortios_block",
+        negation_prefix="unset",
+        comment_prefixes=["#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="config system global",
+                entry_keyword="config system global",
+                exit_keyword="end",
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["set hostname", "set timezone", "set admintimeout"],
+                security_directives=["set admin-lockout-threshold", "set admin-lockout-duration", "set admin-https-ssl-versions", "set admin-sport", "set admin-ssh-port", "unset admin-telnet"],
+            ),
+            GrammarBlock(
+                block_name="config system interface",
+                entry_keyword="config system interface",
+                exit_keyword="end",
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["edit <name>"],
+                common_directives=["edit", "set ip", "set allowaccess", "next"],
+                security_directives=["set allowaccess ping ssh https"],
+            ),
+        ],
+        schema_definition={
+            "format": "config_edit_set_next_end",
+            "start_keyword": "config",
+            "table_item_keyword": "edit",
+            "set_keyword": "set",
+            "next_keyword": "next",
+            "end_keyword": "end",
+        },
+    ),
+    "arista_eos": VendorGrammar(
+        vendor_key="arista_eos",
+        vendor_name="Arista",
+        os_name="Arista EOS",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=["!", "#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="global_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["management ssh", "management api http-commands", "interface", "aaa"],
+                common_directives=["hostname", "enable secret", "logging host", "ntp server"],
+                security_directives=["no management api http-commands", "management ssh server shutdown", "logging level", "banner login"],
+            ),
+        ],
+        schema_definition={
+            "format": "eos_cli_hierarchy",
+        },
+    ),
+    "sonic": VendorGrammar(
+        vendor_key="sonic",
+        vendor_name="SONiC NOS",
+        os_name="SONiC",
+        syntax_type="sonic_json",
+        negation_prefix="",
+        comment_prefixes=[],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="config_db_json",
+                entry_keyword="{",
+                exit_keyword="}",
+                child_delimiter=":",
+                statement_terminator=",",
+                allowed_subblocks=["DEVICE_METADATA", "SYSLOG_SERVER", "NTP_SERVER", "AAA", "SSH_SERVER", "PORT"],
+                common_directives=["DEVICE_METADATA.localhost.hostname", "DEVICE_METADATA.localhost.type"],
+                security_directives=["SSH_SERVER", "SYSLOG_SERVER", "NTP_SERVER", "AAA.authentication.login"],
+            ),
+        ],
+        schema_definition={
+            "format": "json_config_db",
+            "root_object": "dict",
+            "primary_tables": ["DEVICE_METADATA", "SYSLOG_SERVER", "NTP_SERVER", "AAA", "SSH_SERVER", "PORT", "VLAN", "ACL_RULE"],
+        },
+    ),
+    "paloalto_panos": VendorGrammar(
+        vendor_key="paloalto_panos",
+        vendor_name="Palo Alto Networks",
+        os_name="PAN-OS",
+        syntax_type="panos_xml_and_set",
+        negation_prefix="delete",
+        comment_prefixes=["#", "<!--"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="deviceconfig_system",
+                entry_keyword="<system>",
+                exit_keyword="</system>",
+                child_delimiter="",
+                statement_terminator="",
+                allowed_subblocks=["service", "login-banner", "update-server", "ntp-servers"],
+                common_directives=["<hostname>", "<timezone>", "<ip-address>"],
+                security_directives=["<service><disable-telnet>yes</disable-telnet><disable-http>yes</disable-http></service>", "<login-banner>", "<permitted-ip>"],
+            ),
+        ],
+        schema_definition={
+            "format": "xml_tree_or_set_cli",
+            "set_prefix": "set deviceconfig system",
+            "xml_root": "config/devices/entry/deviceconfig/system",
+        },
+    ),
+    "huawei_vrp": VendorGrammar(
+        vendor_key="huawei_vrp",
+        vendor_name="Huawei",
+        os_name="Huawei VRP",
+        syntax_type="huawei_vrp",
+        negation_prefix="undo",
+        comment_prefixes=["#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="system_view",
+                entry_keyword="system-view",
+                exit_keyword="return",
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["aaa", "user-interface vty", "interface", "acl"],
+                common_directives=["sysname", "header login", "info-center enable"],
+                security_directives=["stelnet server enable", "undo http server enable", "undo telnet server enable", "snmp-agent sys-info version v3", "info-center loghost"],
+            ),
+        ],
+        schema_definition={
+            "format": "vrp_system_view",
+            "enter_command": "system-view",
+            "exit_command": "return",
+            "negation_command": "undo",
+        },
+    ),
+    "checkpoint_gaia": VendorGrammar(
+        vendor_key="checkpoint_gaia",
+        vendor_name="Check Point",
+        os_name="Check Point Gaia",
+        syntax_type="clish",
+        negation_prefix="delete",
+        comment_prefixes=["#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="clish_configuration",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["set hostname", "set timezone", "set date"],
+                security_directives=["set sshd port 22", "set password-controls min-password-length", "set password-controls password-history", "set syslog server", "set snmp v3"],
+            ),
+        ],
+        schema_definition={
+            "format": "clish_flat_commands",
+            "set_command": "set",
+            "show_command": "show",
+            "delete_command": "delete",
+        },
+    ),
+    "mikrotik_routeros": VendorGrammar(
+        vendor_key="mikrotik_routeros",
+        vendor_name="MikroTik",
+        os_name="RouterOS v6 & v7",
+        syntax_type="routeros_tree",
+        negation_prefix="remove",
+        comment_prefixes=["#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="export_rsc",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["/ip service", "/system logging", "/system ntp client", "/user", "/snmp"],
+                common_directives=["/system identity set name", "/system clock set time-zone-name"],
+                security_directives=["/ip service set telnet disabled=yes", "/ip service set ftp disabled=yes", "/ip service set www disabled=yes", "/ip service set api disabled=yes", "/ip service set ssh port=22", "/system logging action add", "/snmp set enabled=no"],
+            ),
+        ],
+        schema_definition={
+            "format": "routeros_path_set_add",
+            "export_command": "/export",
+        },
+    ),
+    "sonicwall": VendorGrammar(
+        vendor_key="sonicwall",
+        vendor_name="SonicWall",
+        os_name="SonicOS / SonicOSX",
+        syntax_type="sonicos_cli",
+        negation_prefix="no",
+        comment_prefixes=["#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="administration",
+                entry_keyword="administration",
+                exit_keyword="exit",
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["firewall-name", "system-time"],
+                security_directives=["web-management allow-http no", "web-management allow-https yes", "ssh yes", "session-timeout 10", "login-security admin-lockout-time 30"],
+            ),
+        ],
+        schema_definition={
+            "format": "sonicos_context_cli",
+            "commit_command": "commit",
+        },
+    ),
+    "stormshield": VendorGrammar(
+        vendor_key="stormshield",
+        vendor_name="Stormshield",
+        os_name="Stormshield SNS",
+        syntax_type="stormshield_serverd",
+        negation_prefix="UNSET",
+        comment_prefixes=["#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="serverd_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["CONFIG SYSTEM TIMEZONE", "CONFIG SYSTEM HOSTNAME"],
+                security_directives=["CONFIG SYSTEM SERVER HTTP state=0", "CONFIG SYSTEM SERVER SSH state=1", "CONFIG AUTH", "CONFIG ALARM", "CONFIG SYSLOG"],
+            ),
+        ],
+        schema_definition={
+            "format": "serverd_config_statements",
+            "prefix": "CONFIG",
+        },
+    ),
+    "watchguard_fireware": VendorGrammar(
+        vendor_key="watchguard_fireware",
+        vendor_name="WatchGuard",
+        os_name="Fireware OS",
+        syntax_type="watchguard_xml_cli",
+        negation_prefix="no",
+        comment_prefixes=["#", "<!--"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="fireware_system",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["system-name", "time-zone"],
+                security_directives=["log-host", "ntp server", "snmp version v3", "management-session timeout", "lockout threshold"],
+            ),
+        ],
+        schema_definition={
+            "format": "fireware_xml_and_cli",
+        },
+    ),
+    "a10_acos": VendorGrammar(
+        vendor_key="a10_acos",
+        vendor_name="A10 Networks",
+        os_name="ACOS",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=["!", "#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="global_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["interface", "vlan", "admin", "system", "logging"],
+                common_directives=["hostname", "timezone", "ntp server"],
+                security_directives=["ssh server enable", "no telnet server", "web-service secure-port", "snmp-server community", "enable-password", "admin password"],
+            ),
+        ],
+        schema_definition={"format": "acos_cli_running_config"},
+    ),
+    "alcatel_aos": VendorGrammar(
+        vendor_key="alcatel_aos",
+        vendor_name="Alcatel-Lucent Enterprise",
+        os_name="AOS",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=["!", "#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="aos_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["system name", "system timezone", "ntp server"],
+                security_directives=["aaa authentication", "no telnet", "ssh enable", "no http server", "https enable", "session-timeout", "user password"],
+            ),
+        ],
+        schema_definition={"format": "alcatel_omniswitch_aos_cli"},
+    ),
+    "aws_security_group": VendorGrammar(
+        vendor_key="aws_security_group",
+        vendor_name="Amazon Web Services",
+        os_name="AWS VPC",
+        syntax_type="cloud_json_policy",
+        negation_prefix="",
+        comment_prefixes=[],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="SecurityGroups",
+                entry_keyword="{",
+                exit_keyword="}",
+                child_delimiter=":",
+                statement_terminator=",",
+                allowed_subblocks=["IpPermissions", "IpPermissionsEgress"],
+                common_directives=["GroupId", "GroupName", "Description", "VpcId"],
+                security_directives=["IpPermissions.FromPort", "IpPermissions.ToPort", "IpPermissions.IpRanges", "IpPermissions.PrefixListIds"],
+            ),
+        ],
+        schema_definition={"format": "aws_describe_security_groups_json"},
+    ),
+    "azure_nsg": VendorGrammar(
+        vendor_key="azure_nsg",
+        vendor_name="Microsoft Azure",
+        os_name="Azure Virtual Network",
+        syntax_type="cloud_json_policy",
+        negation_prefix="",
+        comment_prefixes=[],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="securityRules",
+                entry_keyword="{",
+                exit_keyword="}",
+                child_delimiter=":",
+                statement_terminator=",",
+                allowed_subblocks=["properties"],
+                common_directives=["name", "properties.priority", "properties.protocol"],
+                security_directives=["properties.access", "properties.direction", "properties.sourceAddressPrefix", "properties.destinationPortRange"],
+            ),
+        ],
+        schema_definition={"format": "azure_network_security_group_json"},
+    ),
+    "barracuda_cloudgen": VendorGrammar(
+        vendor_key="barracuda_cloudgen",
+        vendor_name="Barracuda Networks",
+        os_name="CloudGen Firewall",
+        syntax_type="generic_conf",
+        negation_prefix="no",
+        comment_prefixes=["#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="box_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["box.name", "system.timezone", "ntp.server"],
+                security_directives=["admin.ssh.enabled", "admin.http.enabled=no", "admin.https.enabled", "passwords.min_length", "logging.syslog"],
+            ),
+        ],
+        schema_definition={"format": "barracuda_conf_and_cli"},
+    ),
+    "cato_networks": VendorGrammar(
+        vendor_key="cato_networks",
+        vendor_name="Cato Networks",
+        os_name="Cato Cloud SASE",
+        syntax_type="cloud_json_policy",
+        negation_prefix="",
+        comment_prefixes=[],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="sase_policy",
+                entry_keyword="{",
+                exit_keyword="}",
+                child_delimiter=":",
+                statement_terminator=",",
+                allowed_subblocks=["rules", "wanSecurity", "threatProtection"],
+                common_directives=["name", "siteName", "timezone"],
+                security_directives=["rules.action", "threatProtection.ips", "wanSecurity.antiMalware", "adminAccess.mfa"],
+            ),
+        ],
+        schema_definition={"format": "cato_sase_json_export"},
+    ),
+    "cisco_asa": VendorGrammar(
+        vendor_key="cisco_asa",
+        vendor_name="Cisco",
+        os_name="Cisco ASA",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=["!", "#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="global_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["telnet", "ssh", "http", "logging", "aaa", "passwd"],
+                common_directives=["hostname", "domain-name", "clock timezone", "ntp server"],
+                security_directives=["ssh version 2", "ssh timeout", "no http server enable", "http server enable", "logging host", "snmp-server community", "enable password", "aaa authentication"],
+            ),
+        ],
+        schema_definition={"format": "cisco_asa_running_config"},
+    ),
+    "extreme_exos": VendorGrammar(
+        vendor_key="extreme_exos",
+        vendor_name="Extreme Networks",
+        os_name="EXOS",
+        syntax_type="exos_cli",
+        negation_prefix="disable",
+        comment_prefixes=["#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="exos_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["configure snmp sysName", "configure timezone", "configure ntp server add"],
+                security_directives=["enable ssh2", "disable telnet", "disable web", "enable web https", "configure radius", "configure syslog add"],
+            ),
+        ],
+        schema_definition={"format": "extremexos_cli_statements"},
+    ),
+    "f5_bigip_tmos": VendorGrammar(
+        vendor_key="f5_bigip_tmos",
+        vendor_name="F5 Networks",
+        os_name="BIG-IP TMOS",
+        syntax_type="tmos_tmsh_brace",
+        negation_prefix="delete",
+        comment_prefixes=["#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="sys",
+                entry_keyword="sys",
+                exit_keyword="}",
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["sys sshd", "sys httpd", "sys ntp", "sys syslog", "sys snmp"],
+                common_directives=["sys global-settings { hostname", "sys ntp { servers"],
+                security_directives=["sys sshd { inactivity-timeout", "sys httpd { ssl-ciphersuite", "sys auth password-policy", "sys syslog { remote-servers"],
+            ),
+        ],
+        schema_definition={"format": "f5_tmos_tmsh_bigip_conf"},
+    ),
+    "forcepoint_ngfw": VendorGrammar(
+        vendor_key="forcepoint_ngfw",
+        vendor_name="Forcepoint",
+        os_name="Forcepoint NGFW",
+        syntax_type="generic_conf",
+        negation_prefix="no",
+        comment_prefixes=["#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="ngfw_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["hostname", "time-zone", "ntp-server"],
+                security_directives=["sshd-enable", "http-server-disable", "https-server-enable", "snmp-v3", "auth-method", "syslog-server"],
+            ),
+        ],
+        schema_definition={"format": "forcepoint_smc_export_and_cli"},
+    ),
+    "hillstone_stoneos": VendorGrammar(
+        vendor_key="hillstone_stoneos",
+        vendor_name="Hillstone Networks",
+        os_name="StoneOS",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=["!", "#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="stoneos_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["hostname", "clock timezone", "ntp-server"],
+                security_directives=["ssh server enable", "no telnet server", "no http server", "https server enable", "aaa authentication", "logging host"],
+            ),
+        ],
+        schema_definition={"format": "hillstone_stoneos_cli"},
+    ),
+    "hpe_aruba": VendorGrammar(
+        vendor_key="hpe_aruba",
+        vendor_name="HPE Aruba Networking",
+        os_name="ProCurve / Provision",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=[";", "#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="provision_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["hostname", "time timezone", "sntp server"],
+                security_directives=["ip ssh", "no telnet-server", "no web-management plaintext", "web-management ssl", "password manager", "logging"],
+            ),
+        ],
+        schema_definition={"format": "hpe_provision_running_config"},
+    ),
+    "hpe_aruba_aos_cx": VendorGrammar(
+        vendor_key="hpe_aruba_aos_cx",
+        vendor_name="HPE Aruba Networking",
+        os_name="AOS-CX",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=["!", "#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="aos_cx_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["ssh", "https-server", "aaa", "logging", "user"],
+                common_directives=["hostname", "clock timezone", "ntp server"],
+                security_directives=["ssh server vrf", "no telnet-server", "https-server rest access-mode", "aaa authentication login", "password-complexity"],
+            ),
+        ],
+        schema_definition={"format": "aruba_aoscx_running_config"},
+    ),
+    "netgate_pfsense": VendorGrammar(
+        vendor_key="netgate_pfsense",
+        vendor_name="Netgate",
+        os_name="pfSense",
+        syntax_type="pfsense_xml",
+        negation_prefix="",
+        comment_prefixes=["<!--"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="pfsense",
+                entry_keyword="<pfsense>",
+                exit_keyword="</pfsense>",
+                child_delimiter="",
+                statement_terminator="",
+                allowed_subblocks=["system", "interfaces", "filter", "syslog", "ntpd"],
+                common_directives=["<hostname>", "<domain>", "<timezone>"],
+                security_directives=["<system><webgui><protocol>https</protocol></webgui></system>", "<sshd><enable>enabled</enable></sshd>", "<syslog><remoteserver>"],
+            ),
+        ],
+        schema_definition={"format": "pfsense_xml_config"},
+    ),
+    "nokia_sros": VendorGrammar(
+        vendor_key="nokia_sros",
+        vendor_name="Nokia",
+        os_name="SR OS / TiMOS",
+        syntax_type="nokia_mdcli_and_classic",
+        negation_prefix="no",
+        comment_prefixes=["#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="sros_system",
+                entry_keyword="configure system",
+                exit_keyword="exit",
+                child_delimiter=" ",
+                statement_terminator="\n",
+                allowed_subblocks=["security", "time", "log", "management-interface"],
+                common_directives=["name", "timezone", "ntp server"],
+                security_directives=["security user", "security ssh", "security telnet shutdown", "security password policy", "log syslog"],
+            ),
+        ],
+        schema_definition={"format": "nokia_sros_admin_display_config"},
+    ),
+    "ruckus_fastiron": VendorGrammar(
+        vendor_key="ruckus_fastiron",
+        vendor_name="Ruckus Networks",
+        os_name="FastIron",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=["!", "#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="fastiron_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["hostname", "clock timezone", "ntp server"],
+                security_directives=["crypto key generate rsa", "ip ssh", "no telnet server", "web-management https", "enable password", "logging host"],
+            ),
+        ],
+        schema_definition={"format": "ruckus_fastiron_running_config"},
+    ),
+    "sangfor_ngaf": VendorGrammar(
+        vendor_key="sangfor_ngaf",
+        vendor_name="Sangfor Technologies",
+        os_name="NGAF",
+        syntax_type="cisco_hierarchical",
+        negation_prefix="no",
+        comment_prefixes=["!", "#"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="ngaf_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["hostname", "timezone", "ntp-server"],
+                security_directives=["ssh-server enable", "no telnet-server", "https-server enable", "admin password-policy", "syslog-server"],
+            ),
+        ],
+        schema_definition={"format": "sangfor_ngaf_cli_export"},
+    ),
+    "sophos_sfos": VendorGrammar(
+        vendor_key="sophos_sfos",
+        vendor_name="Sophos",
+        os_name="SFOS / XG Firewall",
+        syntax_type="generic_conf",
+        negation_prefix="no",
+        comment_prefixes=["#", "<!--"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="sfos_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["system hostname", "system timezone", "system ntp"],
+                security_directives=["system appliance_access", "system ssh enable", "system password-complexity", "system syslog"],
+            ),
+        ],
+        schema_definition={"format": "sophos_sfos_cli_and_xml"},
+    ),
+    "stormshield_sns": VendorGrammar(
+        vendor_key="stormshield_sns",
+        vendor_name="Stormshield",
+        os_name="Stormshield SNS",
+        syntax_type="stormshield_serverd",
+        negation_prefix="UNSET",
+        comment_prefixes=["#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="serverd_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["CONFIG SYSTEM TIMEZONE", "CONFIG SYSTEM HOSTNAME"],
+                security_directives=["CONFIG SYSTEM SERVER HTTP state=0", "CONFIG SYSTEM SERVER SSH state=1", "CONFIG AUTH", "CONFIG ALARM", "CONFIG SYSLOG"],
+            ),
+        ],
+        schema_definition={"format": "serverd_config_statements", "prefix": "CONFIG"},
+    ),
+    "ubiquiti_edgeos": VendorGrammar(
+        vendor_key="ubiquiti_edgeos",
+        vendor_name="Ubiquiti Networks",
+        os_name="EdgeOS",
+        syntax_type="junos_brace_and_set",
+        negation_prefix="delete",
+        comment_prefixes=["/*", "#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="system",
+                entry_keyword="system {",
+                exit_keyword="}",
+                child_delimiter=" ",
+                statement_terminator="",
+                allowed_subblocks=["services", "login", "ntp", "syslog"],
+                common_directives=["host-name", "time-zone", "name-server"],
+                security_directives=["service { ssh { protocol-version v2; } }", "service { gui { https-port; } }", "login { user", "syslog { host"],
+            ),
+        ],
+        schema_definition={"format": "edgeos_brace_and_set_cli"},
+    ),
+    "versa_versos": VendorGrammar(
+        vendor_key="versa_versos",
+        vendor_name="Versa Networks",
+        os_name="VersaOS",
+        syntax_type="junos_brace_and_set",
+        negation_prefix="delete",
+        comment_prefixes=["/*", "#"],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="system",
+                entry_keyword="system {",
+                exit_keyword="}",
+                child_delimiter=" ",
+                statement_terminator=";",
+                allowed_subblocks=["services", "security", "logging", "users"],
+                common_directives=["host-name", "time-zone", "ntp"],
+                security_directives=["services { ssh { enable; } }", "security { authentication", "logging { remote"],
+            ),
+        ],
+        schema_definition={"format": "versos_cli_hierarchy"},
+    ),
+    "zscaler_zia": VendorGrammar(
+        vendor_key="zscaler_zia",
+        vendor_name="Zscaler",
+        os_name="Zscaler Internet Access (ZIA)",
+        syntax_type="cloud_json_policy",
+        negation_prefix="",
+        comment_prefixes=[],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="zia_policy",
+                entry_keyword="{",
+                exit_keyword="}",
+                child_delimiter=":",
+                statement_terminator=",",
+                allowed_subblocks=["urlFilteringRules", "firewallRules", "sslInspectionRules", "dlpRules"],
+                common_directives=["companyName", "cloudName", "timezone"],
+                security_directives=["urlFilteringRules.action", "firewallRules.action", "sslInspectionRules.action", "adminSecurity.samlAuth"],
+            ),
+        ],
+        schema_definition={"format": "zscaler_zia_policy_json"},
+    ),
+    "zscaler_zpa": VendorGrammar(
+        vendor_key="zscaler_zpa",
+        vendor_name="Zscaler",
+        os_name="Zscaler Private Access (ZPA)",
+        syntax_type="cloud_json_policy",
+        negation_prefix="",
+        comment_prefixes=[],
+        indentation_sensitive=False,
+        root_blocks=[
+            GrammarBlock(
+                block_name="zpa_policy",
+                entry_keyword="{",
+                exit_keyword="}",
+                child_delimiter=":",
+                statement_terminator=",",
+                allowed_subblocks=["applicationSegments", "accessPolicyRules", "postureProfiles"],
+                common_directives=["customerName", "cloudName"],
+                security_directives=["accessPolicyRules.action", "postureProfiles.postureTypes", "serverGroups.config"],
+            ),
+        ],
+        schema_definition={"format": "zscaler_zpa_policy_json"},
+    ),
+}
+
+
+def get_vendor_grammar(vendor_key: str) -> Optional[VendorGrammar]:
+    """Retrieve structured grammar for a specific vendor."""
+    normalized = vendor_key.lower().strip()
+    if normalized in VENDOR_GRAMMARS:
+        return VENDOR_GRAMMARS[normalized]
+    return VendorGrammar(
+        vendor_key=normalized,
+        vendor_name=normalized.replace("_", " ").title(),
+        os_name=normalized.replace("_", " ").title(),
+        syntax_type="generic_cli_or_structured",
+        negation_prefix="no",
+        comment_prefixes=["!", "#", "//"],
+        indentation_sensitive=True,
+        root_blocks=[
+            GrammarBlock(
+                block_name="system_config",
+                entry_keyword="",
+                exit_keyword=None,
+                child_delimiter=" ",
+                statement_terminator="\n",
+                common_directives=["hostname", "sysname", "system-name"],
+                security_directives=["ssh", "ntp", "logging", "snmp", "aaa", "user", "password"],
+            )
+        ],
+    )
+
+
+def save_all_vendor_grammars(dataset_base: Path = Path("dataset")):
+    """Persist structured grammar JSON files for all vendors."""
+    vendor_ref_base = dataset_base / "vendor_references"
+    for vendor_key, grammar in VENDOR_GRAMMARS.items():
+        schema_dir = vendor_ref_base / vendor_key / "schemas"
+        schema_dir.mkdir(parents=True, exist_ok=True)
+        schema_file = schema_dir / "grammar.json"
+        with open(schema_file, "w", encoding="utf-8") as f:
+            json.dump(asdict(grammar), f, indent=2)

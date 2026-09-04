@@ -1,0 +1,39 @@
+{
+  "vendor_key": "alcatel_aos",
+  "vendor_name": "Alcatel-Lucent Enterprise",
+  "os_name": "AOS",
+  "syntax_type": "cisco_hierarchical",
+  "root_blocks": [
+    {
+      "block_name": "aos_config",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "system name",
+        "system timezone",
+        "ntp server"
+      ],
+      "security_directives": [
+        "aaa authentication",
+        "no telnet",
+        "ssh enable",
+        "no http server",
+        "https enable",
+        "session-timeout",
+        "user password"
+      ]
+    }
+  ],
+  "negation_prefix": "no",
+  "comment_prefixes": [
+    "!",
+    "#"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "alcatel_omniswitch_aos_cli"
+  }
+}

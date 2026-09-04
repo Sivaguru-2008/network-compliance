@@ -1,0 +1,594 @@
+{
+  "classification": {
+    "task": "classification",
+    "split": "test",
+    "total_samples": 2063,
+    "accuracy": 0.9486,
+    "precision_macro": 0.7372,
+    "recall_macro": 0.7314,
+    "macro_f1": 0.6904,
+    "weighted_f1": 0.9535,
+    "precision_weighted": 0.9684,
+    "recall_weighted": 0.9486,
+    "critical_finding_recall": 0.7314,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "per_class": {
+      "FIREWALL": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 16.0
+      },
+      "INTERFACE": {
+        "precision": 0.7294685990338164,
+        "recall": 1.0,
+        "f1-score": 0.8435754189944135,
+        "support": 151.0
+      },
+      "LOGGING": {
+        "precision": 1.0,
+        "recall": 0.1,
+        "f1-score": 0.18181818181818182,
+        "support": 10.0
+      },
+      "MANAGEMENT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 23.0
+      },
+      "NTP": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "ROUTING": {
+        "precision": 0.4807692307692308,
+        "recall": 1.0,
+        "f1-score": 0.6493506493506493,
+        "support": 25.0
+      },
+      "SNMP": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 11.0
+      },
+      "SYSTEM": {
+        "precision": 0.9946933962264151,
+        "recall": 0.945627802690583,
+        "f1-score": 0.9695402298850575,
+        "support": 1784.0
+      },
+      "USER_MANAGEMENT": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 24.0
+      },
+      "VLAN": {
+        "precision": 0.9047619047619048,
+        "recall": 1.0,
+        "f1-score": 0.95,
+        "support": 19.0
+      },
+      "VPN": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "macro avg": {
+        "precision": 0.7372448300719424,
+        "recall": 0.7314207093355075,
+        "f1-score": 0.6903894981862093,
+        "support": 2063.0
+      },
+      "weighted avg": {
+        "precision": 0.9684403704710314,
+        "recall": 0.9486185167232186,
+        "f1-score": 0.95353446749154,
+        "support": 2063.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        151,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        9,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        23,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        25,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        11,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        56,
+        0,
+        0,
+        1,
+        27,
+        0,
+        1687,
+        0,
+        2,
+        11
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        24,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        19,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "class_names": [
+      "FIREWALL",
+      "INTERFACE",
+      "LOGGING",
+      "MANAGEMENT",
+      "NTP",
+      "ROUTING",
+      "SNMP",
+      "SYSTEM",
+      "USER_MANAGEMENT",
+      "VLAN",
+      "VPN"
+    ]
+  },
+  "security_detection": {
+    "task": "security_detection",
+    "split": "test",
+    "total_samples": 398,
+    "accuracy": 0.8945,
+    "precision_macro": 0.6013,
+    "recall_macro": 0.4963,
+    "macro_f1": 0.515,
+    "weighted_f1": 0.8668,
+    "precision_weighted": 0.8677,
+    "recall_weighted": 0.8945,
+    "critical_finding_recall": 0.1026,
+    "false_positives": 0,
+    "false_negatives": 2,
+    "per_class": {
+      "LOGGING_DISABLED": {
+        "precision": 0.9050131926121372,
+        "recall": 0.9828080229226361,
+        "f1-score": 0.9423076923076923,
+        "support": 349.0
+      },
+      "NTP_DISABLED": {
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1-score": 0.9473684210526315,
+        "support": 10.0
+      },
+      "SECURE_BASELINE": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": 0.0
+      },
+      "WEAK_CRYPTO": {
+        "precision": 0.5,
+        "recall": 0.10256410256410256,
+        "f1-score": 0.1702127659574468,
+        "support": 39.0
+      },
+      "macro avg": {
+        "precision": 0.6012532981530343,
+        "recall": 0.4963430313716847,
+        "f1-score": 0.5149722198294426,
+        "support": 398.0
+      },
+      "weighted avg": {
+        "precision": 0.8677125734211957,
+        "recall": 0.8944723618090452,
+        "f1-score": 0.866777303261938,
+        "support": 398.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        343,
+        0,
+        2,
+        4
+      ],
+      [
+        1,
+        9,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        35,
+        0,
+        0,
+        4
+      ]
+    ],
+    "class_names": [
+      "LOGGING_DISABLED",
+      "NTP_DISABLED",
+      "SECURE_BASELINE",
+      "WEAK_CRYPTO"
+    ]
+  },
+  "compliance": {
+    "task": "compliance",
+    "split": "test",
+    "total_samples": 3032,
+    "accuracy": 0.9875,
+    "precision_macro": 0.9916,
+    "recall_macro": 0.9762,
+    "macro_f1": 0.9836,
+    "weighted_f1": 0.9874,
+    "precision_weighted": 0.9877,
+    "recall_weighted": 0.9875,
+    "critical_finding_recall": 0.9523,
+    "false_positives": 0,
+    "false_negatives": 38,
+    "per_class": {
+      "COMPLIANT": {
+        "precision": 0.9832820061592609,
+        "recall": 1.0,
+        "f1-score": 0.9915705412599822,
+        "support": 2235.0
+      },
+      "NON_COMPLIANT": {
+        "precision": 1.0,
+        "recall": 0.9523212045169385,
+        "f1-score": 0.9755784061696658,
+        "support": 797.0
+      },
+      "macro avg": {
+        "precision": 0.9916410030796304,
+        "recall": 0.9761606022584692,
+        "f1-score": 0.983574473714824,
+        "support": 3032.0
+      },
+      "weighted avg": {
+        "precision": 0.9876765447776873,
+        "recall": 0.987467018469657,
+        "f1-score": 0.9873668039027981,
+        "support": 3032.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        2235,
+        0
+      ],
+      [
+        38,
+        759
+      ]
+    ],
+    "class_names": [
+      "COMPLIANT",
+      "NON_COMPLIANT"
+    ]
+  },
+  "qa": {
+    "task": "qa",
+    "split": "test",
+    "total_samples": 133,
+    "accuracy": 0.7895,
+    "precision_macro": 0.7462,
+    "recall_macro": 0.7385,
+    "macro_f1": 0.7421,
+    "weighted_f1": 0.7878,
+    "precision_weighted": 0.7865,
+    "recall_weighted": 0.7895,
+    "critical_finding_recall": 0.7385,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "per_class": {
+      "no": {
+        "precision": 0.84375,
+        "recall": 0.8617021276595744,
+        "f1-score": 0.8526315789473684,
+        "support": 94.0
+      },
+      "yes": {
+        "precision": 0.6486486486486487,
+        "recall": 0.6153846153846154,
+        "f1-score": 0.631578947368421,
+        "support": 39.0
+      },
+      "macro avg": {
+        "precision": 0.7461993243243243,
+        "recall": 0.7385433715220949,
+        "f1-score": 0.7421052631578947,
+        "support": 133.0
+      },
+      "weighted avg": {
+        "precision": 0.7865398293029872,
+        "recall": 0.7894736842105263,
+        "f1-score": 0.7878116343490305,
+        "support": 133.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        81,
+        13
+      ],
+      [
+        15,
+        24
+      ]
+    ],
+    "class_names": [
+      "no",
+      "yes"
+    ]
+  },
+  "ner": {
+    "task": "ner",
+    "token_accuracy": 0.9845,
+    "precision_macro": 0.4015,
+    "recall_macro": 0.4587,
+    "macro_f1": 0.4213,
+    "weighted_f1": 0.9873,
+    "entity_precision": 0.2824,
+    "entity_recall": 0.3531,
+    "entity_f1": 0.3071,
+    "accuracy": 0.9845,
+    "total_tokens": 6121
+  },
+  "human_benchmark": {
+    "security_detection": {
+      "samples": 10,
+      "accuracy": 0.6,
+      "macro_f1": 0.504,
+      "gold_verified": true
+    },
+    "compliance": {
+      "samples": 6,
+      "accuracy": 0.5,
+      "macro_f1": 0.3333,
+      "gold_verified": true
+    },
+    "qa": {
+      "samples": 5,
+      "accuracy": 0.6,
+      "macro_f1": 0.5833,
+      "gold_verified": true
+    },
+    "ner": {
+      "samples": 21,
+      "token_accuracy": 0.8028,
+      "entity_macro_f1": 0.2665,
+      "gold_verified": true
+    }
+  },
+  "cross_vendor_evaluation": {
+    "core_training_vendors": [
+      "cisco_ios",
+      "fortinet_fortios",
+      "cisco_asa",
+      "arista_eos",
+      "juniper_junos"
+    ],
+    "unseen_vendor_accuracy": 0.9486,
+    "unseen_vendor_weighted_f1": 0.9535,
+    "per_vendor_breakdown": {
+      "mikrotik": {
+        "samples": 18,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "unseen_zero_shot": true
+      },
+      "netgate": {
+        "samples": 12,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "unseen_zero_shot": true
+      },
+      "nokia": {
+        "samples": 527,
+        "accuracy": 0.9564,
+        "macro_f1": 0.8522,
+        "unseen_zero_shot": true
+      },
+      "paloalto": {
+        "samples": 945,
+        "accuracy": 0.9302,
+        "macro_f1": 0.5095,
+        "unseen_zero_shot": true
+      },
+      "ruckus": {
+        "samples": 59,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "unseen_zero_shot": true
+      },
+      "sonic": {
+        "samples": 311,
+        "accuracy": 0.9743,
+        "macro_f1": 0.8765,
+        "unseen_zero_shot": true
+      },
+      "sophos": {
+        "samples": 18,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "unseen_zero_shot": true
+      },
+      "ubiquiti": {
+        "samples": 170,
+        "accuracy": 0.9471,
+        "macro_f1": 0.851,
+        "unseen_zero_shot": true
+      },
+      "watchguard": {
+        "samples": 3,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "unseen_zero_shot": true
+      }
+    }
+  },
+  "ablation_study": {
+    "A_Word_NGrams": {
+      "accuracy": 0.9224,
+      "macro_f1": 0.585,
+      "weighted_f1": 0.9327
+    },
+    "B_Char_NGrams": {
+      "accuracy": 0.9161,
+      "macro_f1": 0.6583,
+      "weighted_f1": 0.9264
+    },
+    "C_Word_Plus_Char": {
+      "accuracy": 0.9486,
+      "macro_f1": 0.6904,
+      "weighted_f1": 0.9535
+    },
+    "D_Raw_Config_Only": {
+      "accuracy": 0.9486,
+      "macro_f1": 0.6904,
+      "weighted_f1": 0.9535
+    },
+    "E_Canonical_Only": {
+      "accuracy": 0.8986,
+      "macro_f1": 0.6304,
+      "weighted_f1": 0.9035
+    },
+    "F_Raw_Plus_Canonical": {
+      "accuracy": 0.9536,
+      "macro_f1": 0.6964,
+      "weighted_f1": 0.9585
+    }
+  },
+  "sanity_test": {
+    "status": "PASS",
+    "shuffled_accuracy": 0.1978,
+    "shuffled_macro_f1": 0.0378,
+    "verdict": "Model relies genuinely on semantic features and collapses when labels are randomized."
+  }
+}

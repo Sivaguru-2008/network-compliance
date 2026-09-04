@@ -1,0 +1,10 @@
+# Sophos Firewall 20.0
+system hostname Sophos-XG-01
+system timezone UTC
+system ntp add server 10.0.0.1
+system ssh enable
+system appliance_access enable https
+system appliance_access disable http
+system appliance_access disable telnet
+system password-complexity enable
+system syslog add host 10.0.0.100

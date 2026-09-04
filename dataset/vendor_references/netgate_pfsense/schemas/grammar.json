@@ -1,0 +1,40 @@
+{
+  "vendor_key": "netgate_pfsense",
+  "vendor_name": "Netgate",
+  "os_name": "pfSense",
+  "syntax_type": "pfsense_xml",
+  "root_blocks": [
+    {
+      "block_name": "pfsense",
+      "entry_keyword": "<pfsense>",
+      "exit_keyword": "</pfsense>",
+      "child_delimiter": "",
+      "statement_terminator": "",
+      "allowed_subblocks": [
+        "system",
+        "interfaces",
+        "filter",
+        "syslog",
+        "ntpd"
+      ],
+      "common_directives": [
+        "<hostname>",
+        "<domain>",
+        "<timezone>"
+      ],
+      "security_directives": [
+        "<system><webgui><protocol>https</protocol></webgui></system>",
+        "<sshd><enable>enabled</enable></sshd>",
+        "<syslog><remoteserver>"
+      ]
+    }
+  ],
+  "negation_prefix": "",
+  "comment_prefixes": [
+    "<!--"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "pfsense_xml_config"
+  }
+}

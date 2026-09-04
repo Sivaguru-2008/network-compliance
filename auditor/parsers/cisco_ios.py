@@ -52,6 +52,7 @@ _LOGGING_NON_HOST_KEYWORDS = (
 )
 
 _IOS_MARKERS: Sequence[Tuple[str, float]] = (
+    # Management-plane markers (present in hardened/configured devices)
     (r"(?im)^\s*line vty\b", 0.30),
     (r"(?im)^\s*interface (?:Gigabit|Fast|Ten|Forty|Hundred)?Ethernet\S*", 0.20),
     (r"(?im)^\s*service password-encryption\b", 0.15),
@@ -61,6 +62,13 @@ _IOS_MARKERS: Sequence[Tuple[str, float]] = (
     (r"(?im)^\s*version \d+\.\d+", 0.10),
     (r"(?im)^\s*snmp-server\b", 0.10),
     (r"(?im)^\s*spanning-tree\b", 0.05),
+    # Data-plane markers (present in real production configs that lack
+    # management-plane commands, e.g. Stanford backbone routers)
+    (r"(?im)^\s*access-list \d+\s+(?:permit|deny)\b", 0.20),
+    (r"(?im)^\s*interface (?:Vlan|Loopback|Port-channel|Tunnel)\d", 0.15),
+    (r"(?im)^\s*(?:ip|ipv6) access-group\b", 0.10),
+    (r"(?im)^\s*redundancy\s*$", 0.10),
+    (r"(?im)^\s*(?:switchport|channel-group)\b", 0.10),
 )
 
 # Syntax that positively identifies some *other* vendor/OS. Each future parser
@@ -137,11 +145,11 @@ class CiscoIOSParser(VendorParser):
         # Ensure all baseline fields are answered
         for field in baseline.observable_fields():
             observation = getattr(baseline, field)
-            if observation.note == "Parser did not evaluate this field.":
+            if observation.note == "Parser did not evaluate this field." or getattr(observation, "is_unsupported", False):
                 setattr(
                     baseline,
                     field,
-                    type(observation).unknown(
+                    type(observation).unsupported(
                         "Cisco IOS parser does not evaluate this field."
                     )
                 )
@@ -325,17 +333,12 @@ class CiscoIOSParser(VendorParser):
         block without one proves the management plane is open to any source.
         """
         if blocks_without_access_class:
-            line, lineno = access_classes[0] if access_classes else (None, None)
             note = (
                 f"{blocks_without_access_class} 'line vty' block(s) have no inbound "
                 "'access-class', so remote management is reachable from any source address."
             )
             self._warn(note)
-            baseline.management_acl_applied = (
-                Observation[bool].found(False, line, lineno, note=note)
-                if line
-                else Observation[bool].absent(False, note)
-            )
+            baseline.management_acl_applied = Observation[bool].absent(False, note)
             return
 
         line, lineno = access_classes[0]

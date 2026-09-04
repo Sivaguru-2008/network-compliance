@@ -1,0 +1,253 @@
+CCSE
+https://training-certifications.checkpoint.com/#/courses/Check%20Point%20Certified%20Expert%20(CCSE)%20R80.x
+
+## Summary of Gaia Clish Commands
+
+This section shows the list of commands available in Gaia Clish The name of the default command line shell in Check Point Gaia operating system. This is a restricted shell (role-based administration controls the number of commands available in the shell)..
+To show the list of all available Gaia Clish commands:
+Step
+
+
+Instructions
+
+
+
+
+
+
+1
+
+
+Connect to the command line on your Gaia Check Point security operating system that combines the strengths of both SecurePlatform and IPSO operating systems. system.
+
+
+
+
+2
+
+
+Log in to Gaia Clish..
+
+
+
+
+3
+
+
+Press the <TAB> key on the keyboard.
+Step
+Instructions
+1
+Connect to the command line on your Gaia Check Point security operating system that combines the strengths of both SecurePlatform and IPSO operating systems. system.
+2
+Log in to Gaia Clish..
+3
+Press the <TAB> key on the keyboard.
+To show the list of available Gaia Clish 'show' commands:
+Step
+
+
+Instructions
+
+
+
+
+
+
+1
+
+
+Connect to the command line on your Gaia system.
+
+
+
+
+2
+
+
+Log in to Gaia Clish.
+
+
+
+
+3
+
+
+Type:
+show
+
+
+
+
+
+4
+
+
+Press the <SPACE> key and then the <TAB> key on the keyboard.
+Step
+Instructions
+1
+Connect to the command line on your Gaia system.
+2
+Log in to Gaia Clish.
+3
+Type:
+show
+4
+Press the <SPACE> key and then the <TAB> key on the keyboard.
+To show the list of available Gaia Clish 'add' commands:
+Step
+
+
+Instructions
+
+
+
+
+
+
+1
+
+
+Connect to the command line on your Gaia system.
+
+
+
+
+2
+
+
+Log in to Gaia Clish.
+
+
+
+
+3
+
+
+Type:
+add
+
+
+
+
+
+4
+
+
+Press the <SPACE> key and then the <TAB> key on the keyboard.
+Step
+Instructions
+1
+Connect to the command line on your Gaia system.
+2
+Log in to Gaia Clish.
+3
+Type:
+add
+4
+Press the <SPACE> key and then the <TAB> key on the keyboard.
+To show the list of available Gaia Clish 'set' commands:
+Step
+
+
+Instructions
+
+
+
+
+
+
+1
+
+
+Connect to the command line on your Gaia system.
+
+
+
+
+2
+
+
+Log in to Gaia Clish.
+
+
+
+
+3
+
+
+Type:
+set
+
+
+
+
+
+4
+
+
+Press the <SPACE> key and then the <TAB> key on the keyboard.
+Step
+Instructions
+1
+Connect to the command line on your Gaia system.
+2
+Log in to Gaia Clish.
+3
+Type:
+set
+4
+Press the <SPACE> key and then the <TAB> key on the keyboard.
+To show the list of available Gaia Clish 'delete' commands:
+Step
+
+
+Instructions
+
+
+
+
+
+
+1
+
+
+Connect to the command line on your Gaia system.
+
+
+
+
+2
+
+
+Log in to Gaia Clish.
+
+
+
+
+3
+
+
+Type:
+delete
+
+
+
+
+
+4
+
+
+Press the <SPACE> key and then the <TAB> key on the keyboard.
+Step
+Instructions
+1
+Connect to the command line on your Gaia system.
+2
+Log in to Gaia Clish.
+3
+Type:
+delete
+4
+Press the <SPACE> key and then the <TAB> key on the keyboard.

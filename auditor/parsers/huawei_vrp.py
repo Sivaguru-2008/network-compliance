@@ -22,6 +22,8 @@ _VRP_MARKERS: Sequence[Tuple[str, float]] = [
     (r"(?im)^\s*ntp-service\s+(?:unicast-server|server)\b", 0.15),
     (r"(?im)^\s*!Software\s+Version\s+\S+", 0.15),
     (r"(?im)^\s*user-interface\s+vty\b", 0.10),
+    (r"(?im)^\s*firewall\s+defend\s+\w+\s+enable\b", 0.15),
+    (r"(?im)^;REGION\b", 0.10),
 ]
 
 _NON_VRP_MARKERS: Sequence[Tuple[str, float]] = [

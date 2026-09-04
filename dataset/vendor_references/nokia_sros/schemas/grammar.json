@@ -1,0 +1,41 @@
+{
+  "vendor_key": "nokia_sros",
+  "vendor_name": "Nokia",
+  "os_name": "SR OS / TiMOS",
+  "syntax_type": "nokia_mdcli_and_classic",
+  "root_blocks": [
+    {
+      "block_name": "sros_system",
+      "entry_keyword": "configure system",
+      "exit_keyword": "exit",
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [
+        "security",
+        "time",
+        "log",
+        "management-interface"
+      ],
+      "common_directives": [
+        "name",
+        "timezone",
+        "ntp server"
+      ],
+      "security_directives": [
+        "security user",
+        "security ssh",
+        "security telnet shutdown",
+        "security password policy",
+        "log syslog"
+      ]
+    }
+  ],
+  "negation_prefix": "no",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": true,
+  "schema_definition": {
+    "format": "nokia_sros_admin_display_config"
+  }
+}

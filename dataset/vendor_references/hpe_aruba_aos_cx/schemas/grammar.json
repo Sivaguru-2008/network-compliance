@@ -1,0 +1,43 @@
+{
+  "vendor_key": "hpe_aruba_aos_cx",
+  "vendor_name": "HPE Aruba Networking",
+  "os_name": "AOS-CX",
+  "syntax_type": "cisco_hierarchical",
+  "root_blocks": [
+    {
+      "block_name": "aos_cx_config",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [
+        "ssh",
+        "https-server",
+        "aaa",
+        "logging",
+        "user"
+      ],
+      "common_directives": [
+        "hostname",
+        "clock timezone",
+        "ntp server"
+      ],
+      "security_directives": [
+        "ssh server vrf",
+        "no telnet-server",
+        "https-server rest access-mode",
+        "aaa authentication login",
+        "password-complexity"
+      ]
+    }
+  ],
+  "negation_prefix": "no",
+  "comment_prefixes": [
+    "!",
+    "#"
+  ],
+  "indentation_sensitive": true,
+  "schema_definition": {
+    "format": "aruba_aoscx_running_config"
+  }
+}

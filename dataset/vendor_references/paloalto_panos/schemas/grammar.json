@@ -1,0 +1,42 @@
+{
+  "vendor_key": "paloalto_panos",
+  "vendor_name": "Palo Alto Networks",
+  "os_name": "PAN-OS",
+  "syntax_type": "panos_xml_and_set",
+  "root_blocks": [
+    {
+      "block_name": "deviceconfig_system",
+      "entry_keyword": "<system>",
+      "exit_keyword": "</system>",
+      "child_delimiter": "",
+      "statement_terminator": "",
+      "allowed_subblocks": [
+        "service",
+        "login-banner",
+        "update-server",
+        "ntp-servers"
+      ],
+      "common_directives": [
+        "<hostname>",
+        "<timezone>",
+        "<ip-address>"
+      ],
+      "security_directives": [
+        "<service><disable-telnet>yes</disable-telnet><disable-http>yes</disable-http></service>",
+        "<login-banner>",
+        "<permitted-ip>"
+      ]
+    }
+  ],
+  "negation_prefix": "delete",
+  "comment_prefixes": [
+    "#",
+    "<!--"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "xml_tree_or_set_cli",
+    "set_prefix": "set deviceconfig system",
+    "xml_root": "config/devices/entry/deviceconfig/system"
+  }
+}

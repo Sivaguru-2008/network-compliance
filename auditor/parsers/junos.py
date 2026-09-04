@@ -276,7 +276,7 @@ class JunosParser(VendorParser):
             if stripped in ("}", "};"):
                 if stack:
                     stack.pop()
-                if inactive_depth is not None and len(stack) < inactive_depth:
+                if inactive_depth is not None and len(stack) <= inactive_depth:
                     inactive_depth = None
                 continue
 

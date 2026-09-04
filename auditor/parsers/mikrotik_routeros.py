@@ -29,6 +29,7 @@ from .base import ParserError, VendorParser, registry
 
 _ROS_MARKERS: Sequence[Tuple[str, float]] = [
     (r"(?im)^\s*#.*by RouterOS\b", 0.45),
+    # v6 space-delimited paths
     (r"(?im)^/ip service\b", 0.20),
     (r"(?im)^/system identity\b", 0.15),
     (r"(?im)^/tool mac-server\b", 0.15),
@@ -37,6 +38,12 @@ _ROS_MARKERS: Sequence[Tuple[str, float]] = [
     (r"(?im)^/ip ssh\b", 0.10),
     (r"(?im)^/system ntp client\b", 0.10),
     (r"(?im)^/tool bandwidth-server\b", 0.05),
+    # v7 slash-delimited paths (e.g. /system/identity, /ip/service)
+    (r"(?im)^/system/(?:identity|package|license|reset-configuration)\b", 0.20),
+    (r"(?im)^/ip/(?:service|ssh|firewall|dhcp-client|address)\b", 0.20),
+    (r"(?im)^/interface/(?:ethernet|bridge|list)\b", 0.15),
+    (r"(?im)^/tool/(?:mac-server|bandwidth-server)\b", 0.10),
+    (r"(?im)^\s*#.*\.rsc\b", 0.15),
 ]
 
 _NON_ROS_MARKERS: Sequence[Tuple[str, float]] = [

@@ -1,0 +1,19 @@
+{
+  "vendor": "sonic",
+  "vendor_name": "SONiC NOS",
+  "os_name": "SONiC",
+  "config_format": "config_db.json",
+  "document_title": "SONiC Utilities Command Reference",
+  "source_url": "https://raw.githubusercontent.com/sonic-net/sonic-utilities/master/doc/Command-Reference.md",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "markdown",
+  "version": "master",
+  "retrieved_at": "2026-08-31T16:29:42.318674+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "8604e5ffc02097b2c14b22b7554e9462b4188594bbc040ae7b06b0bf13c78a77",
+  "byte_size": 665765,
+  "local_path": "vendor_references\\sonic\\documents\\sonic_utilities_command_reference.md",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

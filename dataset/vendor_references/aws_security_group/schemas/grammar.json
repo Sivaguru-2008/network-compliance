@@ -1,0 +1,37 @@
+{
+  "vendor_key": "aws_security_group",
+  "vendor_name": "Amazon Web Services",
+  "os_name": "AWS VPC",
+  "syntax_type": "cloud_json_policy",
+  "root_blocks": [
+    {
+      "block_name": "SecurityGroups",
+      "entry_keyword": "{",
+      "exit_keyword": "}",
+      "child_delimiter": ":",
+      "statement_terminator": ",",
+      "allowed_subblocks": [
+        "IpPermissions",
+        "IpPermissionsEgress"
+      ],
+      "common_directives": [
+        "GroupId",
+        "GroupName",
+        "Description",
+        "VpcId"
+      ],
+      "security_directives": [
+        "IpPermissions.FromPort",
+        "IpPermissions.ToPort",
+        "IpPermissions.IpRanges",
+        "IpPermissions.PrefixListIds"
+      ]
+    }
+  ],
+  "negation_prefix": "",
+  "comment_prefixes": [],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "aws_describe_security_groups_json"
+  }
+}

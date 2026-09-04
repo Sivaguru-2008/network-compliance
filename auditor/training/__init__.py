@@ -38,6 +38,14 @@ from .loop import (
     tuned_parser,
 )
 from .metrics import Calibration, FieldMetrics, RunMetrics, VerdictImpact
+from .suggest import MappingSuggestion, suggest_mapping
+from .nlp_pipeline import (
+    ConfidencePolicy,
+    NLPPrediction,
+    SecurityConceptClassifier,
+    deterministic_predict,
+    hybrid_predict,
+)
 
 __all__ = [
     "ALWAYS_ESCALATE",
@@ -45,6 +53,7 @@ __all__ = [
     "AdjudicationStore",
     "BaselineComparison",
     "Calibration",
+    "ConfidencePolicy",
     "ConfigCorpus",
     "CorpusEntry",
     "ExampleSet",
@@ -53,19 +62,26 @@ __all__ = [
     "FieldOutcome",
     "FieldThreshold",
     "LoopResult",
+    "MappingSuggestion",
+    "NLPPrediction",
     "RegressionReport",
     "RunMetrics",
     "RunSummary",
+    "SecurityConceptClassifier",
     "ThresholdPolicy",
     "TrainingLoop",
     "VerdictImpact",
     "WorkedExample",
     "compare_baselines",
+    "deterministic_predict",
     "fit_policy",
+    "hybrid_predict",
     "load_examples",
     "load_policy",
     "pending_reviews",
     "render_examples_block",
     "select_examples",
+    "suggest_mapping",
     "tuned_parser",
 ]
+

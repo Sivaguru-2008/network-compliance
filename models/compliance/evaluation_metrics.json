@@ -1,0 +1,57 @@
+{
+  "task": "compliance",
+  "split": "test",
+  "total_samples": 3032,
+  "accuracy": 0.9875,
+  "precision_macro": 0.9916,
+  "recall_macro": 0.9762,
+  "macro_f1": 0.9836,
+  "weighted_f1": 0.9874,
+  "precision_weighted": 0.9877,
+  "recall_weighted": 0.9875,
+  "critical_finding_recall": 0.9523,
+  "critical_finding_precision": 1.0,
+  "false_negative_rate": 0.0125,
+  "false_positives": 0,
+  "false_negatives": 38,
+  "per_class": {
+    "COMPLIANT": {
+      "precision": 0.9832820061592609,
+      "recall": 1.0,
+      "f1-score": 0.9915705412599822,
+      "support": 2235.0
+    },
+    "NON_COMPLIANT": {
+      "precision": 1.0,
+      "recall": 0.9523212045169385,
+      "f1-score": 0.9755784061696658,
+      "support": 797.0
+    },
+    "macro avg": {
+      "precision": 0.9916410030796304,
+      "recall": 0.9761606022584692,
+      "f1-score": 0.983574473714824,
+      "support": 3032.0
+    },
+    "weighted avg": {
+      "precision": 0.9876765447776873,
+      "recall": 0.987467018469657,
+      "f1-score": 0.9873668039027981,
+      "support": 3032.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      2235,
+      0
+    ],
+    [
+      38,
+      759
+    ]
+  ],
+  "class_names": [
+    "COMPLIANT",
+    "NON_COMPLIANT"
+  ]
+}

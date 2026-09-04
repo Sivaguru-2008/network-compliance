@@ -1,0 +1,4 @@
+<firewall_node name="NGFW-01" engine_version="7.0" web_server_http="false" web_server_https="true" ssh_service="true">
+  <management telnet_enabled="false"/>
+  <logging_server address="10.0.0.100"/>
+</firewall_node>

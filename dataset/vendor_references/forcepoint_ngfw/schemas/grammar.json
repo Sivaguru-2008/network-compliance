@@ -1,0 +1,37 @@
+{
+  "vendor_key": "forcepoint_ngfw",
+  "vendor_name": "Forcepoint",
+  "os_name": "Forcepoint NGFW",
+  "syntax_type": "generic_conf",
+  "root_blocks": [
+    {
+      "block_name": "ngfw_config",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "hostname",
+        "time-zone",
+        "ntp-server"
+      ],
+      "security_directives": [
+        "sshd-enable",
+        "http-server-disable",
+        "https-server-enable",
+        "snmp-v3",
+        "auth-method",
+        "syslog-server"
+      ]
+    }
+  ],
+  "negation_prefix": "no",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": true,
+  "schema_definition": {
+    "format": "forcepoint_smc_export_and_cli"
+  }
+}

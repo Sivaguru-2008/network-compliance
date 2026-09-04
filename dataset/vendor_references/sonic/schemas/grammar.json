@@ -1,0 +1,50 @@
+{
+  "vendor_key": "sonic",
+  "vendor_name": "SONiC NOS",
+  "os_name": "SONiC",
+  "syntax_type": "sonic_json",
+  "root_blocks": [
+    {
+      "block_name": "config_db_json",
+      "entry_keyword": "{",
+      "exit_keyword": "}",
+      "child_delimiter": ":",
+      "statement_terminator": ",",
+      "allowed_subblocks": [
+        "DEVICE_METADATA",
+        "SYSLOG_SERVER",
+        "NTP_SERVER",
+        "AAA",
+        "SSH_SERVER",
+        "PORT"
+      ],
+      "common_directives": [
+        "DEVICE_METADATA.localhost.hostname",
+        "DEVICE_METADATA.localhost.type"
+      ],
+      "security_directives": [
+        "SSH_SERVER",
+        "SYSLOG_SERVER",
+        "NTP_SERVER",
+        "AAA.authentication.login"
+      ]
+    }
+  ],
+  "negation_prefix": "",
+  "comment_prefixes": [],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "json_config_db",
+    "root_object": "dict",
+    "primary_tables": [
+      "DEVICE_METADATA",
+      "SYSLOG_SERVER",
+      "NTP_SERVER",
+      "AAA",
+      "SSH_SERVER",
+      "PORT",
+      "VLAN",
+      "ACL_RULE"
+    ]
+  }
+}

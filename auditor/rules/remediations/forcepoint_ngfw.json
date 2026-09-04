@@ -1,0 +1,67 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized authentication (RADIUS, TACACS+, or LDAP/AD) in SMC.",
+    "cli": [],
+    "notes": "Configure remote LDAP or RADIUS servers under User Authentication in Forcepoint SMC (Security Management Center)."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable HTTP management access and restrict SSH access.",
+    "cli": [],
+    "notes": "Go to Engine Properties > Administration to configure secure protocol settings. HTTP WebAdmin is disabled by default."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrative console session timeout.",
+    "cli": [],
+    "notes": "Modify session timeout under Engine Properties > Administration in SMC."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "Forcepoint local passwords are automatically hashed in the internal SMC database."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP communities.",
+    "cli": [],
+    "notes": "Modify SNMP community settings under Engine Properties > Add-Ons > SNMP in SMC."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP administrative access.",
+    "cli": [],
+    "notes": "Go to Engine Properties > Administration and disable HTTP Web Portal."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce secure SSH settings.",
+    "cli": [],
+    "notes": "SSH configuration is managed under Engine Properties > Administration in SMC."
+  },
+  "logging_enabled": {
+    "summary": "Configure Log Server destination targets.",
+    "cli": [],
+    "notes": "Go to Engine Properties > Logging to configure remote log forwarding to Forcepoint Log Servers or Syslog."
+  },
+  "management_acl": {
+    "summary": "Restrict WebAdmin and SSH access to trusted IP hosts.",
+    "cli": [],
+    "notes": "Go to Engine Properties > Administration > Access Controls to specify permitted IP addresses."
+  },
+  "login_banner": {
+    "summary": "Configure custom login disclaimer banner.",
+    "cli": [],
+    "notes": "Go to Engine Properties > Administration > custom login message in SMC."
+  },
+  "password_min_length": {
+    "summary": "Configure administrative password length requirements.",
+    "cli": [],
+    "notes": "Configure password complexity rules under SMC > Global System Settings > Password Policy."
+  },
+  "ntp_configured": {
+    "summary": "Configure NTP synchronization settings.",
+    "cli": [],
+    "notes": "Go to Engine Properties > System > Time Sync to specify NTP servers."
+  },
+  "no_write_snmp_community": {
+    "summary": "Disable read-write SNMP access.",
+    "cli": [],
+    "notes": "Ensure SNMP communities are restricted to read-only under Engine Properties > Add-Ons > SNMP."
+  }
+}

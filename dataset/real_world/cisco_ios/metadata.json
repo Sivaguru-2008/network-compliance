@@ -1,0 +1,18 @@
+{
+  "vendor": "Cisco Systems",
+  "platform": "IOS / IOS-XE",
+  "platform_key": "cisco_ios",
+  "native_format": "IOS Running-Config",
+  "source_url": "https://github.com/cllorenz/hassel-reproduction/tree/master/benchmarks/stanford_orig",
+  "source_category": "Stanford University Campus Backbone (USENIX NSDI '12/'13)",
+  "retrieved_at": "2026-09-03T09:28:20.841346+00:00",
+  "original_filename": "bbra_rtr.cfg",
+  "provenance": "REAL_PRODUCTION",
+  "verification_method": "Static Syntax Verification & Grammar Ingestion",
+  "original_sha256": "18c66eb81046549d5ec94b381304fa727d87562c40d0281b57875fe0d1e071f4",
+  "sanitized_sha256": "18c66eb81046549d5ec94b381304fa727d87562c40d0281b57875fe0d1e071f4",
+  "redaction_count": 0,
+  "redaction_types": [],
+  "line_count": 1039,
+  "byte_count": 20872
+}

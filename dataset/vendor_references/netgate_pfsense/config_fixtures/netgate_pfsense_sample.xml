@@ -1,0 +1,20 @@
+<pfsense>
+  <system>
+    <hostname>pfSense-Gateway</hostname>
+    <domain>localdomain</domain>
+    <timezone>UTC</timezone>
+    <webgui>
+      <protocol>https</protocol>
+      <ssl-certref>60f8a9</ssl-certref>
+      <port>443</port>
+    </webgui>
+    <ssh>
+      <enable>enabled</enable>
+      <port>22</port>
+    </ssh>
+  </system>
+  <syslog>
+    <remoteserver>10.0.0.100</remoteserver>
+    <enable>yes</enable>
+  </syslog>
+</pfsense>

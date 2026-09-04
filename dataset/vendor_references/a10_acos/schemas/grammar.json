@@ -1,0 +1,44 @@
+{
+  "vendor_key": "a10_acos",
+  "vendor_name": "A10 Networks",
+  "os_name": "ACOS",
+  "syntax_type": "cisco_hierarchical",
+  "root_blocks": [
+    {
+      "block_name": "global_config",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [
+        "interface",
+        "vlan",
+        "admin",
+        "system",
+        "logging"
+      ],
+      "common_directives": [
+        "hostname",
+        "timezone",
+        "ntp server"
+      ],
+      "security_directives": [
+        "ssh server enable",
+        "no telnet server",
+        "web-service secure-port",
+        "snmp-server community",
+        "enable-password",
+        "admin password"
+      ]
+    }
+  ],
+  "negation_prefix": "no",
+  "comment_prefixes": [
+    "!",
+    "#"
+  ],
+  "indentation_sensitive": true,
+  "schema_definition": {
+    "format": "acos_cli_running_config"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "vendor": "watchguard_fireware",
+  "vendor_name": "WatchGuard",
+  "os_name": "Fireware OS",
+  "config_format": "Fireware XML / CLI",
+  "document_title": "WatchGuard Fireware CLI Command Reference v12.12",
+  "source_url": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "pdf",
+  "version": "v12.12",
+  "retrieved_at": "2026-08-31T16:31:04.827563+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "45de44072226705627a3f386034b1533b56c9934d667d1e6803171acfcf63f9d",
+  "byte_size": 2225941,
+  "local_path": "vendor_references\\watchguard_fireware\\documents\\watchguard_fireware_v12_12_cli_reference.pdf",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

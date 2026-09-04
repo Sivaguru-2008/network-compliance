@@ -146,6 +146,11 @@
   .p-hybrid        { background: #e2f0f4; color: #1c5f70; }
   .p-human         { background: #e6f2e9; color: #1a6b33; }
   .p-none          { background: #eef0f2; color: #8b929c; }
+  .sc { display: inline-block; padding: 1px 7px; border-radius: 4px; font-size: 10px;
+       font-weight: 600; letter-spacing: .3px; margin-left: 4px; }
+  .sc-verified  { background: #e6f2e9; color: #1a6b33; }
+  .sc-intent    { background: #e8edf3; color: #3c5675; }
+  .sc-generic   { background: #fdf4e3; color: #a15c00; }
 
   /* -- findings -- */
   .finding { border: 1px solid var(--line); border-left-width: 4px; border-radius: 6px; padding: 12px 14px; margin-bottom: 10px; background: #fff; }
@@ -335,7 +340,9 @@
     <!-- ---- INVENTORY TAB ---- -->
     <div id="tab-content-inventory">
       <div class="panel">
-        <h2>Device inventory</h2>
+        <h2 style="display:flex;align-items:center;gap:12px">Device inventory
+          <button id="btn-reeval" style="font-size:12px;padding:3px 10px;border-radius:5px;border:1px solid var(--accent);background:var(--panel);color:var(--accent);cursor:pointer;display:none" title="Re-run compliance evaluation with current learned mappings">Re-evaluate</button>
+        </h2>
         <p class="sub" id="inv-sub"></p>
         <div id="fleet-tiles-container" class="hidden"></div>
         <div class="cards" id="inv-cards"></div>
@@ -620,6 +627,19 @@ function provenanceBadge(finding) {
   return '<span class="p p-' + esc(origin) + '" title="' + esc(titles[origin] || "") + '">' + esc(label) + "</span>";
 }
 
+function sourceClassBadge(finding) {
+  var sc = finding.source_classification;
+  if (!sc) return "";
+  var map = {
+    VERIFIED_FROM_PDF: { cls: "verified", label: "verified", tip: "Clause number verified from published benchmark PDF." },
+    CONTROL_INTENT: { cls: "intent", label: "intent-mapped", tip: "Control intent follows the benchmark; clause number not asserted." },
+    GENERIC_MAPPING: { cls: "generic", label: "generic", tip: "No official benchmark for this vendor; mapped from hardening best practices." }
+  };
+  var m = map[sc];
+  if (!m) return "";
+  return '<span class="sc sc-' + m.cls + '" title="' + esc(m.tip) + '">' + esc(m.label) + "</span>";
+}
+
 // ---------------------------------------------------------------- verdicts
 function verdictClass(status) {
   return status === "PASS" ? "pass" : status === "FAIL" ? "fail" : "review";
@@ -777,7 +797,26 @@ function renderInventory() {
         return '<div class="note"><b>' + esc(g.kind.replace(/_/g, " ")) + ":</b> " + esc(g.note) + "</div>";
       }).join("")
     : "";
+
+  $("btn-reeval").style.display = jobId ? "" : "none";
 }
+
+$("btn-reeval").addEventListener("click", function () {
+  if (!jobId) return;
+  var btn = $("btn-reeval");
+  btn.disabled = true;
+  btn.textContent = "Re-evaluating…";
+  fetch("/api/reeval/" + jobId, { method: "POST" })
+    .then(function (r) { return r.json().then(function (b) { return { ok: r.ok, body: b }; }); })
+    .then(function (res) {
+      if (!res.ok) throw new Error(res.body.detail || "Re-evaluation failed.");
+      inventory = res.body.inventory;
+      renderInventory();
+      renderAnalytics();
+    })
+    .catch(function (e) { alert("Re-evaluation failed: " + e.message); })
+    .then(function () { btn.disabled = false; btn.textContent = "Re-evaluate"; });
+});
 
 function card(n, label, cls) {
   return '<div class="card' + (cls ? " " + cls : "") + '"><div class="n">' + n + '</div><div class="k">' + esc(label) + "</div></div>";
@@ -1529,6 +1568,7 @@ function renderFindings() {
         '<span class="ftitle">' + esc(f.title) + "</span>" +
         '<span class="sev sev-' + esc(f.severity) + '">' + esc(f.severity) + "</span>" +
         provenanceBadge(f) +
+        sourceClassBadge(f) +
       "</div>" +
       "<div>" + ref + "</div>" +
       '<div class="fmsg">' + esc(f.message) + "</div>" +

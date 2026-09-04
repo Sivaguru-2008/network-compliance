@@ -1,0 +1,19 @@
+{
+  "vendor": "cisco_ios",
+  "vendor_name": "Cisco",
+  "os_name": "Cisco IOS / IOS-XE",
+  "config_format": "CLI running-config",
+  "document_title": "Using the Cisco IOS CLI (Config Fundamentals Chapter)",
+  "source_url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/configuration/xe-16/fundamentals-xe-16-book/cf-cli-basics.html",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "html",
+  "version": "IOS-XE 16",
+  "retrieved_at": "2026-08-31T16:32:05.067548+00:00",
+  "status": "ACCESS_REQUIRES_ACCOUNT",
+  "sha256": null,
+  "byte_size": 0,
+  "local_path": null,
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": "HTTP 403 Access Denied / Login Required"
+}

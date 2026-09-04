@@ -1,0 +1,87 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized RADIUS or LDAP/AD servers under LDAP/RADIUS settings.",
+    "cli": [],
+    "notes": "Remote authentication servers must be configured in the SonicOS GUI under Device > Users > Settings > Authentication method."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable HTTP management access.",
+    "cli": [
+      "configure",
+      "administration",
+      "no web-management allow-http",
+      "commit"
+    ],
+    "notes": "Ensure HTTP administrative access is disabled globally."
+  },
+  "vty_idle_timeout": {
+    "summary": "Configure web-management session inactivity timeout to 15 minutes (900 seconds) or less.",
+    "cli": [
+      "configure",
+      "administration",
+      "idle-logout-time 15",
+      "commit"
+    ],
+    "notes": "Configure the administrative logout time parameter."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "SonicOS local passwords are automatically hashed and encrypted in local user databases."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP community names public and private.",
+    "cli": [],
+    "notes": "Disable or delete default communities in the SonicOS GUI under Device > Setup > SNMP."
+  },
+  "http_server_disabled": {
+    "summary": "Disable the HTTP web server access.",
+    "cli": [
+      "configure",
+      "administration",
+      "no web-management allow-http",
+      "commit"
+    ],
+    "notes": "Ensure allow-http is disabled."
+  },
+  "ssh_version_2": {
+    "summary": "Restrict management access to SSH/HTTPS on the local interfaces.",
+    "cli": [],
+    "notes": "Configure interface-level management parameters in the SonicOS GUI under Network > Interfaces."
+  },
+  "logging_enabled": {
+    "summary": "Configure a remote syslog server target.",
+    "cli": [],
+    "notes": "Add syslog servers in the SonicOS GUI under Device > Log > Syslog."
+  },
+  "management_acl": {
+    "summary": "Configure administration rules to restrict management services to specific IP addresses.",
+    "cli": [],
+    "notes": "Go to SonicOS GUI > Device > Administration > Web Management to add network restrictions."
+  },
+  "login_banner": {
+    "summary": "Enable the disclaimer/login banner.",
+    "cli": [
+      "configure",
+      "administration",
+      "disclaimer enable",
+      "commit"
+    ],
+    "notes": "Enable the login disclaimer display."
+  },
+  "password_min_length": {
+    "summary": "Enforce local user password complexity requirements.",
+    "cli": [],
+    "notes": "Configure minimum password length and complexity under Device > Users > Settings."
+  },
+  "ntp_configured": {
+    "summary": "Configure NTP time synchronization servers.",
+    "cli": [],
+    "notes": "Add NTP servers and enable time synchronization in the SonicOS GUI under Device > Time."
+  },
+  "no_write_snmp_community": {
+    "summary": "Configure SNMP communities to read-only access only.",
+    "cli": [],
+    "notes": "Verify SNMP community access rights under Device > Setup > SNMP."
+  }
+}

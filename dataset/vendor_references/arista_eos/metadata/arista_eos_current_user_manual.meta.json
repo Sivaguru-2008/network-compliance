@@ -1,0 +1,19 @@
+{
+  "vendor": "arista_eos",
+  "vendor_name": "Arista",
+  "os_name": "Arista EOS",
+  "config_format": "CLI running-config",
+  "document_title": "Arista EOS User Manual Current (4.36.1F)",
+  "source_url": "https://www.arista.com/en/um-eos",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "free_acct",
+  "doc_format": "html",
+  "version": "4.36.1F",
+  "retrieved_at": "2026-08-31T16:29:41.691009+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "32ed63159c77e21ee19ca1b9aa3213ccf0218eb59539560b132a8e68ef0e18ea",
+  "byte_size": 3038,
+  "local_path": "vendor_references\\arista_eos\\documents\\arista_eos_current_user_manual.html",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

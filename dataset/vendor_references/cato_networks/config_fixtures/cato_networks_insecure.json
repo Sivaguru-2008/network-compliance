@@ -1,0 +1,11 @@
+{
+  "name": "Insecure-Cato",
+  "threatProtection": {
+    "ips": false,
+    "antiMalware": false
+  },
+  "adminAccess": {
+    "mfa": false,
+    "sessionTimeoutMinutes": 240
+  }
+}

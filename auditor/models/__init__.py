@@ -1,7 +1,7 @@
 """Pydantic schemas that form the contracts between pipeline stages."""
 
 from .baseline import ParserProvenance, SecurityBaselineModel, SnmpCommunity
-from .observation import Observation, Origin
+from .observation import CapabilityStatus, EvidenceState, Observation, Origin
 from .result import (
     REPORT_SCHEMA_VERSION,
     AuditReport,
@@ -40,6 +40,8 @@ __all__ = [
     "FrameworkInfo",
     "LeafCondition",
     "NotCondition",
+    "CapabilityStatus",
+    "EvidenceState",
     "Observation",
     "Operator",
     "Origin",

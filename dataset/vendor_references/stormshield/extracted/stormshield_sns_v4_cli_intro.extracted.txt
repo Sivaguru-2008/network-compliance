@@ -1,0 +1,10 @@
+SNS and SMC
+
+## Introduction
+
+This document details all the Stormshield Network CLI / Serverd commands of the IPS-Firewall for the release 4.8.18 LTSB.
+These commands can be executed in the CLI console module in web administration, with an administration client connected port 1300 (NSRPC) or by making use of the SNS-PYTHON-API.
+These commands can be used from version 4.8.18 LTSB of Stormshield Network firmware. To check their validity in earlier versions, please refer to the History category of the description of these commands.
+www.stormshield.com
+					  -  FOLLOW US    -  Our websites
+Copyright © Stormshield 2026  -  Legal notice

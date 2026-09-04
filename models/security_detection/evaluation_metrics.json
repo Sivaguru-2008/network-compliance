@@ -1,0 +1,57 @@
+{
+  "task": "security_detection",
+  "split": "test",
+  "total_samples": 39,
+  "accuracy": 0.9744,
+  "precision_macro": 0.5,
+  "recall_macro": 0.4872,
+  "macro_f1": 0.4935,
+  "weighted_f1": 0.987,
+  "precision_weighted": 1.0,
+  "recall_weighted": 0.9744,
+  "critical_finding_recall": 0.9744,
+  "critical_finding_precision": 1.0,
+  "false_negative_rate": 0.0,
+  "false_positives": 0,
+  "false_negatives": 0,
+  "per_class": {
+    "NTP_DISABLED": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "WEAK_CRYPTO": {
+      "precision": 1.0,
+      "recall": 0.9743589743589743,
+      "f1-score": 0.987012987012987,
+      "support": 39.0
+    },
+    "macro avg": {
+      "precision": 0.5,
+      "recall": 0.48717948717948717,
+      "f1-score": 0.4935064935064935,
+      "support": 39.0
+    },
+    "weighted avg": {
+      "precision": 1.0,
+      "recall": 0.9743589743589743,
+      "f1-score": 0.987012987012987,
+      "support": 39.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      38
+    ]
+  ],
+  "class_names": [
+    "NTP_DISABLED",
+    "WEAK_CRYPTO"
+  ]
+}

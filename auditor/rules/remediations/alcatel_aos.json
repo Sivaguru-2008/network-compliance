@@ -1,0 +1,104 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized authentication (RADIUS or TACACS+) in Alcatel AOS.",
+    "cli": [
+      "aaa radius-server \"radius-svr\" host 192.168.1.10 key \"secret\"",
+      "aaa authentication default \"radius-svr\" \"local\""
+    ],
+    "notes": "Define your server group first and assign it as the default authentication source, falling back to local."
+  },
+  "secure_vty_transport": {
+    "summary": "Restrict remote VTY access to SSH only by disabling Telnet.",
+    "cli": [
+      "no ip service telnet"
+    ],
+    "notes": "Disable the Telnet service to prevent cleartext remote administration sessions."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrative session idle timeout.",
+    "cli": [
+      "session timeout cli 15"
+    ],
+    "notes": "Specify the idle timeout in minutes (e.g. 15 minutes) for CLI sessions."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure user account passwords are encrypted.",
+    "cli": [],
+    "notes": "Alcatel AOS automatically hashes/encrypts all user administrative passwords at rest."
+  },
+  "no_default_snmp_community": {
+    "summary": "Change or remove default SNMP community mappings.",
+    "cli": [
+      "no snmp community map \"public\"",
+      "no snmp community map \"private\""
+    ],
+    "notes": "Remove standard default community mapping names."
+  },
+  "http_server_disabled": {
+    "summary": "Disable the insecure HTTP WebView management server.",
+    "cli": [
+      "no ip service http"
+    ],
+    "notes": "Enforce secure management access by disabling unencrypted HTTP."
+  },
+  "ssh_version_2": {
+    "summary": "Ensure SSH version is secure (AOS SSH server defaults to SSHv2).",
+    "cli": [
+      "ip service ssh"
+    ],
+    "notes": "Ensure SSH is enabled."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote swlog syslog server destination socket.",
+    "cli": [
+      "swlog output socket 192.168.1.100",
+      "swlog remote enable"
+    ],
+    "notes": "Direct log events to your central syslog server collector."
+  },
+  "management_acl": {
+    "summary": "Restrict switch CPU management plane access using QoS policies.",
+    "cli": [
+      "policy network group \"mgmt-hosts\" 192.168.1.0 mask 255.255.255.0",
+      "policy service ssh protocol 6 destination tcp port 22",
+      "policy condition AllowedMgmt source network group \"mgmt-hosts\" destination network group Switch service ssh",
+      "policy condition DenyOtherMgmt source ip 0.0.0.0/0 destination network group Switch service ssh",
+      "policy action AllowAction disposition accept",
+      "policy action DenyAction disposition drop",
+      "policy rule AllowMgmt precedence 300 condition AllowedMgmt action AllowAction",
+      "policy rule DenyMgmt precedence 200 condition DenyOtherMgmt action DenyAction",
+      "qos apply"
+    ],
+    "notes": "Restrict SSH and Telnet protocols to your defined management network group."
+  },
+  "login_banner": {
+    "summary": "Configure administrative login banner.",
+    "cli": [
+      "session banner cli /flash/switch/banner.txt"
+    ],
+    "notes": "Assign a pre-created text file in `/flash/switch/` as the CLI login banner."
+  },
+  "password_min_length": {
+    "summary": "Enforce minimum password length policy.",
+    "cli": [
+      "user password-size min 8"
+    ],
+    "notes": "Specify a minimum length of 8 characters or longer for local accounts."
+  },
+  "ntp_configured": {
+    "summary": "Configure upstream NTP time synchronization servers.",
+    "cli": [
+      "ntp server 192.168.1.5",
+      "ntp client admin-state enable"
+    ],
+    "notes": "Define NTP servers and ensure the NTP daemon is administratively enabled."
+  },
+  "no_write_snmp_community": {
+    "summary": "Map SNMP communities to read-only user privileges.",
+    "cli": [
+      "user \"snmp_ro_user\" password \"secure\" read-only all no auth",
+      "snmp community map \"your_community\" user \"snmp_ro_user\" on"
+    ],
+    "notes": "Ensure mapped SNMP users are configured with read-only authorization."
+  }
+}

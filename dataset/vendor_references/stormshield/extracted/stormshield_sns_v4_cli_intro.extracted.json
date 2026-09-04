@@ -1,0 +1,26 @@
+{
+  "vendor_key": "stormshield",
+  "document_title": "Stormshield SNS v4 CLI Reference",
+  "source_filename": "stormshield_sns_v4_cli_intro.html",
+  "source_format": "html",
+  "total_pages": 1,
+  "total_sections": 2,
+  "total_code_blocks": 0,
+  "version": "SNS v4",
+  "sections": [
+    {
+      "heading": "Stormshield SNS v4 CLI Reference",
+      "level": 1,
+      "content": "SNS and SMC",
+      "page_number": 1,
+      "code_blocks": []
+    },
+    {
+      "heading": "Introduction",
+      "level": 1,
+      "content": "This document details all the Stormshield Network CLI / Serverd commands of the IPS-Firewall for the release 4.8.18 LTSB.\nThese commands can be executed in the CLI console module in web administration, with an administration client connected port 1300 (NSRPC) or by making use of the SNS-PYTHON-API.\nThese commands can be used from version 4.8.18 LTSB of Stormshield Network firmware. To check their validity in earlier versions, please refer to the History category of the description of these commands.\nwww.stormshield.com\n\t\t\t\t\t\u00a0 - \u00a0FOLLOW US\u00a0\u00a0\u00a0 - \u00a0Our\u00a0websites\nCopyright \u00a9 Stormshield 2026\u00a0 - \u00a0Legal\u00a0notice",
+      "page_number": 1,
+      "code_blocks": []
+    }
+  ]
+}

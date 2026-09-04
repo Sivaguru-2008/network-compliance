@@ -1,0 +1,19 @@
+{
+  "vendor": "paloalto_panos",
+  "vendor_name": "Palo Alto Networks",
+  "os_name": "PAN-OS",
+  "config_format": "XML running-config.xml / set commands",
+  "document_title": "PAN-OS CLI Command Hierarchy",
+  "source_url": "https://docs.paloaltonetworks.com/ngfw/pan-os-cli-quick-start/cli-command-hierarchy",
+  "source_type": "OFFICIAL_VENDOR_DOCUMENTATION",
+  "access_type": "open",
+  "doc_format": "html",
+  "version": "PAN-OS 11.x",
+  "retrieved_at": "2026-08-31T16:29:49.274737+00:00",
+  "status": "DOWNLOADED",
+  "sha256": "69e28ad9f94fa39139e6a6577792b29002e3f6254f4a72a57bc7e86c59c68481",
+  "byte_size": 284836,
+  "local_path": "vendor_references\\paloalto_panos\\documents\\panos_cli_command_hierarchy.html",
+  "license_or_access_note": "Authoritative vendor technical documentation acquired for parser & compliance syntax validation.",
+  "error_message": null
+}

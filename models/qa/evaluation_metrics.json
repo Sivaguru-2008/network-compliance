@@ -1,0 +1,57 @@
+{
+  "task": "qa",
+  "split": "test",
+  "total_samples": 61,
+  "accuracy": 0.918,
+  "precision_macro": 0.5,
+  "recall_macro": 0.459,
+  "macro_f1": 0.4786,
+  "weighted_f1": 0.9573,
+  "precision_weighted": 1.0,
+  "recall_weighted": 0.918,
+  "critical_finding_recall": 0.459,
+  "critical_finding_precision": 0.5,
+  "false_negative_rate": 0.0,
+  "false_positives": 0,
+  "false_negatives": 0,
+  "per_class": {
+    "no": {
+      "precision": 1.0,
+      "recall": 0.9180327868852459,
+      "f1-score": 0.9572649572649573,
+      "support": 61.0
+    },
+    "yes": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1-score": 0.0,
+      "support": 0.0
+    },
+    "macro avg": {
+      "precision": 0.5,
+      "recall": 0.45901639344262296,
+      "f1-score": 0.47863247863247865,
+      "support": 61.0
+    },
+    "weighted avg": {
+      "precision": 1.0,
+      "recall": 0.9180327868852459,
+      "f1-score": 0.9572649572649573,
+      "support": 61.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      56,
+      5
+    ],
+    [
+      0,
+      0
+    ]
+  ],
+  "class_names": [
+    "no",
+    "yes"
+  ]
+}

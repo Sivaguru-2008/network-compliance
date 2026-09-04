@@ -1,0 +1,10 @@
+{
+  "customerName": "Insecure-Org",
+  "accessPolicyRules": [
+    {
+      "name": "Allow-All",
+      "action": "ALLOW"
+    }
+  ],
+  "postureProfiles": []
+}

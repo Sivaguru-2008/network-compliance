@@ -336,7 +336,7 @@ class TestComplianceEvaluation:
 
     def test_secure_config_passes_all_rules(self):
         model = _parse(SECURE)
-        ruleset = load_framework("CIS", "stormshield_sns", allow_cross_platform=True)
+        ruleset = load_framework("CIS", "stormshield", allow_cross_platform=True)
         engine = ComplianceEngine(ruleset)
         results = engine.evaluate(model)
 
@@ -347,7 +347,7 @@ class TestComplianceEvaluation:
 
     def test_insecure_config_fails_controls(self):
         model = _parse(INSECURE)
-        ruleset = load_framework("CIS", "stormshield_sns", allow_cross_platform=True)
+        ruleset = load_framework("CIS", "stormshield", allow_cross_platform=True)
         engine = ComplianceEngine(ruleset)
         results = engine.evaluate(model)
 
@@ -363,7 +363,7 @@ class TestComplianceEvaluation:
 
     def test_ambiguous_config_returns_needs_review(self):
         model = _parse(AMBIGUOUS)
-        ruleset = load_framework("CIS", "stormshield_sns", allow_cross_platform=True)
+        ruleset = load_framework("CIS", "stormshield", allow_cross_platform=True)
         engine = ComplianceEngine(ruleset)
         results = engine.evaluate(model)
 

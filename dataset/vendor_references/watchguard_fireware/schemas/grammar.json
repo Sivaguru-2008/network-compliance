@@ -1,0 +1,36 @@
+{
+  "vendor_key": "watchguard_fireware",
+  "vendor_name": "WatchGuard",
+  "os_name": "Fireware OS",
+  "syntax_type": "watchguard_xml_cli",
+  "root_blocks": [
+    {
+      "block_name": "fireware_system",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "system-name",
+        "time-zone"
+      ],
+      "security_directives": [
+        "log-host",
+        "ntp server",
+        "snmp version v3",
+        "management-session timeout",
+        "lockout threshold"
+      ]
+    }
+  ],
+  "negation_prefix": "no",
+  "comment_prefixes": [
+    "#",
+    "<!--"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "fireware_xml_and_cli"
+  }
+}

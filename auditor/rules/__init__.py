@@ -5,6 +5,7 @@ from .loader import (
     RuleLoadError,
     available_frameworks,
     discover_packs,
+    get_remediation_for_control,
     load_framework,
     load_ruleset,
     platform_mismatch_note,
@@ -15,7 +16,9 @@ __all__ = [
     "RuleLoadError",
     "available_frameworks",
     "discover_packs",
+    "get_remediation_for_control",
     "load_framework",
     "load_ruleset",
     "platform_mismatch_note",
 ]
+

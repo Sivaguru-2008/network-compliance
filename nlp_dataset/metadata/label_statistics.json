@@ -1,0 +1,49 @@
+{
+  "section_classes": [
+    "INTERFACE",
+    "ROUTING",
+    "FIREWALL",
+    "ACL",
+    "NAT",
+    "VPN",
+    "AAA",
+    "USER_MANAGEMENT",
+    "SNMP",
+    "LOGGING",
+    "NTP",
+    "SYSTEM",
+    "SECURITY",
+    "MANAGEMENT",
+    "VLAN",
+    "BGP",
+    "OSPF",
+    "UNKNOWN"
+  ],
+  "ner_entity_types": [
+    "IP_ADDRESS",
+    "SUBNET",
+    "INTERFACE",
+    "VLAN",
+    "VRF",
+    "PROTOCOL",
+    "PORT",
+    "ACL",
+    "FIREWALL_RULE",
+    "USER",
+    "AUTH_METHOD",
+    "CRYPTO_ALGORITHM",
+    "SERVICE",
+    "SECURITY_ZONE",
+    "ROUTING_PROTOCOL"
+  ],
+  "security_findings": {
+    "LOGGING_DISABLED": 2494,
+    "NTP_DISABLED": 2494,
+    "ANY_TO_ANY_RULE": 77,
+    "WEAK_CRYPTO": 219,
+    "ENABLE_PASSWORD_PLAINTEXT": 1,
+    "UNRESTRICTED_MANAGEMENT": 6,
+    "TELNET_ENABLED": 7,
+    "HTTP_MANAGEMENT_ENABLED": 3
+  }
+}

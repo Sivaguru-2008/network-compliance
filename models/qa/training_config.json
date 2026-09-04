@@ -1,0 +1,12 @@
+{
+  "task_name": "qa",
+  "feature_mode": "word_char",
+  "n_samples": 415,
+  "n_classes": 2,
+  "classes": [
+    "no",
+    "yes"
+  ],
+  "training_time_seconds": 0.252,
+  "random_seed": 42
+}

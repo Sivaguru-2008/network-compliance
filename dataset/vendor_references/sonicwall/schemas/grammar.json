@@ -1,0 +1,36 @@
+{
+  "vendor_key": "sonicwall",
+  "vendor_name": "SonicWall",
+  "os_name": "SonicOS / SonicOSX",
+  "syntax_type": "sonicos_cli",
+  "root_blocks": [
+    {
+      "block_name": "administration",
+      "entry_keyword": "administration",
+      "exit_keyword": "exit",
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "firewall-name",
+        "system-time"
+      ],
+      "security_directives": [
+        "web-management allow-http no",
+        "web-management allow-https yes",
+        "ssh yes",
+        "session-timeout 10",
+        "login-security admin-lockout-time 30"
+      ]
+    }
+  ],
+  "negation_prefix": "no",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": true,
+  "schema_definition": {
+    "format": "sonicos_context_cli",
+    "commit_command": "commit"
+  }
+}

@@ -1,9 +1,0 @@
-# Optional: enables per-device PDF reports (--pdf-out / --pdf-dir).
-# The deterministic core, the CLI table and the JSON/inventory output all work
-# without this; asking for a PDF without it prints an instruction, not a stack trace.
--r requirements.txt
-reportlab>=4.0
-
-# Read side only: tests/test_pdf_report.py asserts on the *text* of a rendered
-# report rather than on its pixels. Nothing the tool ships imports this.
-pypdf>=4.0

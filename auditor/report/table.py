@@ -149,15 +149,16 @@ def render_report(report: AuditReport, *, color: Optional[bool] = None, width: i
         out.append("─" * width)
         for fw_name, fw_sum in report.framework_summaries.items():
             out.append(f"  {fw_name}")
-            out.append(
-                "    "
-                + paint(f"PASS: {fw_sum.passed}", _COLORS[Status.PASS])
-                + "    "
-                + paint(f"FAIL: {fw_sum.failed}", _COLORS[Status.FAIL])
-                + "    "
-                + paint(f"REVIEW: {fw_sum.needs_review}", _COLORS[Status.NEEDS_REVIEW])
-                + f"    of {fw_sum.total} controls"
-            )
+            fw_parts = [
+                paint(f"PASS: {fw_sum.passed}", _COLORS[Status.PASS]),
+                paint(f"FAIL: {fw_sum.failed}", _COLORS[Status.FAIL]),
+                paint(f"REVIEW: {fw_sum.needs_review}", _COLORS[Status.NEEDS_REVIEW]),
+            ]
+            if fw_sum.unsupported > 0:
+                fw_parts.append(paint(f"UNSUPPORTED: {fw_sum.unsupported}", _COLORS[Status.UNSUPPORTED]))
+            if fw_sum.not_applicable > 0:
+                fw_parts.append(paint(f"N/A: {fw_sum.not_applicable}", _COLORS[Status.NOT_APPLICABLE]))
+            out.append("    " + "    ".join(fw_parts) + f"    of {fw_sum.total} controls")
         out.append("─" * width)
         out.append("")
 
@@ -212,23 +213,33 @@ def render_report(report: AuditReport, *, color: Optional[bool] = None, width: i
     summary = report.summary
     out.append(paint("OVERALL SUMMARY", "\033[1m"))
     out.append("-" * width)
-    out.append(
-        "  "
-        + paint(f"PASS {summary.passed}", _COLORS[Status.PASS])
-        + "   "
-        + paint(f"FAIL {summary.failed}", _COLORS[Status.FAIL])
-        + "   "
-        + paint(f"NEEDS_REVIEW {summary.needs_review}", _COLORS[Status.NEEDS_REVIEW])
-        + f"   of {summary.total} controls evaluated"
-    )
+    counts_parts = [
+        paint(f"PASS {summary.passed}", _COLORS[Status.PASS]),
+        paint(f"FAIL {summary.failed}", _COLORS[Status.FAIL]),
+        paint(f"NEEDS_REVIEW {summary.needs_review}", _COLORS[Status.NEEDS_REVIEW]),
+    ]
+    if summary.unsupported > 0:
+        counts_parts.append(paint(f"UNSUPPORTED {summary.unsupported}", _COLORS[Status.UNSUPPORTED]))
+    if summary.not_applicable > 0:
+        counts_parts.append(paint(f"N/A {summary.not_applicable}", _COLORS[Status.NOT_APPLICABLE]))
+    if summary.error > 0:
+        counts_parts.append(paint(f"ERROR {summary.error}", _COLORS[Status.ERROR]))
+    out.append("  " + "   ".join(counts_parts) + f"   of {summary.total} controls evaluated")
+
     if summary.failed_by_severity:
         breakdown = ", ".join(f"{count} {sev}" for sev, count in summary.failed_by_severity.items())
         out.append(f"  Failures by severity : {breakdown}")
-    out.append(f"  Compliance score     : {summary.compliance_score:.1f}%  (passed / all controls)")
+    out.append(f"  Compliance score     : {summary.compliance_score:.1f}%  (passed / {summary.applicable_controls} applicable controls)")
     out.append(
-        f"  Adjudicated score    : {summary.adjudicated_score:.1f}%  (passed / decided controls, "
-        f"excludes {summary.needs_review} needing review)"
+        f"  Adjudicated score    : {summary.adjudicated_score:.1f}%  (passed / {summary.decidable_controls} decided controls, "
+        f"excludes {summary.undecidable_controls} undecidable)"
     )
+    out.append(f"  Decision coverage    : {summary.decision_coverage:.1f}%  ({summary.decidable_controls} decided / {summary.applicable_controls} applicable)")
+    if target.completeness:
+        comp_status = target.completeness.get("status", "UNKNOWN")
+        comp_score = target.completeness.get("score")
+        score_disp = f" ({comp_score:.0%})" if comp_score is not None else ""
+        out.append(f"  Configuration status : {comp_status}{score_disp}")
     if summary.needs_review:
         out.append(
             "  "

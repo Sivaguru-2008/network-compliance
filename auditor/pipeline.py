@@ -23,6 +23,7 @@ from typing import Dict, List, Optional, Sequence, Tuple, Type
 from . import __version__
 from .engine import ComplianceEngine
 from .models.baseline import SecurityBaselineModel
+from .models.excerpt import assess_configuration_completeness
 from .models.result import (
     AuditReport,
     ControlResult,
@@ -113,6 +114,14 @@ def parse_config(
     baseline = parser.parse(config_text, source_file=source_file)
     if confidence is not None and parser_cls not in (LLMParser, HybridParser):
         baseline.provenance.detection_confidence = confidence
+
+    assessment = assess_configuration_completeness(config_text, vendor=baseline.provenance.vendor)
+    baseline.completeness = assessment.to_dict()
+    if assessment.is_partial:
+        disclaimer = assessment.disclaimer()
+        if disclaimer and disclaimer not in baseline.provenance.warnings:
+            baseline.provenance.warnings.append(disclaimer)
+
     return baseline
 
 
@@ -179,6 +188,8 @@ def target_info(baseline: SecurityBaselineModel) -> TargetInfo:
         detection_confidence=baseline.provenance.detection_confidence,
         config_line_count=baseline.config_line_count,
         parser_warnings=baseline.provenance.warnings,
+        completeness=getattr(baseline, "completeness", None),
+        capabilities=baseline.capabilities(),
     )
 
 
@@ -189,7 +200,7 @@ def build_report(
     include_baseline: bool = True,
 ) -> AuditReport:
     """Assemble the structured deliverable the table and the JSON both render."""
-    return AuditReport(
+    report = AuditReport(
         tool={"name": TOOL_NAME, "version": __version__},
         target=target_info(baseline),
         framework=outcome.primary,
@@ -199,6 +210,8 @@ def build_report(
         results=outcome.results,
         baseline=baseline if include_baseline else None,
     )
+    report.validate_consistency()
+    return report
 
 
 def audit_baseline(

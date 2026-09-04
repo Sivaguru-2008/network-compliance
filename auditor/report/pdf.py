@@ -44,6 +44,7 @@ _STATUS_INK = {
     Status.NEEDS_REVIEW: "#a15c00",
     Status.NOT_APPLICABLE: "#6b6b6b",
     Status.UNSUPPORTED: "#7b5ea7",
+    Status.ERROR: "#b42318",
     Status.MANUAL_REVIEW: "#a15c00",
 }
 _SEVERITY_INK = {"high": "#b42318", "medium": "#a15c00", "low": "#2c5aa0"}

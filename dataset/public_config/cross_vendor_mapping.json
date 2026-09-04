@@ -1,0 +1,180 @@
+{
+  "snmp_community_access": {
+    "baseline_field": "snmp_communities",
+    "concept": "SNMP v1/v2c community string and access control",
+    "vendors": {
+      "Cisco": {
+        "syntax": "snmp-server community <name> [RO|RW]",
+        "doc": "Cisco IOS-XE / NX-OS SNMP Configuration Guide (Cisco Systems)"
+      },
+      "Juniper": {
+        "syntax": "set snmp community <name> authorization [read-only|read-write]",
+        "doc": "Junos OS Network Management Configuration Guide (Juniper Networks)"
+      },
+      "Arista": {
+        "syntax": "snmp-server community <name> [ro|rw]",
+        "doc": "Arista EOS User Manual: SNMP Configuration (Arista Networks)"
+      },
+      "Huawei": {
+        "syntax": "snmp-agent community read <name>",
+        "doc": "Huawei VRP Network Management and Monitoring Guide (Huawei Technologies)"
+      },
+      "Mikrotik": {
+        "syntax": "/snmp community add name=<name> read-access=yes",
+        "doc": "MikroTik RouterOS Manual: SNMP and Community Configuration (MikroTik)"
+      },
+      "Extreme": {
+        "syntax": "snmp-server community <name> ro",
+        "doc": "ExtremeXOS / NetIron Network Management Guide (Extreme Networks)"
+      },
+      "Ubiquiti": {
+        "syntax": "set service snmp community <name> authorization ro",
+        "doc": "Ubiquiti EdgeOS User Guide: SNMP Services (Ubiquiti Inc.)"
+      },
+      "Nokia": {
+        "syntax": "configure snmp community <name> access read-only",
+        "doc": "Nokia 7750 SR / 7950 XRS System Management Guide: SNMP & BOF (Nokia)"
+      }
+    }
+  },
+  "snmp_agent_state": {
+    "baseline_field": "snmp_agent_enabled",
+    "concept": "Administrative SNMP agent activation",
+    "vendors": {
+      "Cisco": {
+        "syntax": "snmp-server enable traps",
+        "doc": "Cisco IOS-XE / NX-OS SNMP Configuration Guide (Cisco Systems)"
+      },
+      "Juniper": {
+        "syntax": "set snmp ...",
+        "doc": "Junos OS Network Management Configuration Guide (Juniper Networks)"
+      },
+      "Arista": {
+        "syntax": "snmp-server enable traps",
+        "doc": "Arista EOS User Manual: SNMP Configuration (Arista Networks)"
+      },
+      "Mikrotik": {
+        "syntax": "/snmp set enabled=yes",
+        "doc": "MikroTik RouterOS Manual: SNMP and Community Configuration (MikroTik)"
+      }
+    }
+  },
+  "ssh_protocol_version": {
+    "baseline_field": "ssh_version",
+    "concept": "Enforced SSH protocol version",
+    "vendors": {
+      "Cisco": {
+        "syntax": "ip ssh version 2",
+        "doc": "Cisco IOS Security Configuration Guide: Securing the Control Plane (Cisco Systems)"
+      },
+      "Juniper": {
+        "syntax": "set system services ssh protocol-version v2",
+        "doc": "Junos OS CLI User Guide: System Access Security (Juniper Networks)"
+      },
+      "Arista": {
+        "syntax": "management ssh / ip ssh version 2",
+        "doc": "Arista EOS Management Plane Security Guide (Arista Networks)"
+      },
+      "Huawei": {
+        "syntax": "ssh server compatible-ssh1x disable",
+        "doc": "Huawei VRP Security Configuration Guide: STelnet and SSH (Huawei Technologies)"
+      }
+    }
+  },
+  "ssh_access_control": {
+    "baseline_field": "ssh_enabled",
+    "concept": "SSH administrative remote access service",
+    "vendors": {
+      "Cisco": {
+        "syntax": "transport input ssh / ip ssh",
+        "doc": "Cisco IOS Security Configuration Guide: Securing the Control Plane (Cisco Systems)"
+      },
+      "Juniper": {
+        "syntax": "set system services ssh",
+        "doc": "Junos OS CLI User Guide: System Access Security (Juniper Networks)"
+      },
+      "Arista": {
+        "syntax": "management ssh",
+        "doc": "Arista EOS Management Plane Security Guide (Arista Networks)"
+      },
+      "Mikrotik": {
+        "syntax": "/ip service set ssh disabled=no",
+        "doc": "MikroTik RouterOS Manual: IP Services (MikroTik)"
+      },
+      "Vyatta": {
+        "syntax": "set service ssh",
+        "doc": "VyOS User Guide: Service SSH (VyOS Maintainers)"
+      }
+    }
+  },
+  "syslog_destination_hosts": {
+    "baseline_field": "logging_hosts",
+    "concept": "Remote syslog collector destination",
+    "vendors": {
+      "Cisco": {
+        "syntax": "logging host <ip>",
+        "doc": "Cisco IOS System Message Logging Guide (Cisco Systems)"
+      },
+      "Juniper": {
+        "syntax": "set system syslog host <ip>",
+        "doc": "Junos OS System Logging and Tracing Administration (Juniper Networks)"
+      },
+      "Arista": {
+        "syntax": "logging host <ip>",
+        "doc": "Arista EOS System Logging Guide (Arista Networks)"
+      },
+      "Huawei": {
+        "syntax": "info-center loghost <ip>",
+        "doc": "Huawei VRP System Management Guide: Information Center (Huawei Technologies)"
+      },
+      "Mikrotik": {
+        "syntax": "/system logging action set remote target=remote remote=<ip>",
+        "doc": "MikroTik RouterOS Manual: System Logging (MikroTik)"
+      }
+    }
+  },
+  "ntp_time_synchronization": {
+    "baseline_field": "ntp_servers",
+    "concept": "Network Time Protocol authoritative clock source",
+    "vendors": {
+      "Cisco": {
+        "syntax": "ntp server <ip>",
+        "doc": "Cisco Network Time Protocol Configuration Guide (Cisco Systems)"
+      },
+      "Juniper": {
+        "syntax": "set system ntp server <ip>",
+        "doc": "Junos OS Network Time Protocol Configuration (Juniper Networks)"
+      },
+      "Arista": {
+        "syntax": "ntp server <ip>",
+        "doc": "Arista EOS Network Time Protocol Configuration (Arista Networks)"
+      },
+      "Huawei": {
+        "syntax": "ntp-service unicast-server <ip>",
+        "doc": "Huawei VRP Network Reliability Guide: NTP (Huawei Technologies)"
+      },
+      "Mikrotik": {
+        "syntax": "/system ntp client set servers=<ip>",
+        "doc": "MikroTik RouterOS Manual: SNTP Client (MikroTik)"
+      }
+    }
+  },
+  "session_inactivity_timeout": {
+    "baseline_field": "vty_exec_timeout_seconds",
+    "concept": "Administrative session idle inactivity timeout",
+    "vendors": {
+      "Cisco": {
+        "syntax": "exec-timeout <min> <sec>",
+        "doc": "Cisco Terminal Lines and Modem Support Configuration Guide (Cisco Systems)"
+      },
+      "Arista": {
+        "syntax": "exec-timeout <min>",
+        "doc": "Arista EOS Management Plane Security Guide (Arista Networks)"
+      },
+      "Fortinet": {
+        "syntax": "set admintimeout <min>",
+        "doc": "FortiOS Administration Guide: Admin Timeout"
+      }
+    }
+  }
+}

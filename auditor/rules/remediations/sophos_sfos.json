@@ -1,0 +1,69 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized RADIUS or TACACS+ authentication servers under authentication settings.",
+    "cli": [],
+    "notes": "Remote authentication servers must be configured in the WebAdmin GUI under Configure > Authentication > Servers."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable Telnet access zone permissions.",
+    "cli": [],
+    "notes": "Ensure that the Telnet check box is unchecked for all zones (e.g. LAN, WAN, DMZ) in the WebAdmin GUI under Administration > Device Access."
+  },
+  "vty_idle_timeout": {
+    "summary": "Configure WebAdmin/Console session inactivity timeout to 10 minutes (600 seconds) or less.",
+    "cli": [],
+    "notes": "Set the administration bypass timeout in the WebAdmin GUI under Administration > Admin and user settings > Access settings > Admin console timeout."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "Sophos Firewall local passwords are automatically hashed and encrypted in system configuration databases."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP community names public and private.",
+    "cli": [],
+    "notes": "Disable or delete default communities in the WebAdmin GUI under Administration > SNMP > Community."
+  },
+  "http_server_disabled": {
+    "summary": "Disable the unencrypted WebAdmin HTTP server redirect or access.",
+    "cli": [],
+    "notes": "Configure the WebAdmin access settings under Administration > Admin and user settings > WebAdmin settings."
+  },
+  "ssh_version_2": {
+    "summary": "Secure SSH settings and restrict zone access permissions.",
+    "cli": [
+      "enableremote"
+    ],
+    "notes": "Ensure remote SSH access is enabled and restricted to trusted networks under Administration > Device Access."
+  },
+  "logging_enabled": {
+    "summary": "Configure a remote syslog server target.",
+    "cli": [],
+    "notes": "Add and enable syslog server settings in the WebAdmin GUI under System services > Log settings > Syslog servers."
+  },
+  "management_acl": {
+    "summary": "Configure Device Access control rules to restrict administration services (SSH/HTTPS) to specific hosts or subnets.",
+    "cli": [],
+    "notes": "Go to WebAdmin GUI > Administration > Device Access > Local Service ACL Exception Rule to add network/IP restrictions."
+  },
+  "login_banner": {
+    "summary": "Enable and configure a pre-login warning banner message.",
+    "cli": [],
+    "notes": "Enable and configure the login disclaimer text in the WebAdmin GUI under Administration > Admin and user settings > Login disclaimer settings."
+  },
+  "password_min_length": {
+    "summary": "Enforce local user password complexity requirements.",
+    "cli": [],
+    "notes": "Configure complexity and minimum password length under Administration > Password complexity settings."
+  },
+  "ntp_configured": {
+    "summary": "Configure NTP time synchronization servers.",
+    "cli": [],
+    "notes": "Add NTP servers and enable time synchronization in the WebAdmin GUI under Administration > Time."
+  },
+  "no_write_snmp_community": {
+    "summary": "Configure SNMP communities to readonly access only.",
+    "cli": [],
+    "notes": "Verify SNMP community access rights under Administration > SNMP."
+  }
+}

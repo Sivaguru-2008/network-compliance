@@ -1,0 +1,19 @@
+{
+  "task_name": "security_detection",
+  "feature_mode": "word_char",
+  "n_samples": 1310,
+  "n_classes": 9,
+  "classes": [
+    "ANY_TO_ANY_RULE",
+    "ENABLE_PASSWORD_PLAINTEXT",
+    "HTTP_MANAGEMENT_ENABLED",
+    "LOGGING_DISABLED",
+    "NTP_DISABLED",
+    "SECURE_BASELINE",
+    "TELNET_ENABLED",
+    "UNRESTRICTED_MANAGEMENT",
+    "WEAK_CRYPTO"
+  ],
+  "training_time_seconds": 1.443,
+  "random_seed": 42
+}

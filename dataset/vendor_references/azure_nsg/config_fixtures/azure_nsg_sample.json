@@ -1,0 +1,30 @@
+{
+  "securityRules": [
+    {
+      "name": "Allow-HTTPS-Inbound",
+      "properties": {
+        "priority": 100,
+        "protocol": "Tcp",
+        "access": "Allow",
+        "direction": "Inbound",
+        "sourceAddressPrefix": "*",
+        "sourcePortRange": "*",
+        "destinationAddressPrefix": "*",
+        "destinationPortRange": "443"
+      }
+    },
+    {
+      "name": "Deny-All-Inbound",
+      "properties": {
+        "priority": 4096,
+        "protocol": "*",
+        "access": "Deny",
+        "direction": "Inbound",
+        "sourceAddressPrefix": "*",
+        "sourcePortRange": "*",
+        "destinationAddressPrefix": "*",
+        "destinationPortRange": "*"
+      }
+    }
+  ]
+}

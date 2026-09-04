@@ -1,0 +1,1459 @@
+{
+  "dataset_name": "Config2Spec Internet2 Real Production Backbone Configurations",
+  "provenance_classification": "VERIFIED_REAL_PRODUCTION_DEVICE",
+  "total_files": 10,
+  "total_lines": 96664,
+  "total_bytes": 2800869,
+  "evaluation_summary": {
+    "vendor_detection_accuracy": 1.0,
+    "parsing_success_rate": 1.0,
+    "security_concepts_extracted_total": 78,
+    "normalization_success_rate": 1.0,
+    "avg_cis_rules_evaluated_per_device": 13.0,
+    "zero_leakage_verified": true
+  },
+  "devices": [
+    {
+      "filename": "atla.conf",
+      "pop_location": "Atlanta, GA (ATLA)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 8051,
+        "statements_extracted": 15709,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SNMP",
+          "SSH_v2",
+          "SYSLOG_LOGGING",
+          "TACACS+"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "134.68.107.9",
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "134.68.1.9",
+          "198.32.10.252",
+          "198.32.10.254"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": true,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 9,
+        "failed": 3,
+        "needs_review": 1,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "PASS",
+            "message": "management_acl_applied=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "PASS",
+            "message": "ssh_version=2 (required: equals 2)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '134.68.1.9', '198.32.10.252', '198.32.10.254'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['134.68.107.9', '140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except [ INTERFACE-BACKBONE INTERFACE-CONNECTOR ];",
+        "apply-groups-except [ INTERFACE-CONNECTOR INTERFACE-BACKBONE ];",
+        "traceoptions {"
+      ]
+    },
+    {
+      "filename": "chic.conf",
+      "pop_location": "Chicago, IL (CHIC)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 14759,
+        "statements_extracted": 26372,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SESSION_TIMEOUT",
+          "SNMP",
+          "SSH",
+          "SYSLOG_LOGGING",
+          "TACACS+"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "134.68.1.9"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": true,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 8,
+        "failed": 3,
+        "needs_review": 2,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for ssh_version. No 'protocol-version' under 'system services ssh'; the enforced version is a release default (v1 was still accepted before Junos 15.1) and cannot be determined from the configuration text."
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "PASS",
+            "message": "management_acl_applied=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '134.68.1.9'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except [ INTERFACE-BACKBONE INTERFACE-CONNECTOR ];",
+        "apply-groups-except [ INTERFACE-CONNECTOR INTERFACE-BACKBONE ];",
+        "traceoptions {"
+      ]
+    },
+    {
+      "filename": "clev.conf",
+      "pop_location": "Cleveland, OH (CLEV)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 5833,
+        "statements_extracted": 10694,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SNMP",
+          "SSH_v2",
+          "SYSLOG_LOGGING"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "134.68.107.9",
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "134.68.1.9",
+          "198.32.10.252",
+          "198.32.10.254"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": false,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 8,
+        "failed": 4,
+        "needs_review": 1,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "FAIL",
+            "message": "management_acl_applied=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "PASS",
+            "message": "ssh_version=2 (required: equals 2)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '134.68.1.9', '198.32.10.252', '198.32.10.254'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['134.68.107.9', '140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except [ INTERFACE-BACKBONE INTERFACE-CONNECTOR ];",
+        "apply-groups-except [ INTERFACE-CONNECTOR INTERFACE-BACKBONE ];",
+        "traceoptions {"
+      ]
+    },
+    {
+      "filename": "hous.conf",
+      "pop_location": "Houston, TX (HOUS)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 7836,
+        "statements_extracted": 16278,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SNMP",
+          "SSH_v2",
+          "SYSLOG_LOGGING",
+          "TACACS+"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "134.68.107.9",
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "134.68.1.9",
+          "198.32.10.252",
+          "198.32.10.254"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": false,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 8,
+        "failed": 4,
+        "needs_review": 1,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "FAIL",
+            "message": "management_acl_applied=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "PASS",
+            "message": "ssh_version=2 (required: equals 2)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '134.68.1.9', '198.32.10.252', '198.32.10.254'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['134.68.107.9', '140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except INTERFACE-BACKBONE;",
+        "apply-groups-except INTERFACE-CONNECTOR;",
+        "apply-groups-except [ INTERFACE-BACKBONE INTERFACE-CONNECTOR ];",
+        "apply-groups-except [ INTERFACE-CONNECTOR INTERFACE-BACKBONE ];",
+        "traceoptions {"
+      ]
+    },
+    {
+      "filename": "kans.conf",
+      "pop_location": "Kansas City, MO (KANS)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 8911,
+        "statements_extracted": 19389,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SNMP",
+          "SSH_v2",
+          "SYSLOG_LOGGING",
+          "TACACS+"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "134.68.107.9",
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "134.68.1.9",
+          "192.12.206.254"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": false,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 8,
+        "failed": 4,
+        "needs_review": 1,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "FAIL",
+            "message": "management_acl_applied=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "PASS",
+            "message": "ssh_version=2 (required: equals 2)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '134.68.1.9', '192.12.206.254'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['134.68.107.9', '140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except [ INTERFACE-BACKBONE INTERFACE-CONNECTOR ];",
+        "apply-groups-except [ INTERFACE-CONNECTOR INTERFACE-BACKBONE ];",
+        "traceoptions {"
+      ]
+    },
+    {
+      "filename": "losa.conf",
+      "pop_location": "Los Angeles, CA (LOSA)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 14192,
+        "statements_extracted": 30236,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SNMP",
+          "SSH_v2",
+          "SYSLOG_LOGGING"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "134.68.107.9",
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "134.68.1.9"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": true,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 9,
+        "failed": 3,
+        "needs_review": 1,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "PASS",
+            "message": "management_acl_applied=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "PASS",
+            "message": "ssh_version=2 (required: equals 2)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '134.68.1.9'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['134.68.107.9', '140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except [ INTERFACE-BACKBONE INTERFACE-CONNECTOR ];",
+        "apply-groups-except [ INTERFACE-CONNECTOR INTERFACE-BACKBONE ];",
+        "damping;",
+        "traceoptions {"
+      ]
+    },
+    {
+      "filename": "newy32aoa.conf",
+      "pop_location": "New York, NY (NEWY32AOA)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 9326,
+        "statements_extracted": 8856,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SNMP",
+          "SSH",
+          "SYSLOG_LOGGING",
+          "TACACS+"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "134.68.107.9",
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "134.68.1.9",
+          "198.32.10.252",
+          "198.32.10.254"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": true,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 8,
+        "failed": 3,
+        "needs_review": 2,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for ssh_version. No 'protocol-version' under 'system services ssh'; the enforced version is a release default (v1 was still accepted before Junos 15.1) and cannot be determined from the configuration text."
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "PASS",
+            "message": "management_acl_applied=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '134.68.1.9', '198.32.10.252', '198.32.10.254'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['134.68.107.9', '140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups MSDP-SA-Limit-per-peer-group;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except [ INTERFACE-BACKBONE INTERFACE-CONNECTOR ];",
+        "traceoptions {"
+      ]
+    },
+    {
+      "filename": "salt.conf",
+      "pop_location": "Salt Lake City, UT (SALT)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 5338,
+        "statements_extracted": 11574,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SNMP",
+          "SSH_v2",
+          "SYSLOG_LOGGING",
+          "TACACS+"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "134.68.107.9",
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "134.68.1.9"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": true,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 9,
+        "failed": 3,
+        "needs_review": 1,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "PASS",
+            "message": "management_acl_applied=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "PASS",
+            "message": "ssh_version=2 (required: equals 2)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '134.68.1.9'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['134.68.107.9', '140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except [ INTERFACE-CONNECTOR INTERFACE-BACKBONE ];",
+        "traceoptions {"
+      ]
+    },
+    {
+      "filename": "seat.conf",
+      "pop_location": "Seattle, WA (SEAT)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 8796,
+        "statements_extracted": 18667,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SNMP",
+          "SSH_v2",
+          "SYSLOG_LOGGING"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "134.68.107.9",
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "134.68.1.9"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": true,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 9,
+        "failed": 3,
+        "needs_review": 1,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "PASS",
+            "message": "management_acl_applied=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "PASS",
+            "message": "ssh_version=2 (required: equals 2)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '134.68.1.9'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['134.68.107.9', '140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except INTERFACE-CONNECTOR;",
+        "apply-groups-except [ INTERFACE-BACKBONE INTERFACE-CONNECTOR ];",
+        "apply-groups-except [ INTERFACE-CONNECTOR INTERFACE-BACKBONE ];",
+        "traceoptions {"
+      ]
+    },
+    {
+      "filename": "wash.conf",
+      "pop_location": "Washington, DC (WASH)",
+      "vendor_detection": {
+        "detected_vendor": "juniper",
+        "confidence": 0.9,
+        "success": true
+      },
+      "parsing_success": {
+        "parsed": true,
+        "line_count": 13622,
+        "statements_extracted": 26938,
+        "hostname": null
+      },
+      "security_concept_extraction": {
+        "concepts": [
+          "AAA",
+          "ACLS_FIREWALL_POLICIES",
+          "NTP",
+          "RADIUS",
+          "SNMP",
+          "SSH",
+          "SYSLOG_LOGGING",
+          "TACACS+"
+        ],
+        "ssh_detected": true,
+        "radius_configured": true,
+        "syslog_remote": true,
+        "ntp_configured": true,
+        "snmp_configured": true,
+        "acls_firewall_rules": true
+      },
+      "normalization_success": {
+        "ssh_enabled": true,
+        "telnet_enabled": false,
+        "logging_hosts": [
+          "134.68.107.9",
+          "140.182.44.73"
+        ],
+        "ntp_servers": [
+          "129.79.5.100",
+          "130.126.24.24",
+          "134.68.1.9",
+          "140.182.45.75"
+        ],
+        "enable_secret_set": false,
+        "management_acl_applied": true,
+        "vty_exec_timeout_seconds": 0
+      },
+      "compliance_evaluation": {
+        "total_rules": 13,
+        "passed": 8,
+        "failed": 3,
+        "needs_review": 2,
+        "unsupported": 0,
+        "results_breakdown": [
+          {
+            "rule_id": "CIS-JUNOS-ROOT-AUTH-HASHED",
+            "title": "Store privileged credential as hash and encrypt passwords",
+            "status": "FAIL",
+            "message": "enable_secret_set=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+            "title": "Set VTY session idle timeout",
+            "status": "FAIL",
+            "message": "vty_exec_timeout_seconds=0 (required: greater_than 0)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+            "title": "Configure a login banner",
+            "status": "FAIL",
+            "message": "login_banner_present=False (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SSH-V2",
+            "title": "Enforce SSH protocol version 2",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for ssh_version. No 'protocol-version' under 'system services ssh'; the enforced version is a release default (v1 was still accepted before Junos 15.1) and cannot be determined from the configuration text."
+          },
+          {
+            "rule_id": "CIS-JUNOS-PASSWORD-MIN-LENGTH",
+            "title": "Enforce minimum password length",
+            "status": "NEEDS_REVIEW",
+            "message": "No conclusive evidence for password_min_length. No 'system login password minimum-length' statement present. Junos applies a release-dependent default minimum (six characters in current releases) rather than none, so the enforced length cannot be read from the configuration."
+          },
+          {
+            "rule_id": "CIS-JUNOS-MGMT-FILTER",
+            "title": "Restrict management access by source IP",
+            "status": "PASS",
+            "message": "management_acl_applied=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-CLEARTEXT-SERVICES",
+            "title": "Restrict VTY transport to secure protocols only",
+            "status": "PASS",
+            "message": "telnet_enabled=False (required: is_false); vty_transport_input=['ssh'] (required: subset_of ['ssh'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-DEFAULT-COMMUNITY",
+            "title": "Unset default SNMP community names",
+            "status": "PASS",
+            "message": "snmp_communities.name=[] (required: contains_none ['public', 'private'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SNMP-NO-WRITE",
+            "title": "Do not configure read-write SNMP communities",
+            "status": "PASS",
+            "message": "snmp_communities.access=[] (required: contains_none ['rw'])"
+          },
+          {
+            "rule_id": "CIS-JUNOS-AAA-CENTRALISED",
+            "title": "Enable AAA Authentication",
+            "status": "PASS",
+            "message": "aaa_enabled=True (required: is_true)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NO-JWEB-HTTP",
+            "title": "Disable HTTP management server",
+            "status": "PASS",
+            "message": "http_server_enabled=False (required: is_false)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-NTP-CONFIGURED",
+            "title": "Configure at least one NTP server",
+            "status": "PASS",
+            "message": "ntp_servers=['129.79.5.100', '130.126.24.24', '134.68.1.9', '140.182.45.75'] (required: is_not_empty)"
+          },
+          {
+            "rule_id": "CIS-JUNOS-SYSLOG-DESTINATION",
+            "title": "Configure a logging destination",
+            "status": "PASS",
+            "message": "logging_enabled=True (required: is_true); logging_hosts=['134.68.107.9', '140.182.44.73'] (required: is_not_empty); logging_buffered=True (required: is_true)"
+          }
+        ]
+      },
+      "unrecognized_commands_sample": [
+        "apply-groups INTERFACE-BACKBONE;",
+        "apply-groups INTERFACE-CONNECTOR;",
+        "apply-groups MSDP-SA-Limit-per-peer-group;",
+        "apply-groups [ re0 re1 ];",
+        "apply-groups-except [ INTERFACE-BACKBONE INTERFACE-CONNECTOR ];",
+        "apply-groups-except [ INTERFACE-CONNECTOR INTERFACE-BACKBONE ];",
+        "traceoptions {"
+      ]
+    }
+  ]
+}

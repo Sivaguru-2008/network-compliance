@@ -1,0 +1,37 @@
+{
+  "vendor_key": "cato_networks",
+  "vendor_name": "Cato Networks",
+  "os_name": "Cato Cloud SASE",
+  "syntax_type": "cloud_json_policy",
+  "root_blocks": [
+    {
+      "block_name": "sase_policy",
+      "entry_keyword": "{",
+      "exit_keyword": "}",
+      "child_delimiter": ":",
+      "statement_terminator": ",",
+      "allowed_subblocks": [
+        "rules",
+        "wanSecurity",
+        "threatProtection"
+      ],
+      "common_directives": [
+        "name",
+        "siteName",
+        "timezone"
+      ],
+      "security_directives": [
+        "rules.action",
+        "threatProtection.ips",
+        "wanSecurity.antiMalware",
+        "adminAccess.mfa"
+      ]
+    }
+  ],
+  "negation_prefix": "",
+  "comment_prefixes": [],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "cato_sase_json_export"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "task_name": "compliance",
+  "feature_mode": "word_char",
+  "n_samples": 14088,
+  "n_classes": 2,
+  "classes": [
+    "COMPLIANT",
+    "NON_COMPLIANT"
+  ],
+  "training_time_seconds": 7.645,
+  "random_seed": 42
+}

@@ -33,6 +33,7 @@ class Ternary(Enum):
     TRUE = "true"
     FALSE = "false"
     UNKNOWN = "unknown"
+    UNSUPPORTED = "unsupported"
 
 
 class RuleEvaluationError(Exception):
@@ -177,6 +178,14 @@ def _describe(field: str, select: Optional[str], value: Any, operator: Operator,
 def evaluate_leaf(leaf: LeafCondition, baseline: Any) -> LeafOutcome:
     observation = resolve_observation(baseline, leaf.field)
 
+    if getattr(observation, "is_unsupported", False):
+        return LeafOutcome(
+            ternary=Ternary.UNSUPPORTED,
+            field=leaf.field,
+            observation=observation,
+            detail=f"{leaf.field}: property unsupported by parser ({observation.note or 'not evaluated'})",
+        )
+
     if not observation.detected:
         return LeafOutcome(
             ternary=Ternary.UNKNOWN,
@@ -209,6 +218,8 @@ def evaluate_condition(condition: Any, baseline: Any) -> ConditionOutcome:
             return ConditionOutcome(Ternary.FALSE, leaves)
         if Ternary.UNKNOWN in states:
             return ConditionOutcome(Ternary.UNKNOWN, leaves)
+        if Ternary.UNSUPPORTED in states:
+            return ConditionOutcome(Ternary.UNSUPPORTED, leaves)
         return ConditionOutcome(Ternary.TRUE, leaves)
 
     if isinstance(condition, AnyOfCondition):
@@ -217,8 +228,12 @@ def evaluate_condition(condition: Any, baseline: Any) -> ConditionOutcome:
         states = {result.ternary for result in results}
         if Ternary.TRUE in states:
             return ConditionOutcome(Ternary.TRUE, leaves)
+        if Ternary.FALSE in states and len(states) == 1:
+            return ConditionOutcome(Ternary.FALSE, leaves)
         if Ternary.UNKNOWN in states:
             return ConditionOutcome(Ternary.UNKNOWN, leaves)
+        if Ternary.UNSUPPORTED in states:
+            return ConditionOutcome(Ternary.UNSUPPORTED, leaves)
         return ConditionOutcome(Ternary.FALSE, leaves)
 
     if isinstance(condition, NotCondition):
@@ -227,6 +242,7 @@ def evaluate_condition(condition: Any, baseline: Any) -> ConditionOutcome:
             Ternary.TRUE: Ternary.FALSE,
             Ternary.FALSE: Ternary.TRUE,
             Ternary.UNKNOWN: Ternary.UNKNOWN,
+            Ternary.UNSUPPORTED: Ternary.UNSUPPORTED,
         }[inner.ternary]
         return ConditionOutcome(flipped, inner.leaves)
 

@@ -1,0 +1,40 @@
+{
+  "task": "ner",
+  "token_accuracy": 0.9872,
+  "entity_precision": 0.6804,
+  "entity_recall": 0.8919,
+  "entity_f1": 0.7719,
+  "entity_macro_f1": 0.4014,
+  "macro_f1": 0.5198,
+  "weighted_f1": 0.9891,
+  "accuracy": 0.9872,
+  "total_tokens": 6072,
+  "total_gold_entities": 148,
+  "total_predicted_entities": 194,
+  "per_entity_metrics": {
+    "INTERFACE": {
+      "precision": 0.5,
+      "recall": 0.7681,
+      "f1": 0.6057,
+      "support": 69
+    },
+    "IP_ADDRESS": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 79
+    },
+    "PORT": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "SERVICE": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    }
+  }
+}

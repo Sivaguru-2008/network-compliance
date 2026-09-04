@@ -1,0 +1,53 @@
+{
+  "summary": {
+    "total_configs_processed": 2518,
+    "total_nlp_examples": 44687,
+    "train_examples": 32053,
+    "validation_examples": 6204,
+    "test_examples": 6430,
+    "data_leakage_status": "PASS",
+    "secret_audit_status": "FAIL"
+  },
+  "vendors": {
+    "a10": 61,
+    "alcatel": 26,
+    "arista": 227,
+    "aws": 1,
+    "checkpoint": 40,
+    "cisco": 972,
+    "extreme": 9,
+    "f5": 75,
+    "fortinet": 113,
+    "hpe": 75,
+    "huawei": 76,
+    "juniper": 386,
+    "mikrotik": 84,
+    "netgate": 2,
+    "nokia": 83,
+    "paloalto": 197,
+    "ruckus": 11,
+    "sonic": 56,
+    "sophos": 3,
+    "ubiquiti": 20,
+    "watchguard": 1
+  },
+  "findings_distribution": {
+    "LOGGING_DISABLED": 2494,
+    "NTP_DISABLED": 2494,
+    "WEAK_CRYPTO": 219,
+    "ANY_TO_ANY_RULE": 22,
+    "UNRESTRICTED_MANAGEMENT": 7,
+    "TELNET_ENABLED": 7,
+    "HTTP_MANAGEMENT_ENABLED": 3,
+    "ENABLE_PASSWORD_PLAINTEXT": 1
+  },
+  "tasks": {
+    "task_a_analysis": 2518,
+    "task_b_security_detection": 1394,
+    "task_c_compliance": 20136,
+    "task_d_qa": 511,
+    "task_e_remediation": 5247,
+    "task_f_classification": 13294,
+    "task_g_ner": 1587
+  }
+}

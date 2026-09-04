@@ -1,0 +1,20 @@
+{
+  "name": "Cato-Headquarters",
+  "timezone": "UTC",
+  "threatProtection": {
+    "ips": true,
+    "antiMalware": true,
+    "nextGenAntiVirus": true
+  },
+  "rules": [
+    {
+      "name": "Block-Insecure-Protocols",
+      "action": "Block",
+      "services": ["telnet", "http"]
+    }
+  ],
+  "adminAccess": {
+    "mfa": true,
+    "sessionTimeoutMinutes": 15
+  }
+}

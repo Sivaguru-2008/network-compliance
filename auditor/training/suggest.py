@@ -40,8 +40,11 @@ class MappingSuggestion:
     confidence: float = 0.0
     reasoning: str = ""
     compliance_relevance: str = ""
+    security_concept: str = ""
+    extracted_value: Any = None
     source: str = "heuristic"
     alternatives: List[Dict[str, Any]] = dc_field(default_factory=list)
+
 
 
 _OBSERVABLE = None
@@ -57,7 +60,7 @@ def _observable_fields() -> List[str]:
 # ---- keyword → baseline-field heuristics --------------------------------
 
 _KEYWORD_MAP: List[Tuple[List[str], str, str]] = [
-    (["exec-timeout", "idle-timeout", "admintimeout"],
+    (["exec-timeout", "idle-timeout", "admintimeout", "admin-session-limit", "session-limit", "session-timeout"],
      "vty_exec_timeout_seconds", "Session idle timeout"),
     (["ssh", "ip ssh", "set admin-ssh"],
      "ssh_enabled", "SSH access control"),
@@ -166,7 +169,15 @@ def _heuristic_suggest(
     if best_field is None:
         return None
 
+
     pattern, strategy, regex = _derive_pattern(line, best_field)
+    val = None
+    try:
+        from .nlp_pipeline import _extract_value, FIELD_TO_CONCEPT
+        val = _extract_value(line, best_field)
+        concept = FIELD_TO_CONCEPT.get(best_field, best_relevance)
+    except Exception:
+        concept = best_relevance
     return MappingSuggestion(
         field=best_field,
         pattern=pattern,
@@ -175,8 +186,63 @@ def _heuristic_suggest(
         confidence=min(0.6, best_score / 30.0),
         reasoning=f"Keyword match: line contains terms associated with '{best_field}'.",
         compliance_relevance=best_relevance,
+        security_concept=concept,
+        extracted_value=val,
         source="heuristic",
     )
+
+
+_NLP_MODEL = None
+
+
+def _get_nlp_model():
+    global _NLP_MODEL
+    if _NLP_MODEL is None:
+        try:
+            from .nlp_pipeline import SecurityConceptClassifier, ConfidencePolicy
+            from pathlib import Path
+            import json
+            model_dir = Path("training/nlp/nlp_model")
+            if model_dir.is_dir() and (model_dir / "concept_classifier.joblib").is_file():
+                clf = SecurityConceptClassifier.load(model_dir)
+                policy_file = model_dir / "confidence_policy.json"
+                if policy_file.is_file():
+                    pd = json.loads(policy_file.read_text(encoding="utf-8"))
+                    policy = ConfidencePolicy(**pd)
+                else:
+                    policy = ConfidencePolicy()
+                _NLP_MODEL = (clf, policy)
+            else:
+                _NLP_MODEL = False
+        except Exception:
+            _NLP_MODEL = False
+    return _NLP_MODEL if _NLP_MODEL is not False else (None, None)
+
+
+def _nlp_suggest(line: str, context: str, vendor: str) -> Optional[MappingSuggestion]:
+    clf, policy = _get_nlp_model()
+    if clf is None:
+        return None
+    try:
+        from .nlp_pipeline import NON_SECURITY_LABEL, AMBIGUOUS_LABEL
+        pred = clf.predict_one(line)
+        if pred.predicted_concept in (NON_SECURITY_LABEL, AMBIGUOUS_LABEL) or not pred.predicted_field:
+            return None
+        pattern, strategy, regex = _derive_pattern(line, pred.predicted_field)
+        return MappingSuggestion(
+            field=pred.predicted_field,
+            pattern=pattern,
+            extraction_strategy=strategy,
+            regex_pattern=regex,
+            confidence=pred.confidence,
+            reasoning=f"NLP semantic prediction: '{pred.predicted_concept}' with confidence {pred.confidence:.2f}.",
+            compliance_relevance=pred.predicted_concept,
+            security_concept=pred.predicted_concept,
+            extracted_value=pred.predicted_value,
+            source="nlp",
+        )
+    except Exception:
+        return None
 
 
 def _derive_pattern(
@@ -261,6 +327,7 @@ def _ai_suggest(
         confidence=0.75,
         reasoning=reasoning,
         compliance_relevance=relevance,
+        security_concept=relevance,
         source="ai",
     )
 
@@ -287,8 +354,8 @@ def suggest_mapping(
 ) -> MappingSuggestion:
     """Produce a mapping suggestion for an unrecognized configuration line.
 
-    Tries the AI path first (if ``client`` is provided), then falls back to
-    heuristic matching.  Always returns a suggestion — the worst case is a
+    Tries the AI path first (if ``client`` is provided), then NLP model,
+    then falls back to heuristic matching.  Always returns a suggestion — the worst case is a
     low-confidence heuristic guess that the admin will override.
 
     The returned suggestion is NEVER applied to the compliance engine.  It
@@ -307,9 +374,31 @@ def suggest_mapping(
                 })
             return ai_result
 
+    nlp_result = _nlp_suggest(line, context, vendor)
+    if nlp_result is not None and nlp_result.confidence >= 0.5:
+        heuristic = _heuristic_suggest(line, context, vendor)
+        if heuristic and heuristic.field != nlp_result.field:
+            nlp_result.alternatives.append({
+                "field": heuristic.field,
+                "confidence": heuristic.confidence,
+                "source": "heuristic",
+                "reasoning": heuristic.reasoning,
+            })
+        return nlp_result
+
     heuristic = _heuristic_suggest(line, context, vendor)
     if heuristic is not None:
+        if nlp_result is not None and nlp_result.field != heuristic.field:
+            heuristic.alternatives.append({
+                "field": nlp_result.field,
+                "confidence": nlp_result.confidence,
+                "source": "nlp",
+                "reasoning": nlp_result.reasoning,
+            })
         return heuristic
+
+    if nlp_result is not None:
+        return nlp_result
 
     return _fallback_suggestion(line)
 
@@ -326,5 +415,7 @@ def _fallback_suggestion(line: str) -> MappingSuggestion:
         confidence=0.0,
         reasoning="No matching pattern found. Please select the target field manually.",
         compliance_relevance="Unknown",
+        security_concept="Unknown",
         source="none",
     )
+

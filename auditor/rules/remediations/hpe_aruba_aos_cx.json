@@ -1,0 +1,124 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure AAA authentication login for default access methods.",
+    "cli": [
+      "configure",
+      " aaa authentication login default local",
+      " end"
+    ],
+    "notes": "Ensure local fallback or local admin credentials are set to prevent lockout."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable Telnet access server on all configured VRFs.",
+    "cli": [
+      "configure",
+      " no telnet server vrf default",
+      " no telnet server vrf mgmt",
+      " end"
+    ],
+    "notes": "Telnet transmits passwords in cleartext. SSH should be used exclusively."
+  },
+  "vty_idle_timeout": {
+    "summary": "Configure the global session idle timeout limit to 10 minutes or less.",
+    "cli": [
+      "configure",
+      " session-timeout 10",
+      " end"
+    ],
+    "notes": "The parameter is in minutes. 10 minutes = 600 seconds."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Configure local admin credentials with secure default hashing.",
+    "cli": [
+      "configure",
+      " user admin group administrators password plaintext <strong-password>",
+      " end"
+    ],
+    "notes": "AOS-CX automatically encrypts and hashes all stored user passwords."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default community strings public and private.",
+    "cli": [
+      "configure",
+      " no snmp-server community public",
+      " no snmp-server community private",
+      " end"
+    ],
+    "notes": "Replace default public/private community names with unique, random values."
+  },
+  "http_server_disabled": {
+    "summary": "HTTP web server is unsupported on AOS-CX; no disable command is required.",
+    "cli": [],
+    "notes": "AOS-CX only runs HTTPS server for Web UI and REST API management."
+  },
+  "ssh_version_2": {
+    "summary": "AOS-CX enforces SSH version 2.0 by default. Verify status with 'show ssh server'.",
+    "cli": [],
+    "notes": "SSHv1 is not supported by AOS-CX SSH server software."
+  },
+  "logging_enabled": {
+    "summary": "Configure a remote syslog server destination.",
+    "cli": [
+      "configure",
+      " logging <syslog-ip>",
+      " end"
+    ],
+    "notes": "Logging to a remote collector ensures logs are preserved when local buffers rotate."
+  },
+  "management_acl": {
+    "summary": "Configure an SSH server allow-list to restrict management access.",
+    "cli": [
+      "configure",
+      " ssh server allow-list",
+      "  ip <management-subnet-prefix>",
+      "  enable",
+      "  exit",
+      " end"
+    ],
+    "notes": "SSH allow-list restricts access on all configured VRFs."
+  },
+  "login_banner": {
+    "summary": "Configure a login message of the day (MOTD) banner warning unauthorized users.",
+    "cli": [
+      "configure",
+      " banner motd ^",
+      "WARNING: Authorized Access Only!",
+      "^",
+      " end"
+    ],
+    "notes": "Use a non-whitespace delimiter character (like '^') to enclose the banner text."
+  },
+  "password_min_length": {
+    "summary": "Enable password complexity and set the minimum local password length to 8.",
+    "cli": [
+      "configure",
+      " password-complexity",
+      "  enable",
+      "  min-length 8",
+      "  exit",
+      " end"
+    ],
+    "notes": "Complexity settings apply to passwords created or modified after complexity is enabled."
+  },
+  "ntp_configured": {
+    "summary": "Configure a remote NTP server and enable the NTP client.",
+    "cli": [
+      "configure",
+      " ntp server <ntp-ip>",
+      " ntp enable",
+      " end"
+    ],
+    "notes": "Clock synchronization is required for correct log timestamping."
+  },
+  "no_write_snmp_community": {
+    "summary": "Ensure all configured SNMP communities restrict access to read-only.",
+    "cli": [
+      "configure",
+      " snmp-server community <community-string>",
+      "  access-level ro",
+      "  exit",
+      " end"
+    ],
+    "notes": "AOS-CX communities default to read-only access-level."
+  }
+}

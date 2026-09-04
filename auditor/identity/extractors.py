@@ -62,8 +62,27 @@ _HARDWARE_SOURCE = {
     "sonic": "show platform summary",
     "checkpoint_gaia": "cpstat os / fw ver",
     "mikrotik_routeros": "system resource print / system routerboard print",
-    "stormshield_sns": "SYSTEM PROPERTY / SYS INFO / getconf",
-    "watchguard_fireware": "show sysinfo / Fireware Web UI Dashboard",
+    "hpe_aruba_aos_cx": "show version",
+    "extreme_exos": "show version",
+    "sophos_sfos": "show version",
+    "sonicwall_sonicos": "show system",
+    "watchguard_fireware": "show system status",
+    "cato_cato_networks": "Cato Management Application (CMA)",
+    "stormshield_sns": "sysinfo / show version",
+    "zscaler_zia": "Zscaler ZIA Admin Portal",
+    "zscaler_zpa": "Zscaler ZPA Admin Portal",
+    "barracuda_barracuda_cloudgen": "show version / status info",
+    "forcepoint_forcepoint_ngfw": "SMC System Engine status / show version",
+    "sangfor_ngaf": "show system status / show version",
+    "a10_acos": "show version",
+    "netgate_pfsense": "pfsense config.xml version tag",
+    "nokia_sros": "TiMOS config header",
+    "alcatel_aos": "show microcode",
+    "alcatel_lucent_enterprise_aos": "show microcode",
+    "f5_bigip_tmos": "show sys version",
+    "versa_versos": "show system detail",
+    "ruckus_fastiron": "show version",
+    "ubiquiti_edgeos": "show version",
     UNKNOWN_VENDOR: "the vendor's show-version equivalent",
 }
 
@@ -380,9 +399,149 @@ def _extract_mikrotik_routeros(
     return fields
 
 
-# ---------------------------------------------------------------------------
-# Stormshield Network Security (SNS)
-# ---------------------------------------------------------------------------
+_AOS_CX_VERSION = re.compile(r"(?i)^\s*!\s*Version:?\s+(?:AOS-CX\s+)?(\S+)")
+
+
+def _extract_hpe_aruba_aos_cx(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _AOS_CX_VERSION)
+    fields["os_version"] = (
+        _found(version, note="AOS-CX version from configuration header comment.")
+        if version
+        else Observation[str].unknown(
+            "No '!Version AOS-CX <version>' header comment found in this configuration."
+        )
+    )
+
+    fields["model"] = _missing("model", "hpe_aruba_aos_cx")
+    fields["serial_number"] = _missing("serial_number", "hpe_aruba_aos_cx")
+    return fields
+
+
+_EXOS_VERSION_XML = re.compile(r'.*<xos-configuration version="([^"]+)".*')
+_EXOS_VERSION_COMMENT = re.compile(r'(?i)^\s*#\s*Software Version\s*:\s*(\S+)')
+
+
+def _extract_extreme_exos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _EXOS_VERSION_XML)
+    if not version:
+        version = _scan(lines, _EXOS_VERSION_COMMENT)
+
+    fields["os_version"] = (
+        _found(version, note="Extreme EXOS version from configuration.")
+        if version
+        else Observation[str].unknown(
+            "No version metadata found in this configuration."
+        )
+    )
+
+    fields["model"] = _missing("model", "extreme_exos")
+    fields["serial_number"] = _missing("serial_number", "extreme_exos")
+    return fields
+
+
+_SOPHOS_VERSION = re.compile(r'.*<FirmwareVersion>([^<]+)</FirmwareVersion>.*')
+
+
+def _extract_sophos_sfos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _SOPHOS_VERSION)
+    fields["os_version"] = (
+        _found(version, note="Sophos Firewall version from configuration.")
+        if version
+        else Observation[str].unknown(
+            "No firmware version metadata found in this configuration."
+        )
+    )
+
+    fields["model"] = _missing("model", "sophos_sfos")
+    fields["serial_number"] = _missing("serial_number", "sophos_sfos")
+    return fields
+
+
+_SONICWALL_VERSION = re.compile(r'.*SonicOS\s+(?:Enhanced\s+)?([0-9][A-Za-z0-9._-]+).*', re.IGNORECASE)
+
+
+def _extract_sonicwall_sonicos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _SONICWALL_VERSION)
+    fields["os_version"] = (
+        _found(version, note="SonicOS version from configuration.")
+        if version
+        else Observation[str].unknown(
+            "No SonicOS version metadata found in this configuration."
+        )
+    )
+
+    fields["model"] = _missing("model", "sonicwall_sonicos")
+    fields["serial_number"] = _missing("serial_number", "sonicwall_sonicos")
+    return fields
+
+
+_WG_VERSION = re.compile(
+    r"(?i)(?:<configuration\b[^>]*\bversion=[\"'](\d+\.\d+\.\d+[\w.-]*)[\"']|WatchGuard\s+Fireware\s+v?(\S+))"
+)
+_WG_MODEL = re.compile(r"(?i)(?:<model>([^<]+)</model>|Firebox\s+([A-Z0-9]+))")
+_WG_SERIAL = re.compile(r"(?i)<serial(?:-number)?>([^<]+)</serial(?:-number)?>")
+
+
+def _extract_watchguard_fireware(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+    version = _scan(lines, _WG_VERSION, group=1)
+    if not version:
+        version = _scan(lines, _WG_VERSION, group=2)
+    fields["os_version"] = (
+        _found(version, note="Fireware OS version.")
+        if version
+        else Observation[str].unknown("No Fireware version header in this configuration.")
+    )
+
+    model = _scan(lines, _WG_MODEL, group=1)
+    if not model:
+        model = _scan(lines, _WG_MODEL, group=2)
+    fields["model"] = (
+        _found(model, note="Firebox hardware model.")
+        if model
+        else _missing("model", "watchguard_fireware")
+    )
+
+    serial = _scan(lines, _WG_SERIAL)
+    fields["serial_number"] = (
+        _found(serial, note="Serial number from configuration/header.")
+        if serial
+        else _missing("serial_number", "watchguard_fireware")
+    )
+    return fields
+
+
+def _extract_cato_networks(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    # Cato SASE Cloud services do not have hardware model/version in configuration XML/JSON
+    fields["os_version"] = Observation[str].unknown(
+        "Cato SASE Cloud firmware/OS version is not present in standard API responses."
+    )
+    fields["model"] = _missing("model", "cato_cato_networks")
+    fields["serial_number"] = _missing("serial_number", "cato_cato_networks")
+    return fields
+
 
 _SNS_VERSION_COMMENT = re.compile(r"(?i)^\s*#.*(?:Stormshield Network Security|SNS)\s+v?(\d[\w.-]*)\b")
 _SNS_VERSION_INI = re.compile(r"(?i)^\s*(?:version|firmware)\s*=\s*(\S+)")
@@ -420,45 +579,248 @@ def _extract_stormshield_sns(
     return fields
 
 
-# ---------------------------------------------------------------------------
-# WatchGuard Firebox / Fireware
-# ---------------------------------------------------------------------------
-
-_WG_VERSION = re.compile(
-    r"(?i)(?:<configuration\b[^>]*\bversion=[\"']([^\"']+)[\"']|WatchGuard\s+Fireware\s+v?(\S+))"
-)
-_WG_MODEL = re.compile(r"(?i)(?:<model>([^<]+)</model>|Firebox\s+([A-Z0-9]+))")
-_WG_SERIAL = re.compile(r"(?i)<serial(?:-number)?>([^<]+)</serial(?:-number)?>")
-
-
-def _extract_watchguard_fireware(
+def _extract_zscaler_zia(
     lines: List[str], baseline: Optional[SecurityBaselineModel]
 ) -> Dict[str, Observation]:
     fields: Dict[str, Observation] = {}
-    version = _scan(lines, _WG_VERSION, group=1)
-    if not version:
-        version = _scan(lines, _WG_VERSION, group=2)
+
+    # Cloud tenant API does not contain OS versions, models, serial numbers
+    fields["os_version"] = Observation[str].unknown(
+        "Zscaler ZIA version is managed by Zscaler cloud and is not in configuration exports."
+    )
+    fields["model"] = _missing("model", "zscaler_zia")
+    fields["serial_number"] = _missing("serial_number", "zscaler_zia")
+    return fields
+
+
+def _extract_zscaler_zpa(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    # Cloud tenant API does not contain OS versions, models, serial numbers
+    fields["os_version"] = Observation[str].unknown(
+        "Zscaler ZPA version is managed by Zscaler cloud and is not in configuration exports."
+    )
+    fields["model"] = _missing("model", "zscaler_zpa")
+    fields["serial_number"] = _missing("serial_number", "zscaler_zpa")
+    return fields
+
+
+_BARRACUDA_VERSION = re.compile(r'.*Barracuda\s+CloudGen\s+Firewall\s+([A-Za-z0-9._-]+).*', re.IGNORECASE)
+_FORCEPOINT_VERSION = re.compile(r'.*engine_version="version\s+([A-Za-z0-9._-]+)(?:\s+#\d+)?"', re.IGNORECASE)
+
+
+def _extract_barracuda_cloudgen(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _BARRACUDA_VERSION)
     fields["os_version"] = (
-        _found(version, note="Fireware OS version.")
+        _found(version, note="Barracuda CloudGen version from configuration.")
         if version
-        else Observation[str].unknown("No Fireware version header in this configuration.")
+        else Observation[str].unknown(
+            "No firmware version metadata found in this configuration."
+        )
     )
 
-    model = _scan(lines, _WG_MODEL, group=1)
-    if not model:
-        model = _scan(lines, _WG_MODEL, group=2)
-    fields["model"] = (
-        _found(model, note="Firebox hardware model.")
-        if model
-        else _missing("model", "watchguard_fireware")
+    fields["model"] = _missing("model", "barracuda_barracuda_cloudgen")
+    fields["serial_number"] = _missing("serial_number", "barracuda_barracuda_cloudgen")
+    return fields
+
+
+def _extract_forcepoint_ngfw(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _FORCEPOINT_VERSION)
+    fields["os_version"] = (
+        _found(version, note="Forcepoint NGFW version from configuration.")
+        if version
+        else Observation[str].unknown(
+            "No firmware version metadata found in this configuration."
+        )
     )
 
-    serial = _scan(lines, _WG_SERIAL)
-    fields["serial_number"] = (
-        _found(serial, note="Serial number from configuration/header.")
-        if serial
-        else _missing("serial_number", "watchguard_fireware")
+    fields["model"] = _missing("model", "forcepoint_forcepoint_ngfw")
+    fields["serial_number"] = _missing("serial_number", "forcepoint_forcepoint_ngfw")
+    return fields
+
+
+_SANGFOR_VERSION = re.compile(r'.*Firmware\s+Version:\s*(?:NGAF\s+)?([A-Za-z0-9._-]+).*', re.IGNORECASE)
+
+
+def _extract_sangfor_ngaf(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _SANGFOR_VERSION)
+    fields["os_version"] = (
+        _found(version, note="Sangfor NGAF version from configuration.")
+        if version
+        else Observation[str].unknown(
+            "No firmware version metadata found in this configuration."
+        )
     )
+
+    fields["model"] = _missing("model", "sangfor_ngaf")
+    fields["serial_number"] = _missing("serial_number", "sangfor_ngaf")
+    return fields
+
+
+_HILLSTONE_VERSION = re.compile(r'.*StoneOS\s+Version\s+([A-Za-z0-9._-]+).*', re.IGNORECASE)
+
+
+def _extract_hillstone_stoneos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _HILLSTONE_VERSION)
+    fields["os_version"] = (
+        _found(version, note="StoneOS version from configuration.")
+        if version
+        else Observation[str].unknown(
+            "No firmware version metadata found in this configuration."
+        )
+    )
+
+    fields["model"] = _missing("model", "hillstone_stoneos")
+    fields["serial_number"] = _missing("serial_number", "hillstone_stoneos")
+    return fields
+
+
+_ACOS_VERSION = re.compile(r'.*ACOS\s+Version\s+([A-Za-z0-9._-]+).*', re.IGNORECASE)
+
+
+def _extract_a10_acos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _ACOS_VERSION)
+    fields["os_version"] = (
+        _found(version, note="ACOS version from configuration.")
+        if version
+        else Observation[str].unknown(
+            "No firmware version metadata found in this configuration."
+        )
+    )
+
+    fields["model"] = _missing("model", "a10_acos")
+    fields["serial_number"] = _missing("serial_number", "a10_acos")
+    return fields
+
+
+_PFSENSE_VERSION = re.compile(r'.*<version>([A-Za-z0-9._-]+)</version>.*', re.IGNORECASE)
+
+
+def _extract_netgate_pfsense(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _PFSENSE_VERSION)
+    fields["os_version"] = (
+        _found(version, note="pfSense version from configuration.")
+        if version
+        else Observation[str].unknown(
+            "No firmware version metadata found in this configuration."
+        )
+    )
+
+    fields["model"] = _missing("model", "netgate_pfsense")
+    fields["serial_number"] = _missing("serial_number", "netgate_pfsense")
+    return fields
+
+
+_TIMOS_VERSION = re.compile(r'.*TiMOS-([A-Za-z0-9._-]+).*', re.IGNORECASE)
+
+
+def _extract_nokia_sros(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    version = _scan(lines, _TIMOS_VERSION)
+    fields["os_version"] = (
+        _found(version, note="Nokia TiMOS version from configuration header.")
+        if version
+        else Observation[str].unknown(
+            "No firmware version metadata found in this configuration."
+        )
+    )
+
+    fields["model"] = _missing("model", "nokia_sros")
+    fields["serial_number"] = _missing("serial_number", "nokia_sros")
+    return fields
+
+
+def _extract_alcatel_aos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    fields["os_version"] = Observation[str].unknown(
+        "AOS version is not stored in boot.cfg configuration files."
+    )
+    fields["model"] = _missing("model", "alcatel_aos")
+    fields["serial_number"] = _missing("serial_number", "alcatel_aos")
+    return fields
+
+
+def _extract_f5_bigip_tmos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    fields["os_version"] = Observation[str].unknown(
+        "F5 BIG-IP TMOS version is not stored in bigip.conf configuration files."
+    )
+    fields["model"] = _missing("model", "f5_bigip_tmos")
+    fields["serial_number"] = _missing("serial_number", "f5_bigip_tmos")
+    return fields
+
+
+def _extract_versa_versos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    fields["os_version"] = Observation[str].unknown(
+        "VersaOS version is not stored in configuration files."
+    )
+    fields["model"] = _missing("model", "versa_versos")
+    fields["serial_number"] = _missing("serial_number", "versa_versos")
+    return fields
+
+
+def _extract_ruckus_fastiron(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    fields["os_version"] = Observation[str].unknown(
+        "Ruckus FastIron version is not stored in configuration files."
+    )
+    fields["model"] = _missing("model", "ruckus_fastiron")
+    fields["serial_number"] = _missing("serial_number", "ruckus_fastiron")
+    return fields
+
+
+def _extract_ubiquiti_edgeos(
+    lines: List[str], baseline: Optional[SecurityBaselineModel]
+) -> Dict[str, Observation]:
+    fields: Dict[str, Observation] = {}
+
+    fields["os_version"] = Observation[str].unknown(
+        "EdgeOS version is not stored in configuration files."
+    )
+    fields["model"] = _missing("model", "ubiquiti_edgeos")
+    fields["serial_number"] = _missing("serial_number", "ubiquiti_edgeos")
     return fields
 
 
@@ -473,13 +835,43 @@ _EXTRACTORS: Dict[
     "huawei_vrp": _extract_huawei,
     "checkpoint_gaia": _extract_checkpoint_gaia,
     "mikrotik_routeros": _extract_mikrotik_routeros,
-    "stormshield_sns": _extract_stormshield_sns,
+    "hpe_aruba_aos_cx": _extract_hpe_aruba_aos_cx,
+    "extreme_exos": _extract_extreme_exos,
+    "sophos_sfos": _extract_sophos_sfos,
+    "sonicwall_sonicos": _extract_sonicwall_sonicos,
     "watchguard_fireware": _extract_watchguard_fireware,
+    "cato_cato_networks": _extract_cato_networks,
+    "stormshield_sns": _extract_stormshield_sns,
+    "zscaler_zia": _extract_zscaler_zia,
+    "zscaler_zpa": _extract_zscaler_zpa,
+    "barracuda_barracuda_cloudgen": _extract_barracuda_cloudgen,
+    "forcepoint_forcepoint_ngfw": _extract_forcepoint_ngfw,
+    "sangfor_ngaf": _extract_sangfor_ngaf,
+    "hillstone_stoneos": _extract_hillstone_stoneos,
+    "a10_acos": _extract_a10_acos,
+    "netgate_pfsense": _extract_netgate_pfsense,
+    "nokia_sros": _extract_nokia_sros,
+    "alcatel_aos": _extract_alcatel_aos,
+    "alcatel_lucent_enterprise_aos": _extract_alcatel_aos,
+    "f5_bigip_tmos": _extract_f5_bigip_tmos,
+    "versa_versos": _extract_versa_versos,
+    "ruckus_fastiron": _extract_ruckus_fastiron,
+    "ubiquiti_edgeos": _extract_ubiquiti_edgeos,
 }
 
 
 def platform_key(baseline: SecurityBaselineModel) -> str:
     """The vendor key the rest of the tool speaks: ``cisco_ios``, ``juniper_junos``, ..."""
+    if baseline.provenance.vendor == "alcatel_lucent_enterprise":
+        return "alcatel_aos"
+    if baseline.provenance.vendor == "f5" and baseline.provenance.os_family == "tmos":
+        return "f5_bigip_tmos"
+    if baseline.provenance.vendor == "versa_networks" and baseline.provenance.os_family == "versos":
+        return "versa_versos"
+    if baseline.provenance.vendor == "ruckus" and baseline.provenance.os_family == "fastiron":
+        return "ruckus_fastiron"
+    if baseline.provenance.vendor == "ubiquiti" and baseline.provenance.os_family == "edgeos":
+        return "ubiquiti_edgeos"
     return f"{baseline.provenance.vendor}_{baseline.provenance.os_family}"
 
 

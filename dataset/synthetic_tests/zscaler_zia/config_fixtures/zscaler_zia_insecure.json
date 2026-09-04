@@ -1,0 +1,8 @@
+{
+  "companyName": "Insecure-Org",
+  "adminSecurity": {
+    "samlAuth": false,
+    "sessionTimeoutMinutes": 480
+  },
+  "sslInspectionRules": []
+}

@@ -1,0 +1,67 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure SAML Single Sign-On (SSO) in the ZPA Admin Portal.",
+    "cli": [],
+    "notes": "Go to ZPA Admin Portal > Administration > IdP Configuration to set up SAML authentication."
+  },
+  "secure_vty_transport": {
+    "summary": "ZPA portal strictly enforces secure HTTPS administration connections.",
+    "cli": [],
+    "notes": "HTTP and legacy cleartext console connections are not supported in ZPA."
+  },
+  "vty_idle_timeout": {
+    "summary": "Configure session timeout in Client Sessions.",
+    "cli": [],
+    "notes": "Go to ZPA Admin Portal > Configuration > Client Sessions > Administrator Session Timeout."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "Local user databases in ZPA automatically hash password credentials."
+  },
+  "no_default_snmp_community": {
+    "summary": "SNMP management is not supported.",
+    "cli": [],
+    "notes": "Zscaler cloud endpoints do not expose traditional SNMP agent access."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP administrative access.",
+    "cli": [],
+    "notes": "HTTP administrative connections are not supported by ZPA Admin Portal."
+  },
+  "ssh_version_2": {
+    "summary": "Secure SSH settings.",
+    "cli": [],
+    "notes": "SSH management access is not supported on ZPA cloud consoles."
+  },
+  "logging_enabled": {
+    "summary": "Configure Log Receivers for log forwarding.",
+    "cli": [],
+    "notes": "Go to ZPA Admin Portal > Configuration > Log Receivers to configure log destinations."
+  },
+  "management_acl": {
+    "summary": "Configure source IP restrictions for administrators.",
+    "cli": [],
+    "notes": "Go to ZPA Admin Portal > Administration > Administrator Management to configure allowed IP access controls."
+  },
+  "login_banner": {
+    "summary": "Configure ZPA Login disclaimer banner.",
+    "cli": [],
+    "notes": "Configure SAML warning screen details in the ZPA portal."
+  },
+  "password_min_length": {
+    "summary": "Configure password complexity rules.",
+    "cli": [],
+    "notes": "Go to ZPA Admin Portal > Administration > Administrator Management > Password Policy."
+  },
+  "ntp_configured": {
+    "summary": "Time synchronization is managed automatically by Zscaler Cloud.",
+    "cli": [],
+    "notes": "Zscaler cloud nodes synchronize time automatically with internal NTP servers."
+  },
+  "no_write_snmp_community": {
+    "summary": "SNMP is not supported.",
+    "cli": [],
+    "notes": "Legacy SNMP read-write is not applicable to ZPA cloud instances."
+  }
+}

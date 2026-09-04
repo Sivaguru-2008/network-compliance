@@ -1,0 +1,36 @@
+{
+  "vendor_key": "sophos_sfos",
+  "vendor_name": "Sophos",
+  "os_name": "SFOS / XG Firewall",
+  "syntax_type": "generic_conf",
+  "root_blocks": [
+    {
+      "block_name": "sfos_config",
+      "entry_keyword": "",
+      "exit_keyword": null,
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "system hostname",
+        "system timezone",
+        "system ntp"
+      ],
+      "security_directives": [
+        "system appliance_access",
+        "system ssh enable",
+        "system password-complexity",
+        "system syslog"
+      ]
+    }
+  ],
+  "negation_prefix": "no",
+  "comment_prefixes": [
+    "#",
+    "<!--"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "sophos_sfos_cli_and_xml"
+  }
+}

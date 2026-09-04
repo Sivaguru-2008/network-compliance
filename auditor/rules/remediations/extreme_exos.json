@@ -1,0 +1,99 @@
+{
+  "aaa_enabled": {
+    "summary": "Enable RADIUS or TACACS+ management authentication client.",
+    "cli": [
+      "enable radius mgmt-access"
+    ],
+    "notes": "Always verify you have a valid local administration account configured before enabling remote authentication."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable Telnet access server on the switch.",
+    "cli": [
+      "disable telnet"
+    ],
+    "notes": "SSHv2 should be used exclusively. Telnet transmits sensitive credentials in cleartext."
+  },
+  "vty_idle_timeout": {
+    "summary": "Configure CLI inactivity session timeout to 10 minutes or less, and enable the timer.",
+    "cli": [
+      "configure cli idle-timeout 10",
+      "enable cli idle-timeout"
+    ],
+    "notes": "The configuration parameter is in minutes (10 minutes = 600 seconds)."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure all configured accounts use encrypted passwords.",
+    "cli": [
+      "configure account admin password"
+    ],
+    "notes": "EXOS automatically hashes and encrypts passwords in configuration storage."
+  },
+  "no_default_snmp_community": {
+    "summary": "Delete default SNMP community names public and private.",
+    "cli": [
+      "configure snmp delete community public",
+      "configure snmp delete community private"
+    ],
+    "notes": "Default community names are widely known and pose a severe security threat."
+  },
+  "http_server_disabled": {
+    "summary": "Disable the unencrypted web HTTP management interface.",
+    "cli": [
+      "disable web http"
+    ],
+    "notes": "Only use HTTPS for web-based switch administration."
+  },
+  "ssh_version_2": {
+    "summary": "Enable SSHv2 server on the switch.",
+    "cli": [
+      "enable ssh2"
+    ],
+    "notes": "Ensure that the SSH module is installed on the switch before enabling."
+  },
+  "logging_enabled": {
+    "summary": "Configure a remote syslog server target and enable it.",
+    "cli": [
+      "configure syslog add <syslog-ip> vr VR-Default",
+      "enable log target syslog <syslog-ip> vr VR-Default"
+    ],
+    "notes": "A remote syslog host guarantees that log records are preserved independently."
+  },
+  "management_acl": {
+    "summary": "Apply access profiles to restrict management SSH2 and Telnet access.",
+    "cli": [
+      "configure ssh2 access-profile <policy-name>"
+    ],
+    "notes": "Verify that your current administrative workstation IP is permitted by the access profile."
+  },
+  "login_banner": {
+    "summary": "Configure a pre-login banner message warning unauthorized users.",
+    "cli": [
+      "configure banner"
+    ],
+    "notes": "Banner configurations typically require multiline text input followed by an empty line."
+  },
+  "password_min_length": {
+    "summary": "Configure account password policy minimum length to 8 or more, and enable complexity validation.",
+    "cli": [
+      "configure account all password-policy min-length 8",
+      "configure account all password-policy char-validation all-char-groups"
+    ],
+    "notes": "Enabling character validation requires passwords to draw from uppercase, lowercase, numeric, and special character groups."
+  },
+  "ntp_configured": {
+    "summary": "Configure an NTP server and enable the NTP client.",
+    "cli": [
+      "configure ntp server add <ntp-ip> vr VR-Default",
+      "enable ntp"
+    ],
+    "notes": "System time synchronization is crucial for accurate audit log chronology."
+  },
+  "no_write_snmp_community": {
+    "summary": "Configure all SNMP communities to readonly access only.",
+    "cli": [
+      "configure snmp delete community <write-community-name>",
+      "configure snmp add community <community-name> readonly"
+    ],
+    "notes": "Avoid using SNMP write communities. Prefer SNMPv3 for write configuration options."
+  }
+}

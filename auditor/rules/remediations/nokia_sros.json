@@ -1,0 +1,97 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized authentication (RADIUS or TACACS+) in Nokia SR OS.",
+    "cli": [
+      "configure system security authentication-order tacplus radius local"
+    ],
+    "notes": "Verify that your remote server groups are configured before enabling authentication-order to prevent administrative lockout."
+  },
+  "secure_vty_transport": {
+    "summary": "Restrict remote VTY access to SSH only by disabling Telnet.",
+    "cli": [
+      "configure system security telnet-server shutdown"
+    ],
+    "notes": "Shutdown telnet-server and telnet6-server to enforce encrypted SSH-only administration."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrative session idle timeout.",
+    "cli": [
+      "configure system login-control idle-timeout 15"
+    ],
+    "notes": "Specify the idle timeout in minutes (e.g. 15 minutes). Setting it to disable is insecure."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "Nokia SR OS automatically hashes/encrypts all user credentials at rest."
+  },
+  "no_default_snmp_community": {
+    "summary": "Change or remove default SNMP community strings.",
+    "cli": [
+      "configure system security snmp no community \"public\"",
+      "configure system security snmp no community \"private\""
+    ],
+    "notes": "Remove default communities and configure complex community strings."
+  },
+  "http_server_disabled": {
+    "summary": "Nokia SR OS does not support an onboard HTTP web management server.",
+    "cli": [],
+    "notes": "The HTTP server feature is not supported/enabled in standard Nokia SR OS deployments."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce SSH protocol version 2.",
+    "cli": [
+      "configure system security ssh shutdown",
+      "configure system security ssh version 2",
+      "configure system security ssh no shutdown"
+    ],
+    "notes": "The SSH server must be shut down before changing the protocol version."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote syslog server target.",
+    "cli": [
+      "configure log syslog 1 address 192.168.1.100",
+      "configure log syslog 1 no shutdown",
+      "configure log log-id 10 to syslog 1",
+      "configure log log-id 10 no shutdown"
+    ],
+    "notes": "Define a syslog destination ID and map the event stream logs to it."
+  },
+  "management_acl": {
+    "summary": "Restrict management access using Management Access Filters.",
+    "cli": [
+      "configure system security mgmt-access-filter default-action deny",
+      "configure system security mgmt-access-filter ip-filter entry 10 create match src-ip 192.168.1.0/24 action permit"
+    ],
+    "notes": "Ensure your current administration IP/subnet is explicitly permitted to prevent lockout."
+  },
+  "login_banner": {
+    "summary": "Configure pre-login message disclaimer.",
+    "cli": [
+      "configure system login-control pre-login-message \"Authorized Access Only.\""
+    ],
+    "notes": "Configure a clear legal warning message displayed before login prompts."
+  },
+  "password_min_length": {
+    "summary": "Enforce minimum password length policy.",
+    "cli": [
+      "configure system security password minimum-length 8"
+    ],
+    "notes": "Ensure passwords are set to a minimum of 8 characters or longer."
+  },
+  "ntp_configured": {
+    "summary": "Configure upstream NTP time servers.",
+    "cli": [
+      "configure system time ntp server 192.168.1.10 prefer",
+      "configure system time ntp no shutdown"
+    ],
+    "notes": "Define preferred NTP servers and ensure the NTP daemon is administratively enabled."
+  },
+  "no_write_snmp_community": {
+    "summary": "Restrict SNMP communities to read-only access.",
+    "cli": [
+      "configure system security snmp community \"your_community\" access-permissions r"
+    ],
+    "notes": "Do not grant read-write-admin (rwa) permissions to SNMP communities."
+  }
+}

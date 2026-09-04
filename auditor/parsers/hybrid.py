@@ -79,8 +79,29 @@ class HybridParser(VendorParser):
         if not config_text or not config_text.strip():
             raise ParserError("Configuration is empty.")
 
-        deterministic = self._resolve_deterministic(config_text)
-        baseline = deterministic.parse(config_text, source_file=source_file)
+        deterministic = None
+        try:
+            deterministic = self._resolve_deterministic(config_text)
+            baseline = deterministic.parse(config_text, source_file=source_file)
+        except ParserError as exc:
+            if self.mapping_store is None:
+                from ..training.mappings import LearnedMappingStore
+                store_path = self.training_dir / "learned_mappings.jsonl"
+                self.mapping_store = LearnedMappingStore(store_path)
+
+            approved = self.mapping_store.get_active_approved_mappings()
+            if not approved:
+                raise exc
+
+            from ..models.baseline import ParserProvenance
+            prov = ParserProvenance(
+                parser_name=self.name,
+                parser_version=self.version,
+                vendor="unknown",
+                os_family="unknown",
+                source_file=source_file,
+            )
+            baseline = SecurityBaselineModel(provenance=prov)
 
         # Apply learned mappings
         if self.mapping_store is None:
@@ -120,9 +141,10 @@ class HybridParser(VendorParser):
                 filled.append(field)
 
             self.filled_fields = filled
+            det_desc = f"{deterministic.name} v{deterministic.version}" if deterministic else "unknown"
             baseline.provenance.parser_name = self.name
             baseline.provenance.parser_version = (
-                f"{self.version} ({deterministic.name} v{deterministic.version} + {self._llm.name})"
+                f"{self.version} ({det_desc} + {self._llm.name})"
             )
             baseline.provenance.warnings = [
                 *baseline.provenance.warnings,
@@ -136,12 +158,13 @@ class HybridParser(VendorParser):
             ]
         except Exception as exc:
             self.filled_fields = []
+            det_desc = f"{deterministic.name} v{deterministic.version}" if deterministic else "unknown"
             baseline.provenance.parser_name = self.name
             baseline.provenance.parser_version = (
-                f"{self.version} ({deterministic.name} v{deterministic.version})"
+                f"{self.version} ({det_desc})"
             )
             baseline.provenance.warnings = [
                 *baseline.provenance.warnings,
-                f"Hybrid parse: LLM is unavailable or failed ({exc}). Remaining gaps left as NEEDS_REVIEW."
+                f"LLM fallback unavailable ({exc}); gaps remain undetected.",
             ]
         return baseline

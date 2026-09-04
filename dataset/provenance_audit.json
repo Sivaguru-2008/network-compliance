@@ -1,0 +1,93 @@
+[
+  {
+    "file": "cisco_stanford_core01.cfg",
+    "current_classification": "SANITIZED_REAL_DEVICE",
+    "verified_classification": "PUBLIC_CONFIGURATION",
+    "real_device": false,
+    "production_device": false,
+    "lab_device": false,
+    "mock_or_fixture": true,
+    "provenance_verified": true,
+    "evidence": [
+      {
+        "url": "https://github.com/batfish/pybatfish/tree/master/jupyter_notebooks/networks/example/configs/as1core1.cfg",
+        "statement": "The example network is a synthetic multi-AS topology designed to demonstrate BGP routing, ACLs, and reachability in Jupyter notebook tutorials.",
+        "location": "batfish/pybatfish/jupyter_notebooks/networks/example/README.md"
+      },
+      {
+        "url": "https://pybatfish.readthedocs.io/en/latest/notebooks/interacting.html",
+        "statement": "Pybatfish tutorial snapshot networks use mock router configurations (as1core1, as1border1, as2core1) for educational demonstrations.",
+        "location": "Pybatfish Documentation / Tutorial Snapshots"
+      }
+    ],
+    "reason": "The upstream Batfish repository explicitly maintains as1core1.cfg as a tutorial demonstration snapshot rather than a production campus export. While the Batfish academic paper evaluated Stanford configs, this specific repository file is a synthetic tutorial fixture.",
+    "confidence": "HIGH"
+  },
+  {
+    "file": "cisco_napalm_border02.cfg",
+    "current_classification": "SANITIZED_REAL_DEVICE",
+    "verified_classification": "PUBLIC_CONFIGURATION",
+    "real_device": false,
+    "production_device": false,
+    "lab_device": false,
+    "mock_or_fixture": true,
+    "provenance_verified": true,
+    "evidence": [
+      {
+        "url": "https://napalm.readthedocs.io/en/latest/development/testing_framework.html",
+        "statement": "The framework allows developers to test getters without requiring a live network device. By default, tests run against this mocked data... you are encouraged to create a FakeDevice class to act as a test double.",
+        "location": "NAPALM Driver Testing Framework Documentation"
+      },
+      {
+        "url": "https://github.com/napalm-automation/napalm/tree/develop/napalm/ios/mocked_data",
+        "statement": "Directory structure test/unit/mocked_data/$test_function/$test_case contains mock outputs and expected json payloads.",
+        "location": "napalm/ios/mocked_data/"
+      }
+    ],
+    "reason": "NAPALM documentation explicitly designates all files within mocked_data/ as unit test doubles and offline mock fixtures created to test parser functions without live network devices.",
+    "confidence": "HIGH"
+  },
+  {
+    "file": "juniper_mx480_sanitized.conf",
+    "current_classification": "SANITIZED_REAL_DEVICE",
+    "verified_classification": "PUBLIC_CONFIGURATION",
+    "real_device": false,
+    "production_device": false,
+    "lab_device": false,
+    "mock_or_fixture": true,
+    "provenance_verified": true,
+    "evidence": [
+      {
+        "url": "https://napalm.readthedocs.io/en/latest/development/testing_framework.html",
+        "statement": "By default, NAPALM tests run against mocked data rather than a live network device, allowing for consistent and repeatable unit testing.",
+        "location": "NAPALM Junos Driver Testing Framework"
+      },
+      {
+        "url": "https://github.com/napalm-automation/napalm/tree/develop/napalm/junos/mocked_data",
+        "statement": "Mocked test fixture data for Junos driver unit tests.",
+        "location": "napalm/junos/mocked_data/"
+      }
+    ],
+    "reason": "The Junos running.conf file resides inside NAPALM's unit test mock directory. It is maintained as an offline test fixture for getter unit testing, not documented as an authorized live production export.",
+    "confidence": "HIGH"
+  },
+  {
+    "file": "arista_eos_spine01_sanitized.cfg",
+    "current_classification": "SANITIZED_REAL_DEVICE",
+    "verified_classification": "PUBLIC_CONFIGURATION",
+    "real_device": false,
+    "production_device": false,
+    "lab_device": false,
+    "mock_or_fixture": true,
+    "provenance_verified": true,
+    "evidence": [
+      {
+        "url": "https://github.com/batfish/batfish/tree/master/projects/batfish/src/test/resources/org/batfish/grammar/arista",
+        "statement": "Test resources used to verify the correctness of the ANTLR grammar parser implementations for Arista EOS.",
+        "location": "Batfish Repository Grammar Test Resources"
+      }
+    ],
+    "reason": "The file is located in Batfish's ANTLR parser regression suite (src/test/resources/org/batfish/grammar/arista). It is designed to exercise AST tokenization rules in CI rather than representing a verified production switch deployment.",
+    "confidence": "HIGH"
+  }
+]

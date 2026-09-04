@@ -1,0 +1,61 @@
+{
+  "vendor_key": "fortinet_fortios",
+  "vendor_name": "Fortinet",
+  "os_name": "FortiOS",
+  "syntax_type": "fortios_block",
+  "root_blocks": [
+    {
+      "block_name": "config system global",
+      "entry_keyword": "config system global",
+      "exit_keyword": "end",
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [],
+      "common_directives": [
+        "set hostname",
+        "set timezone",
+        "set admintimeout"
+      ],
+      "security_directives": [
+        "set admin-lockout-threshold",
+        "set admin-lockout-duration",
+        "set admin-https-ssl-versions",
+        "set admin-sport",
+        "set admin-ssh-port",
+        "unset admin-telnet"
+      ]
+    },
+    {
+      "block_name": "config system interface",
+      "entry_keyword": "config system interface",
+      "exit_keyword": "end",
+      "child_delimiter": " ",
+      "statement_terminator": "\n",
+      "allowed_subblocks": [
+        "edit <name>"
+      ],
+      "common_directives": [
+        "edit",
+        "set ip",
+        "set allowaccess",
+        "next"
+      ],
+      "security_directives": [
+        "set allowaccess ping ssh https"
+      ]
+    }
+  ],
+  "negation_prefix": "unset",
+  "comment_prefixes": [
+    "#"
+  ],
+  "indentation_sensitive": true,
+  "schema_definition": {
+    "format": "config_edit_set_next_end",
+    "start_keyword": "config",
+    "table_item_keyword": "edit",
+    "set_keyword": "set",
+    "next_keyword": "next",
+    "end_keyword": "end"
+  }
+}

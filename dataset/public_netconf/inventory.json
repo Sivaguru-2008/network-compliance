@@ -1,0 +1,232 @@
+[
+  {
+    "module": "root",
+    "file": ".gitignore",
+    "classification": "OTHER",
+    "description": "Other ancillary file.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/.gitignore"
+  },
+  {
+    "module": "root",
+    "file": "contributing.md",
+    "classification": "DOCUMENTATION",
+    "description": "Repository or module documentation.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/contributing.md"
+  },
+  {
+    "module": "root",
+    "file": "LICENSE",
+    "classification": "DOCUMENTATION",
+    "description": "Repository or module documentation.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/LICENSE"
+  },
+  {
+    "module": "netconf-101",
+    "file": "netconf-101/get_capabilities.py",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "Python ncclient script interacting with NETCONF RPC endpoints.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-101/get_capabilities.py"
+  },
+  {
+    "module": "netconf-101",
+    "file": "netconf-101/README.md",
+    "classification": "DOCUMENTATION",
+    "description": "Repository or module documentation.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-101/README.md"
+  },
+  {
+    "module": "netconf-101",
+    "file": "netconf-101/sandbox-nexus9kv-config.txt",
+    "classification": "CONFIGURATION",
+    "description": "Cisco Nexus 9000v CLI configuration snippet for DevNet sandbox.",
+    "contains_actual_config": true,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-101/sandbox-nexus9kv-config.txt"
+  },
+  {
+    "module": "netconf-101",
+    "file": "netconf-101/screen_scraping.py",
+    "classification": "AUTOMATION CODE",
+    "description": "Python network automation / screen-scraping CLI script.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-101/screen_scraping.py"
+  },
+  {
+    "module": "netconf-102",
+    "file": "netconf-102/configuration_data_randomizer.py",
+    "classification": "AUTOMATION CODE",
+    "description": "Python network automation / screen-scraping CLI script.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-102/configuration_data_randomizer.py"
+  },
+  {
+    "module": "netconf-102",
+    "file": "netconf-102/create_subinterface.py",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "Python ncclient script interacting with NETCONF RPC endpoints.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-102/create_subinterface.py"
+  },
+  {
+    "module": "netconf-102",
+    "file": "netconf-102/get_capabilities.py",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "Python ncclient script interacting with NETCONF RPC endpoints.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-102/get_capabilities.py"
+  },
+  {
+    "module": "netconf-102",
+    "file": "netconf-102/get_config_csr1000V.py",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "Python ncclient script interacting with NETCONF RPC endpoints.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-102/get_config_csr1000V.py"
+  },
+  {
+    "module": "netconf-102",
+    "file": "netconf-102/get_hostname.py",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "Python ncclient script interacting with NETCONF RPC endpoints.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-102/get_hostname.py"
+  },
+  {
+    "module": "netconf-102",
+    "file": "netconf-102/get_interfaces.xml",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "NETCONF XML RPC payload or Jinja2 NETCONF interface template.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-102/get_interfaces.xml"
+  },
+  {
+    "module": "netconf-102",
+    "file": "netconf-102/README.md",
+    "classification": "DOCUMENTATION",
+    "description": "Repository or module documentation.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-102/README.md"
+  },
+  {
+    "module": "netconf-102",
+    "file": "netconf-102/templates/create_subinterface.j2",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "NETCONF XML RPC payload or Jinja2 NETCONF interface template.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-102/templates/create_subinterface.j2"
+  },
+  {
+    "module": "netconf-103",
+    "file": "netconf-103/enable_odm_control.xml",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "NETCONF XML RPC payload or Jinja2 NETCONF interface template.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-103/enable_odm_control.xml"
+  },
+  {
+    "module": "netconf-103",
+    "file": "netconf-103/get_interfaces.xml",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "NETCONF XML RPC payload or Jinja2 NETCONF interface template.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-103/get_interfaces.xml"
+  },
+  {
+    "module": "netconf-103",
+    "file": "netconf-103/get_interfaces_csr1000V.py",
+    "classification": "NETCONF/API EXAMPLE",
+    "description": "Python ncclient script interacting with NETCONF RPC endpoints.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-103/get_interfaces_csr1000V.py"
+  },
+  {
+    "module": "netconf-103",
+    "file": "netconf-103/interfaces.py",
+    "classification": "AUTOMATION CODE",
+    "description": "Python network automation / screen-scraping CLI script.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-103/interfaces.py"
+  },
+  {
+    "module": "netconf-103",
+    "file": "netconf-103/README.md",
+    "classification": "DOCUMENTATION",
+    "description": "Repository or module documentation.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-103/README.md"
+  },
+  {
+    "module": "netconf-103",
+    "file": "netconf-103/screen_scrape_interfaces.py",
+    "classification": "AUTOMATION CODE",
+    "description": "Python network automation / screen-scraping CLI script.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-103/screen_scrape_interfaces.py"
+  },
+  {
+    "module": "netconf-103",
+    "file": "netconf-103/show_ip_int_brief.txt",
+    "classification": "OTHER",
+    "description": "Operational CLI command output ('show ip interface brief'). Not configuration text.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/netconf-103/show_ip_int_brief.txt"
+  },
+  {
+    "module": "root",
+    "file": "README.md",
+    "classification": "DOCUMENTATION",
+    "description": "Repository or module documentation.",
+    "contains_actual_config": false,
+    "provenance": "PUBLIC_NETCONF_EXAMPLE",
+    "real_device": false,
+    "source_path": "netconf-examples-master/README.md"
+  }
+]

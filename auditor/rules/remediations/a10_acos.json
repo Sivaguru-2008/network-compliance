@@ -1,0 +1,92 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized authentication (RADIUS, TACACS+, or LDAP/AD) in ACOS.",
+    "cli": [],
+    "notes": "Configure remote AAA servers under global configuration mode: aaa {authentication | authorization}."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable HTTP management and restrict SSH access.",
+    "cli": [
+      "configure",
+      "no enable-management service http",
+      "enable-management service https",
+      "enable-management service ssh",
+      "no enable-management service telnet",
+      "end"
+    ],
+    "notes": "Use the enable-management service commands to restrict management methods."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrative console session timeout.",
+    "cli": [
+      "configure",
+      "console timeout <minutes>",
+      "end"
+    ],
+    "notes": "Modify session timeout under global configuration in minutes."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "ACOS local administrative passwords are automatically hashed in the system."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP communities.",
+    "cli": [],
+    "notes": "Modify SNMP community settings under global configuration: snmp-server community."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP administrative access.",
+    "cli": [
+      "configure",
+      "no enable-management service http",
+      "web-service server disable",
+      "end"
+    ],
+    "notes": "Revoke HTTP access permission."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce secure SSH settings.",
+    "cli": [],
+    "notes": "SSH configuration settings are managed via the ssh command suite under global configuration mode."
+  },
+  "logging_enabled": {
+    "summary": "Configure Syslog server destination targets.",
+    "cli": [
+      "configure",
+      "logging host <ip-address>",
+      "logging syslog <level>",
+      "end"
+    ],
+    "notes": "Configure a syslog host using the logging host command."
+  },
+  "management_acl": {
+    "summary": "Restrict Web Management Console and SSH access to trusted IP hosts.",
+    "cli": [],
+    "notes": "Restrict access by defining management ACL interface permissions using the enable-management command options."
+  },
+  "login_banner": {
+    "summary": "Configure custom login disclaimer banner.",
+    "cli": [],
+    "notes": "Configure login warning banner in global configuration using banner login."
+  },
+  "password_min_length": {
+    "summary": "Configure administrative password length requirements.",
+    "cli": [],
+    "notes": "Configure password complexity rules under global configuration settings."
+  },
+  "ntp_configured": {
+    "summary": "Configure NTP synchronization settings.",
+    "cli": [
+      "configure",
+      "ntp server <ip-address>",
+      "end"
+    ],
+    "notes": "Specify time synchronization NTP servers."
+  },
+  "no_write_snmp_community": {
+    "summary": "Disable read-write SNMP access.",
+    "cli": [],
+    "notes": "Ensure SNMP communities are restricted to read-only."
+  }
+}

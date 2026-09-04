@@ -1,0 +1,88 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized administrative authentication (TACACS+, RADIUS, or LDAP) in VersaOS.",
+    "cli": [
+      "set system authentication-order [ tacplus radius local ]"
+    ],
+    "notes": "Ensure remote servers are configured before enabling authentication-order to prevent administrative lockout."
+  },
+  "secure_vty_transport": {
+    "summary": "Restrict remote access to SSH only by disabling Telnet (default on VOS).",
+    "cli": [
+      "delete system services telnet"
+    ],
+    "notes": "Ensure Telnet is deleted or disabled and only SSH is enabled."
+  },
+  "vty_idle_timeout": {
+    "summary": "Set administrative session inactivity timeout.",
+    "cli": [
+      "set system login idle-timeout 10"
+    ],
+    "notes": "Define VTY idle-timeout in minutes (e.g. 10 minutes) under the login hierarchy."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "VersaOS automatically hashes/encrypts all user administrative passwords at rest."
+  },
+  "no_default_snmp_community": {
+    "summary": "Change or remove default SNMP community strings.",
+    "cli": [
+      "delete system snmp community \"public\"",
+      "delete system snmp community \"private\""
+    ],
+    "notes": "Remove standard default community mapping names."
+  },
+  "http_server_disabled": {
+    "summary": "Insecure HTTP administrative access is disabled by default.",
+    "cli": [],
+    "notes": "Ensure secure access by using HTTPS for administrative portals."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce SSH protocol version 2.",
+    "cli": [],
+    "notes": "The VersaOS SSH server natively enforces SSHv2 by default."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote syslog server forwarding.",
+    "cli": [
+      "set system syslog server 192.168.1.100 selector 1 facility-list [ auth ] level alert"
+    ],
+    "notes": "Add your central remote syslog server IP and log selectors."
+  },
+  "management_acl": {
+    "summary": "Restrict administrative SSH access using system services access-lists.",
+    "cli": [
+      "set system services access-list ssh allow [ 192.168.1.0/24 ]"
+    ],
+    "notes": "Restricts remote SSH connections to your dedicated management networks."
+  },
+  "login_banner": {
+    "summary": "Configure pre-login administrative banners.",
+    "cli": [
+      "set system login announcement \"Authorized Access Only.\""
+    ],
+    "notes": "Define a clear legal warning message for pre-login display."
+  },
+  "password_min_length": {
+    "summary": "Configure local administrative password policy restrictions.",
+    "cli": [
+      "set system password-policy minimum-length 8"
+    ],
+    "notes": "Set password minimum length to 8 characters or longer."
+  },
+  "ntp_configured": {
+    "summary": "Configure system NTP time servers.",
+    "cli": [
+      "set system ntp server 192.168.1.10 iburst"
+    ],
+    "notes": "Define upstream NTP time servers for system synchronization."
+  },
+  "no_write_snmp_community": {
+    "summary": "Map SNMP communities to read-only authorization.",
+    "cli": [
+      "set system snmp community \"your_community\" authorization read-only"
+    ],
+    "notes": "Do not grant read-write access to SNMP communities."
+  }
+}

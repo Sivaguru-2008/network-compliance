@@ -1,0 +1,90 @@
+{
+  "aaa_enabled": {
+    "summary": "Configure centralized administrative authentication (RADIUS or TACACS) in EdgeOS.",
+    "cli": [
+      "set system login radius-server 192.168.1.50 key secret_key"
+    ],
+    "notes": "Define remote AAA server parameters to authenticate administrative access."
+  },
+  "secure_vty_transport": {
+    "summary": "Disable insecure Telnet and enable secure SSH remote access.",
+    "cli": [
+      "set service ssh",
+      "delete service telnet"
+    ],
+    "notes": "Enforce secure management access by enabling SSH and deleting/disabling the Telnet service."
+  },
+  "vty_idle_timeout": {
+    "summary": "Inactivity VTY timeout is hardcoded / not supported natively in standard EdgeOS CLI configuration.",
+    "cli": [],
+    "notes": "Manual review of client-side keepalive settings (e.g. ClientAliveInterval in sshd_config) is required."
+  },
+  "enable_secret_encrypted": {
+    "summary": "Ensure administrative account passwords are encrypted.",
+    "cli": [],
+    "notes": "EdgeOS automatically hashes/encrypts all user administrative passwords at rest."
+  },
+  "no_default_snmp_community": {
+    "summary": "Remove default SNMP community strings.",
+    "cli": [
+      "delete service snmp community public",
+      "delete service snmp community private"
+    ],
+    "notes": "Ensure default community strings are removed to prevent unauthorized network mapping information leak."
+  },
+  "http_server_disabled": {
+    "summary": "Disable HTTP cleartext management server.",
+    "cli": [
+      "delete service gui http-port"
+    ],
+    "notes": "The HTTP port service should be deleted to prevent unencrypted administrative connections."
+  },
+  "ssh_version_2": {
+    "summary": "Enforce SSH protocol version 2.",
+    "cli": [
+      "set service ssh protocol-version v2"
+    ],
+    "notes": "Enforces secure protocol version 2 on the SSH daemon."
+  },
+  "logging_enabled": {
+    "summary": "Configure remote syslog target host.",
+    "cli": [
+      "set system syslog host 192.168.1.100 facility all level err"
+    ],
+    "notes": "Forward device security events and logs to a centralized syslog server."
+  },
+  "management_acl": {
+    "summary": "Restrict management services using listen-address bindings.",
+    "cli": [
+      "set service ssh listen-address 192.168.1.1",
+      "set service gui listen-address 192.168.1.1"
+    ],
+    "notes": "Restricts management daemons to listen only on designated secure internal interfaces/IPs."
+  },
+  "login_banner": {
+    "summary": "Configure pre-login warning banner.",
+    "cli": [
+      "set system login banner pre-login \"Authorized Access Only.\""
+    ],
+    "notes": "Define a legal notice for display before password prompt."
+  },
+  "password_min_length": {
+    "summary": "Password policy complexity enforcement is not supported natively in standalone EdgeOS configuration.",
+    "cli": [],
+    "notes": "Manual review of account password strength is required."
+  },
+  "ntp_configured": {
+    "summary": "Configure system NTP time servers.",
+    "cli": [
+      "set system ntp server 0.ubnt.pool.ntp.org"
+    ],
+    "notes": "Synchronize system clock for accurate log audit trails."
+  },
+  "no_write_snmp_community": {
+    "summary": "Configure SNMP communities with read-only authorization.",
+    "cli": [
+      "set service snmp community your_community authorization ro"
+    ],
+    "notes": "Configure community strings with read-only access (ro)."
+  }
+}

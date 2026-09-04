@@ -1,0 +1,17 @@
+{
+  "customerName": "Enterprise Corp",
+  "cloudName": "zpatwo.net",
+  "accessPolicyRules": [
+    {
+      "name": "Allow-Internal-Admin",
+      "action": "ALLOW",
+      "postureProfiles": ["Corporate-Device-Compliance"]
+    }
+  ],
+  "postureProfiles": [
+    {
+      "name": "Corporate-Device-Compliance",
+      "postureTypes": ["DOMAIN_JOINED", "DISK_ENCRYPTED", "EDR_ACTIVE"]
+    }
+  ]
+}

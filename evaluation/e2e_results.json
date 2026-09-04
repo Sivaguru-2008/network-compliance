@@ -1,0 +1,2347 @@
+{
+  "dataset": {
+    "total_configs": 26,
+    "cisco_ios_count": 16,
+    "juniper_junos_count": 10,
+    "provenance_class": "REAL_PRODUCTION"
+  },
+  "vendor_detection": {
+    "total": 26,
+    "correct": 26,
+    "accuracy": 1.0,
+    "per_config": [
+      {
+        "file": "bbra_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.75,
+        "correct": true
+      },
+      {
+        "file": "bbrb_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.75,
+        "correct": true
+      },
+      {
+        "file": "boza_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.75,
+        "correct": true
+      },
+      {
+        "file": "bozb_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.75,
+        "correct": true
+      },
+      {
+        "file": "coza_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "cozb_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "goza_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "gozb_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "poza_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "pozb_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "roza_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "rozb_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.75,
+        "correct": true
+      },
+      {
+        "file": "soza_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "sozb_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "yoza_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "yozb_rtr.cfg",
+        "expected": "cisco_ios",
+        "detected": "cisco_ios",
+        "confidence": 0.85,
+        "correct": true
+      },
+      {
+        "file": "atla.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "chic.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "clev.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "hous.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "kans.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "losa.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "newy32aoa.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "salt.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "seat.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      },
+      {
+        "file": "wash.conf",
+        "expected": "juniper_junos",
+        "detected": "juniper_junos",
+        "confidence": 0.9,
+        "correct": true
+      }
+    ]
+  },
+  "parser_success": {
+    "total": 26,
+    "success": 26,
+    "rate": 1.0,
+    "failures": []
+  },
+  "semantic_field_coverage": {
+    "avg_coverage": 0.2611,
+    "min_coverage": 0.2115,
+    "max_coverage": 0.3462,
+    "per_config": [
+      {
+        "file": "bbra_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "bbrb_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "boza_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "bozb_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "coza_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "cozb_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "goza_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "gozb_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "poza_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "pozb_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "roza_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "rozb_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "soza_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "sozb_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "yoza_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "yozb_rtr.cfg",
+        "populated": 11,
+        "total": 52,
+        "coverage": 0.2115
+      },
+      {
+        "file": "atla.conf",
+        "populated": 18,
+        "total": 52,
+        "coverage": 0.3462
+      },
+      {
+        "file": "chic.conf",
+        "populated": 17,
+        "total": 52,
+        "coverage": 0.3269
+      },
+      {
+        "file": "clev.conf",
+        "populated": 18,
+        "total": 52,
+        "coverage": 0.3462
+      },
+      {
+        "file": "hous.conf",
+        "populated": 18,
+        "total": 52,
+        "coverage": 0.3462
+      },
+      {
+        "file": "kans.conf",
+        "populated": 18,
+        "total": 52,
+        "coverage": 0.3462
+      },
+      {
+        "file": "losa.conf",
+        "populated": 18,
+        "total": 52,
+        "coverage": 0.3462
+      },
+      {
+        "file": "newy32aoa.conf",
+        "populated": 17,
+        "total": 52,
+        "coverage": 0.3269
+      },
+      {
+        "file": "salt.conf",
+        "populated": 18,
+        "total": 52,
+        "coverage": 0.3462
+      },
+      {
+        "file": "seat.conf",
+        "populated": 18,
+        "total": 52,
+        "coverage": 0.3462
+      },
+      {
+        "file": "wash.conf",
+        "populated": 17,
+        "total": 52,
+        "coverage": 0.3269
+      }
+    ]
+  },
+  "compliance_evaluation": {
+    "rules_evaluated": 13,
+    "per_rule": {
+      "aaa_enabled": {
+        "tp": 16,
+        "tn": 10,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 0,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0
+      },
+      "secure_vty_transport": {
+        "tp": 0,
+        "tn": 10,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 16,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "accuracy": 1.0
+      },
+      "vty_idle_timeout": {
+        "tp": 10,
+        "tn": 0,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 16,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0
+      },
+      "enable_secret_encrypted": {
+        "tp": 26,
+        "tn": 0,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 0,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0
+      },
+      "no_default_snmp_community": {
+        "tp": 0,
+        "tn": 26,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 0,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "accuracy": 1.0
+      },
+      "http_server_disabled": {
+        "tp": 0,
+        "tn": 10,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 16,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "accuracy": 1.0
+      },
+      "ssh_version_2": {
+        "tp": 0,
+        "tn": 7,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 19,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "accuracy": 1.0
+      },
+      "logging_enabled": {
+        "tp": 16,
+        "tn": 10,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 0,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0
+      },
+      "management_acl": {
+        "tp": 0,
+        "tn": 10,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 16,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "accuracy": 1.0
+      },
+      "login_banner": {
+        "tp": 26,
+        "tn": 0,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 0,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0
+      },
+      "password_min_length": {
+        "tp": 16,
+        "tn": 0,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 10,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0
+      },
+      "ntp_configured": {
+        "tp": 16,
+        "tn": 10,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 0,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0
+      },
+      "no_write_snmp_community": {
+        "tp": 0,
+        "tn": 26,
+        "fp": 0,
+        "fn": 0,
+        "needs_review_correct": 0,
+        "needs_review_incorrect": 0,
+        "total": 26,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "accuracy": 1.0
+      }
+    },
+    "macro_avg_precision": 1.0,
+    "macro_avg_recall": 1.0,
+    "macro_avg_f1": 1.0
+  },
+  "evidence_correctness": {
+    "total_evidence_items": 442,
+    "verified_correct": 442,
+    "rate": 1.0
+  },
+  "remediation_validation": {
+    "attempted": 116,
+    "success": 116,
+    "rate": 1.0,
+    "details": [
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.4.1-1.4.2",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1-PASSWORD-MIN-LENGTH",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.1.1",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.2.2-2.2.4",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-2.3-NTP-CONFIGURED",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-IOS-1.6-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-IDLE-TIMEOUT",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      },
+      {
+        "rule_id": "CIS-JUNOS-LOGIN-BANNER",
+        "success": true,
+        "original_status": "FAIL",
+        "new_status": "PASS"
+      }
+    ]
+  },
+  "processing_time": {
+    "total": {
+      "avg_ms": 576.37,
+      "p95_ms": 1294.79,
+      "min_ms": 167.59,
+      "max_ms": 1353.22
+    },
+    "detection": {
+      "avg_ms": 258.13,
+      "p95_ms": 907.59,
+      "min_ms": 13.5,
+      "max_ms": 909.07
+    },
+    "parsing": {
+      "avg_ms": 101.71,
+      "p95_ms": 313.86,
+      "min_ms": 15.51,
+      "max_ms": 321.33
+    },
+    "evaluation": {
+      "avg_ms": 6.58,
+      "p95_ms": 8.55,
+      "min_ms": 4.78,
+      "max_ms": 14.45
+    }
+  },
+  "per_config_results": [
+    {
+      "file": "bbra_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/bbra_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.75,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 387.84
+    },
+    {
+      "file": "bbrb_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/bbrb_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.75,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 167.59
+    },
+    {
+      "file": "boza_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/boza_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.75,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 387.79
+    },
+    {
+      "file": "bozb_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/bozb_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.75,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 371.67
+    },
+    {
+      "file": "coza_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/coza_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 348.17
+    },
+    {
+      "file": "cozb_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/cozb_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 317.95
+    },
+    {
+      "file": "goza_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/goza_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 342.66
+    },
+    {
+      "file": "gozb_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/gozb_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 387.8
+    },
+    {
+      "file": "poza_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/poza_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 293.73
+    },
+    {
+      "file": "pozb_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/pozb_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 291.38
+    },
+    {
+      "file": "roza_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/roza_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 239.76
+    },
+    {
+      "file": "rozb_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/rozb_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.75,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 281.01
+    },
+    {
+      "file": "soza_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/soza_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 379.91
+    },
+    {
+      "file": "sozb_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/sozb_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 370.87
+    },
+    {
+      "file": "yoza_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/yoza_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 884.55
+    },
+    {
+      "file": "yozb_rtr.cfg",
+      "path": "dataset/real_world/cisco_ios/yozb_rtr.cfg",
+      "vendor": "Cisco Systems",
+      "platform": "cisco_ios",
+      "detection_correct": true,
+      "detection_confidence": 0.85,
+      "parse_success": true,
+      "field_coverage": 0.2115,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "password_min_length": "FAIL",
+        "aaa_enabled": "FAIL",
+        "logging_enabled": "FAIL",
+        "ntp_configured": "FAIL",
+        "login_banner": "FAIL",
+        "management_acl": "NEEDS_REVIEW",
+        "secure_vty_transport": "NEEDS_REVIEW",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "vty_idle_timeout": "NEEDS_REVIEW",
+        "http_server_disabled": "NEEDS_REVIEW",
+        "no_write_snmp_community": "PASS",
+        "no_default_snmp_community": "PASS"
+      },
+      "total_time_ms": 691.05
+    },
+    {
+      "file": "atla.conf",
+      "path": "dataset/real_world/juniper_junos/atla.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3462,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "ssh_version_2": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 739.07
+    },
+    {
+      "file": "chic.conf",
+      "path": "dataset/real_world/juniper_junos/chic.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3269,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 1294.79
+    },
+    {
+      "file": "clev.conf",
+      "path": "dataset/real_world/juniper_junos/clev.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3462,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "ssh_version_2": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 577.69
+    },
+    {
+      "file": "hous.conf",
+      "path": "dataset/real_world/juniper_junos/hous.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3462,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "ssh_version_2": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 701.79
+    },
+    {
+      "file": "kans.conf",
+      "path": "dataset/real_world/juniper_junos/kans.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3462,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "ssh_version_2": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 822.75
+    },
+    {
+      "file": "losa.conf",
+      "path": "dataset/real_world/juniper_junos/losa.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3462,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "ssh_version_2": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 1353.22
+    },
+    {
+      "file": "newy32aoa.conf",
+      "path": "dataset/real_world/juniper_junos/newy32aoa.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3269,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 844.64
+    },
+    {
+      "file": "salt.conf",
+      "path": "dataset/real_world/juniper_junos/salt.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3462,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "ssh_version_2": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 479.55
+    },
+    {
+      "file": "seat.conf",
+      "path": "dataset/real_world/juniper_junos/seat.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3462,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "ssh_version_2": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 796.25
+    },
+    {
+      "file": "wash.conf",
+      "path": "dataset/real_world/juniper_junos/wash.conf",
+      "vendor": "Juniper Networks",
+      "platform": "juniper_junos",
+      "detection_correct": true,
+      "detection_confidence": 0.9,
+      "parse_success": true,
+      "field_coverage": 0.3269,
+      "rule_results": {
+        "enable_secret_encrypted": "FAIL",
+        "vty_idle_timeout": "FAIL",
+        "login_banner": "FAIL",
+        "ssh_version_2": "NEEDS_REVIEW",
+        "password_min_length": "NEEDS_REVIEW",
+        "management_acl": "PASS",
+        "secure_vty_transport": "PASS",
+        "no_default_snmp_community": "PASS",
+        "no_write_snmp_community": "PASS",
+        "aaa_enabled": "PASS",
+        "http_server_disabled": "PASS",
+        "ntp_configured": "PASS",
+        "logging_enabled": "PASS"
+      },
+      "total_time_ms": 1232.11
+    }
+  ],
+  "ground_truth": {
+    "dataset/real_world/cisco_ios/bbra_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/bbrb_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/boza_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/bozb_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/coza_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/cozb_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/goza_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/gozb_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/poza_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/pozb_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/roza_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/rozb_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/soza_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/sozb_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/yoza_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/cisco_ios/yozb_rtr.cfg": {
+      "aaa_enabled": "FAIL",
+      "secure_vty_transport": "NEEDS_REVIEW",
+      "vty_idle_timeout": "NEEDS_REVIEW",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "NEEDS_REVIEW",
+      "ssh_version_2": "NEEDS_REVIEW",
+      "logging_enabled": "FAIL",
+      "management_acl": "NEEDS_REVIEW",
+      "login_banner": "FAIL",
+      "password_min_length": "FAIL",
+      "ntp_configured": "FAIL",
+      "no_write_snmp_community": "PASS"
+    },
+    "dataset/real_world/juniper_junos/atla.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "PASS"
+    },
+    "dataset/real_world/juniper_junos/chic.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "NEEDS_REVIEW"
+    },
+    "dataset/real_world/juniper_junos/clev.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "PASS"
+    },
+    "dataset/real_world/juniper_junos/hous.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "PASS"
+    },
+    "dataset/real_world/juniper_junos/kans.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "PASS"
+    },
+    "dataset/real_world/juniper_junos/losa.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "PASS"
+    },
+    "dataset/real_world/juniper_junos/newy32aoa.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "NEEDS_REVIEW"
+    },
+    "dataset/real_world/juniper_junos/salt.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "PASS"
+    },
+    "dataset/real_world/juniper_junos/seat.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "PASS"
+    },
+    "dataset/real_world/juniper_junos/wash.conf": {
+      "aaa_enabled": "PASS",
+      "secure_vty_transport": "PASS",
+      "vty_idle_timeout": "FAIL",
+      "enable_secret_encrypted": "FAIL",
+      "no_default_snmp_community": "PASS",
+      "http_server_disabled": "PASS",
+      "logging_enabled": "PASS",
+      "management_acl": "PASS",
+      "login_banner": "FAIL",
+      "password_min_length": "NEEDS_REVIEW",
+      "ntp_configured": "PASS",
+      "no_write_snmp_community": "PASS",
+      "ssh_version_2": "NEEDS_REVIEW"
+    }
+  }
+}

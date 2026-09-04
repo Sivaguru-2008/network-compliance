@@ -1,0 +1,45 @@
+{
+  "vendor_key": "juniper_junos",
+  "vendor_name": "Juniper Networks",
+  "os_name": "Junos OS",
+  "syntax_type": "junos_brace_and_set",
+  "root_blocks": [
+    {
+      "block_name": "system",
+      "entry_keyword": "system {",
+      "exit_keyword": "}",
+      "child_delimiter": " ",
+      "statement_terminator": ";",
+      "allowed_subblocks": [
+        "services",
+        "syslog",
+        "login",
+        "ntp",
+        "name-server"
+      ],
+      "common_directives": [
+        "host-name",
+        "time-zone",
+        "domain-name"
+      ],
+      "security_directives": [
+        "services { ssh { protocol-version v2; } }",
+        "services { web-management { https; } }",
+        "syslog { file messages { any notice; } }",
+        "login { message",
+        "root-authentication"
+      ]
+    }
+  ],
+  "negation_prefix": "delete",
+  "comment_prefixes": [
+    "/*",
+    "#"
+  ],
+  "indentation_sensitive": false,
+  "schema_definition": {
+    "format": "curly_brace_hierarchy_or_set_flat",
+    "set_prefix": "set",
+    "delete_prefix": "delete"
+  }
+}

@@ -285,6 +285,54 @@ def create_app(store_root: Optional[Path] = None) -> FastAPI:
             filename=names[device_id],
         )
 
+    # -- re-evaluation -------------------------------------------------------
+
+    @app.post("/api/reeval/{job_id}")
+    async def reeval(job_id: str) -> JSONResponse:
+        """Re-run compliance evaluation on a previously uploaded job.
+
+        Uses the current set of approved learned mappings, so newly trained
+        mappings take effect without re-uploading configs.
+        """
+        job = _require_job(job_id)
+
+        config_files = sorted(job.config_dir.glob("*"))
+        if not config_files:
+            raise HTTPException(
+                status_code=400,
+                detail=f"No configuration files found for job {job_id}.",
+            )
+
+        frameworks = list(job.inventory.frameworks) or [DEFAULT_FRAMEWORK]
+
+        from ..parsers import HybridParser
+        def custom_parser_factory(parser_cls):
+            if issubclass(parser_cls, HybridParser):
+                return parser_cls(
+                    training_dir=store_path.parent,
+                    mapping_store=app.state.mapping_store,
+                )
+            return parser_cls()
+
+        new_inventory = await run_in_threadpool(
+            ingest_module.ingest_paths,
+            [str(p) for p in config_files],
+            frameworks,
+            vendor="hybrid",
+            parser_factory=custom_parser_factory,
+        )
+
+        store.record(job_id, job.root, new_inventory)
+
+        return JSONResponse(
+            {
+                "job_id": job_id,
+                "frameworks": frameworks,
+                "inventory": new_inventory.to_dict(),
+                "reeval": True,
+            }
+        )
+
     # -- training endpoints --------------------------------------------------
 
     from pydantic import BaseModel
@@ -320,24 +368,27 @@ def create_app(store_root: Optional[Path] = None) -> FastAPI:
             if not job or not job.inventory:
                 continue
             for idx, device in enumerate(job.inventory.devices):
-                if device.status != DeviceStatus.AUDITED:
-                    continue
                 try:
                     config_text = get_device_config_text(job, idx)
                 except Exception:
                     continue
 
-                if not device.target or not device.target.parser:
-                    continue
-                try:
-                    parser_cls = registry.get(device.target.parser)
-                    parser = parser_cls()
-                    baseline = parser.parse(config_text)
-                except Exception:
-                    continue
-
-                from ..training.mappings import get_unrecognized_lines
-                unrecognized = get_unrecognized_lines(config_text, baseline)
+                unrecognized = []
+                if device.status == DeviceStatus.AUDITED and device.target and device.target.parser and device.target.parser != "hybrid":
+                    try:
+                        parser_cls = registry.get(device.target.parser)
+                        parser = parser_cls()
+                        baseline = parser.parse(config_text)
+                        from ..training.mappings import get_unrecognized_lines
+                        unrecognized = get_unrecognized_lines(config_text, baseline)
+                    except Exception:
+                        unrecognized = []
+                else:
+                    lines = config_text.splitlines()
+                    for line_idx, raw_line in enumerate(lines):
+                        stripped = raw_line.strip()
+                        if stripped and not stripped.startswith(("#", "!", "/*", "//")):
+                            unrecognized.append({"line_number": line_idx + 1, "text": stripped})
 
                 for item in unrecognized:
                     line_num = item["line_number"]
@@ -351,12 +402,16 @@ def create_app(store_root: Optional[Path] = None) -> FastAPI:
                         context_lines.append(f"Line {i+1}: {lines[i]}")
                     context = "\n".join(context_lines)
 
+                    dev_vendor = device.identity.vendor or (device.target.vendor if device.target else "unknown")
+                    if dev_vendor in ("unknown_vendor", "UNKNOWN"):
+                        dev_vendor = "unknown"
+
                     queue.append({
                         "id": f"{job_id}_{idx}_{line_num}",
                         "job_id": job_id,
                         "device_id": idx,
                         "line_number": line_num,
-                        "vendor": device.identity.vendor or device.target.vendor,
+                        "vendor": dev_vendor,
                         "device_identity": device.display_name,
                         "field": "Unknown",
                         "status": "NEEDS_REVIEW",
@@ -568,6 +623,142 @@ def create_app(store_root: Optional[Path] = None) -> FastAPI:
             "source": suggestion.source,
             "alternatives": suggestion.alternatives,
         })
+
+    # -- Phase 26 REST API Endpoints -----------------------------------------
+
+    @app.get("/health")
+    @app.get("/api/health")
+    async def health() -> JSONResponse:
+        """System health and version check."""
+        return JSONResponse({"status": "ok", "version": "2.2.0", "service": "network-compliance-auditor"})
+
+    class AnalyzeRequest(BaseModel):
+        config_text: str
+        vendor: Optional[str] = None
+        frameworks: List[str] = [DEFAULT_FRAMEWORK]
+
+    @app.post("/analyze")
+    @app.post("/api/analyze")
+    async def analyze_config(req: AnalyzeRequest) -> JSONResponse:
+        """Analyze raw configuration text directly and return security findings & compliance."""
+        from ..parsers import registry
+        from ..pipeline import audit_baseline
+
+        config_text = req.config_text
+        if req.vendor:
+            try:
+                parser_cls = registry.get(req.vendor)
+            except Exception:
+                parser_cls = None
+        else:
+            ranked = registry.rank(config_text)
+            parser_cls = ranked[0][1] if ranked else None
+
+        if parser_cls:
+            parser = parser_cls()
+            baseline = parser.parse(config_text)
+            detected_vendor = getattr(parser, "vendor", "unknown")
+            detected_platform = getattr(parser, "name", "unknown")
+            confidence = getattr(parser, "base_confidence", 1.0)
+        else:
+            baseline = SecurityBaselineModel()
+            detected_vendor = "unknown"
+            detected_platform = "unknown"
+            confidence = 0.0
+
+        report = audit_baseline(baseline, req.frameworks)
+        results = [r.to_dict() if hasattr(r, "to_dict") else {
+            "control_id": getattr(r, "control_ref", getattr(r, "rule_id", "rule")),
+            "status": getattr(r, "status", "PASS").value if hasattr(getattr(r, "status", None), "value") else str(getattr(r, "status", "PASS")),
+            "title": getattr(r, "title", ""),
+            "severity": getattr(r, "severity", "MEDIUM").value if hasattr(getattr(r, "severity", None), "value") else str(getattr(r, "severity", "MEDIUM")),
+            "message": getattr(r, "message", ""),
+        } for r in report.results]
+
+        return JSONResponse({
+            "vendor": detected_vendor,
+            "platform": detected_platform,
+            "confidence": confidence,
+            "summary": report.summary.to_dict() if hasattr(report.summary, "to_dict") else {},
+            "findings": results,
+            "status": "COMPLETED"
+        })
+
+    class QARequest(BaseModel):
+        question: str
+        config_text: Optional[str] = ""
+        vendor: Optional[str] = "unknown"
+
+    @app.post("/qa")
+    @app.post("/api/qa")
+    async def security_qa(req: QARequest) -> JSONResponse:
+        """Answer security questions grounded in configuration evidence."""
+        from nlp_pipeline.qa_engine import qa_engine
+        result = qa_engine.answer_question(req.question, req.config_text or "", vendor=req.vendor or "unknown")
+        return JSONResponse({
+            "question": result.question,
+            "answer": result.answer,
+            "confidence": result.confidence,
+            "evidence": result.evidence,
+            "reason": result.reason,
+            "matched_concept": result.matched_concept
+        })
+
+    @app.get("/devices")
+    @app.get("/api/devices")
+    async def list_all_devices() -> JSONResponse:
+        """List all audited devices across all completed jobs."""
+        devices = []
+        for jid in store.job_ids():
+            job = store.get(jid)
+            if not job or not job.inventory:
+                continue
+            for idx, dev in enumerate(job.inventory.devices):
+                devices.append({
+                    "job_id": jid,
+                    "device_index": idx,
+                    "name": dev.display_name,
+                    "vendor": dev.identity.vendor if dev.identity else "unknown",
+                    "status": dev.status.value if hasattr(dev.status, "value") else str(dev.status),
+                    "finding_count": dev.finding_count
+                })
+        return JSONResponse({"total_devices": len(devices), "devices": devices})
+
+    @app.get("/findings")
+    @app.get("/api/findings")
+    async def list_all_findings() -> JSONResponse:
+        """List findings across latest jobs."""
+        all_findings = []
+        for jid in store.job_ids()[-5:]:
+            job = store.get(jid)
+            if not job or not job.inventory:
+                continue
+            for dev in job.inventory.devices:
+                for f in dev.findings:
+                    all_findings.append({
+                        "device": dev.display_name,
+                        "finding_id": f.control_id if hasattr(f, "control_id") else getattr(f, "title", "finding"),
+                        "severity": getattr(f, "severity", "MEDIUM"),
+                        "status": getattr(f, "status", "FAIL"),
+                    })
+        return JSONResponse({"total_findings": len(all_findings), "findings": all_findings})
+
+    @app.get("/compliance")
+    @app.get("/api/compliance")
+    async def compliance_summary() -> JSONResponse:
+        """Return overall compliance summary across recent jobs."""
+        summaries = []
+        for jid in store.job_ids()[-5:]:
+            job = store.get(jid)
+            if not job or not job.inventory:
+                continue
+            summaries.append({
+                "job_id": jid,
+                "frameworks": list(job.inventory.frameworks),
+                "device_count": job.inventory.counts.total,
+                "rollup": {k: v.to_dict() if hasattr(v, "to_dict") else str(v) for k, v in job.inventory.framework_rollup.items()}
+            })
+        return JSONResponse({"jobs": summaries})
 
     return app
 
