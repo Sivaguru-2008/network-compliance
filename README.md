@@ -1,4 +1,4 @@
-# Network Security Compliance Auditor
+# ConfigIQ: Network Security Compliance Auditor
 
 **SIH 2026 &middot; PS SIH26155**
 
